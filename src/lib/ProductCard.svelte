@@ -29,8 +29,7 @@
 <div class="card-container" {style}>
 	<Card raised>
 		<div class="inner-card">
-			<img src="" alt="" dec />
-			<!-- <img decoding="async" class="ml-auto" src={image?.src} alt={image?.alt} /> -->
+			<img decoding="async" class="ml-auto" src={image?.src} alt={image?.alt} />
 			<CardTitle class="justify-center h4">Hamburger</CardTitle>
 
 			<div class="actionsContainer">

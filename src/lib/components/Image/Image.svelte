@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let src: string;
-	export let alt: string = '';
+	export let alt: string;
 	export let width: number;
 	export let height: number;
 	export let loading: 'eager' | 'lazy' = 'lazy';
@@ -46,6 +46,7 @@
 		opacity: 0;
 		transition: opacity 1200ms ease-out;
 	}
+
 	img.loaded {
 		opacity: 1;
 	}

@@ -14,8 +14,6 @@
 	};
 
 	const list = Array(10).fill(burgerImage);
-
-	let activeItem;
 </script>
 
 <svelte:head>

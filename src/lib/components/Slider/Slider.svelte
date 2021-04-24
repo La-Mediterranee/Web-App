@@ -3,12 +3,21 @@
 
 	type oriantation = 'vertical' | 'horizontal';
 
-	export let itemsPerView: number = 3;
+	interface CarouelOptions {
+		itemsPerView?: number;
+	}
+
+	interface IbreakPoints {
+		[width: number]: CarouelOptions;
+	}
+
+	export let itemsPerView: number = 1;
 	export let draggable = true;
 	export let threshold = 20;
 	export let showIndicators: boolean = false;
 	export let defaultIndex: number = 0;
 	export let oriantation: oriantation = 'horizontal';
+	export let breakpoints: IbreakPoints;
 
 	export let autoplay = false;
 	export let delay = 1000;
@@ -16,38 +25,26 @@
 	export let activeItem = 0;
 
 	let touch_active = false;
-	let page_axis = oriantation === 'vertical' ? 'pageY' : 'pageX',
-		activeIndicator = 0,
-		indicators: any[],
-		totalElements = 0,
-		availableSpace = 0,
-		availableWidth = 0,
-		availableDistance = 0,
-		pos_axis = 0,
-		axis: number,
-		longTouch: boolean,
-		last_axis_pos: number,
-		sliderWrapper: HTMLDivElement,
-		sliderElements: NodeListOf<any>,
-		sliderHandler: HTMLDivElement;
+	let activeIndicator = 0;
+	let totalElements = 0;
+	let availableSpace = 0;
+	let availableWidth = 0;
+	let availableDistance = 0;
+	let pos_axis = 0;
+
+	let indicators: any[];
+	let axis: number;
+	let longTouch: boolean;
+	let last_axis_pos: number;
+	let sliderWrapper: HTMLDivElement;
+	let sliderElements: NodeListOf<HTMLElement>;
+	let sliderHandler: HTMLDivElement;
 
 	let played = defaultIndex || 0;
-	let run_interval: boolean = false;
-
-	let IntervalID: ReturnType<typeof setTimeout>;
 
 	$: indicators = Array(totalElements);
 
-	$: {
-		if (autoplay && !run_interval) {
-			IntervalID = setInterval(changeView, delay);
-			run_interval = true;
-		}
-		if (!autoplay && run_interval) {
-			clearInterval(IntervalID);
-			run_interval = false;
-		}
-	}
+	$: offset = 0;
 
 	onMount(() => {
 		init();
@@ -63,13 +60,13 @@
 	});
 
 	function init() {
-		sliderElements = sliderWrapper.querySelectorAll('.slider-item');
+		sliderElements = sliderWrapper.querySelectorAll<HTMLElement>('.slider-item');
 		totalElements = sliderElements.length;
 		update();
 	}
 
 	function update() {
-		let { offsetWidth, offsetHeight } = sliderWrapper;
+		const { offsetWidth, offsetHeight } = sliderWrapper;
 		availableSpace = oriantation === 'vertical' ? offsetHeight : offsetWidth;
 
 		[...sliderElements].forEach((element, i) => {
@@ -102,10 +99,32 @@
 			window[delegationTypes[type]]('touchend', onEnd, { passive: false });
 		}
 	}
+
 	function normalizeEventBehavior(e: Event) {
 		e && e.preventDefault();
 		e && e.stopImmediatePropagation();
 		e && e.stopPropagation();
+	}
+
+	function onKeyUp(e: KeyboardEvent): void {
+		const key = e.keyCode;
+
+		switch (key) {
+			case 37:
+				return this.previous();
+			case 39:
+				return this.next();
+		}
+	}
+
+	function handleMove(e: MouseEvent | TouchEvent) {
+		if (
+			(!isMouseMoveEvent(e) && !this.props.swipeable) ||
+			(isMouseMoveEvent(e) && !this.props.draggable) ||
+			notEnoughChildren(this.state)
+		) {
+			return;
+		}
 	}
 
 	function generateTranslateValue(value: number) {
@@ -124,7 +143,7 @@
 		return _css;
 	}
 
-	function onMove(e) {
+	function onMove(e: TouchEvent) {
 		if (touch_active) {
 			normalizeEventBehavior(e);
 			let _axis = e.touches ? e.touches[0][page_axis] : e[page_axis],

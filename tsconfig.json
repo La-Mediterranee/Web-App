@@ -2,8 +2,8 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"module": "es2020",
-		"lib": ["es2020", "dom", "DOM.Iterable"], //"dom.iterable",
-		"target": "es2019",
+		"lib": ["es2020", "dom", "DOM.Iterable"],
+		"target": "ES6",
 		"removeComments": true,
 		"importHelpers": true,
 		"strict": false,

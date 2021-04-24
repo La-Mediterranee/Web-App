@@ -155,14 +155,17 @@
 
 	onDestroy(() => {
 		window.removeEventListener('resize', onResize as any);
+
 		if (keyBoardControl) {
 			window.removeEventListener('keyup', onKeyUp);
 		}
+
 		if (autoPlay) {
 			//props.autoPlay &&
 			clearInterval(autoPlay);
 			autoPlay = undefined;
 		}
+
 		if (itemsToShowTimeout) {
 			clearTimeout(itemsToShowTimeout);
 		}

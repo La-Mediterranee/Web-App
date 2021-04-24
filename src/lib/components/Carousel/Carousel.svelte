@@ -123,12 +123,21 @@
 		containerWidth,
 	};
 
+	$: {
+		if (!keyBoardControl) {
+			window.removeEventListener('keyup', onKeyUp);
+		} else {
+			window.addEventListener('keyup', onKeyUp);
+		}
+	}
+
 	onMount(() => {
 		domLoaded = true;
 		totalItems = containerRef.children.length;
 		setItemsToShow();
 		window.addEventListener('resize', onResize as any);
 		onResize(true);
+
 		if (keyBoardControl) {
 			window.addEventListener('keyup', onKeyUp);
 		}
@@ -138,7 +147,11 @@
 		}
 	});
 
-	afterUpdate(() => {});
+	afterUpdate(() => {
+		if (itemsToShowTimeout) {
+			clearTimeout(itemsToShowTimeout);
+		}
+	});
 
 	onDestroy(() => {
 		window.removeEventListener('resize', onResize as any);

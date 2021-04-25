@@ -2,12 +2,10 @@
 	import { onMount } from 'svelte';
 	import ProductCard from '$lib/ProductCard.svelte';
 	import Wave from '$lib/Wave.svelte';
-	import Container from 'svelte-materialify/src/components/Grid/Container.svelte';
-	import Row from 'svelte-materialify/src/components/Grid/Row.svelte';
-	import Col from 'svelte-materialify/src/components/Grid/Col.svelte';
-	import Carousel from '$lib/Carousel.svelte';
-	import SliderItem from '$lib/components/Slider/SliderItem.svelte';
-
+	// import Carousel from '$lib/Carousel.svelte';
+	// import SliderItem from '$lib/components/Slider/SliderItem.svelte';
+	// import {Carousel,CarouselItem} from '$lib/components/Carousel';
+	
 	const burgerImage = {
 		src: '/burger.png',
 		alt: 'Bild von einem Burger',
@@ -28,16 +26,16 @@
 	<Wave />
 </div>
 
-<section class="loloRow">
+<!-- <section class="loloRow">
 	<h2 class="row-header">Essen</h2>
-	<Carousel showIndicators>
+	<Carousel>
 		{#each list as image, i}
-			<SliderItem>
+			<CarouselItem>
 				<ProductCard {image} style="width: var(--carousel-item);" />
-			</SliderItem>
+			</CarouselItem>
 		{/each}
 	</Carousel>
-</section>
+</section> -->
 <section>
 	<h2 class="row-header">Essen</h2>
 	<ProductCard image={burgerImage} style="min-width: 220px; max-width: 250px;" />

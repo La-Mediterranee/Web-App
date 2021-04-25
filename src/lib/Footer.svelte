@@ -1,36 +1,43 @@
-<div>
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-		<defs>
-			<linearGradient id="MyGradient">
-				<stop offset="0" stop-color="var(--top1)" />
-				<stop offset="100%" stop-color="var(--top2)" />
-			</linearGradient>
-		</defs>
-		<path
-			fill="url(#MyGradient)"
-			fill-opacity="1"
-			d="M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,149.3C672,117,768,75,864,85.3C960,96,1056,160,1152,176C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-		/>
-	</svg>
-	<footer>
+<footer>
+
+	<div class="content">
 		<div>
 			<h3>Über uns</h3>
 		</div>
 		<div>
 			<h3>Lieferzeiten</h3>
 		</div>
-	</footer>
-</div>
+	</div>
+</footer>
 
 <style lang="scss">
 	footer {
 		position: relative;
-		background: linear-gradient(to right, var(--top1), var(--top2));
 		text-align: center;
-		padding: 20px;
+		// padding-top: 100px;
+		background-image: url(./Footer.svg);
 	}
 
 	svg {
 		display: block;
+		position: absolute;
+		top: 0px;
+		z-index: 1;
+
+		path{
+			stroke: none;
+		}
+
+		rect{
+			stroke: none;
+		}
+	}
+
+	.content {
+		padding: 20px;
+		// padding-top: 100px;
+		position: relative;
+		// background: linear-gradient(to right, var(--top1), var(--top2));
+		z-index: 5;
 	}
 </style>

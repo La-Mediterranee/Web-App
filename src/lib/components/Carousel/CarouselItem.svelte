@@ -9,7 +9,7 @@
 	export let infinite: boolean;
 	export { itemClass as class };
 	export let itemAriaLabel: string;
-	export let partialVisible;
+	export let partialVisible: boolean;
 
 	export let props: CarouselProps;
 	export let state: CarouselInternalState;

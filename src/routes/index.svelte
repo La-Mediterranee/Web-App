@@ -5,7 +5,7 @@
 	// import Carousel from '$lib/Carousel.svelte';
 	// import SliderItem from '$lib/components/Slider/SliderItem.svelte';
 	// import {Carousel,CarouselItem} from '$lib/components/Carousel';
-	
+
 	const burgerImage = {
 		src: '/burger.png',
 		alt: 'Bild von einem Burger',

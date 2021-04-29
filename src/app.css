@@ -53,10 +53,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;800&display=swap');
 
 :root {
-	--body-bg1: #4994f5e5;
-	--body-bg2: #1d68ca;
-	--top1: #4050e0e5;
-	--top2: #062ba5;
+	/* --body-bg1: #4994f5e5;
+	--body-bg2: #1d68ca; */
+	/* --top1: #4050e0e5;
+	--top2: #062ba5; */
+	--body-bg1: #5881a7;
+	--body-bg2: #284159;
+	--top1: #5881a7;
+	--top2: #284159;
 	--subtle: rgba(0, 0, 0, 0.1);
 	--carousel-item: 50%;
 }

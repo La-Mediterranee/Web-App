@@ -32,7 +32,8 @@
 	}
 
 	nav {
-		background: linear-gradient(to right, #4050e0e5, #062ba5);
+		// background: linear-gradient(to right, #4050e0e5, #062ba5);
+		background: var(--theme-app-bar);
 		position: fixed;
 		z-index: 3;
 		height: 65px;

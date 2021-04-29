@@ -29,60 +29,49 @@
 	import Dots from './Dots.svelte';
 	import { LeftArrow, RightArrow } from './Arrows';
 	import { getTransform } from './utils/common';
-	import CarouselItem from './CarouselItem.svelte';
 
 	export let responsive: ResponsiveType;
-	export let deviceType: string;
-	export let ssr: boolean;
 	export let slidesToSlide = 1;
+	export let infinite = false;
 	export let draggable = true;
+	export let swipeable = true;
 	export let arrows = true;
 	export let renderArrowsWhenDisabled = false;
-	export let swipeable = true;
-	export let removeArrowOnDeviceType: string | Array<string>;
-	export let infinite = false;
+	export let containerClass = '';
+	export let sliderClass = '';
+	export let itemClass = '';
+	export let keyBoardControl = true;
+	export let autoPlaySpeed = 3000;
+	export let showDots = false;
+	export let renderDotsOutside = false;
+	export let renderButtonGroupOutside = false;
 	export let minimumTouchDrag = 80;
-
-	let className: string = '';
-
-	export { className as class };
-	// export let className:string ="";
-	export let containerClass: string = '';
-	export let sliderClass: string = '';
-	export let itemClass: string = '';
-	export let dotListClass: string = '';
-
-	export let itemAriaLabel: string;
-	export let keyBoardControl: boolean = true;
-	export let centerMode: boolean = false;
-	export let autoPlay: boolean = false;
-	export let autoPlaySpeed: number = 3000;
-	export let showDots: boolean = false;
-	export let renderDotsOutside: boolean = false;
-	export let renderButtonGroupOutside: boolean = false;
-
+	export let className = '';
+	export let dotListClass = '';
+	export let focusOnSelect = false;
+	export let centerMode = false;
+	export let additionalTransfrom = 0;
+	export let pauseOnHover = true;
 	export let customTransition: string;
-	export let transitionDuration: number;
-
-	export let focusOnSelect: boolean = false;
-	export let additionalTransfrom: number = 0;
-	export let pauseOnHover: boolean = true;
-
 	export let afterChange: (arg0: number, arg1: CarouselInternalState) => void;
 	export let beforeChange: (arg0: number, arg1: CarouselInternalState) => void;
+	export let transitionDuration: number;
 
 	let containerRef: HTMLDivElement;
 	let listRef: HTMLDivElement;
 
 	let children = containerRef.children;
-	const props: CarouselProps = {
+
+	const defaultTransitionDuration = 400;
+	const defaultTransition = 'transform 400ms ease-in-out';
+
+	$: props = {
 		slidesToSlide,
 		infinite,
 		draggable,
 		swipeable,
 		arrows,
 		renderArrowsWhenDisabled,
-		removeArrowOnDeviceType,
 		containerClass,
 		sliderClass,
 		itemClass,
@@ -100,56 +89,28 @@
 		pauseOnHover,
 		children,
 		responsive,
-		ssr,
-		itemAriaLabel,
 	};
 
-	// $: props = {
-	// 	slidesToSlide,
-	// 	infinite,
-	// 	draggable,
-	// 	swipeable,
-	// 	arrows,
-	// 	renderArrowsWhenDisabled,
-	// 	removeArrowOnDeviceType,
-	// 	containerClass,
-	// 	sliderClass,
-	// 	itemClass,
-	// 	keyBoardControl,
-	// 	autoPlaySpeed,
-	// 	showDots,
-	// 	renderDotsOutside,
-	// 	renderButtonGroupOutside,
-	// 	minimumTouchDrag,
-	// 	className,
-	// 	dotListClass,
-	// 	focusOnSelect,
-	// 	centerMode,
-	// 	additionalTransfrom,
-	// 	pauseOnHover,
-	// 	children,
-	// 	responsive,
-	// ssr,
-	// 	itemAriaLabel,
-	// };
-
-	const defaultTransitionDuration = 400;
-	const defaultTransition = 'transform 400ms ease-in-out';
-
-	let direction: Direction = '';
 	let onMove: boolean = false;
 	let initialX: number = 0;
-	let initialY: number = 0;
 	let lastX: number = 0;
 	let isAnimationAllowed: boolean = false;
+	let direction: Direction = '';
+	let initialY: number = 0;
 	let isInThrottle: boolean = false;
+	let transformPlaceHolder: number = 0;
 
 	let itemWidth = 0;
 	let slidesToShow = 0;
+	let currentSlide = 0;
+	let totalItems = 0;
+	let deviceType = '';
+	let domLoaded = false;
+	let transform = 0;
+	let containerWidth = 0;
 
-	let transformPlaceHolder: number = 0;
 	let itemsToShowTimeout: any;
-	// let autoPlay: any;
+	let autoPlay: any;
 
 	const state: CarouselInternalState = {
 		itemWidth: 0,
@@ -162,13 +123,16 @@
 		containerWidth: 0,
 	};
 
-	// $: {
-	// 	if (typeof afterChange === 'function') {
-	// 		setTimeout(() => {
-	// 			afterChange(previousSlide, this.getState());
-	// 		}, transitionDuration || defaultTransitionDuration);
-	// 	}
-	// }
+	$: state = {
+		itemWidth,
+		slidesToShow,
+		currentSlide,
+		totalItems,
+		deviceType,
+		domLoaded,
+		transform,
+		containerWidth,
+	};
 
 	$: {
 		if (!keyBoardControl) {
@@ -179,8 +143,8 @@
 	}
 
 	onMount(() => {
-		state.domLoaded = true;
-		state.totalItems = containerRef.children.length;
+		domLoaded = true;
+		totalItems = containerRef.children.length;
 		setItemsToShow();
 		window.addEventListener('resize', onResize as any);
 		onResize(true);
@@ -219,15 +183,15 @@
 	});
 
 	function resetTotalItems(): void {
-		const totalItems = containerRef.children.length;
-		const currentSlide = notEnoughChildren(slidesToShow, totalItems)
+		const newTotalItems = containerRef.children.length;
+		const newCurrentSlide = notEnoughChildren(slidesToShow, totalItems)
 			? 0
 			: // this ensures that if the currentSlide before change in childrenCount is more than new childrenCount; we will set it to new childrenCount
-			  Math.max(0, Math.min(state.currentSlide, totalItems));
+			  Math.max(0, Math.min(currentSlide, newTotalItems));
 
-		state.totalItems = totalItems;
-		state.currentSlide = currentSlide;
-		setContainerAndItemWidth(state.slidesToShow, true);
+		totalItems = newTotalItems;
+		currentSlide = newCurrentSlide;
+		setContainerAndItemWidth(slidesToShow, true);
 	}
 
 	function setIsInThrottle(isInThrottle = false): void {
@@ -274,10 +238,10 @@
 		);
 
 		const clones = getClones(state.slidesToShow, childrenArr);
-		const currentSlide = childrenArr.length < state.slidesToShow ? 0 : state.currentSlide;
+		const newCurrentSlide = childrenArr.length < state.slidesToShow ? 0 : state.currentSlide;
 
-		state.totalItems = clones.length;
-		state.currentSlide = forResizing && !resetCurrentSlide ? currentSlide : initialSlide;
+		totalItems = clones.length;
+		currentSlide = forResizing && !resetCurrentSlide ? newCurrentSlide : initialSlide;
 
 		correctItemsPosition(itemWidth || state.itemWidth);
 	}
@@ -290,8 +254,8 @@
 			const { breakpoint, items } = responsive[item];
 			const { max, min } = breakpoint;
 			if (window.innerWidth >= min && window.innerWidth <= max) {
-				state.slidesToShow = items;
-				state.deviceType = item;
+				slidesToShow = items;
+				deviceType = item;
 				setContainerAndItemWidth(items, shouldCorrectItemPosition, resetCurrentSlide);
 			}
 		});
@@ -310,13 +274,11 @@
 				newContainerWidth
 			);
 
-			state.containerWidth = newContainerWidth;
-			state.itemWidth = newItemWidth;
-
+			containerWidth = newContainerWidth;
+			itemWidth = newItemWidth;
 			if (infinite) {
 				setClones(slidesToShow, itemWidth, shouldCorrectItemPosition, resetCurrentSlide);
 			}
-
 			if (shouldCorrectItemPosition) {
 				correctItemsPosition(itemWidth);
 			}
@@ -340,14 +302,13 @@
 			isAnimationAllowed = false;
 		}
 
-		const nextTransform =
-			state.totalItems < state.slidesToShow ? 0 : -(itemWidth * state.currentSlide);
+		const nextTransform = totalItems < slidesToShow ? 0 : -(itemWidth * currentSlide);
 
 		if (setToDomDirectly) {
 			setTransformDirectly(nextTransform, true);
 		}
 
-		state.transform = nextTransform;
+		transform = nextTransform;
 	}
 
 	function onResize(value?: KeyboardEvent | boolean): void {
@@ -390,8 +351,7 @@
 			if (isReachingTheEnd || isReachingTheStart) {
 				isAnimationAllowed = false;
 				setTimeout(() => {
-					state.transform = nextPosition;
-					state.currentSlide = nextSlide;
+					(transform = nextPosition), (currentSlide = nextSlide);
 				}, transitionDuration || defaultTransitionDuration);
 			}
 		}
@@ -399,7 +359,7 @@
 
 	const next = throttle(
 		function next(slidesHavePassed = 0): void {
-			if (notEnoughChildren(state.slidesToShow, state.totalItems)) {
+			if (notEnoughChildren(slidesToShow, totalItems)) {
 				return;
 			}
 			/*
@@ -408,8 +368,8 @@
     2. We are sliding over to what we have, that means nextslides > this.props.children.length. (does not apply to the inifnite mode)
     */
 			const { nextSlides, nextPosition } = populateNextSlides(state, props, slidesHavePassed);
+			const previousSlide = currentSlide;
 
-			const previousSlide = state.currentSlide;
 			if (nextSlides === undefined || nextPosition === undefined) {
 				// they can be 0.
 				return;
@@ -420,8 +380,8 @@
 			}
 
 			isAnimationAllowed = true;
-			state.transform = nextPosition;
-			state.currentSlide = nextSlides;
+			transform = nextPosition;
+			currentSlide = nextSlides;
 
 			if (typeof afterChange === 'function') {
 				setTimeout(() => {
@@ -435,7 +395,7 @@
 
 	const previous = throttle(
 		function previous(slidesHavePassed = 0): void {
-			if (notEnoughChildren(state.slidesToShow, state.totalItems)) {
+			if (notEnoughChildren(slidesToShow, totalItems)) {
 				return;
 			}
 
@@ -449,15 +409,15 @@
 				return;
 			}
 
-			const previousSlide = state.currentSlide;
+			const previousSlide = currentSlide;
 			if (typeof beforeChange === 'function') {
 				beforeChange(nextSlides, getState());
 			}
 
 			isAnimationAllowed = true;
 
-			state.transform = nextPosition;
-			state.currentSlide = nextSlides;
+			transform = nextPosition;
+			currentSlide = nextSlides;
 
 			if (typeof afterChange === 'function') {
 				setTimeout(() => {
@@ -499,7 +459,7 @@
 		if (
 			(!isMouseMoveEvent(e) && !swipeable) ||
 			(isMouseMoveEvent(e) && !draggable) ||
-			notEnoughChildren(state.slidesToShow, state.totalItems)
+			notEnoughChildren(slidesToShow, totalItems)
 		) {
 			return;
 		}
@@ -556,20 +516,20 @@
 			if (direction === 'right') {
 				const canGoNext = initialX - lastX >= minimumTouchDrag!;
 				if (canGoNext) {
-					const slidesHavePassed = Math.round((initialX - lastX) / state.itemWidth);
+					const slidesHavePassed = Math.round((initialX - lastX) / itemWidth);
 					next(slidesHavePassed);
 				} else {
-					correctItemsPosition(state.itemWidth, true, true);
+					correctItemsPosition(itemWidth, true, true);
 				}
 			}
 
 			if (direction === 'left') {
 				const canGoNext = lastX - initialX > minimumTouchDrag!;
 				if (canGoNext) {
-					const slidesHavePassed = Math.round((lastX - initialX) / state.itemWidth);
+					const slidesHavePassed = Math.round((lastX - initialX) / itemWidth);
 					previous(slidesHavePassed);
 				} else {
-					correctItemsPosition(state.itemWidth, true, true);
+					correctItemsPosition(itemWidth, true, true);
 				}
 			}
 
@@ -600,7 +560,6 @@
 				return;
 			}
 
-			const { itemWidth } = state;
 			const previousSlide = state.currentSlide;
 			if (
 				typeof beforeChange === 'function' &&
@@ -611,8 +570,8 @@
 			}
 
 			isAnimationAllowed = true;
-			state.currentSlide = slide;
-			state.transform = -(itemWidth * slide);
+			currentSlide = slide;
+			transform = -(itemWidth * slide);
 
 			if (infinite) {
 				correctClonesPosition({ domLoaded: true });
@@ -638,33 +597,11 @@
 
 	const { shouldRenderOnSSR, shouldRenderAtAll } = getInitialState(state, props);
 
-	const isLeftEndReach = isInLeftEnd(state);
-	const isRightEndReach = isInRightEnd(state);
-
-	const shouldShowArrows =
-		arrows &&
-		!(
-			removeArrowOnDeviceType &&
-			((deviceType && removeArrowOnDeviceType.indexOf(deviceType) > -1) ||
-				(state.deviceType && removeArrowOnDeviceType.indexOf(state.deviceType) > -1))
-		) &&
-		!notEnoughChildren(state.slidesToShow, state.totalItems) &&
-		shouldRenderAtAll;
-
-	const disableLeftArrow = !infinite && isLeftEndReach;
-	const disableRightArrow = !infinite && isRightEndReach;
-
-	// this lib supports showing next set of items partially as well as center mode which shows both.
 	const currentTransform = getTransform(state, props);
-
-	function buttonGroupGoToSlide(slideIndex: number, skipCallbacks?: SkipCallbackOptions) {
-		return goToSlide(slideIndex, skipCallbacks);
-	}
 </script>
 
-<div bind:this={containerRef} class={`multi-carousel-list ${containerClass} ${className}`}>
+<div class={`multi-carousel-list ${containerClass} ${className}`} bind:this={containerRef}>
 	<div
-		bind:this={listRef}
 		class={`react-multi-carousel-track ${sliderClass}`}
 		style={`
         transition: ${isAnimationAllowed ? customTransition || defaultTransition : 'none'},
@@ -679,50 +616,31 @@
 		on:touchmove={handleMove}
 		on:touchend={handleOut}
 	>
-		<div class="content">
-			<slot {clones} {state} {props} {goToSlide} />
+		<div class="content" bind:this={listRef}>
+			<slot />
 		</div>
 	</div>
-	{#if shouldShowArrows && (!disableLeftArrow || renderArrowsWhenDisabled)}
-		<slot name="customLeftArrow" {previous} disabled={disableLeftArrow}>
-			<LeftArrow getState={() => getState()} {previous} disabled={disableLeftArrow} />
-		</slot>
-	{/if}
-	{#if shouldShowArrows && (!disableRightArrow || renderArrowsWhenDisabled)}
-		<slot name="customRightArrow" {next} disabled={disableRightArrow}>
-			<RightArrow getState={() => getState()} {next} disabled={disableRightArrow} />
-		</slot>
-	{/if}
-	{#if shouldRenderAtAll && !renderButtonGroupOutside}
-		<slot
-			name="cutomButtonGroup"
-			gotToSlide={buttonGroupGoToSlide}
-			carouselState={getState()}
-			{previous}
-			{next}
-		/>
-	{/if}
-	{#if shouldRenderAtAll && !renderDotsOutside}
-		<slot name="customDots">
-			<Dots {state} {props} {goToSlide} getState={() => getState()} />
-		</slot>
-	{/if}
-</div>
-{#if shouldRenderAtAll && renderDotsOutside}
-	<slot name="customDots">
-		<Dots {state} {props} {goToSlide} getState={() => getState()} />
-	</slot>
-{/if}
-
-{#if shouldRenderAtAll && renderButtonGroupOutside}
-	<slot
-		name="cutomButtonGroup"
-		gotToSlide={buttonGroupGoToSlide}
-		carouselState={getState()}
-		{previous}
-		{next}
+	<!-- <div
+		class="swipe-handler"
+		bind:this={sliderHandler}
+		on:touchstart={onTouchStart}
+		on:mousedown={onMoveStart}
 	/>
-{/if}
+	{#if showIndicators}
+		<div class="swipe-indicator swipe-indicator-inside">
+			{#each indicators as x, i}
+				<slot name="indicators" {activeIndicator} index={i}>
+					<span
+						class="dot {activeIndicator === i ? 'is-active' : ''}"
+						on:click={() => {
+							changeItem(i);
+						}}
+					/>
+				</slot>
+			{/each}
+		</div>
+	{/if} -->
+</div>
 
 <style>
 	div {

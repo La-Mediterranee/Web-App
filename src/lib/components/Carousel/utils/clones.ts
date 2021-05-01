@@ -85,6 +85,7 @@ function getClones(slidesToShow: number, childrenArr: any[]) {
 	if (childrenArr.length < slidesToShow) {
 		return childrenArr;
 	}
+
 	if (childrenArr.length > slidesToShow * 2) {
 		return [
 			...childrenArr.slice(childrenArr.length - slidesToShow * 2, childrenArr.length),
@@ -92,6 +93,7 @@ function getClones(slidesToShow: number, childrenArr: any[]) {
 			...childrenArr.slice(0, slidesToShow * 2),
 		];
 	}
+
 	return [...childrenArr, ...childrenArr, ...childrenArr];
 }
 

@@ -29,7 +29,6 @@ function getInitialState(
 	if (ssr && deviceType && !domFullyLoaded) {
 		flexBisis = getWidthFromDeviceType(deviceType, responsive);
 	}
-
 	const shouldRenderOnSSR = Boolean(ssr && deviceType && !domFullyLoaded && flexBisis);
 	const partialVisibilityGutter = getPartialVisibilityGutter(
 		responsive,
@@ -37,7 +36,6 @@ function getInitialState(
 		deviceType,
 		state.deviceType
 	);
-
 	const shouldRenderAtAll = shouldRenderOnSSR || domFullyLoaded;
 	return {
 		shouldRenderOnSSR,

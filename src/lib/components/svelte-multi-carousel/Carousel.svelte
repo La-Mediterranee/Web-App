@@ -29,7 +29,7 @@
 	import Dots from './Dots.svelte';
 	import { LeftArrow, RightArrow } from './Arrows';
 	import { getTransform } from './utils/common';
-	import CarouselItems from './CarouselItems.svelte';
+	import CarouselItem from './CarouselItem.svelte';
 
 	export let responsive: ResponsiveType;
 	export let deviceType: string;
@@ -39,42 +39,55 @@
 	export let arrows = true;
 	export let renderArrowsWhenDisabled = false;
 	export let swipeable = true;
-	export let removeArrowOnDeviceType: string | string[];
+	export let removeArrowOnDeviceType: string | Array<string>;
 	export let infinite = false;
 	export let minimumTouchDrag = 80;
 
 	let className: string = '';
 	export { className as class };
 	// export let className:string ="";
-	export let containerClass: string = '';
-	export let sliderClass: string = '';
-	export let itemClass: string = '';
-	export let dotListClass: string = '';
-
-	export let itemAriaLabel: string;
-	export let keyBoardControl: boolean = true;
-	export let centerMode: boolean = false;
-	export let autoPlay: boolean = false;
-	export let autoPlaySpeed: number = 3000;
-	export let showDots: boolean = false;
-	export let renderDotsOutside: boolean = false;
-	export let renderButtonGroupOutside: boolean = false;
 
 	export let customTransition: string;
 	export let transitionDuration: number;
 
-	export let focusOnSelect: boolean = false;
-	export let additionalTransfrom: number = 0;
-	export let pauseOnHover: boolean = true;
-	export let children = [];
-
-	export let afterChange: (previousSlide: number, state: CarouselInternalState) => void;
-	export let beforeChange: (nextSlides: number, state: CarouselInternalState) => void;
+	export let afterChange: (arg0: number, arg1: CarouselInternalState) => void;
+	export let beforeChange: (arg0: number, arg1: CarouselInternalState) => void;
 
 	let containerRef: HTMLDivElement;
 	let listRef: HTMLDivElement;
 
-	// const props: CarouselProps = {
+	let children = [];
+	export let props: CarouselProps = {
+		slidesToSlide,
+		infinite,
+		draggable,
+		swipeable,
+		arrows,
+		renderArrowsWhenDisabled,
+		removeArrowOnDeviceType,
+		containerClass: '',
+		sliderClass: '',
+		itemClass: '',
+		dotListClass: '',
+		keyBoardControl: true,
+		centerMode: false,
+		autoPlay: false,
+		autoPlaySpeed: 3000,
+		showDots: false,
+		renderDotsOutside: false,
+		renderButtonGroupOutside: false,
+		minimumTouchDrag,
+		className,
+		focusOnSelect: false,
+		additionalTransfrom: 0,
+		pauseOnHover: true,
+		children: [],
+		responsive,
+		ssr,
+		itemAriaLabel: undefined,
+	};
+
+	// $: props = {
 	// 	slidesToSlide,
 	// 	infinite,
 	// 	draggable,
@@ -99,38 +112,9 @@
 	// 	pauseOnHover,
 	// 	children,
 	// 	responsive,
-	// 	ssr,
+	// ssr,
 	// 	itemAriaLabel,
 	// };
-
-	$: props = {
-		slidesToSlide,
-		infinite,
-		draggable,
-		swipeable,
-		arrows,
-		renderArrowsWhenDisabled,
-		removeArrowOnDeviceType,
-		containerClass,
-		sliderClass,
-		itemClass,
-		keyBoardControl,
-		autoPlaySpeed,
-		showDots,
-		renderDotsOutside,
-		renderButtonGroupOutside,
-		minimumTouchDrag,
-		className,
-		dotListClass,
-		focusOnSelect,
-		centerMode,
-		additionalTransfrom,
-		pauseOnHover,
-		children,
-		responsive,
-		ssr,
-		itemAriaLabel,
-	};
 
 	const defaultTransitionDuration = 400;
 	const defaultTransition = 'transform 400ms ease-in-out';
@@ -148,7 +132,7 @@
 
 	let transformPlaceHolder: number = 0;
 	let itemsToShowTimeout: any;
-	let autoPlayId: number;
+	// let autoPlay: any;
 
 	const state: CarouselInternalState = {
 		itemWidth: 0,
@@ -189,7 +173,7 @@
 		}
 
 		if (autoPlay && autoPlaySpeed) {
-			autoPlayId = window.setInterval(next, autoPlaySpeed);
+			autoPlay = setInterval(next, autoPlaySpeed);
 		}
 	});
 
@@ -208,7 +192,7 @@
 
 		if (autoPlay) {
 			//props.autoPlay &&
-			clearInterval(autoPlayId);
+			clearInterval(autoPlay);
 			autoPlay = undefined;
 		}
 
@@ -507,7 +491,7 @@
 		const diffX = initialX - clientX;
 		const diffY = initialY - clientY;
 		if (!isMouseMoveEvent(e) && autoPlay && autoPlay && pauseOnHover) {
-			clearInterval(autoPlayId);
+			clearInterval(autoPlay);
 			autoPlay = undefined;
 		}
 		if (onMove) {
@@ -541,7 +525,7 @@
 	function handleOut(e: MouseEvent | TouchEvent): void {
 		if (!autoPlay) {
 			//props.autoPlay &&
-			autoPlayId = window.setInterval(next, autoPlaySpeed);
+			autoPlay = setInterval(next, autoPlaySpeed);
 		}
 		const shouldDisableOnMobile = e.type === 'touchend' && !swipeable;
 		const shouldDisableOnDesktop =
@@ -588,7 +572,7 @@
 	function handleEnter(): void {
 		if (autoPlay) {
 			//&& props.autoPlay
-			clearInterval(autoPlayId);
+			clearInterval(autoPlay);
 			autoPlay = undefined;
 		}
 	}
@@ -679,23 +663,17 @@
 		on:touchend={handleOut}
 	>
 		<div class="content">
-			<CarouselItems
-				{clones}
-				{state}
-				{props}
-				{goToSlide}
-				notEnoughChildren={notEnoughChildren(state.slidesToShow, state.totalItems)}
-			/>
+			<slot {clones} {state} {props} {goToSlide} />
 		</div>
 	</div>
 	{#if shouldShowArrows && (!disableLeftArrow || renderArrowsWhenDisabled)}
 		<slot name="customLeftArrow" {previous} disabled={disableLeftArrow}>
-			<LeftArrow {getState} {previous} disabled={disableLeftArrow} />
+			<LeftArrow getState={() => getState()} {previous} disabled={disableLeftArrow} />
 		</slot>
 	{/if}
 	{#if shouldShowArrows && (!disableRightArrow || renderArrowsWhenDisabled)}
 		<slot name="customRightArrow" {next} disabled={disableRightArrow}>
-			<RightArrow {getState} {next} disabled={disableRightArrow} />
+			<RightArrow getState={() => getState()} {next} disabled={disableRightArrow} />
 		</slot>
 	{/if}
 	{#if shouldRenderAtAll && !renderButtonGroupOutside}
@@ -708,13 +686,14 @@
 		/>
 	{/if}
 	{#if shouldRenderAtAll && !renderDotsOutside}
-		<Dots {state} {props} {goToSlide} {getState} />
+		<slot name="customDots">
+			<Dots {state} {props} {goToSlide} getState={() => getState()} />
+		</slot>
 	{/if}
 </div>
-
 {#if shouldRenderAtAll && renderDotsOutside}
 	<slot name="customDots">
-		<Dots {state} {props} {goToSlide} {getState} />
+		<Dots {state} {props} {goToSlide} getState={() => getState()} />
 	</slot>
 {/if}
 

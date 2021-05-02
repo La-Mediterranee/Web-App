@@ -9,28 +9,27 @@ function enoughChildren(slidesToShow: number, totalItems: number): boolean {
 	return totalItems > slidesToShow;
 }
 
-function getInitialState(
-	state: CarouselInternalState,
-	props: CarouselProps
-): {
+interface InitialState {
 	shouldRenderOnSSR: boolean;
-	flexBisis: number | string | undefined;
+	flexBasis: number | string | undefined;
 	domFullyLoaded: boolean;
 	partialVisibilityGutter: number | undefined;
 	shouldRenderAtAll: boolean;
-} {
+}
+
+function getInitialState(state: CarouselInternalState, props: CarouselProps): InitialState {
 	const { domLoaded, slidesToShow, containerWidth, itemWidth } = state;
 	const { deviceType, responsive, ssr, partialVisible } = props;
 
-	let flexBisis: number | string | undefined;
+	let flexBasis: number | string | undefined;
 
 	const domFullyLoaded = Boolean(domLoaded && slidesToShow && containerWidth && itemWidth);
 
 	if (ssr && deviceType && !domFullyLoaded) {
-		flexBisis = getWidthFromDeviceType(deviceType, responsive);
+		flexBasis = getWidthFromDeviceType(deviceType, responsive);
 	}
 
-	const shouldRenderOnSSR = Boolean(ssr && deviceType && !domFullyLoaded && flexBisis);
+	const shouldRenderOnSSR = Boolean(ssr && deviceType && !domFullyLoaded && flexBasis);
 	const partialVisibilityGutter = getPartialVisibilityGutter(
 		responsive,
 		partialVisible,
@@ -41,7 +40,7 @@ function getInitialState(
 	const shouldRenderAtAll = shouldRenderOnSSR || domFullyLoaded;
 	return {
 		shouldRenderOnSSR,
-		flexBisis,
+		flexBasis,
 		domFullyLoaded,
 		partialVisibilityGutter,
 		shouldRenderAtAll,
@@ -57,7 +56,7 @@ function getTransformForCenterMode(
 	state: CarouselInternalState,
 	props: CarouselProps,
 	transformPlaceHolder?: number
-) {
+): number {
 	const transform = transformPlaceHolder || state.transform;
 	if (
 		(!props.infinite && state.currentSlide === 0) ||
@@ -82,7 +81,7 @@ function getTransformForPartialVsibile(
 	partialVisibilityGutter = 0,
 	props: CarouselProps,
 	transformPlaceHolder?: number
-) {
+): number {
 	const { currentSlide, slidesToShow } = state;
 	const isRightEndReach = isInRightEnd(state);
 	const shouldRemoveRightGutter = !props.infinite && isRightEndReach;
@@ -106,7 +105,7 @@ function getTransform(
 	state: CarouselInternalState,
 	props: CarouselProps,
 	transformPlaceHolder?: number
-) {
+): number {
 	// old wrongly spelt partialVisbile prop kept to not make changes breaking
 	const { partialVisbile, partialVisible, responsive, deviceType, centerMode } = props;
 	const transform = transformPlaceHolder || state.transform;
@@ -116,6 +115,7 @@ function getTransform(
 		deviceType,
 		state.deviceType
 	);
+
 	const currentTransform =
 		partialVisible || partialVisbile
 			? getTransformForPartialVsibile(
@@ -127,6 +127,7 @@ function getTransform(
 			: centerMode
 			? getTransformForCenterMode(state, props, transformPlaceHolder)
 			: transform;
+
 	return currentTransform;
 }
 
@@ -136,6 +137,7 @@ function getSlidesToSlide(state: CarouselInternalState, props: CarouselProps): n
 	let slidesToScroll = props.slidesToSlide || 1;
 	const domFullyLoaded = Boolean(domLoaded && slidesToShow && containerWidth && itemWidth);
 	const ssr = props.ssr && props.deviceType && !domFullyLoaded;
+
 	if (ssr) {
 		Object.keys(responsive).forEach((device) => {
 			const { slidesToSlide } = responsive[device];
@@ -144,6 +146,7 @@ function getSlidesToSlide(state: CarouselInternalState, props: CarouselProps): n
 			}
 		});
 	}
+
 	if (domFullyLoaded) {
 		Object.keys(responsive).forEach((item) => {
 			const { breakpoint, slidesToSlide } = responsive[item];
@@ -153,6 +156,7 @@ function getSlidesToSlide(state: CarouselInternalState, props: CarouselProps): n
 			}
 		});
 	}
+
 	return slidesToScroll;
 }
 

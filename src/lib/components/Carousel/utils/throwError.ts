@@ -1,11 +1,12 @@
-import { CarouselInternalState, CarouselProps } from '../types';
+import { CarouselProps } from '../types';
 
-function throwError(state: CarouselInternalState, props: CarouselProps): void {
-	// old wrongly spelt partialVisbile prop kept to not make changes breaking
-	const { partialVisbile, partialVisible, centerMode, ssr, responsive } = props;
-	if ((partialVisbile || partialVisible) && centerMode) {
+function throwError(props: CarouselProps): void {
+	const { partialVisible, centerMode, ssr, responsive } = props;
+
+	if (partialVisible && centerMode) {
 		throw new Error('center mode can not be used at the same time with partialVisible');
 	}
+
 	if (!responsive) {
 		if (ssr) {
 			throw new Error('ssr mode need to be used in conjunction with responsive prop');
@@ -15,6 +16,7 @@ function throwError(state: CarouselInternalState, props: CarouselProps): void {
 			);
 		}
 	}
+
 	if (responsive && typeof responsive !== 'object') {
 		throw new Error('responsive prop must be an object');
 	}

@@ -3,6 +3,7 @@
 	export let props: CarouselProps;
 	export let getState;
 	export let goToSlide;
+	export let isActive: boolean;
 
 	// export let showDots;
 	// export let customDot;
@@ -19,7 +20,7 @@
 	import { getOriginalIndexLookupTableByClones } from './utils/clones';
 	import { getLookupTableForNextSlides } from './utils/dots';
 	import { getSlidesToSlide, enoughChildren } from './utils/common';
-	import { Dot } from './Dot';
+	import Carousel from './Carousel.svelte';
 
 	const { showDots, customDot, dotListClass, infinite, children } = props;
 	const { currentSlide, slidesToShow } = state;
@@ -49,7 +50,14 @@
 {#if showDots || enoughChildren(state.slidesToShow, state.totalItems)}
 	<ul class={`multi-carousel-dot-list ${dotListClass}`} bind:this={DotList}>
 		{#each Array(numberOfDotsToShow).fill(0) as item, index}
-			<Dot />
+			<slot name="customDot" {index} {goToSlide}>
+				<li class={`multi-carousel-dot ${isActive ? 'multi-carousel-dot--active' : ''}`}>
+					<button
+						aria-label={`Go to slide ${index + 1}`}
+						on:click={() => goToSlide(nextSlide)}
+					/>
+				</li>
+			</slot>
 		{/each}
 	</ul>
 {/if}

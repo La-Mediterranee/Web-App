@@ -29,41 +29,79 @@
 	import Dots from './Dots.svelte';
 	import { LeftArrow, RightArrow } from './Arrows';
 	import { getTransform } from './utils/common';
+	import CarouselItems from './CarouselItems.svelte';
 
 	export let responsive: ResponsiveType;
+	export let deviceType: string;
+	export let ssr: boolean;
 	export let slidesToSlide = 1;
-	export let infinite = false;
 	export let draggable = true;
-	export let swipeable = true;
 	export let arrows = true;
 	export let renderArrowsWhenDisabled = false;
-	export let containerClass = '';
-	export let sliderClass = '';
-	export let itemClass = '';
-	export let keyBoardControl = true;
-	export let autoPlaySpeed = 3000;
-	export let showDots = false;
-	export let renderDotsOutside = false;
-	export let renderButtonGroupOutside = false;
+	export let swipeable = true;
+	export let removeArrowOnDeviceType: string | string[];
+	export let infinite = false;
 	export let minimumTouchDrag = 80;
-	export let className = '';
-	export let dotListClass = '';
-	export let focusOnSelect = false;
-	export let centerMode = false;
-	export let additionalTransfrom = 0;
-	export let pauseOnHover = true;
+
+	let className: string = '';
+	export { className as class };
+	// export let className:string ="";
+	export let containerClass: string = '';
+	export let sliderClass: string = '';
+	export let itemClass: string = '';
+	export let dotListClass: string = '';
+
+	export let itemAriaLabel: string;
+	// export let keyBoardControl: boolean = true;
+	export let centerMode: boolean = false;
+	export let autoPlay: boolean = false;
+	export let autoPlaySpeed: number = 3000;
+	export let showDots: boolean = false;
+	export let renderDotsOutside: boolean = false;
+	export let renderButtonGroupOutside: boolean = false;
+
 	export let customTransition: string;
-	export let afterChange: (arg0: number, arg1: CarouselInternalState) => void;
-	export let beforeChange: (arg0: number, arg1: CarouselInternalState) => void;
 	export let transitionDuration: number;
+
+	export let focusOnSelect: boolean = false;
+	export let additionalTransfrom: number = 0;
+	export let pauseOnHover: boolean = true;
+	export let children = [];
+
+	export let afterChange: (previousSlide: number, state: CarouselInternalState) => void;
+	export let beforeChange: (nextSlides: number, state: CarouselInternalState) => void;
 
 	let containerRef: HTMLDivElement;
 	let listRef: HTMLDivElement;
 
-	let children = containerRef.children;
-
-	const defaultTransitionDuration = 400;
-	const defaultTransition = 'transform 400ms ease-in-out';
+	// const props: CarouselProps = {
+	// 	slidesToSlide,
+	// 	infinite,
+	// 	draggable,
+	// 	swipeable,
+	// 	arrows,
+	// 	renderArrowsWhenDisabled,
+	// 	removeArrowOnDeviceType,
+	// 	containerClass,
+	// 	sliderClass,
+	// 	itemClass,
+	// 	keyBoardControl,
+	// 	autoPlaySpeed,
+	// 	showDots,
+	// 	renderDotsOutside,
+	// 	renderButtonGroupOutside,
+	// 	minimumTouchDrag,
+	// 	className,
+	// 	dotListClass,
+	// 	focusOnSelect,
+	// 	centerMode,
+	// 	additionalTransfrom,
+	// 	pauseOnHover,
+	// 	children,
+	// 	responsive,
+	// 	ssr,
+	// 	itemAriaLabel,
+	// };
 
 	$: props = {
 		slidesToSlide,
@@ -72,10 +110,11 @@
 		swipeable,
 		arrows,
 		renderArrowsWhenDisabled,
+		removeArrowOnDeviceType,
 		containerClass,
 		sliderClass,
 		itemClass,
-		keyBoardControl,
+		// keyBoardControl,
 		autoPlaySpeed,
 		showDots,
 		renderDotsOutside,
@@ -89,91 +128,141 @@
 		pauseOnHover,
 		children,
 		responsive,
+		ssr,
+		itemAriaLabel,
+		autoPlay,
 	};
 
+	if (process.env.NODE_ENV !== 'production') {
+		throwError(props);
+	}
+
+	const defaultTransitionDuration = 400;
+	const defaultTransition = 'transform 400ms ease-in-out';
+
+	let direction: Direction = '';
 	let onMove: boolean = false;
 	let initialX: number = 0;
+	let initialY: number = 0;
 	let lastX: number = 0;
 	let isAnimationAllowed: boolean = false;
-	let direction: Direction = '';
-	let initialY: number = 0;
 	let isInThrottle: boolean = false;
-	let transformPlaceHolder: number = 0;
 
 	let itemWidth = 0;
 	let slidesToShow = 0;
-	let currentSlide = 0;
-	let totalItems = 0;
-	let deviceType = '';
-	let domLoaded = false;
-	let transform = 0;
-	let containerWidth = 0;
 
+	let transformPlaceHolder: number = 0;
 	let itemsToShowTimeout: any;
-	let autoPlay: any;
+	let autoPlayId: number;
 
 	const state: CarouselInternalState = {
 		itemWidth: 0,
 		slidesToShow: 0,
 		currentSlide: 0,
-		totalItems: containerRef.children.length,
+		totalItems: children.length,
 		deviceType: '',
 		domLoaded: false,
 		transform: 0,
 		containerWidth: 0,
 	};
 
-	$: state = {
-		itemWidth,
-		slidesToShow,
-		currentSlide,
-		totalItems,
-		deviceType,
-		domLoaded,
-		transform,
-		containerWidth,
+	// $: {
+	// 	if (typeof afterChange === 'function') {
+	// 		setTimeout(() => {
+	// 			afterChange(previousSlide, this.getState());
+	// 		}, transitionDuration || defaultTransitionDuration);
+	// 	}
+	// }
+
+	// $: {
+	// 	if (!keyBoardControl) {
+	// 		window.removeEventListener('keyup', onKeyUp);
+	// 	} else {
+	// 		window.addEventListener('keyup', onKeyUp);
+	// 	}
+	// }
+	const prevState = {
+		currentSlide: 1,
 	};
 
+	/*
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	This has to be fixed
+	*/
 	$: {
-		if (!keyBoardControl) {
-			window.removeEventListener('keyup', onKeyUp);
-		} else {
-			window.addEventListener('keyup', onKeyUp);
+		//prev State and Props
+		// 	{ keyBoardControl, autoPlay, children }: CarouselProps ,
+		// { containerWidth, domLoaded, currentSlide }: CarouselInternalState
+
+		//if previously autoplay remove
+		if (autoPlay && !this.props.autoPlay && autoPlayId) {
+			clearInterval(autoPlayId);
+			autoPlayId = undefined;
+		}
+
+		//if previously no autoplay add
+		if (!autoPlay && props.autoPlay && !autoPlayId) {
+			autoPlayId = window.setInterval(this.next, this.props.autoPlaySpeed);
+		}
+
+		if (children.length !== props.children.length) {
+			// this is for handling changing children only.
+			setTimeout(() => {
+				if (infinite) {
+					setClones(state.slidesToShow, state.itemWidth, true, true);
+				} else {
+					resetTotalItems();
+				}
+			}, transitionDuration || defaultTransitionDuration);
+		} else if (infinite && state.currentSlide !== prevState.currentSlide) {
+			// this is to quickly cancel the animation and move the items position to create the infinite effects.
+			correctClonesPosition({ domLoaded });
 		}
 	}
 
 	onMount(() => {
-		domLoaded = true;
-		totalItems = containerRef.children.length;
+		state.domLoaded = true;
+		// state.totalItems = containerRef.children.length;
 		setItemsToShow();
 		window.addEventListener('resize', onResize as any);
 		onResize(true);
 
-		if (keyBoardControl) {
-			window.addEventListener('keyup', onKeyUp);
-		}
+		// if (keyBoardControl) {
+		// 	window.addEventListener('keyup', onKeyUp);
+		// }
 
 		if (autoPlay && autoPlaySpeed) {
-			autoPlay = setInterval(next, autoPlaySpeed);
+			autoPlayId = window.setInterval(next, autoPlaySpeed);
 		}
 	});
 
 	afterUpdate(() => {
-		if (itemsToShowTimeout) {
-			clearTimeout(itemsToShowTimeout);
+		if (containerRef && containerRef.offsetWidth !== state.containerWidth) {
+			// this is for handling resizing only.
+			if (itemsToShowTimeout) {
+				clearTimeout(itemsToShowTimeout);
+			}
+
+			itemsToShowTimeout = setTimeout(() => {
+				setItemsToShow(true);
+			}, transitionDuration || defaultTransitionDuration);
+		}
+
+		if (transformPlaceHolder !== state.transform) {
+			transformPlaceHolder = state.transform;
 		}
 	});
 
 	onDestroy(() => {
 		window.removeEventListener('resize', onResize as any);
 
-		if (keyBoardControl) {
-			window.removeEventListener('keyup', onKeyUp);
-		}
+		// if (keyBoardControl) {
+		// 	window.removeEventListener('keyup', onKeyUp);
+		// }
 
 		if (autoPlay) {
 			//props.autoPlay &&
-			clearInterval(autoPlay);
+			clearInterval(autoPlayId);
 			autoPlay = undefined;
 		}
 
@@ -183,15 +272,15 @@
 	});
 
 	function resetTotalItems(): void {
-		const newTotalItems = containerRef.children.length;
-		const newCurrentSlide = notEnoughChildren(slidesToShow, totalItems)
+		const totalItems = containerRef.children.length;
+		const currentSlide = notEnoughChildren(slidesToShow, totalItems)
 			? 0
 			: // this ensures that if the currentSlide before change in childrenCount is more than new childrenCount; we will set it to new childrenCount
-			  Math.max(0, Math.min(currentSlide, newTotalItems));
+			  Math.max(0, Math.min(state.currentSlide, totalItems));
 
-		totalItems = newTotalItems;
-		currentSlide = newCurrentSlide;
-		setContainerAndItemWidth(slidesToShow, true);
+		state.totalItems = totalItems;
+		state.currentSlide = currentSlide;
+		setContainerAndItemWidth(state.slidesToShow, true);
 	}
 
 	function setIsInThrottle(isInThrottle = false): void {
@@ -238,10 +327,10 @@
 		);
 
 		const clones = getClones(state.slidesToShow, childrenArr);
-		const newCurrentSlide = childrenArr.length < state.slidesToShow ? 0 : state.currentSlide;
+		const currentSlide = childrenArr.length < state.slidesToShow ? 0 : state.currentSlide;
 
-		totalItems = clones.length;
-		currentSlide = forResizing && !resetCurrentSlide ? newCurrentSlide : initialSlide;
+		state.totalItems = clones.length;
+		state.currentSlide = forResizing && !resetCurrentSlide ? currentSlide : initialSlide;
 
 		correctItemsPosition(itemWidth || state.itemWidth);
 	}
@@ -254,8 +343,8 @@
 			const { breakpoint, items } = responsive[item];
 			const { max, min } = breakpoint;
 			if (window.innerWidth >= min && window.innerWidth <= max) {
-				slidesToShow = items;
-				deviceType = item;
+				state.slidesToShow = items;
+				state.deviceType = item;
 				setContainerAndItemWidth(items, shouldCorrectItemPosition, resetCurrentSlide);
 			}
 		});
@@ -274,11 +363,13 @@
 				newContainerWidth
 			);
 
-			containerWidth = newContainerWidth;
-			itemWidth = newItemWidth;
+			state.containerWidth = newContainerWidth;
+			state.itemWidth = newItemWidth;
+
 			if (infinite) {
 				setClones(slidesToShow, itemWidth, shouldCorrectItemPosition, resetCurrentSlide);
 			}
+
 			if (shouldCorrectItemPosition) {
 				correctItemsPosition(itemWidth);
 			}
@@ -302,13 +393,14 @@
 			isAnimationAllowed = false;
 		}
 
-		const nextTransform = totalItems < slidesToShow ? 0 : -(itemWidth * currentSlide);
+		const nextTransform =
+			state.totalItems < state.slidesToShow ? 0 : -(itemWidth * state.currentSlide);
 
 		if (setToDomDirectly) {
 			setTransformDirectly(nextTransform, true);
 		}
 
-		transform = nextTransform;
+		state.transform = nextTransform;
 	}
 
 	function onResize(value?: KeyboardEvent | boolean): void {
@@ -331,7 +423,7 @@
 	}
 
 	function correctClonesPosition({
-		domLoaded, // this domLoaded comes from previous state, only use to tell if we are on client-side or server-side because this functin relies the dom.
+		domLoaded, // this domLoaded comes from previous state, only use to tell if we are on client-side or server-side because this functin relies on the dom.
 	}: {
 		domLoaded?: boolean;
 	}): void {
@@ -344,14 +436,15 @@
 		} = checkClonesPosition(state, childrenArr, props);
 
 		if (
-			// this is to prevent this gets called on the server-side.
+			// this is to prevent it from getting called on the server-side.
 			state.domLoaded &&
 			domLoaded
 		) {
 			if (isReachingTheEnd || isReachingTheStart) {
 				isAnimationAllowed = false;
 				setTimeout(() => {
-					(transform = nextPosition), (currentSlide = nextSlide);
+					state.transform = nextPosition;
+					state.currentSlide = nextSlide;
 				}, transitionDuration || defaultTransitionDuration);
 			}
 		}
@@ -359,7 +452,7 @@
 
 	const next = throttle(
 		function next(slidesHavePassed = 0): void {
-			if (notEnoughChildren(slidesToShow, totalItems)) {
+			if (notEnoughChildren(state.slidesToShow, state.totalItems)) {
 				return;
 			}
 			/*
@@ -368,8 +461,8 @@
     2. We are sliding over to what we have, that means nextslides > this.props.children.length. (does not apply to the inifnite mode)
     */
 			const { nextSlides, nextPosition } = populateNextSlides(state, props, slidesHavePassed);
-			const previousSlide = currentSlide;
 
+			const previousSlide = state.currentSlide;
 			if (nextSlides === undefined || nextPosition === undefined) {
 				// they can be 0.
 				return;
@@ -380,8 +473,8 @@
 			}
 
 			isAnimationAllowed = true;
-			transform = nextPosition;
-			currentSlide = nextSlides;
+			state.transform = nextPosition;
+			state.currentSlide = nextSlides;
 
 			if (typeof afterChange === 'function') {
 				setTimeout(() => {
@@ -395,7 +488,7 @@
 
 	const previous = throttle(
 		function previous(slidesHavePassed = 0): void {
-			if (notEnoughChildren(slidesToShow, totalItems)) {
+			if (notEnoughChildren(state.slidesToShow, state.totalItems)) {
 				return;
 			}
 
@@ -409,15 +502,15 @@
 				return;
 			}
 
-			const previousSlide = currentSlide;
+			const previousSlide = state.currentSlide;
 			if (typeof beforeChange === 'function') {
 				beforeChange(nextSlides, getState());
 			}
 
 			isAnimationAllowed = true;
 
-			transform = nextPosition;
-			currentSlide = nextSlides;
+			state.transform = nextPosition;
+			state.currentSlide = nextSlides;
 
 			if (typeof afterChange === 'function') {
 				setTimeout(() => {
@@ -459,7 +552,7 @@
 		if (
 			(!isMouseMoveEvent(e) && !swipeable) ||
 			(isMouseMoveEvent(e) && !draggable) ||
-			notEnoughChildren(slidesToShow, totalItems)
+			notEnoughChildren(state.slidesToShow, state.totalItems)
 		) {
 			return;
 		}
@@ -468,7 +561,7 @@
 		const diffX = initialX - clientX;
 		const diffY = initialY - clientY;
 		if (!isMouseMoveEvent(e) && autoPlay && autoPlay && pauseOnHover) {
-			clearInterval(autoPlay);
+			clearInterval(autoPlayId);
 			autoPlay = undefined;
 		}
 		if (onMove) {
@@ -502,7 +595,7 @@
 	function handleOut(e: MouseEvent | TouchEvent): void {
 		if (!autoPlay) {
 			//props.autoPlay &&
-			autoPlay = setInterval(next, autoPlaySpeed);
+			autoPlayId = window.setInterval(next, autoPlaySpeed);
 		}
 		const shouldDisableOnMobile = e.type === 'touchend' && !swipeable;
 		const shouldDisableOnDesktop =
@@ -516,20 +609,20 @@
 			if (direction === 'right') {
 				const canGoNext = initialX - lastX >= minimumTouchDrag!;
 				if (canGoNext) {
-					const slidesHavePassed = Math.round((initialX - lastX) / itemWidth);
+					const slidesHavePassed = Math.round((initialX - lastX) / state.itemWidth);
 					next(slidesHavePassed);
 				} else {
-					correctItemsPosition(itemWidth, true, true);
+					correctItemsPosition(state.itemWidth, true, true);
 				}
 			}
 
 			if (direction === 'left') {
 				const canGoNext = lastX - initialX > minimumTouchDrag!;
 				if (canGoNext) {
-					const slidesHavePassed = Math.round((lastX - initialX) / itemWidth);
+					const slidesHavePassed = Math.round((lastX - initialX) / state.itemWidth);
 					previous(slidesHavePassed);
 				} else {
-					correctItemsPosition(itemWidth, true, true);
+					correctItemsPosition(state.itemWidth, true, true);
 				}
 			}
 
@@ -549,7 +642,7 @@
 	function handleEnter(): void {
 		if (autoPlay) {
 			//&& props.autoPlay
-			clearInterval(autoPlay);
+			clearInterval(autoPlayId);
 			autoPlay = undefined;
 		}
 	}
@@ -560,6 +653,7 @@
 				return;
 			}
 
+			const { itemWidth } = state;
 			const previousSlide = state.currentSlide;
 			if (
 				typeof beforeChange === 'function' &&
@@ -570,8 +664,8 @@
 			}
 
 			isAnimationAllowed = true;
-			currentSlide = slide;
-			transform = -(itemWidth * slide);
+			state.currentSlide = slide;
+			state.transform = -(itemWidth * slide);
 
 			if (infinite) {
 				correctClonesPosition({ domLoaded: true });
@@ -597,11 +691,33 @@
 
 	const { shouldRenderOnSSR, shouldRenderAtAll } = getInitialState(state, props);
 
+	const isLeftEndReach = isInLeftEnd(state);
+	const isRightEndReach = isInRightEnd(state);
+
+	const shouldShowArrows =
+		arrows &&
+		!(
+			removeArrowOnDeviceType &&
+			((deviceType && removeArrowOnDeviceType.indexOf(deviceType) > -1) ||
+				(state.deviceType && removeArrowOnDeviceType.indexOf(state.deviceType) > -1))
+		) &&
+		!notEnoughChildren(state.slidesToShow, state.totalItems) &&
+		shouldRenderAtAll;
+
+	const disableLeftArrow = !infinite && isLeftEndReach;
+	const disableRightArrow = !infinite && isRightEndReach;
+
+	// this lib supports showing next set of items partially as well as center mode which shows both.
 	const currentTransform = getTransform(state, props);
+
+	function buttonGroupGoToSlide(slideIndex: number, skipCallbacks?: SkipCallbackOptions) {
+		return goToSlide(slideIndex, skipCallbacks);
+	}
 </script>
 
-<div class={`multi-carousel-list ${containerClass} ${className}`} bind:this={containerRef}>
+<div bind:this={containerRef} class={`multi-carousel-list ${containerClass} ${className}`}>
 	<div
+		bind:this={listRef}
 		class={`react-multi-carousel-track ${sliderClass}`}
 		style={`
         transition: ${isAnimationAllowed ? customTransition || defaultTransition : 'none'},
@@ -616,84 +732,57 @@
 		on:touchmove={handleMove}
 		on:touchend={handleOut}
 	>
-		<div class="content" bind:this={listRef}>
-			<slot />
+		<div class="content">
+			<CarouselItems {state} {props} {goToSlide}>
+				<slot />
+			</CarouselItems>
 		</div>
 	</div>
-	<!-- <div
-		class="swipe-handler"
-		bind:this={sliderHandler}
-		on:touchstart={onTouchStart}
-		on:mousedown={onMoveStart}
-	/>
-	{#if showIndicators}
-		<div class="swipe-indicator swipe-indicator-inside">
-			{#each indicators as x, i}
-				<slot name="indicators" {activeIndicator} index={i}>
-					<span
-						class="dot {activeIndicator === i ? 'is-active' : ''}"
-						on:click={() => {
-							changeItem(i);
-						}}
-					/>
-				</slot>
-			{/each}
-		</div>
-	{/if} -->
+	{#if shouldShowArrows && (!disableLeftArrow || renderArrowsWhenDisabled)}
+		<slot
+			name="customLeftArrow"
+			carouselState={getState()}
+			{previous}
+			disabled={disableLeftArrow}
+		>
+			<LeftArrow {previous} disabled={disableLeftArrow} />
+		</slot>
+	{/if}
+	{#if shouldShowArrows && (!disableRightArrow || renderArrowsWhenDisabled)}
+		<slot
+			name="customRightArrow"
+			carouselState="{getState()}{next}"
+			disabled={disableRightArrow}
+		>
+			<RightArrow {next} disabled={disableRightArrow} />
+		</slot>
+	{/if}
+	{#if shouldRenderAtAll && !renderButtonGroupOutside}
+		<slot
+			name="cutomButtonGroup"
+			gotToSlide={buttonGroupGoToSlide}
+			carouselState={getState()}
+			{previous}
+			{next}
+		/>
+	{/if}
+	{#if shouldRenderAtAll && !renderDotsOutside}
+		<Dots {state} {props} {goToSlide} {getState} />
+	{/if}
 </div>
 
-<style>
-	div {
-		position: relative;
-	}
+{#if shouldRenderAtAll && renderDotsOutside}
+	<slot name="customDots">
+		<Dots {state} {props} {goToSlide} {getState} />
+	</slot>
+{/if}
 
-	.slider {
-		touch-action: pan-y;
-		-webkit-overflow-scrolling: touch;
-		-ms-overflow-style: -ms-autohiding-scrollbar;
-	}
-
-	.mask {
-		overflow-x: visible;
-		padding-bottom: 1px;
-	}
-
-	.content {
-		white-space: nowrap;
-	}
-
-	.swipe-handler {
-		width: 100%;
-		position: absolute;
-		top: var(--slider-handler, 0px);
-		bottom: 0px;
-		left: 0;
-		right: 0;
-		background: rgba(0, 0, 0, 0);
-	}
-
-	.dot {
-		height: 10px;
-		width: 10px;
-		background-color: transparent;
-		border: 1px solid grey;
-		border-radius: 50%;
-		display: inline-block;
-		margin: 0px 2px;
-		cursor: pointer;
-		pointer-events: fill;
-	}
-
-	.swipe-indicator {
-		position: relative;
-		bottom: 1.5rem;
-		display: flex;
-		justify-content: center;
-		z-index: var(--slider-indicator, 2);
-		pointer-events: none;
-	}
-
-	.swipe-indicator .is-active {
-		background-color: var(--slider-indicator-active, grey);
-	}
-</style>
+{#if shouldRenderAtAll && renderButtonGroupOutside}
+	<slot
+		name="cutomButtonGroup"
+		gotToSlide={buttonGroupGoToSlide}
+		carouselState={getState()}
+		{previous}
+		{next}
+	/>
+{/if}

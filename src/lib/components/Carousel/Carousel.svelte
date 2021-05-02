@@ -52,7 +52,7 @@
 	export let dotListClass: string = '';
 
 	export let itemAriaLabel: string;
-	export let keyBoardControl: boolean = true;
+	// export let keyBoardControl: boolean = true;
 	export let centerMode: boolean = false;
 	export let autoPlay: boolean = false;
 	export let autoPlaySpeed: number = 3000;
@@ -61,7 +61,7 @@
 	export let renderButtonGroupOutside: boolean = false;
 
 	export let customTransition: string;
-	export let transitionDuration: number;
+	export let transitionDuration: number = 400;
 
 	export let focusOnSelect: boolean = false;
 	export let additionalTransfrom: number = 0;
@@ -74,35 +74,6 @@
 	let containerRef: HTMLDivElement;
 	let listRef: HTMLDivElement;
 
-	// const props: CarouselProps = {
-	// 	slidesToSlide,
-	// 	infinite,
-	// 	draggable,
-	// 	swipeable,
-	// 	arrows,
-	// 	renderArrowsWhenDisabled,
-	// 	removeArrowOnDeviceType,
-	// 	containerClass,
-	// 	sliderClass,
-	// 	itemClass,
-	// 	keyBoardControl,
-	// 	autoPlaySpeed,
-	// 	showDots,
-	// 	renderDotsOutside,
-	// 	renderButtonGroupOutside,
-	// 	minimumTouchDrag,
-	// 	className,
-	// 	dotListClass,
-	// 	focusOnSelect,
-	// 	centerMode,
-	// 	additionalTransfrom,
-	// 	pauseOnHover,
-	// 	children,
-	// 	responsive,
-	// 	ssr,
-	// 	itemAriaLabel,
-	// };
-
 	$: props = {
 		slidesToSlide,
 		infinite,
@@ -114,7 +85,7 @@
 		containerClass,
 		sliderClass,
 		itemClass,
-		keyBoardControl,
+		// keyBoardControl,
 		autoPlaySpeed,
 		showDots,
 		renderDotsOutside,
@@ -130,9 +101,13 @@
 		responsive,
 		ssr,
 		itemAriaLabel,
+		autoPlay,
 	};
 
-	const defaultTransitionDuration = 400;
+	if (process.env.NODE_ENV !== 'production') {
+		throwError(props);
+	}
+
 	const defaultTransition = 'transform 400ms ease-in-out';
 
 	let direction: Direction = '';
@@ -154,7 +129,7 @@
 		itemWidth: 0,
 		slidesToShow: 0,
 		currentSlide: 0,
-		totalItems: containerRef.children.length,
+		totalItems: children.length,
 		deviceType: '',
 		domLoaded: false,
 		transform: 0,
@@ -165,28 +140,66 @@
 	// 	if (typeof afterChange === 'function') {
 	// 		setTimeout(() => {
 	// 			afterChange(previousSlide, this.getState());
-	// 		}, transitionDuration || defaultTransitionDuration);
+	// 		}, transitionDuration);
 	// 	}
 	// }
 
+	// $: {
+	// 	if (!keyBoardControl) {
+	// 		window.removeEventListener('keyup', onKeyUp);
+	// 	} else {
+	// 		window.addEventListener('keyup', onKeyUp);
+	// 	}
+	// }
+	const prevState = {
+		currentSlide: 1,
+	};
+
+	/*
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	This has to be fixed
+	*/
 	$: {
-		if (!keyBoardControl) {
-			window.removeEventListener('keyup', onKeyUp);
-		} else {
-			window.addEventListener('keyup', onKeyUp);
+		//prev State and Props
+		// 	{  autoPlay, children }: CarouselProps ,
+		// { containerWidth, domLoaded, currentSlide }: CarouselInternalState
+
+		//if previously autoplay remove
+		if (autoPlay && !props.autoPlay && autoPlayId) {
+			clearInterval(autoPlayId);
+			autoPlayId = undefined;
+		}
+
+		//if previously no autoplay add
+		if (!autoPlay && props.autoPlay && !autoPlayId) {
+			autoPlayId = window.setInterval(this.next, this.props.autoPlaySpeed);
+		}
+
+		if (children.length !== props.children.length) {
+			// this is for handling changing children only.
+			setTimeout(() => {
+				if (infinite) {
+					setClones(state.slidesToShow, state.itemWidth, true, true);
+				} else {
+					resetTotalItems();
+				}
+			}, transitionDuration);
+		} else if (infinite && state.currentSlide !== prevState.currentSlide) {
+			// this is to quickly cancel the animation and move the items position to create the infinite effects.
+			correctClonesPosition({ domLoaded });
 		}
 	}
 
 	onMount(() => {
 		state.domLoaded = true;
-		state.totalItems = containerRef.children.length;
+
 		setItemsToShow();
 		window.addEventListener('resize', onResize as any);
 		onResize(true);
 
-		if (keyBoardControl) {
-			window.addEventListener('keyup', onKeyUp);
-		}
+		// if (keyBoardControl) {
+		// 	window.addEventListener('keyup', onKeyUp);
+		// }
 
 		if (autoPlay && autoPlaySpeed) {
 			autoPlayId = window.setInterval(next, autoPlaySpeed);
@@ -194,17 +207,28 @@
 	});
 
 	afterUpdate(() => {
-		if (itemsToShowTimeout) {
-			clearTimeout(itemsToShowTimeout);
+		if (containerRef && containerRef.offsetWidth !== state.containerWidth) {
+			// this is for handling resizing only.
+			if (itemsToShowTimeout) {
+				clearTimeout(itemsToShowTimeout);
+			}
+
+			itemsToShowTimeout = setTimeout(() => {
+				setItemsToShow(true);
+			}, transitionDuration);
+		}
+
+		if (transformPlaceHolder !== state.transform) {
+			transformPlaceHolder = state.transform;
 		}
 	});
 
 	onDestroy(() => {
 		window.removeEventListener('resize', onResize as any);
 
-		if (keyBoardControl) {
-			window.removeEventListener('keyup', onKeyUp);
-		}
+		// if (keyBoardControl) {
+		// 	window.removeEventListener('keyup', onKeyUp);
+		// }
 
 		if (autoPlay) {
 			//props.autoPlay &&
@@ -248,7 +272,7 @@
 	function setAnimationDirectly(animationAllowed?: boolean) {
 		if (listRef) {
 			if (animationAllowed) {
-				listRef.style.transition = customTransition || defaultTransition;
+				listRef.style.transition = customTransition;
 			} else {
 				listRef.style.transition = 'none';
 			}
@@ -369,7 +393,7 @@
 	}
 
 	function correctClonesPosition({
-		domLoaded, // this domLoaded comes from previous state, only use to tell if we are on client-side or server-side because this functin relies the dom.
+		domLoaded, // this domLoaded comes from previous state, only use to tell if we are on client-side or server-side because this functin relies on the dom.
 	}: {
 		domLoaded?: boolean;
 	}): void {
@@ -382,7 +406,7 @@
 		} = checkClonesPosition(state, childrenArr, props);
 
 		if (
-			// this is to prevent this gets called on the server-side.
+			// this is to prevent it from getting called on the server-side.
 			state.domLoaded &&
 			domLoaded
 		) {
@@ -391,7 +415,7 @@
 				setTimeout(() => {
 					state.transform = nextPosition;
 					state.currentSlide = nextSlide;
-				}, transitionDuration || defaultTransitionDuration);
+				}, transitionDuration);
 			}
 		}
 	}
@@ -425,10 +449,10 @@
 			if (typeof afterChange === 'function') {
 				setTimeout(() => {
 					afterChange(previousSlide, getState());
-				}, transitionDuration || defaultTransitionDuration);
+				}, transitionDuration);
 			}
 		},
-		transitionDuration || defaultTransitionDuration,
+		transitionDuration,
 		setIsInThrottle
 	);
 
@@ -461,10 +485,10 @@
 			if (typeof afterChange === 'function') {
 				setTimeout(() => {
 					afterChange(previousSlide, getState());
-				}, transitionDuration || defaultTransitionDuration);
+				}, transitionDuration);
 			}
 		},
-		transitionDuration || defaultTransitionDuration,
+		transitionDuration,
 		setIsInThrottle
 	);
 
@@ -624,10 +648,10 @@
 			) {
 				setTimeout(() => {
 					afterChange(previousSlide, getState());
-				}, transitionDuration || defaultTransitionDuration);
+				}, transitionDuration);
 			}
 		},
-		transitionDuration || defaultTransitionDuration,
+		transitionDuration,
 		setIsInThrottle
 	);
 
@@ -679,23 +703,28 @@
 		on:touchend={handleOut}
 	>
 		<div class="content">
-			<CarouselItems
-				{clones}
-				{state}
-				{props}
-				{goToSlide}
-				notEnoughChildren={notEnoughChildren(state.slidesToShow, state.totalItems)}
-			/>
+			<CarouselItems {state} {props} {goToSlide}>
+				<slot />
+			</CarouselItems>
 		</div>
 	</div>
 	{#if shouldShowArrows && (!disableLeftArrow || renderArrowsWhenDisabled)}
-		<slot name="customLeftArrow" {previous} disabled={disableLeftArrow}>
-			<LeftArrow {getState} {previous} disabled={disableLeftArrow} />
+		<slot
+			name="customLeftArrow"
+			carouselState={getState()}
+			{previous}
+			disabled={disableLeftArrow}
+		>
+			<LeftArrow {previous} disabled={disableLeftArrow} />
 		</slot>
 	{/if}
 	{#if shouldShowArrows && (!disableRightArrow || renderArrowsWhenDisabled)}
-		<slot name="customRightArrow" {next} disabled={disableRightArrow}>
-			<RightArrow {getState} {next} disabled={disableRightArrow} />
+		<slot
+			name="customRightArrow"
+			carouselState="{getState()}{next}"
+			disabled={disableRightArrow}
+		>
+			<RightArrow {next} disabled={disableRightArrow} />
 		</slot>
 	{/if}
 	{#if shouldRenderAtAll && !renderButtonGroupOutside}
@@ -727,59 +756,3 @@
 		{next}
 	/>
 {/if}
-
-<style>
-	div {
-		position: relative;
-	}
-
-	.slider {
-		touch-action: pan-y;
-		-webkit-overflow-scrolling: touch;
-		-ms-overflow-style: -ms-autohiding-scrollbar;
-	}
-
-	.mask {
-		overflow-x: visible;
-		padding-bottom: 1px;
-	}
-
-	.content {
-		white-space: nowrap;
-	}
-
-	.swipe-handler {
-		width: 100%;
-		position: absolute;
-		top: var(--slider-handler, 0px);
-		bottom: 0px;
-		left: 0;
-		right: 0;
-		background: rgba(0, 0, 0, 0);
-	}
-
-	.dot {
-		height: 10px;
-		width: 10px;
-		background-color: transparent;
-		border: 1px solid grey;
-		border-radius: 50%;
-		display: inline-block;
-		margin: 0px 2px;
-		cursor: pointer;
-		pointer-events: fill;
-	}
-
-	.swipe-indicator {
-		position: relative;
-		bottom: 1.5rem;
-		display: flex;
-		justify-content: center;
-		z-index: var(--slider-indicator, 2);
-		pointer-events: none;
-	}
-
-	.swipe-indicator .is-active {
-		background-color: var(--slider-indicator-active, grey);
-	}
-</style>

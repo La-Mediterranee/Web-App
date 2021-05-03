@@ -35,6 +35,7 @@ This is based on the getclones method below.
 interface Table {
 	[key: number]: number;
 }
+
 function getOriginalIndexLookupTableByClones(slidesToShow: number, childrenArr: any[]): Table {
 	if (childrenArr.length > slidesToShow * 2) {
 		const table: Table = {};

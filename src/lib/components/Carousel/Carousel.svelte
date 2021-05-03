@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, afterUpdate, onDestroy } from 'svelte';
+	import { onMount, afterUpdate, onDestroy, tick } from 'svelte';
 	import {
 		CarouselInternalState,
 		CarouselProps,
@@ -52,7 +52,6 @@
 	export let dotListClass: string = '';
 
 	export let itemAriaLabel: string;
-	// export let keyBoardControl: boolean = true;
 	export let centerMode: boolean = false;
 	export let autoPlay: boolean = false;
 	export let autoPlaySpeed: number = 3000;
@@ -85,7 +84,6 @@
 		containerClass,
 		sliderClass,
 		itemClass,
-		// keyBoardControl,
 		autoPlaySpeed,
 		showDots,
 		renderDotsOutside,
@@ -136,33 +134,35 @@
 		containerWidth: 0,
 	};
 
-	// $: {
-	// 	if (typeof afterChange === 'function') {
-	// 		setTimeout(() => {
-	// 			afterChange(previousSlide, this.getState());
-	// 		}, transitionDuration);
-	// 	}
-	// }
-
-	// $: {
-	// 	if (!keyBoardControl) {
-	// 		window.removeEventListener('keyup', onKeyUp);
-	// 	} else {
-	// 		window.addEventListener('keyup', onKeyUp);
-	// 	}
-	// }
 	const prevState = {
 		currentSlide: 1,
+		domLoaded: false,
+		containerWidth: 0,
 	};
 
 	/*
-	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	This has to be fixed
 	*/
+
+	$: if (!autoPlay && autoPlayId) {
+		clearInterval(autoPlayId);
+		autoPlayId = undefined;
+	}
+
+	$: if (autoPlay && !autoPlayId) {
+		autoPlayId = window.setInterval(next, props.autoPlaySpeed);
+	}
+
+	$: transformPlaceHolder = state.transform;
+
 	$: {
 		//prev State and Props
 		// 	{  autoPlay, children }: CarouselProps ,
 		// { containerWidth, domLoaded, currentSlide }: CarouselInternalState
+
+		const { containerWidth, domLoaded, currentSlide } = prevState;
+		const { autoPlay, children } = prevProps;
 
 		//if previously autoplay remove
 		if (autoPlay && !props.autoPlay && autoPlayId) {
@@ -172,7 +172,7 @@
 
 		//if previously no autoplay add
 		if (!autoPlay && props.autoPlay && !autoPlayId) {
-			autoPlayId = window.setInterval(this.next, this.props.autoPlaySpeed);
+			autoPlayId = window.setInterval(next, props.autoPlaySpeed);
 		}
 
 		if (children.length !== props.children.length) {
@@ -197,13 +197,23 @@
 		window.addEventListener('resize', onResize as any);
 		onResize(true);
 
-		// if (keyBoardControl) {
-		// 	window.addEventListener('keyup', onKeyUp);
-		// }
-
 		if (autoPlay && autoPlaySpeed) {
 			autoPlayId = window.setInterval(next, autoPlaySpeed);
 		}
+
+		return () => {
+			window.removeEventListener('resize', onResize as any);
+
+			if (autoPlay) {
+				//props.autoPlay &&
+				clearInterval(autoPlayId);
+				autoPlay = undefined;
+			}
+
+			if (itemsToShowTimeout) {
+				clearTimeout(itemsToShowTimeout);
+			}
+		};
 	});
 
 	afterUpdate(() => {
@@ -218,28 +228,24 @@
 			}, transitionDuration);
 		}
 
-		if (transformPlaceHolder !== state.transform) {
-			transformPlaceHolder = state.transform;
-		}
-	});
-
-	onDestroy(() => {
-		window.removeEventListener('resize', onResize as any);
-
-		// if (keyBoardControl) {
-		// 	window.removeEventListener('keyup', onKeyUp);
+		// if (transformPlaceHolder !== state.transform) {
+		// 	transformPlaceHolder = state.transform;
 		// }
-
-		if (autoPlay) {
-			//props.autoPlay &&
-			clearInterval(autoPlayId);
-			autoPlay = undefined;
-		}
-
-		if (itemsToShowTimeout) {
-			clearTimeout(itemsToShowTimeout);
-		}
 	});
+
+	// onDestroy(() => {
+	// 	window.removeEventListener('resize', onResize as any);
+
+	// 	if (autoPlay) {
+	// 		//props.autoPlay &&
+	// 		clearInterval(autoPlayId);
+	// 		autoPlay = undefined;
+	// 	}
+
+	// 	if (itemsToShowTimeout) {
+	// 		clearTimeout(itemsToShowTimeout);
+	// 	}
+	// });
 
 	function resetTotalItems(): void {
 		const totalItems = containerRef.children.length;
@@ -250,7 +256,8 @@
 
 		state.totalItems = totalItems;
 		state.currentSlide = currentSlide;
-		setContainerAndItemWidth(state.slidesToShow, true);
+
+		tick().then(() => setContainerAndItemWidth(state.slidesToShow, true));
 	}
 
 	function setIsInThrottle(isInThrottle = false): void {
@@ -290,7 +297,7 @@
 		// because the first time we set the clones, we change the position of all carousel items when entering client-side from server-side.
 		// but still, we want to maintain the same position as it was on the server-side which is translateX(0) by getting the couter part of the original first slide.
 		isAnimationAllowed = false;
-		const childrenArr = Array.from(children);
+		const childrenArr = [...children];
 		const initialSlide = getInitialSlideInInfiniteMode(
 			slidesToShow || state.slidesToShow,
 			childrenArr
@@ -302,7 +309,7 @@
 		state.totalItems = clones.length;
 		state.currentSlide = forResizing && !resetCurrentSlide ? currentSlide : initialSlide;
 
-		correctItemsPosition(itemWidth || state.itemWidth);
+		tick().then(() => correctItemsPosition(itemWidth || state.itemWidth));
 	}
 
 	function setItemsToShow(
@@ -336,9 +343,16 @@
 			state.containerWidth = newContainerWidth;
 			state.itemWidth = newItemWidth;
 
-			if (infinite) {
-				setClones(slidesToShow, itemWidth, shouldCorrectItemPosition, resetCurrentSlide);
-			}
+			tick().then(() => {
+				if (infinite) {
+					setClones(
+						slidesToShow,
+						itemWidth,
+						shouldCorrectItemPosition,
+						resetCurrentSlide
+					);
+				}
+			});
 
 			if (shouldCorrectItemPosition) {
 				correctItemsPosition(itemWidth);
@@ -426,10 +440,10 @@
 				return;
 			}
 			/*
-    two cases:
-    1. We are not over-sliding.
-    2. We are sliding over to what we have, that means nextslides > this.props.children.length. (does not apply to the inifnite mode)
-    */
+				two cases:
+				1. We are not over-sliding.
+				2. We are sliding over to what we have, that means nextslides > this.props.children.length. (does not apply to the inifnite mode)
+				*/
 			const { nextSlides, nextPosition } = populateNextSlides(state, props, slidesHavePassed);
 
 			const previousSlide = state.currentSlide;
@@ -443,14 +457,17 @@
 			}
 
 			isAnimationAllowed = true;
+
 			state.transform = nextPosition;
 			state.currentSlide = nextSlides;
 
-			if (typeof afterChange === 'function') {
-				setTimeout(() => {
-					afterChange(previousSlide, getState());
-				}, transitionDuration);
-			}
+			tick().then(() => {
+				if (typeof afterChange === 'function') {
+					setTimeout(() => {
+						afterChange(previousSlide, getState());
+					}, transitionDuration);
+				}
+			});
 		},
 		transitionDuration,
 		setIsInThrottle
@@ -482,11 +499,13 @@
 			state.transform = nextPosition;
 			state.currentSlide = nextSlides;
 
-			if (typeof afterChange === 'function') {
-				setTimeout(() => {
-					afterChange(previousSlide, getState());
-				}, transitionDuration);
-			}
+			tick().then(() => {
+				if (typeof afterChange === 'function') {
+					setTimeout(() => {
+						afterChange(previousSlide, getState());
+					}, transitionDuration);
+				}
+			});
 		},
 		transitionDuration,
 		setIsInThrottle
@@ -637,19 +656,21 @@
 			state.currentSlide = slide;
 			state.transform = -(itemWidth * slide);
 
-			if (infinite) {
-				correctClonesPosition({ domLoaded: true });
-			}
+			tick().then(() => {
+				if (infinite) {
+					correctClonesPosition({ domLoaded: true });
+				}
 
-			if (
-				typeof afterChange === 'function' &&
-				(!skipCallbacks ||
-					(typeof skipCallbacks === 'object' && !skipCallbacks.skipAfterChange))
-			) {
-				setTimeout(() => {
-					afterChange(previousSlide, getState());
-				}, transitionDuration);
-			}
+				if (
+					typeof afterChange === 'function' &&
+					(!skipCallbacks ||
+						(typeof skipCallbacks === 'object' && !skipCallbacks.skipAfterChange))
+				) {
+					setTimeout(() => {
+						afterChange(previousSlide, getState());
+					}, transitionDuration);
+				}
+			});
 		},
 		transitionDuration,
 		setIsInThrottle
@@ -701,6 +722,7 @@
 		on:touchstart={handleDown}
 		on:touchmove={handleMove}
 		on:touchend={handleOut}
+		on:keydown={onKeyUp}
 	>
 		<div class="content">
 			<CarouselItems {state} {props} {goToSlide}>
@@ -742,9 +764,25 @@
 </div>
 
 {#if shouldRenderAtAll && renderDotsOutside}
-	<slot name="customDots">
+	{#if !showDots || notEnoughChildren(state.slidesToShow, state.totalItems)}
+		{null}
+	{:else if $$slots.customDots}
+		<Dots {state} {props} {goToSlide} {getState}>
+			<slot name="customDots" />
+		</Dots>
+	{:else}
 		<Dots {state} {props} {goToSlide} {getState} />
-	</slot>
+	{/if}
+
+	<!-- {#if showDots && !notEnoughChildren(state.slidesToShow, state.totalItems)}
+		{#if $$slots.customDots}
+			<Dots {state} {props} {goToSlide} {getState}>
+				<slot name="customDots" />
+			</Dots>
+		{:else}
+			<Dots {state} {props} {goToSlide} {getState} />
+		{/if}
+	{/if} -->
 {/if}
 
 {#if shouldRenderAtAll && renderButtonGroupOutside}

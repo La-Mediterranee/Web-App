@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, afterUpdate, onDestroy } from 'svelte';
+	import { onMount, afterUpdate, onDestroy, tick } from 'svelte';
 	import {
 		CarouselInternalState,
 		CarouselProps,
@@ -280,7 +280,8 @@
 
 		state.totalItems = totalItems;
 		state.currentSlide = currentSlide;
-		setContainerAndItemWidth(state.slidesToShow, true);
+
+		tick().then(() => setContainerAndItemWidth(state.slidesToShow, true));
 	}
 
 	function setIsInThrottle(isInThrottle = false): void {
@@ -320,7 +321,7 @@
 		// because the first time we set the clones, we change the position of all carousel items when entering client-side from server-side.
 		// but still, we want to maintain the same position as it was on the server-side which is translateX(0) by getting the couter part of the original first slide.
 		isAnimationAllowed = false;
-		const childrenArr = Array.from(children);
+		const childrenArr = [...children];
 		const initialSlide = getInitialSlideInInfiniteMode(
 			slidesToShow || state.slidesToShow,
 			childrenArr
@@ -332,7 +333,7 @@
 		state.totalItems = clones.length;
 		state.currentSlide = forResizing && !resetCurrentSlide ? currentSlide : initialSlide;
 
-		correctItemsPosition(itemWidth || state.itemWidth);
+		tick().then(() => correctItemsPosition(itemWidth || state.itemWidth));
 	}
 
 	function setItemsToShow(
@@ -366,9 +367,16 @@
 			state.containerWidth = newContainerWidth;
 			state.itemWidth = newItemWidth;
 
-			if (infinite) {
-				setClones(slidesToShow, itemWidth, shouldCorrectItemPosition, resetCurrentSlide);
-			}
+			tick().then(() => {
+				if (infinite) {
+					setClones(
+						slidesToShow,
+						itemWidth,
+						shouldCorrectItemPosition,
+						resetCurrentSlide
+					);
+				}
+			});
 
 			if (shouldCorrectItemPosition) {
 				correctItemsPosition(itemWidth);
@@ -476,11 +484,13 @@
 			state.transform = nextPosition;
 			state.currentSlide = nextSlides;
 
-			if (typeof afterChange === 'function') {
-				setTimeout(() => {
-					afterChange(previousSlide, getState());
-				}, transitionDuration || defaultTransitionDuration);
-			}
+			tick().then(() => {
+				if (typeof afterChange === 'function') {
+					setTimeout(() => {
+						afterChange(previousSlide, getState());
+					}, transitionDuration);
+				}
+			});
 		},
 		transitionDuration || defaultTransitionDuration,
 		setIsInThrottle
@@ -512,11 +522,13 @@
 			state.transform = nextPosition;
 			state.currentSlide = nextSlides;
 
-			if (typeof afterChange === 'function') {
-				setTimeout(() => {
-					afterChange(previousSlide, getState());
-				}, transitionDuration || defaultTransitionDuration);
-			}
+			tick().then(() => {
+				if (typeof afterChange === 'function') {
+					setTimeout(() => {
+						afterChange(previousSlide, getState());
+					}, transitionDuration);
+				}
+			});
 		},
 		transitionDuration || defaultTransitionDuration,
 		setIsInThrottle
@@ -667,19 +679,21 @@
 			state.currentSlide = slide;
 			state.transform = -(itemWidth * slide);
 
-			if (infinite) {
-				correctClonesPosition({ domLoaded: true });
-			}
+			tick().then(() => {
+				if (infinite) {
+					correctClonesPosition({ domLoaded: true });
+				}
 
-			if (
-				typeof afterChange === 'function' &&
-				(!skipCallbacks ||
-					(typeof skipCallbacks === 'object' && !skipCallbacks.skipAfterChange))
-			) {
-				setTimeout(() => {
-					afterChange(previousSlide, getState());
-				}, transitionDuration || defaultTransitionDuration);
-			}
+				if (
+					typeof afterChange === 'function' &&
+					(!skipCallbacks ||
+						(typeof skipCallbacks === 'object' && !skipCallbacks.skipAfterChange))
+				) {
+					setTimeout(() => {
+						afterChange(previousSlide, getState());
+					}, transitionDuration);
+				}
+			});
 		},
 		transitionDuration || defaultTransitionDuration,
 		setIsInThrottle

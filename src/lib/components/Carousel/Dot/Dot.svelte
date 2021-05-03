@@ -1,63 +1,15 @@
 <script lang="ts">
-	export let state: CarouselInternalState;
-	export let props: CarouselProps;
-	export let getState;
-	export let goToSlide;
+	import { SkipCallbackOptions } from '../types';
+
+	export let index: number;
 	export let isActive: boolean;
-
-	// export let showDots;
-	// export let customDot;
-	// export let dotListClass;
-	// export let infinite;
-	// export let children;
-
-	import {
-		CarouselInternalState,
-		CarouselProps,
-		StateCallBack,
-		SkipCallbackOptions,
-	} from './types';
-	import { getOriginalIndexLookupTableByClones } from './utils/clones';
-	import { getLookupTableForNextSlides } from './utils/dots';
-	import { getSlidesToSlide, enoughChildren } from './utils/common';
-	import Carousel from './Carousel.svelte';
-
-	const { showDots, customDot, dotListClass, infinite, children } = props;
-	const { currentSlide, slidesToShow } = state;
-	let DotList: HTMLUListElement;
-
-	// const childrenArr = Array.from(DotList.querySelectorAll('.multi-carousel-dot'));
-	const childrenArr = children;
-
-	const slidesToSlide = getSlidesToSlide(state, props);
-	let numberOfDotsToShow: number;
-	if (!infinite) {
-		numberOfDotsToShow = Math.ceil((childrenArr.length - slidesToShow) / slidesToSlide!) + 1;
-	} else {
-		numberOfDotsToShow = Math.ceil(childrenArr.length / slidesToSlide!);
-	}
-
-	const nextSlidesTable = getLookupTableForNextSlides(
-		numberOfDotsToShow,
-		state,
-		props,
-		childrenArr
-	);
-
-	const lookupTable = getOriginalIndexLookupTableByClones(slidesToShow, childrenArr);
+	export let goToSlide: (index: number, skipCallbacks?: SkipCallbackOptions) => void;
+	export let nextSlide: number;
 </script>
 
-{#if showDots || enoughChildren(state.slidesToShow, state.totalItems)}
-	<ul class={`multi-carousel-dot-list ${dotListClass}`} bind:this={DotList}>
-		{#each Array(numberOfDotsToShow).fill(0) as item, index}
-			<slot name="customDot" {index} {goToSlide}>
-				<li class={`multi-carousel-dot ${isActive ? 'multi-carousel-dot--active' : ''}`}>
-					<button
-						aria-label={`Go to slide ${index + 1}`}
-						on:click={() => goToSlide(nextSlide)}
-					/>
-				</li>
-			</slot>
-		{/each}
-	</ul>
-{/if}
+<!-- class={`multi-carousel-dot ${isActive ? 'multi-carousel-dot--active' : ''}`}
+ -->
+
+<li class="multi-carousel-dot" class:multi-carousel-dot--active={isActive === true}>
+	<button aria-label={`Go to slide ${index + 1}`} on:click={() => goToSlide(nextSlide)} />
+</li>

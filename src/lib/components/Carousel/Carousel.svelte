@@ -134,48 +134,24 @@
 		containerWidth: 0,
 	};
 
-	const prevState = {
-		currentSlide: 1,
-		domLoaded: false,
-		containerWidth: 0,
-	};
-
 	/*
 	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	This has to be fixed
 	*/
 
-	$: if (!autoPlay && autoPlayId) {
-		clearInterval(autoPlayId);
-		autoPlayId = undefined;
-	}
-
-	$: if (autoPlay && !autoPlayId) {
-		autoPlayId = window.setInterval(next, props.autoPlaySpeed);
-	}
-
-	$: transformPlaceHolder = state.transform;
-
-	$: {
-		//prev State and Props
-		// 	{  autoPlay, children }: CarouselProps ,
-		// { containerWidth, domLoaded, currentSlide }: CarouselInternalState
-
-		const { containerWidth, domLoaded, currentSlide } = prevState;
-		const { autoPlay, children } = prevProps;
-
-		//if previously autoplay remove
-		if (autoPlay && !props.autoPlay && autoPlayId) {
+	function updateAutoPlay(autoplay: boolean) {
+		if (!autoplay && autoPlayId) {
 			clearInterval(autoPlayId);
 			autoPlayId = undefined;
 		}
 
-		//if previously no autoplay add
-		if (!autoPlay && props.autoPlay && !autoPlayId) {
-			autoPlayId = window.setInterval(next, props.autoPlaySpeed);
+		if (autoplay && !autoPlayId) {
+			autoPlayId = window.setInterval(next, autoPlaySpeed);
 		}
+	}
 
-		if (children.length !== props.children.length) {
+	function updateSize(childrenLength: number) {
+		if (childrenLength) {
 			// this is for handling changing children only.
 			setTimeout(() => {
 				if (infinite) {
@@ -184,11 +160,87 @@
 					resetTotalItems();
 				}
 			}, transitionDuration);
-		} else if (infinite && state.currentSlide !== prevState.currentSlide) {
+		} else if (infinite && state.currentSlide) {
 			// this is to quickly cancel the animation and move the items position to create the infinite effects.
-			correctClonesPosition({ domLoaded });
+			correctClonesPosition(state.domLoaded);
 		}
 	}
+
+	$: updateAutoPlay(autoPlay);
+
+	$: childrenLength = children.length;
+
+	$: updateSize(childrenLength);
+
+	$: transformPlaceHolder = state.transform;
+
+	// const prevState = {
+	// 	currentSlide: 1,
+	// 	domLoaded: false,
+	// 	containerWidth: 0,
+	// };
+	// const { containerWidth, domLoaded, currentSlide } = prevState;
+	// const { autoPlay, children } = prevProps;
+
+	// //code from react-multi-carousel
+	// //prev State and Props
+	// 	componentDidUpdate(
+	//     { keyBoardControl, autoPlay, children }: CarouselProps,
+	//     { containerWidth, domLoaded, currentSlide }: CarouselInternalState
+	//   ): void {
+	//     if (
+	//       this.containerRef &&
+	//       this.containerRef.current &&
+	//       this.containerRef.current.offsetWidth !== containerWidth
+	//     ) {
+	//       // this is for handling resizing only.
+	//       if (this.itemsToShowTimeout) {
+	//         clearTimeout(this.itemsToShowTimeout);
+	//       }
+	//       this.itemsToShowTimeout = setTimeout(() => {
+	//         this.setItemsToShow(true);
+	//       }, this.props.transitionDuration || defaultTransitionDuration);
+	//     }
+	//     if (keyBoardControl && !this.props.keyBoardControl) {
+	//       window.removeEventListener("keyup", this.onKeyUp as React.EventHandler<
+	//         any
+	//       >);
+	//     }
+	//     if (!keyBoardControl && this.props.keyBoardControl) {
+	//       window.addEventListener("keyup", this.onKeyUp as React.EventHandler<any>);
+	//     }
+	//     if (autoPlay && !this.props.autoPlay && this.autoPlay) {
+	//       clearInterval(this.autoPlay);
+	//       this.autoPlay = undefined;
+	//     }
+	//     if (!autoPlay && this.props.autoPlay && !this.autoPlay) {
+	//       this.autoPlay = setInterval(this.next, this.props.autoPlaySpeed);
+	//     }
+	//     if (children.length !== this.props.children.length) {
+	//       // this is for handling changing children only.
+	//       setTimeout(() => {
+	//         if (this.props.infinite) {
+	//           this.setClones(
+	//             this.state.slidesToShow,
+	//             this.state.itemWidth,
+	//             true,
+	//             true
+	//           );
+	//         } else {
+	//           this.resetTotalItems();
+	//         }
+	//       }, this.props.transitionDuration || defaultTransitionDuration);
+	//     } else if (
+	//       this.props.infinite &&
+	//       this.state.currentSlide !== currentSlide
+	//     ) {
+	//       // this is to quickly cancel the animation and move the items position to create the infinite effects.
+	//       this.correctClonesPosition({ domLoaded });
+	//     }
+	//     if (this.transformPlaceHolder !== this.state.transform) {
+	//       this.transformPlaceHolder = this.state.transform;
+	//     }
+	//   }
 
 	onMount(() => {
 		state.domLoaded = true;
@@ -227,25 +279,7 @@
 				setItemsToShow(true);
 			}, transitionDuration);
 		}
-
-		// if (transformPlaceHolder !== state.transform) {
-		// 	transformPlaceHolder = state.transform;
-		// }
 	});
-
-	// onDestroy(() => {
-	// 	window.removeEventListener('resize', onResize as any);
-
-	// 	if (autoPlay) {
-	// 		//props.autoPlay &&
-	// 		clearInterval(autoPlayId);
-	// 		autoPlay = undefined;
-	// 	}
-
-	// 	if (itemsToShowTimeout) {
-	// 		clearTimeout(itemsToShowTimeout);
-	// 	}
-	// });
 
 	function resetTotalItems(): void {
 		const totalItems = containerRef.children.length;
@@ -406,11 +440,10 @@
 		setItemsToShow(shouldCorrectItemPosition);
 	}
 
-	function correctClonesPosition({
-		domLoaded, // this domLoaded comes from previous state, only use to tell if we are on client-side or server-side because this functin relies on the dom.
-	}: {
-		domLoaded?: boolean;
-	}): void {
+	function correctClonesPosition(
+		// this domLoaded comes from previous state, only use to tell if we are on client-side or server-side because this functin relies on the dom.
+		domLoaded?: boolean
+	): void {
 		const childrenArr = Array.from(children);
 		const {
 			isReachingTheEnd,
@@ -658,7 +691,7 @@
 
 			tick().then(() => {
 				if (infinite) {
-					correctClonesPosition({ domLoaded: true });
+					correctClonesPosition(true);
 				}
 
 				if (

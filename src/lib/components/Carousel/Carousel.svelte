@@ -134,46 +134,13 @@
 		containerWidth: 0,
 	};
 
+	//state
+	let currentSlide: number;
+
 	/*
 	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	This has to be fixed
 	*/
-
-	function updateAutoPlay(autoplay: boolean) {
-		if (!autoplay && autoPlayId) {
-			clearInterval(autoPlayId);
-			autoPlayId = undefined;
-		}
-
-		if (autoplay && !autoPlayId) {
-			autoPlayId = window.setInterval(next, autoPlaySpeed);
-		}
-	}
-
-	function updateSize(childrenLength: number) {
-		if (childrenLength) {
-			// this is for handling changing children only.
-			setTimeout(() => {
-				if (infinite) {
-					setClones(state.slidesToShow, state.itemWidth, true, true);
-				} else {
-					resetTotalItems();
-				}
-			}, transitionDuration);
-		} else if (infinite && state.currentSlide) {
-			// this is to quickly cancel the animation and move the items position to create the infinite effects.
-			correctClonesPosition(state.domLoaded);
-		}
-	}
-
-	$: updateAutoPlay(autoPlay);
-
-	$: childrenLength = children.length;
-
-	$: updateSize(childrenLength);
-
-	$: transformPlaceHolder = state.transform;
-
 	// const prevState = {
 	// 	currentSlide: 1,
 	// 	domLoaded: false,
@@ -241,6 +208,45 @@
 	//       this.transformPlaceHolder = this.state.transform;
 	//     }
 	//   }
+
+	function updateAutoPlay(autoplay: boolean) {
+		if (!autoplay && autoPlayId) {
+			clearInterval(autoPlayId);
+			autoPlayId = undefined;
+		} else if (autoplay && !autoPlayId) {
+			autoPlayId = window.setInterval(next, autoPlaySpeed);
+		}
+	}
+
+	function updateSize(childrenLength: number) {
+		// this is for handling changing children only.
+		setTimeout(() => {
+			if (infinite) {
+				setClones(state.slidesToShow, state.itemWidth, true, true);
+			} else {
+				resetTotalItems();
+			}
+		}, transitionDuration);
+	}
+
+	function updateSlides(slides: number) {
+		// this is to quickly cancel the animation and move the items position to create the infinite effects.
+		if (infinite) {
+			correctClonesPosition(state.domLoaded);
+		}
+	}
+
+	$: updateAutoPlay(autoPlay);
+
+	$: childrenLength = children.length;
+	$: updateSize(childrenLength);
+
+	$: updateSlides(currentSlide);
+
+	// $: stateTransform = state.transform;
+	// $: transformPlaceHolder = stateTransform;
+
+	$: transformPlaceHolder = state.transform;
 
 	onMount(() => {
 		state.domLoaded = true;

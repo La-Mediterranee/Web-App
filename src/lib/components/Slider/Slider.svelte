@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-
-	type oriantation = 'vertical' | 'horizontal';
+	import { onMount, tick, createEventDispatcher } from 'svelte';
+	import Arrow from './Arrows';
+	import Indicators from './Indicators';
+	import { createStore } from './store';
 
 	interface CarouelOptions {
 		itemsPerView?: number;
@@ -11,18 +12,31 @@
 		[width: number]: CarouelOptions;
 	}
 
+	export let sliderElements: [];
 	export let itemsPerView: number = 1;
 	export let draggable = true;
 	export let threshold = 20;
-	export let showIndicators: boolean = false;
-	export let defaultIndex: number = 0;
-	export let oriantation: oriantation = 'horizontal';
 	export let breakpoints: IbreakPoints;
-
-	export let autoplay = false;
-	export let delay = 1000;
+	/**
+	 * Enable Next/Prev arrows
+	 */
+	export let arrows = true;
+	/**
+	 * Current slide indicator
+	 */
+	export let showIndicators: boolean = false;
+	/**
+	 * Transition duration in ms
+	 */
 	export let transitionDuration = 200;
+	/**
+	 * Infinite looping
+	 */
+	export let infinite = true;
 	export let activeItem = 0;
+
+	const dispatch = createEventDispatcher();
+	let store = createStore();
 
 	let touch_active = false;
 	let activeIndicator = 0;
@@ -37,7 +51,6 @@
 	let longTouch: boolean;
 	let last_axis_pos: number;
 	let sliderWrapper: HTMLDivElement;
-	let sliderElements: NodeListOf<HTMLElement>;
 	let sliderHandler: HTMLDivElement;
 
 	let played = defaultIndex || 0;
@@ -48,29 +61,24 @@
 
 	onMount(() => {
 		init();
-		if (typeof window !== 'undefined') {
-			window.addEventListener('resize', update);
-		}
-	});
+		window.addEventListener('resize', update);
 
-	onDestroy(() => {
-		if (typeof window !== 'undefined') {
+		return () => {
 			window.removeEventListener('resize', update);
-		}
+		};
 	});
 
 	function init() {
-		sliderElements = sliderWrapper.querySelectorAll<HTMLElement>('.slider-item');
 		totalElements = sliderElements.length;
 		update();
 	}
 
 	function update() {
 		const { offsetWidth, offsetHeight } = sliderWrapper;
-		availableSpace = oriantation === 'vertical' ? offsetHeight : offsetWidth;
+		// availableSpace = oriantation === 'vertical' ? offsetHeight : offsetWidth;
 
 		[...sliderElements].forEach((element, i) => {
-			element.style.transform = generateTranslateValue(availableSpace * i);
+			element.style.transform = generateTranslateValue(offsetWidth * i);
 		});
 
 		availableDistance = 0;
@@ -128,9 +136,10 @@
 	}
 
 	function generateTranslateValue(value: number) {
-		return oriantation === 'vertical'
-			? `translate3d(0, ${value}px, 0)`
-			: `translate3d(${value}px, 0, 0)`;
+		return `translate3d(${value}px, 0, 0)`;
+		// return oriantation === 'vertical'
+		// 	? `translate3d(0, ${value}px, 0)`
+		// 	: `translate3d(${value}px, 0, 0)`;
 	}
 
 	function generateTouchPosCss(value: number, touch_end = false) {
@@ -234,7 +243,10 @@
 <div class="slider">
 	<div class="mask">
 		<div class="content" bind:this={sliderWrapper}>
-			<slot />
+			{#each sliderElements as sliderElement, index}
+				<!-- content here -->
+				<slot {sliderElement} {index} />
+			{/each}
 		</div>
 	</div>
 	<div
@@ -243,16 +255,31 @@
 		on:touchstart={onTouchStart}
 		on:mousedown={onMoveStart}
 	/>
+	{#if arrows}
+		<slot name="next" {showNextPage}>
+			<div class="sc-carousel__arrow-container">
+				<Arrow
+					direction="next"
+					disabled={!infinite && originalCurrentPageIndex === originalPagesCount - 1}
+					on:click={showNextPage}
+				/>
+			</div>
+		</slot>
+	{/if}
 	{#if showIndicators}
 		<div class="swipe-indicator swipe-indicator-inside">
 			{#each indicators as x, i}
 				<slot name="indicators" {activeIndicator} index={i}>
 					<span
-						class="dot {activeIndicator === i ? 'is-active' : ''}"
+						class="dot"
+						class:is-active={activeIndicator === i}
 						on:click={() => {
 							changeItem(i);
 						}}
 					/>
+					<!-- on:click|preventDefault|stopPropagation={() => {
+							changeItem(i);
+						}} -->
 				</slot>
 			{/each}
 		</div>
@@ -287,30 +314,5 @@
 		left: 0;
 		right: 0;
 		background: rgba(0, 0, 0, 0);
-	}
-
-	.dot {
-		height: 10px;
-		width: 10px;
-		background-color: transparent;
-		border: 1px solid grey;
-		border-radius: 50%;
-		display: inline-block;
-		margin: 0px 2px;
-		cursor: pointer;
-		pointer-events: fill;
-	}
-
-	.swipe-indicator {
-		position: relative;
-		bottom: 1.5rem;
-		display: flex;
-		justify-content: center;
-		z-index: var(--slider-indicator, 2);
-		pointer-events: none;
-	}
-
-	.swipe-indicator .is-active {
-		background-color: var(--slider-indicator-active, grey);
 	}
 </style>

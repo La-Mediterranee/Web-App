@@ -451,12 +451,8 @@
 		domLoaded?: boolean
 	): void {
 		const childrenArr = Array.from(children);
-		const {
-			isReachingTheEnd,
-			isReachingTheStart,
-			nextSlide,
-			nextPosition,
-		} = checkClonesPosition(state, childrenArr, props);
+		const { isReachingTheEnd, isReachingTheStart, nextSlide, nextPosition } =
+			checkClonesPosition(state, childrenArr, props);
 
 		if (
 			// this is to prevent it from getting called on the server-side.
@@ -803,17 +799,15 @@
 </div>
 
 {#if shouldRenderAtAll && renderDotsOutside}
-	{#if !showDots || notEnoughChildren(state.slidesToShow, state.totalItems)}
-		{null}
-	{:else if $$slots.customDots}
+	<!-- {#if !showDots || notEnoughChildren(state.slidesToShow, state.totalItems)}{:else if $$slots.customDots}
 		<Dots {state} {props} {goToSlide} {getState}>
 			<slot name="customDots" />
 		</Dots>
 	{:else}
 		<Dots {state} {props} {goToSlide} {getState} />
-	{/if}
+	{/if} -->
 
-	<!-- {#if showDots && !notEnoughChildren(state.slidesToShow, state.totalItems)}
+	{#if showDots && !notEnoughChildren(state.slidesToShow, state.totalItems)}
 		{#if $$slots.customDots}
 			<Dots {state} {props} {goToSlide} {getState}>
 				<slot name="customDots" />
@@ -821,7 +815,7 @@
 		{:else}
 			<Dots {state} {props} {goToSlide} {getState} />
 		{/if}
-	{/if} -->
+	{/if}
 {/if}
 
 {#if shouldRenderAtAll && renderButtonGroupOutside}

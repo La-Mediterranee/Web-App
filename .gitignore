@@ -1,3 +1,4 @@
 node_modules
 .svelte/
 src/utils/address*
+build/

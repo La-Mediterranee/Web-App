@@ -1,4 +1,4 @@
-import { Home, Person, Fastfood } from '$lib/Icons/index';
+import { Home, Person, Fastfood } from '../../lib/Icons';
 
 export const navItems = [
 	// {
@@ -11,14 +11,14 @@ export const navItems = [
 	// },
 	{
 		icon: Fastfood,
-		text: 'Essen',
+		text: 'Essen'
 	},
 	{
 		icon: Home,
-		text: 'Warenkorb',
+		text: 'Warenkorb'
 	},
 	{
 		icon: Person,
-		text: 'Profil',
-	},
+		text: 'Profil'
+	}
 ];

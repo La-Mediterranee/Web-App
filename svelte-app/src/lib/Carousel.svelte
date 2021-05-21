@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 
-	type oriantation = 'vertical' | 'horizontal';
-
 	export let itemsPerView: number = 3;
 	export let draggable = true;
 	export let threshold = 20;
 	export let showIndicators: boolean = false;
 	export let defaultIndex: number = 0;
-	export let oriantation: oriantation = 'horizontal';
+	export let oriantation: 'vertical' | 'horizontal' = 'horizontal';
 
 	export let autoplay = false;
 	export let delay = 1000;
@@ -88,7 +86,7 @@
 	function eventDelegate(type: string) {
 		const delegationTypes = {
 			add: 'addEventListener',
-			remove: 'removeEventListener',
+			remove: 'removeEventListener'
 		};
 
 		if (typeof window !== 'undefined') {

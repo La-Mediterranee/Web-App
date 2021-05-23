@@ -1,0 +1,18 @@
+{
+	"name": "La Mediterranee",
+	"start_url": "/?utm_source=homescreen",
+	"lang": "de",
+	"display": "standalone",
+	"shortcuts": [
+		{
+			"name": "Bestellungen Anschauen",
+			"url": "",
+			"icons": [
+				{
+					"src": "/icons/see-orders.png",
+					"sizes": "192x192"
+				}
+			]
+		}
+	]
+}

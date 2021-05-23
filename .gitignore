@@ -1,4 +1,7 @@
 node_modules
+
 .svelte/
+.vscode
+
 src/utils/address*
-build/
+build

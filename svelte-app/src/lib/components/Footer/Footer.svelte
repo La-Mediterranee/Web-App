@@ -1,5 +1,4 @@
 <footer>
-
 	<div class="content">
 		<div>
 			<h3>Über uns</h3>
@@ -24,11 +23,11 @@
 		top: 0px;
 		z-index: 1;
 
-		path{
+		path {
 			stroke: none;
 		}
 
-		rect{
+		rect {
 			stroke: none;
 		}
 	}

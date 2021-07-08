@@ -1,8 +1,11 @@
 {
 	"name": "La Mediterranee",
-	"start_url": "/?utm_source=homescreen",
+	"short_name": "La Mediterranee",
+	"background_color": "#FFFFFF",
 	"lang": "de",
 	"display": "standalone",
+	"start_url": "/?utm_source=homescreen",
+	"scope": "/",
 	"shortcuts": [
 		{
 			"name": "Bestellungen Anschauen",
@@ -14,5 +17,9 @@
 				}
 			]
 		}
-	]
+	],
+	"gcm_sender_id": "",
+	"gcm_user_visible_only": true,
+	"related_applications": [],
+	"capture_links": "none"
 }

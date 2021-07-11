@@ -1,5 +1,5 @@
 # FROM node:14-slim
-FROM node:10
+FROM node:16
 WORKDIR /usr/src/app
 #Install packages
 COPY package*.json ./

@@ -1,7 +1,6 @@
 node_modules
 
-.svelte/
+.DS_Store
 .vscode
 
-src/utils/address*
 build

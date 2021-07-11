@@ -3,18 +3,18 @@ module.exports = {
 	parser: '@typescript-eslint/parser',
 	extends: ['eslint:recommended'],
 	plugins: ['svelte3', '@typescript-eslint'],
-	ignorePatterns: ['*.cjs'],
+	ignorePatterns: ['*.cjs', 'node_modules/*'],
 	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
 	settings: {
-		'svelte3/typescript': require('typescript'),
+		'svelte3/typescript': require('typescript')
 	},
 	parserOptions: {
 		sourceType: 'module',
-		ecmaVersion: 2019,
+		ecmaVersion: 2019
 	},
 	env: {
 		browser: true,
 		es2017: true,
-		node: true,
-	},
+		node: true
+	}
 };

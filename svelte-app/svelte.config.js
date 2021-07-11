@@ -1,36 +1,70 @@
 import * as path from 'path';
 import sveltePreprocess from 'svelte-preprocess';
-// import netlify from '@sveltejs/adapter-netlify';
-// import { createRequire } from 'module';
-// const require = createRequire(import.meta.url);
-// const { dependencies } = require('./package.json');
+import node from '@sveltejs/adapter-node';
+import netlify from '@sveltejs/adapter-netlify';
+import { visualizer } from 'rollup-plugin-visualizer';
+import autoprefixer from 'autoprefixer';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: sveltePreprocess({
+		// babel: {
+		// 	presets: [
+		// 		[
+		// 			'@babel/preset-env',
+		// 			{
+		// 				loose: true,
+		// 				modules: false,
+		// 				targets: {
+		// 					// ! Very important. Target es6+
+		// 					esmodules: true
+		// 				}
+		// 			}
+		// 		]
+		// 	]
+		// },
 		scss: {
 			includePaths: ['theme', 'node_modules']
-		}
+		},
+		postcss: {
+			plugins: [autoprefixer()]
+		},
+		sourceMap: process.env.NODE_ENV === 'development' ? true : false
 	}),
 	kit: {
 		// adapter: netlify(),
+		adapter: node(),
 		target: '#svelte',
 		vite: () => ({
-			// ssr: {
-			// 	noExternal: Object.keys(dependencies || {})
+			// optimizeDeps: {
+			// 	include: ['firebase']
 			// },
-			// plugins: [],
+			// ssr: {
+			// 	external: ['firebase']
+			// },
+			// build: {
+			// 	// target: 'es2015',
+			// 	sourcemap: true,
+			// 	rollupOptions: {
+			// 		plugins: [
+			// 			visualizer({
+			// 				template: 'treemap',
+			// 				sourcemap: true,
+			// 				gzipSize: true
+			// 			})
+			// 		]
+			// 	}
+			// },
 			resolve: {
 				alias: {
-					$utils: path.resolve('./src/utils')
+					// firebase: path.resolve('./node_modules/@firebase/'),
+					$utils: path.resolve('./src/utils'),
+					$firebase: path.resolve('./src/utils/firebase.ts'),
+					$stores: path.resolve('./src/lib/stores'),
+					$components: path.resolve('./src/lib/components')
 				}
 			}
 		})
 	}
 };
 export default config;
-// const sveltePreprocess = require('svelte-preprocess');
-// const pkg = require('./package.json');
-// const node = require('@sveltejs/adapter-node');
-// const netlify = require('@sveltejs/adapter-netlify');
-// const path = require('path');

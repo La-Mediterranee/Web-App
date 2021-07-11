@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"module": "es2020",
-		"lib": ["es2020", "dom", "DOM.Iterable"],
+		"lib": ["es2020", "dom", "DOM.Iterable", "WebWorker"],
 		"target": "ES6",
 		"removeComments": true,
 		"importHelpers": true,
@@ -27,9 +27,16 @@
 		"checkJs": true,
 		"paths": {
 			"$lib/*": ["src/lib/*"],
-			"$utils/*": ["src/utils/*"]
+			"$utils/*": ["src/utils/*"],
+			"$components/*": ["src/lib/components/*"],
+			"$firebase": ["src/utils/firebase.ts"],
+			"$stores/*": ["src/lib/stores/*"]
+			// "firebase/app$": ["firebase/app/dist/index.esm.js"],
+			// "firebase/auth$": ["firebase/auth/dist/index.esm.js"],
+			// "firebase/analytics$": ["firebase/analytics/dist/index.esm.js"],
+			// "firebase/performance$": ["firebase/performance/dist/index.esm.js"]
 		}
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"],
-	"exclude": ["node_modules/*", "build"]
+	"exclude": ["build", "node_modules", "node_modules/", "node_modules/*"]
 }

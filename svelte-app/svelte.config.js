@@ -23,8 +23,12 @@ const config = {
 		// 		]
 		// 	]
 		// },
+		defaults: {
+			script: 'typescript',
+			style: 'scss'
+		},
 		scss: {
-			includePaths: ['theme', 'node_modules']
+			includePaths: ['theme', 'node_modules', 'src/styles']
 		},
 		postcss: {
 			plugins: [autoprefixer()]

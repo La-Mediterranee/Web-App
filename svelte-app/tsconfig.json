@@ -38,5 +38,5 @@
 		}
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"],
-	"exclude": ["build", "node_modules", "node_modules/", "node_modules/*"]
+	"exclude": ["build", "node_modules"]
 }

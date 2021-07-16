@@ -57,6 +57,7 @@
 	--body-bg2: #1d68ca; */
 	/* --top1: #4050e0e5;
 	--top2: #062ba5; */
+	font-size: 16px;
 	--body-bg1: #5881a7;
 	--body-bg2: #284159;
 	--top1: #5881a7;
@@ -103,22 +104,13 @@ body {
 	background-attachment: fixed;
 	background-repeat: no-repeat;
 	color: black;
-	margin-bottom: 65px;
 }
 
-@media screen and (min-width: 770px) {
+/* @media screen and (min-width: 770px) {
 	body {
 		margin-bottom: 0;
 	}
-}
-
-main {
-	padding-bottom: 0.5em;
-}
-
-.s-row {
-	position: relative;
-}
+} */
 
 .theme--custom {
 	overflow: hidden;
@@ -153,12 +145,17 @@ main {
 	/* --theme-app-bar: #272727; */
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
+	--tint-color: rgb(76, 83, 221);
 	background-color: var(--theme-surface);
 	color: var(--theme-text-primary);
 }
 
 .text-center {
 	text-align: center !important;
+}
+
+.s-row {
+	position: relative;
 }
 
 .h2 {

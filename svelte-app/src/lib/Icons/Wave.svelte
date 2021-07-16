@@ -18,6 +18,8 @@
 
 <style>
 	svg {
+		position: relative;
+		top: -1px;
 		display: block;
 	}
 </style>

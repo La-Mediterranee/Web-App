@@ -1,4 +1,5 @@
-export { default as Home } from './Home.svelte';
-export { default as Person } from './Person.svelte';
-export { default as Fastfood } from './Fastfood.svelte';
-export { default as Restaurant } from './Restaurant.svelte';
+export * from './filled';
+// export * from './outline';
+
+export { default as Wave } from './Wave.svelte';
+export { default as LayeredWaves } from './LayeredWaves.svelte';

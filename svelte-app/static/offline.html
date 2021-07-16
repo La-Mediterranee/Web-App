@@ -4,9 +4,18 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
 
 		<title>Du bist Offline</title>
+		<meta name="description" content="La Mediterranee offline Seite" />
+		<meta name="theme-color" content="#2F3BA2" />
+
+		<!-- Startup configuration -->
+		<link rel="manifest" href="/site.webmanifest" />
+
+		<!-- Fallback application metadata for legacy browsers -->
+		<meta name="application-name" content="La Mediterranee" />
+		<link rel="icon" sizes="16x16 32x32 48x48" href="lo_def.ico" />
+		<link rel="icon" sizes="512x512" href="hi_def.png" />
 
 		<!-- Inline the page's stylesheet. -->
 		<style>
@@ -26,11 +35,32 @@
 		</style>
 	</head>
 	<body>
-		<h1>Du bist Offline</h1>
-
-		<button type="button">⤾ Reload</button>
+		<header>
+			<h1>LA Mediterranee</h1>
+		</header>
+		<main>
+			<h3>Sie sind derzet Offline</h3>
+			<div>Erneut verbinden in <span id="indicator">3</span></div>
+			<button type="button">⤾ Aktualisieren</button>
+		</main>
 
 		<script>
+			let counter = 3;
+			const indicator = document.getElementById('indicator');
+
+			function count() {
+				--counter;
+				if (counter === 0) {
+					window.setTimeout(() => {
+						counter = 3;
+						indicator.innerText = 'Erneut verbinden in ';
+					}, 500);
+					return;
+				}
+				indicator.innerText = counter;
+			}
+
+			window.setTimeout(count, 1000);
 			// Manual reload feature.
 			document.querySelector('button').addEventListener('click', () => {
 				window.location.reload();
@@ -56,7 +86,7 @@
 				} catch {
 					// Unable to connect to the server, ignore.
 				}
-				window.setTimeout(checkNetworkAndReload, 2500);
+				window.setTimeout(checkNetworkAndReload, 3500);
 			}
 
 			checkNetworkAndReload();

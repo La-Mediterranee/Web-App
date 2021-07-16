@@ -1,11 +1,13 @@
 {
-	"name": "La Mediterranee",
+	"name": "La Mediterranee Lieferapp",
 	"short_name": "La Mediterranee",
-	"background_color": "#FFFFFF",
+	"scope": "/",
+	"start_url": "/?utm_source=homescreen",
+	"dir": "ltr",
 	"lang": "de",
 	"display": "standalone",
-	"start_url": "/?utm_source=homescreen",
-	"scope": "/",
+	"background_color": "#FFFFFF",
+	"theme_color": "aliceblue",
 	"shortcuts": [
 		{
 			"name": "Bestellungen Anschauen",

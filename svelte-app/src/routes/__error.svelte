@@ -16,7 +16,6 @@
 
 <script lang="ts">
 	import { dev } from '$app/env';
-	import HttpStatusCode from '$utils/httpResponse';
 
 	export let status: HttpStatusCode;
 	export let error: Error;

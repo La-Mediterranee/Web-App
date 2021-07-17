@@ -1,26 +1,49 @@
 <script lang="ts">
 	import '../app.css';
-	import Navbar from '$lib/components/Navbar/Navbar.svelte';
-	import Footer from '$lib/components/Footer/Footer.svelte';
-	import Installprompt from '$lib/components/Installprompt';
-	import MaterialApp from 'svelte-materialify/src/components/MaterialApp/MaterialAppMin.svelte';
-	// import { FirebaseApp } from '$lib/Firebase';
-	import FirebaseApp from '$lib/Firebase/Firebase.svelte';
-	import Statusbar from '$lib/components/Statusbar';
+	import { onMount } from 'svelte';
 
-	let online: boolean;
+	import Navbar from '$lib/components/Navbar';
+	import Footer from '$lib/components/Footer';
+	import Statusbar from '$lib/components/Statusbar';
+	import Tabbar from '$lib/components/Tabbar/Tabbar.svelte';
+	import Installprompt from '$lib/components/Installprompt';
+	import Providers from './_layoutProviders.svelte';
+
+	import { navItems } from '$utils/navItems';
+
+	let online: boolean = true;
+	let mobile: boolean = true;
+
+	onMount(() => {
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag(...args: unknown[]) {
+			window.dataLayer.push(args as never);
+		}
+
+		gtag('js', new Date());
+		gtag('config', 'GA_MEASUREMENT_ID');
+	});
 </script>
 
 <svelte:window bind:online />
 
-<FirebaseApp>
-	<MaterialApp theme="custom">
-		<Statusbar {online} />
-		<Navbar />
-		<main>
-			<slot />
-		</main>
-		<Installprompt />
-		<Footer />
-	</MaterialApp>
-</FirebaseApp>
+<Providers>
+	<Statusbar {online} />
+	<Navbar routes={navItems} />
+	{#if mobile}
+		<Tabbar routes={navItems} />
+	{/if}
+	<main>
+		<Installprompt installSource={'LayoutInstallButton'} />
+		<slot />
+	</main>
+	<Footer />
+</Providers>
+
+<style>
+	main {
+		min-height: 90vh;
+		position: relative;
+	}
+</style>

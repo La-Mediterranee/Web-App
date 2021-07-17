@@ -61,9 +61,8 @@ const config = {
 			// },
 			resolve: {
 				alias: {
-					// firebase: path.resolve('./node_modules/@firebase/'),
-					$utils: path.resolve('./src/utils'),
-					$firebase: path.resolve('./src/utils/firebase.ts'),
+					$utils: path.resolve('./src/lib/utils'),
+					$firebase: path.resolve('./src/lib/utils/firebase.ts'),
 					$stores: path.resolve('./src/lib/stores'),
 					$components: path.resolve('./src/lib/components')
 				}

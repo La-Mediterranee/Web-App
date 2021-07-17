@@ -6,7 +6,7 @@
 		"target": "ES6",
 		"removeComments": true,
 		"importHelpers": true,
-		"strict": false,
+		"strict": true,
 		/**
 			svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
 			to enforce using \`import type\` instead of \`import\` for Types.
@@ -27,9 +27,9 @@
 		"checkJs": true,
 		"paths": {
 			"$lib/*": ["src/lib/*"],
-			"$utils/*": ["src/utils/*"],
+			"$utils/*": ["src/lib/utils/*"],
 			"$components/*": ["src/lib/components/*"],
-			"$firebase": ["src/utils/firebase.ts"],
+			"$firebase": ["src/lib/utils/firebase.ts"],
 			"$stores/*": ["src/lib/stores/*"]
 			// "firebase/app$": ["firebase/app/dist/index.esm.js"],
 			// "firebase/auth$": ["firebase/auth/dist/index.esm.js"],

@@ -113,7 +113,7 @@ body {
 } */
 
 .theme--custom {
-	overflow: hidden;
+	/* overflow: hidden; */
 	/* --theme-surface: #212121; */
 	--theme-surface: #4994f5e5;
 	--theme-icons-active: #ffffff;

@@ -1,5 +1,6 @@
 export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 export const NODE_ENV = import.meta.env.NODE_ENV;
+export const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
 export const firebaseConfig = {
 	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

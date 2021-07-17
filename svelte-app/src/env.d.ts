@@ -1,5 +1,9 @@
 interface ImportMetaEnv {
+	// Google Analytics
 	readonly VITE_GA_MEASUREMENT_ID: string;
+	// Stripe
+	readonly VITE_STRIPE_PUBLIC_KEY: string;
+	// Firebase
 	readonly VITE_FIREBASE_API_KEY: string;
 	readonly VITE_FIREBASE_AUTH_DOMAIN: string;
 	readonly VITE_FIREBASE_DATABASE_URL: string;

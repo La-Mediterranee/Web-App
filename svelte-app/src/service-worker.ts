@@ -5,43 +5,59 @@ import { build, files, timestamp } from '$service-worker';
 	`files` is an array of URL strings representing the files in your static directory, or whatever 
 	directory is specified by config.kit.files.assets 
 */
-const cached = new Set(files);
-const ASSETS = `cache${timestamp}`;
-const OFFLINE_VERSION = 1;
-const CHACHE_NAME = 'offline';
-const OFFLINE_URL = 'offline.html';
+const cached = new Set(build);
+const ASSETS_CACHE = `cache${timestamp}`;
+const OFFLINE_VERSION = '1';
+const OFFLINE_PAGE_CACHE = `offline_v${OFFLINE_VERSION}`;
+const OFFLINE_URL = '/offline.html';
 
 self.addEventListener('install', (event) => {
 	event.waitUntil(
-		caches
-			.open(ASSETS)
-			.then((cache) => cache.addAll(build))
-			.then(() => {
-				self.skipWaiting();
-			})
+		(async () => {
+			const cache = await caches.open(ASSETS_CACHE);
+			await cache.addAll(build);
+			self.skipWaiting();
+		})()
 	);
 
 	event.waitUntil(
 		(async () => {
-			const chache = await caches.open(CHACHE_NAME);
-			await chache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
+			console.log('[ServiceWorker] Pre-caching offline page');
+			const cache = await caches.open(OFFLINE_PAGE_CACHE);
+			await cache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
+			self.skipWaiting();
 		})()
 	);
-
-	self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-	event.waitUntil(
-		caches.keys().then(async (keys) => {
-			// delete old caches
-			for (const key of keys) {
-				if (key !== ASSETS) await caches.delete(key);
-			}
+	console.log('Activating new service worker...');
+	const cacheWhitelist = [ASSETS_CACHE, OFFLINE_PAGE_CACHE];
 
-			self.clients.claim();
+	event.waitUntil(
+		(async () => {
+			// Enable navigation preload if it's supported.
+			if ('navigationPreload' in self.registration) {
+				await self.registration.navigationPreload.enable();
+			}
+		})()
+	);
+
+	event.waitUntil(
+		caches.keys().then((keys) => {
+			// delete old caches
+			return Promise.all(
+				keys.map((cacheName) => {
+					if (cacheWhitelist.indexOf(cacheName) === -1) {
+						console.log('[ServiceWorker] Removing old cache', cacheName);
+						return caches.delete(cacheName);
+					}
+				})
+			);
 		})
 	);
+
+	self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -55,67 +71,143 @@ self.addEventListener('fetch', (event) => {
 	// ignore dev server requests
 	if (url.hostname === self.location.hostname && url.port !== self.location.port) return;
 
-	// always serve static files and bundler-generated assets from cache
-	if (url.host === self.location.host && cached.has(url.pathname)) {
-		event.respondWith(caches.match(event.request));
-		return;
-	}
-
-	// event.respondWith(
-	// 	caches.match(event.request).then((response) => {
-	// 		if (!response) {
-	// 			//fall back to the network fetch
-	// 			return fetch(event.request);
-	// 		}
-	// 		return response;
-	// 	})
-	// );
-
-	// for pages, you might want to serve a shell `service-worker-index.html` file,
-	// which Sapper has generated for you. It's not right for every
-	// app, but if it's right for yours then uncomment this section
-	/*
-	if (url.origin === self.origin && routes.find(route => route.pattern.test(url.pathname))) {
-		event.respondWith(caches.match('/service-worker-index.html'));
-		return;
-	}
-	*/
-
-	if (event.request.cache === 'only-if-cached') return;
-
-	// for everything else, try the network first, falling back to
-	// cache if the user is offline. (If the pages never change, you
-	// might prefer a cache-first approach to a network-first one.)
-	event.respondWith(
-		caches.open(`offline${timestamp}`).then(async (cache) => {
-			try {
-				const response = await fetch(event.request);
-				cache.put(event.request, response.clone());
-				return response;
-			} catch (err) {
-				const response = await cache.match(event.request);
-				if (response) return response;
-
-				throw err;
-			}
-		})
-	);
+	console.log(event.request.mode);
 
 	// Offline Page
-	if (event.request.mode !== 'navigate') {
+	if (event.request.mode === 'navigate') {
+		// We only want to call event.respondWith() if this is a navigation request
+		// for an HTML page.
+		event.respondWith(
+			(async () => {
+				try {
+					// First, try to use the navigation preload response if it's supported.
+					const preloadResponse = await event.preloadResponse;
+					if (preloadResponse) {
+						return preloadResponse;
+					}
+
+					const networkResponse = await fetch(event.request);
+					return networkResponse;
+				} catch (err) {
+					console.log('Fetch failed; returning offline page instead.', err);
+					const cache = await caches.open(OFFLINE_PAGE_CACHE);
+					console.log(cache);
+					const chachedResponse = await cache.match(OFFLINE_URL);
+					console.log(chachedResponse);
+					return chachedResponse;
+				}
+			})()
+		);
+	}
+
+	// always serve static files and bundler-generated assets from cache
+	if (url.host === self.location.host && cached.has(url.pathname)) {
+		event.respondWith(
+			(async () => {
+				try {
+					const cache = await caches.open(ASSETS_CACHE);
+					const match = await cache.match(event.request);
+					if (match) {
+						return match;
+					}
+					return fetchAndCache(event.request);
+				} catch (error) {
+					console.error(error);
+				}
+			})()
+		);
 		return;
 	}
 
-	event.respondWith(
-		(async () => {
-			try {
-				const networkRespone = await fetch(event.request);
-				return networkRespone;
-			} catch (err) {
-				const cache = await caches.open(CHACHE_NAME);
-				const chachedResponse = await cache.match(OFFLINE_URL);
-				return chachedResponse;
-			}
-		})()
-	);
+	if (event.request.cache === 'only-if-cached') return;
+});
+
+/**
+ * Fetch the asset from the network and store it in the cache.
+ * Fall back to the cache if the user is offline.
+ */
+async function fetchAndCache(request: Request) {
+	const cache = await caches.open(ASSETS_CACHE);
+	try {
+		const response = await fetch(request);
+		if (
+			[0, 200].includes(response.status) &&
+			request.method.toUpperCase() === 'GET' &&
+			request.url.indexOf('chrome-extension') === -1 &&
+			response.type === 'basic'
+		)
+			cache.put(request, response.clone());
+		return response;
+	} catch (err) {
+		const cache = await caches.open(OFFLINE_PAGE_CACHE);
+		if (cache) return cache.match('offline.html');
+		throw err;
+	}
+}
+
+///////////////////////////////
+////// Push Notification //////
+///////////////////////////////
+const applicationServerPublicKey =
+	'BH8-hIchXKMI6AKSee8gD0hhPThRqaEhIEtMJwcTjEQhiOKdG-_2tTIO-6hOAK4kwg5M9Saedjxp4hVE-khhWxY';
+
+function urlB64ToUint8Array(base64String) {
+	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+
+	const rawData = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
+
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
+}
+
+self.addEventListener('push', function (event) {
+	console.log('[Service Worker] Push Received.');
+	console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
+
+	const title = 'Push Codelab';
+	const options = {
+		body: 'Yay it works.',
+		icon: 'images/icon.png',
+		badge: 'images/badge.png'
+	};
+
+	event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', function (event) {
+	console.log('[Service Worker] Notification click Received.');
+
+	const notification = event.notification;
+	const primaryKey = notification.data.primaryKey;
+
+	notification.close();
+	console.log('Closed notification: ' + primaryKey);
+
+	if (event.action === 'close') {
+		notification.close();
+	} else {
+		// self.clients.openWindow('http://www.example.com');
+		event.waitUntil(self.clients.openWindow('https://developers.google.com/web/'));
+		notification.close();
+	}
+});
+
+self.addEventListener('pushsubscriptionchange', async (event) => {
+	console.log("[Service Worker]: 'pushsubscriptionchange' event fired.");
+	const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+
+	async function newSub() {
+		const newSubscription = await self.registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: applicationServerKey
+		});
+
+		console.log('[Service Worker] New subscription: ', newSubscription);
+	}
+
+	event.waitUntil(newSub());
 });

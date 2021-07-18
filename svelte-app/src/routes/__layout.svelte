@@ -31,18 +31,19 @@
 <Providers>
 	<Statusbar {online} />
 	<Navbar routes={navItems} />
-	{#if mobile}
-		<Tabbar routes={navItems} />
-	{/if}
 	<main>
 		<Installprompt installSource={'LayoutInstallButton'} />
 		<slot />
 	</main>
+	{#if mobile}
+		<Tabbar routes={navItems} />
+	{/if}
 	<Footer />
 </Providers>
 
 <style>
 	main {
+		padding-top: 55px;
 		min-height: 90vh;
 		position: relative;
 	}

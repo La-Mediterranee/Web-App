@@ -1,20 +1,14 @@
 <script lang="ts">
+	import { Minus, Plus } from '$lib/Icons';
 	import Card from 'svelte-materialify/src/components/Card/Card.svelte';
 	import CardActions from 'svelte-materialify/src/components/Card/CardActions.svelte';
 	import CardTitle from 'svelte-materialify/src/components/Card/CardTitle.svelte';
-	import Icon from 'svelte-materialify/src/components/Icon/Icon.svelte';
 	import Button from 'svelte-materialify/src/components/Button/Button.svelte';
-	import Chip from 'svelte-materialify/src/components/Chip/Chip.svelte';
-	import { mdiPlus, mdiMinus } from '@mdi/js';
 
-	interface Image {
-		src: string | undefined;
-		alt: string | undefined;
-	}
-
-	export let image: Image;
+	export let product: Product;
 	export let style: string;
 
+	const { image, name, price, sku } = product;
 	let amount = 1;
 
 	function increment() {
@@ -26,11 +20,19 @@
 	}
 </script>
 
-<div class="card-container" {style}>
+<div class="card-container" {style} itemscope itemtype="https://schema.org/Product">
 	<Card raised>
 		<div class="inner-card">
-			<img decoding="async" class="ml-auto" src={image?.src} alt={image?.alt} />
-			<CardTitle class="justify-center h4">Hamburger</CardTitle>
+			<img
+				itemprop="image"
+				decoding="async"
+				class="ml-auto"
+				src={image?.src}
+				alt={image?.alt}
+			/>
+			<CardTitle itemprop="name" class="justify-center h4">{name}</CardTitle>
+			<span itemprop="priceCurrency" content="EUR">€</span>
+			<span class="price" itemprop="price" content={`price`}>{price}</span>
 
 			<div class="actionsContainer">
 				<svg
@@ -54,11 +56,11 @@
 						class="orange darken-1"
 						on:click={decrement}
 					>
-						<Icon path={mdiMinus} />
+						<Minus />
 					</Button>
-					<Chip class="w-100 m-2 justify-center">
+					<span data-amount={amount} class="s-chip w-100 m-2 justify-center size-default">
 						{amount}
-					</Chip>
+					</span>
 					<Button
 						text
 						fab
@@ -66,7 +68,7 @@
 						class="ml-auto orange darken-1"
 						on:click={increment}
 					>
-						<Icon path={mdiPlus} />
+						<Plus />
 					</Button>
 				</CardActions>
 			</div>

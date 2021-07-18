@@ -1,5 +1,11 @@
-export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+export const SHOP_OWNER = import.meta.env.VITE_SHOP_OWNER;
+export const SHOP_NAME = import.meta.env.VITE_SHOP_NAME;
+export const SHOP_LOGO = import.meta.env.VITE_SHOP_LOGO;
+
 export const NODE_ENV = import.meta.env.NODE_ENV;
+
+export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
 export const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
 export const firebaseConfig = {

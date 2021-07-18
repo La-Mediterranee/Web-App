@@ -1,6 +1,6 @@
-import User from './User.svelte';
+import Customer from './Customer.svelte';
 import FirebaseApp from './Firebase.svelte';
 
 // export const FirebaseApp = Firebase;
-export { FirebaseApp, User };
+export { FirebaseApp, Customer };
 // export default FirebaseApp;

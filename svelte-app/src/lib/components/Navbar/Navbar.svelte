@@ -1,13 +1,19 @@
 <script lang="ts">
-	import { navItems } from '$utils/data/navItems';
+	import Magnify from '$lib/Icons/filled/Magnify.svelte';
+
+	export let routes: NavItem[] = [];
 </script>
 
-<div id="nav">
-	<nav role="navigation">
-		<ul class="navbar">
-			{#each navItems as { text, icon }}
+<nav role="navigation">
+	<div id="nav-logo">
+		<img src="/Logos/V1.png" alt="" />
+	</div>
+
+	<div class="nav-content">
+		<ul>
+			{#each routes as { text, icon, href } (href)}
 				<li class="nav-item">
-					<a href={`#${text}`}>
+					<a {href}>
 						<div>
 							<svelte:component this={icon} width={30} height={30} />
 						</div>
@@ -18,42 +24,76 @@
 				</li>
 			{/each}
 		</ul>
-	</nav>
-</div>
+
+		<form>
+			<div>
+				<input type="text" />
+				<button aria-label="Suchen">
+					<Magnify color="#fff" />
+				</button>
+			</div>
+		</form>
+
+		<div id="profile">
+			<img src="" alt="" />
+		</div>
+	</div>
+</nav>
 
 <style lang="scss">
+	// box-shadow: 0 2px 20px 0 var(--subtle);
+	@use "./variables.scss" as *;
+
+	$text-color: var(--tint-color);
+	$bg-color: #000;
+
 	a {
 		color: inherit;
 		text-decoration: none;
 	}
 
-	#nav {
-		box-shadow: 0 2px 20px 0 var(--subtle);
-	}
-
 	nav {
 		// background: linear-gradient(to right, #4050e0e5, #062ba5);
-		background: var(--theme-app-bar);
+		display: flex;
+		top: 0;
+		height: 72.5px;
+		width: 100%;
+		z-index: 10;
+		padding: 0.3em 0.5em;
 		position: fixed;
-		z-index: 3;
-		height: 65px;
-		bottom: 0;
-		left: 0;
-		right: 0;
-
-		@media screen and (min-width: 770px) {
-			position: sticky;
-			height: 50px;
-			top: 0;
-		}
+		background: var(--theme-app-bar);
+		border-radius: 0 0 1.2em 1.2em;
 	}
 
-	.navbar {
+	div {
 		display: flex;
-		justify-content: space-around;
+		justify-content: center;
+	}
+
+	#nav-logo {
+		width: 12%;
+	}
+
+	img {
+		width: 6.7em;
+		height: 3.8em;
+	}
+
+	.nav-content {
+		width: 88%;
+	}
+
+	ul {
+		width: 80%;
 		height: 100%;
-		padding: 0 10px;
+		padding: 0.5em;
+		display: none;
+		justify-content: space-around;
 		align-items: center;
+
+		@media screen and (min-width: $md) {
+			display: flex;
+		}
 	}
 
 	.nav-item {
@@ -67,6 +107,7 @@
 		}
 
 		div {
+			display: block;
 			height: fit-content;
 			width: 30px;
 			height: 30px;
@@ -86,5 +127,48 @@
 				margin-left: 5px;
 			}
 		}
+	}
+
+	form {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+
+		@media screen and (min-width: $md) {
+			width: 20%;
+		}
+
+		div {
+			height: 2.5em;
+			padding: 0.5em 0.7em;
+			border-radius: 1.3em;
+			width: 90%;
+			background: $bg-color;
+			align-items: center;
+		}
+	}
+
+	input {
+		display: flex;
+		align-content: center;
+		align-items: center;
+		color: $text-color;
+		height: 100%;
+		width: calc(100% - 30px);
+	}
+
+	button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 30px;
+		height: 30px;
+	}
+
+	#profile {
+		width: 65px;
+		height: 50px;
 	}
 </style>

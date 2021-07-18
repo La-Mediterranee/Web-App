@@ -7,6 +7,7 @@ export { default as Fastfood } from './Fastfood.svelte';
 export { default as Halal } from './Halal.svelte';
 export { default as Home } from './Home.svelte';
 export { default as Key } from './Key.svelte';
+export { default as Magnify } from './Magnify.svelte';
 export { default as Minus } from './Minus.svelte';
 export { default as Person } from './Person.svelte';
 export { default as Plus } from './Plus.svelte';

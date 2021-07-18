@@ -1,26 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import ProductCard from '$lib/ProductCard.svelte';
-	import Wave from '$lib/Wave.svelte';
-	// import Carousel from '$lib/Carousel.svelte';
+
+	import { Wave } from '$lib/Icons';
+	import { SHOP_LOGO } from '$lib/utils/constants';
+	import ProductCard from '$lib/components/ProductCard';
+
+	// import Carousel from '$lib/Carousel.svelte';w
 	// import SliderItem from '$lib/components/Slider/SliderItem.svelte';
 	// import {Carousel,CarouselItem} from '$lib/components/Carousel';
 
-	const burgerImage = {
-		src: '/burger.png',
-		alt: 'Bild von einem Burger',
+	const burger: Product = {
+		name: 'Hamburger',
+		price: 4.5,
+		image: { src: '/burger.png', alt: 'Bild von einem Burger' }
 	};
 
-	const list = Array(10).fill(burgerImage);
+	const list = Array(10).fill(burger);
 </script>
 
 <svelte:head>
-	<title>Food Delivery App!</title>
+	<title>Essen Liferapp!</title>
 </svelte:head>
 
 <div>
 	<div class="head">
-		<img decoding="async" src="/Logos/V1.png" alt="" height="512" width="918" />
+		<img decoding="async" src={SHOP_LOGO} alt="" height="512" width="918" />
 		<h1>Herzlich Willkomen!</h1>
 	</div>
 	<Wave />
@@ -38,8 +42,9 @@
 </section> -->
 <section>
 	<h2 class="row-header">Essen</h2>
-	<ProductCard image={burgerImage} style="min-width: 220px; max-width: 250px;" />
+	<ProductCard product={burger} style="min-width: 220px; max-width: 250px;" />
 </section>
+
 <section>
 	<h2>Getränke</h2>
 </section>
@@ -60,7 +65,8 @@
 	}
 
 	section {
-		padding: 0 20px;
+		padding: 0 1.2em;
+		margin-bottom: 1em;
 	}
 
 	.head {

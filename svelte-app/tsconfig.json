@@ -26,6 +26,7 @@
 		"allowJs": true,
 		"checkJs": true,
 		"paths": {
+			"types/*": ["src/lib/@types/*"],
 			"$lib/*": ["src/lib/*"],
 			"$utils/*": ["src/lib/utils/*"],
 			"$components/*": ["src/lib/components/*"],

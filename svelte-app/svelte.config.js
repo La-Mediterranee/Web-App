@@ -61,6 +61,7 @@ const config = {
 			// },
 			resolve: {
 				alias: {
+					types: path.resolve('./src/lib/@types'),
 					$utils: path.resolve('./src/lib/utils'),
 					$firebase: path.resolve('./src/lib/utils/firebase.ts'),
 					$stores: path.resolve('./src/lib/stores'),

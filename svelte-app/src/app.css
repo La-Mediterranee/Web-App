@@ -145,7 +145,8 @@ body {
 	/* --theme-app-bar: #272727; */
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
-	--tint-color: rgb(76, 83, 221);
+	/* --tint-color: rgb(76, 83, 221); */
+	--tint-color: #5881a7;
 	background-color: var(--theme-surface);
 	color: var(--theme-text-primary);
 }

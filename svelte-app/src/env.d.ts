@@ -1,4 +1,9 @@
 interface ImportMetaEnv {
+	// Shop
+	readonly VITE_SHOP_NAME: string;
+	readonly VITE_SHOP_OWNER: string;
+	readonly VITE_SHOP_LOGO: string;
+
 	// Google Analytics
 	readonly VITE_GA_MEASUREMENT_ID: string;
 	// Stripe

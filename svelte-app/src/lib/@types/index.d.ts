@@ -3,10 +3,16 @@
 
 type SKU = string;
 
+interface Image {
+	readonly src: string;
+	readonly alt?: string;
+}
+
 interface Product {
-	readonly sku: SKU;
+	readonly sku?: SKU;
 	readonly name: string;
 	readonly price: number;
+	readonly image: Image;
 }
 
 interface CartItem extends Product {
@@ -21,11 +27,6 @@ interface NavItem {
 		readonly width: number;
 		readonly height: number;
 	};
-}
-
-interface Image {
-	readonly src: string;
-	readonly alt?: string;
 }
 
 interface FirebaseContext {

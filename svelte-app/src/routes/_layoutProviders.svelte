@@ -3,7 +3,7 @@
 	import { dev } from '$app/env';
 	import { initializeApp, getApps } from '@firebase/app';
 
-	import Firebase from '$lib/Firebase/Firebase.svelte';
+	import Firebase from '$lib/firebase/Firebase.svelte';
 	import Stripe from '$lib/components/Stripe/Stripe.svelte';
 	import MaterialApp from 'svelte-materialify/src/components/MaterialApp/MaterialAppMin.svelte';
 

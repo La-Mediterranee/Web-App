@@ -1,0 +1,68 @@
+<script lang="ts">
+	import { fetchFromAPI } from '$utils/helpers';
+
+	import { loadStripe, Stripe } from '@stripe/stripe-js';
+	import { onMount } from 'svelte';
+
+	interface Product {
+		name: string;
+		description: string;
+		images: string[];
+		amount: number;
+		currency: 'eur';
+		quantity: number;
+	}
+
+	const product: Product = {
+		name: '',
+		description: '',
+		images: [''],
+		amount: 0,
+		currency: 'eur',
+		quantity: 0
+	};
+
+	let stripe: Stripe;
+
+	onMount(async () => {
+		stripe = await loadStripe(
+			'pk_test_51IsAVoEBqS7ZzpBPUULWoOWoAa3kwI4PBidbVa1qWO9Xk9ELB82exXCnVqsdsBWL2PYhGD2r1LKSdQgXKAKhimdr00x0ZYKGdg'
+		);
+	});
+
+	function changeQuantity(v: number) {
+		product.quantity = Math.max(0, product.quantity + v);
+	}
+
+	async function handleClick(event: Event) {
+		const body = { line_items: [product] };
+		const { id: sessionId } = await fetchFromAPI('checkout', {
+			body
+		});
+
+		const { error } = await stripe.redirectToCheckout({
+			sessionId
+		});
+
+		if (error) {
+			console.log(error);
+		}
+	}
+</script>
+
+<div>
+	<h3>{product.name}</h3>
+	<h4>Stripe Amount: {product.amount}</h4>
+	<img src={product.images[0]} width="250px" alt="product" />
+	<button on:click={() => changeQuantity(-1)} disabled={product.quantity === 1}> - </button>
+	<button on:click={() => changeQuantity(1)} disabled={product.quantity >= 50}> + </button>
+	<span> {product.quantity} </span>
+</div>
+
+<hr />
+
+<button on:click={handleClick}> Start Checkout </button>
+
+<style>
+	/* your styles go here */
+</style>

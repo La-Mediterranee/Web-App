@@ -2,6 +2,8 @@ import { getContext } from 'svelte';
 import { readable } from 'svelte/store'; //writable,
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
+import type { FirebaseContext } from 'types/firebase';
+
 export function userStore() {
 	const firebaseApp = getContext<FirebaseContext>('firebase').getFirebase();
 	const auth = getAuth(firebaseApp);

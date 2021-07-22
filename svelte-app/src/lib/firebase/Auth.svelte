@@ -5,8 +5,8 @@
 
 	import { getFirebaseContext } from './helpers';
 
-	import type { Auth } from '@firebase/auth';
-	import type { Unsubscribe } from '@firebase/util';
+	import type { Auth } from 'firebase/auth';
+	import type { Unsubscribe } from 'firebase/auth';
 	import type { Unsubscriber } from 'svelte/store';
 
 	const dispatch = createEventDispatcher();

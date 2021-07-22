@@ -1,1 +1,1 @@
-export { customer, customerStore } from './auth';
+export { authStore, createAuthStore } from './auth';

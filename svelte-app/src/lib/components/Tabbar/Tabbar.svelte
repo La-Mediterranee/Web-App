@@ -4,14 +4,18 @@
 	export let routes: NavItem[];
 
 	let activeRoute = $page.path;
+
+	// let activeRoute = typeof window !== 'undefined' ? window.location.pathname : $page.path;
+	console.log(activeRoute);
 </script>
 
 <nav role="navigation">
-	{#each routes as { text, icon, href, size } (href)}
+	{#each routes as { text, icon, href, size, rel } (href)}
 		<a
 			{href}
 			class="item"
 			class:active={activeRoute === href}
+			rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
 			on:click={() => (activeRoute = href)}
 		>
 			<div class="item-container">

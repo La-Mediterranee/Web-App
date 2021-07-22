@@ -1,7 +1,5 @@
 <script lang="ts">
+	import Cart from '$lib/components/Cart';
 </script>
 
-<!-- markup (zero or more items) goes here -->
-<style>
-	/* your styles go here */
-</style>
+<Cart />

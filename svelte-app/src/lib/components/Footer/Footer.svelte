@@ -17,10 +17,10 @@
 		<div>
 			<h3>Über LA Mediterranee</h3>
 			<ul>
-				<li>Kontakt</li>
-				<li>Über uns</li>
-				<li>Impressum</li>
-				<li>Geschäftsbedingungen</li>
+				<li><a href="/"> Kontakt </a></li>
+				<li><a href="/ueber-uns"> Über uns </a></li>
+				<li><a href="/impressum">Impressum</a></li>
+				<li><a href="/">Geschäftsbedingungen</a></li>
 			</ul>
 		</div>
 		<div>

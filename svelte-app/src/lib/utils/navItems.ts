@@ -29,11 +29,13 @@ export const navItems: NavItem[] = [
 	{
 		icon: Person,
 		text: 'Profil',
-		href: '/customer'
+		href: '/customer',
+		rel: ['nofollow', 'ugc']
 	},
 	{
 		icon: Cart,
 		text: 'Warenkorb',
-		href: '/cart'
+		href: '/cart',
+		rel: ['nofollow', 'ugc']
 	}
 ];

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/env';
 	import { onMount, createEventDispatcher, setContext } from 'svelte';
-	import { getAnalytics, initializeAnalytics } from '@firebase/analytics';
 
 	import type { FirebaseApp } from 'firebase/app';
 	import type { Analytics } from 'firebase/analytics';

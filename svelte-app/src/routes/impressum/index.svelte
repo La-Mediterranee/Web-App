@@ -1,3 +1,16 @@
+<script context="module">
+	import { browser, dev } from '$app/env';
+
+	// we don't need any JS on this page, though we'll load
+	// it in dev so that we get hot module replacement...
+	export const hydrate = dev;
+	// ...but if the client-side router is already loaded
+	// (i.e. we came here from elsewhere in the app), use it
+	export const router = browser;
+
+	export const prerender = true;
+</script>
+
 <script>
 	import { SHOP_OWNER, SHOP_NAME } from '$lib/utils/constants';
 </script>
@@ -26,19 +39,6 @@ But MDN says: "In the latest spec versions however, its definition has been upda
 	Verantwortlich i.S. des §6 des Staatsvertrages über Mediendienste:<br />
 	LA-Mediterranee Geschäftsführer: {SHOP_OWNER}
 </p>
-
-<address>
-	You can contact author at <a href="http://www.somedomain.com/contact">
-		www.somedomain.com</a
-	>.<br />
-	If you see any bugs, please <a href="mailto:webmaster@somedomain.com"> contact webmaster</a>.<br
-	/>
-	You may also want to visit us:<br />
-	Mozilla Foundation<br />
-	331 E Evelyn Ave<br />
-	Mountain View, CA 94041<br />
-	USA
-</address>
 
 <style>
 	/* your styles go here */

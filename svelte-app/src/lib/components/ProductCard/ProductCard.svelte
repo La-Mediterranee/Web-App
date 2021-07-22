@@ -4,12 +4,21 @@
 	import CardActions from 'svelte-materialify/src/components/Card/CardActions.svelte';
 	import CardTitle from 'svelte-materialify/src/components/Card/CardTitle.svelte';
 	import Button from 'svelte-materialify/src/components/Button/Button.svelte';
+	import Chip from 'svelte-materialify/src/components/Chip/Chip.svelte';
+	import LDTag from '../LDTag';
 
-	export let product: Product;
+	import { WithContext, Product } from 'schema-dts';
+
+	export let product: globalThis.Product;
+	export let locale: string = 'de-DE';
+	export let currency: string = 'EUR';
 	export let style: string;
 
-	const { image, name, price, sku } = product;
 	let amount = 1;
+
+	const { image, name, price, sku, rating } = product;
+
+	const _price = new Intl.NumberFormat(locale, { style: 'currency', currency }).format(price);
 
 	function increment() {
 		++amount;
@@ -18,21 +27,44 @@
 	function decrement() {
 		--amount;
 	}
+
+	const jsonLd: WithContext<Product> = {
+		'@context': 'https://schema.org',
+		'@type': 'Product',
+		image: image.src,
+		name: name,
+		sku: sku,
+		offers: {
+			'@type': 'Offer',
+			price: price,
+			priceCurrency: 'EUR',
+			availability: 'https://schema.org/InStock'
+		},
+		aggregateRating: {
+			'@type': 'AggregateRating',
+			ratingValue: rating?.value,
+			reviewCount: rating?.count
+		}
+	};
 </script>
 
-<div class="card-container" {style} itemscope itemtype="https://schema.org/Product">
+<LDTag schema={jsonLd} />
+
+<div class="card-container" {style}>
 	<Card raised>
 		<div class="inner-card">
-			<img
-				itemprop="image"
-				decoding="async"
-				class="ml-auto"
-				src={image?.src}
-				alt={image?.alt}
-			/>
+			<img decoding="async" class="ml-auto" src={image?.src} alt={image?.alt} />
 			<CardTitle itemprop="name" class="justify-center h4">{name}</CardTitle>
-			<span itemprop="priceCurrency" content="EUR">€</span>
-			<span class="price" itemprop="price" content={`price`}>{price}</span>
+
+			<div>
+				<span content="EUR">€</span>
+				<span class="price" content={`${price}`}>{price}</span>
+			</div>
+
+			<meter min="0" value={`${rating?.value ?? 0}`} max="5"
+				>Rated {`${rating?.value}`}/5</meter
+			>
+			<span>{rating?.count}</span>
 
 			<div class="actionsContainer">
 				<svg
@@ -58,9 +90,9 @@
 					>
 						<Minus />
 					</Button>
-					<span data-amount={amount} class="s-chip w-100 m-2 justify-center size-default">
+					<Chip class="w-100 m-2 justify-center">
 						{amount}
-					</span>
+					</Chip>
 					<Button
 						text
 						fab

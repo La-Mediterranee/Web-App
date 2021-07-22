@@ -1,6 +1,7 @@
 export const SHOP_OWNER = import.meta.env.VITE_SHOP_OWNER;
 export const SHOP_NAME = import.meta.env.VITE_SHOP_NAME;
 export const SHOP_LOGO = import.meta.env.VITE_SHOP_LOGO;
+export const SHOP_URL = import.meta.env.VITE_SHOP_URL;
 
 export const NODE_ENV = import.meta.env.NODE_ENV;
 

@@ -38,4 +38,4 @@ function createCartStore() {
 	};
 }
 
-export const store = createCartStore();
+export const cart = createCartStore();

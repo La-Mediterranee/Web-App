@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { dev } from '$app/env';
-	import { initializeApp, getApps, getApp } from '@firebase/app';
+	import { initializeApp, getApps, getApp } from 'firebase/app';
 
 	import Auth from '$lib/firebase/Auth.svelte';
 	import Firebase from '$lib/firebase/Firebase.svelte';

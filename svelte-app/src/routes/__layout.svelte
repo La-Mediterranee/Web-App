@@ -10,6 +10,7 @@
 	import Providers from './_layoutProviders.svelte';
 
 	import { navItems } from '$utils/navItems';
+	import LDTag from '$lib/components/LDTag';
 
 	let online: boolean = true;
 	let mobile: boolean = true;
@@ -28,6 +29,8 @@
 
 <svelte:window bind:online />
 
+<!-- <LDTag {}/> -->
+
 <Providers>
 	<Statusbar {online} />
 	<Navbar routes={navItems} />
@@ -43,7 +46,7 @@
 
 <style>
 	main {
-		padding-top: 55px;
+		padding-top: 50px;
 		min-height: 90vh;
 		position: relative;
 	}

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
-	import TextField from 'svelte-materialify/src/components/TextField/TextField.svelte';
-
 	import {
 		signIn,
 		signInWithGoogle,
@@ -11,6 +9,7 @@
 		signInWithTwitter
 	} from '$utils/login';
 	import { Account, Key, Eye, EyeOff } from '$lib/Icons/filled';
+	import TextField from 'svelte-materialify/src/components/TextField/TextField.svelte';
 
 	import type { Auth } from 'firebase/auth';
 
@@ -75,7 +74,15 @@
 <section>
 	<form bind:this={form} name="login" novalidate>
 		<div class="wrapper">
-			<TextField bind:value={email} name="email" rules={emailRules} filled rounded>
+			<TextField
+				bind:value={email}
+				type="email"
+				name="email"
+				rules={emailRules}
+				filled
+				autocomplete="email"
+				rounded
+			>
 				<div slot="prepend">
 					<Account color="#fff" />
 				</div>

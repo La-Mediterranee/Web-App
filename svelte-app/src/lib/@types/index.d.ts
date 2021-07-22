@@ -1,36 +1,34 @@
-/// <reference types="firebase/app" />
-// import type { FirebaseApp } from 'firebase/app';
-
-type SKU = string;
-
 interface Image {
 	readonly src: string;
 	readonly alt?: string;
 }
 
-interface Product {
-	readonly sku?: SKU;
-	readonly name: string;
-	readonly price: number;
-	readonly image: Image;
-}
-
-interface CartItem extends Product {
-	quantity: number;
-}
+type AnchorLinkTypes =
+	| 'alternate'
+	| 'author'
+	| 'bookmark'
+	| 'external'
+	| 'help'
+	| 'license'
+	| 'next'
+	| 'nofollow'
+	| 'noopener'
+	| 'noreferrer'
+	| 'prev'
+	| 'search'
+	| 'prev'
+	| 'ugc'
+	| 'tag';
 
 interface NavItem {
 	readonly icon: unknown;
 	readonly text: string;
 	readonly href: string;
+	readonly rel?: AnchorLinkTypes | AnchorLinkTypes[];
 	readonly size?: {
 		readonly width: number;
 		readonly height: number;
 	};
-}
-
-interface FirebaseContext {
-	getFirebase: () => import('firebase/app').FirebaseApp;
 }
 
 enum HttpStatusCode {

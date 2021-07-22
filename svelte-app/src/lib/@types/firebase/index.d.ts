@@ -1,14 +1,19 @@
 import type { CollectionReference, DocumentData, Query } from 'firebase/firestore';
+import type { FirebaseApp } from 'firebase/app';
 
-export interface Options<T> {
+interface Options<T> {
 	startWith?: T;
 	log?: boolean;
 	traceId?: string;
 	once?: boolean;
 }
 
-export interface StorageOptions extends Options<Object> {
+interface StorageOptions extends Options<Object> {
 	meta?: string;
 }
 
-export type QueryFn = (ref: CollectionReference<DocumentData>) => Query;
+type QueryFn = (ref: CollectionReference<DocumentData>) => Query;
+
+interface FirebaseContext {
+	getFirebase: () => FirebaseApp;
+}

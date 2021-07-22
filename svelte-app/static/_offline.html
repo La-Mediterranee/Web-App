@@ -36,10 +36,10 @@
 	</head>
 	<body>
 		<header>
-			<h1>LA Mediterranee</h1>
+			<h1>La Mediterranee</h1>
 		</header>
 		<main>
-			<h3>Sie sind derzet Offline</h3>
+			<h3>Sie sind derzeit Offline</h3>
 			<div>Erneut verbinden in <span id="indicator">3</span></div>
 			<button type="button">⤾ Aktualisieren</button>
 		</main>
@@ -51,16 +51,18 @@
 			function count() {
 				--counter;
 				if (counter === 0) {
-					window.setTimeout(() => {
-						counter = 3;
-						indicator.innerText = 'Erneut verbinden in ';
-					}, 500);
+					indicator.innerText = '...';
 					return;
 				}
+
+				if (counter === -1) {
+					counter = 3;
+				}
+
 				indicator.innerText = counter;
 			}
 
-			window.setTimeout(count, 1000);
+			window.setInterval(count, 800);
 			// Manual reload feature.
 			document.querySelector('button').addEventListener('click', () => {
 				window.location.reload();

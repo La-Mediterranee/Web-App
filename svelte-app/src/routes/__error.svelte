@@ -22,6 +22,7 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex" />
 	<title>{status}</title>
 </svelte:head>
 

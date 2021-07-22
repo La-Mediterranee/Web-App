@@ -2,6 +2,7 @@ import * as path from 'path';
 import sveltePreprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
 import netlify from '@sveltejs/adapter-netlify';
+import adapterStatic from '@sveltejs/adapter-static';
 import { visualizer } from 'rollup-plugin-visualizer';
 import autoprefixer from 'autoprefixer';
 
@@ -37,15 +38,17 @@ const config = {
 	}),
 	kit: {
 		// adapter: netlify(),
-		adapter: node(),
+		// adapter: node(),
+		adapter: adapterStatic(),
 		target: '#svelte',
+		// router: false,
+		prerender: {
+			enabled: true,
+			crawl: true,
+			force: true,
+			pages: ['*']
+		},
 		vite: () => ({
-			// optimizeDeps: {
-			// 	include: ['firebase']
-			// },
-			// ssr: {
-			// 	external: ['firebase']
-			// },
 			// build: {
 			// 	// target: 'es2015',
 			// 	sourcemap: true,

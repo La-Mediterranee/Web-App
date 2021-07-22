@@ -11,9 +11,9 @@
 
 	<div class="nav-content">
 		<ul>
-			{#each routes as { text, icon, href } (href)}
+			{#each routes as { text, icon, href, rel } (href)}
 				<li class="nav-item">
-					<a {href}>
+					<a {href} rel={`${rel instanceof Array ? rel.join(' ') : rel}`}>
 						<div>
 							<svelte:component this={icon} width={30} height={30} />
 						</div>

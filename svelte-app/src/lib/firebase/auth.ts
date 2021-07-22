@@ -14,13 +14,14 @@ export function authStore() {
 	const logOut = () => signOut(auth);
 
 	const storageKey: string = 'customer';
-	const customer = localStorage?.getItem(storageKey);
+	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
+	const customer = storage?.getItem(storageKey);
 	const cached = customer ? JSON.parse(customer) : '';
 
 	const store = readable(cached, (set) => {
 		const teardown = onAuthStateChanged(auth, (customer) => {
 			set(customer);
-			localStorage && localStorage.setItem(storageKey, JSON.stringify(customer));
+			storage?.setItem(storageKey, JSON.stringify(customer));
 		});
 		return () => teardown;
 	});
@@ -34,7 +35,7 @@ export function authStore() {
 	};
 }
 
-// export const customer = customerStore();
+// export const user = authStore();
 
 export function createAuthStore() {
 	const storage = typeof localStorage !== 'undefined' ? localStorage : null;

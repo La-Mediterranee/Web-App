@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/env';
-	import { getApps, getApp } from '@firebase/app';
 	import { onMount, createEventDispatcher, setContext } from 'svelte';
 	import { getAnalytics, initializeAnalytics } from '@firebase/analytics';
 
@@ -8,6 +7,12 @@
 	import type { Analytics } from 'firebase/analytics';
 
 	export let firebase: FirebaseApp | null = null;
+
+	if (!firebase) {
+		throw Error(
+			'No firebase app was provided. You must provide an initialized Firebase app or make it available globally.'
+		);
+	}
 
 	const dispatch = createEventDispatcher();
 
@@ -19,34 +24,16 @@
 		getFirebase: () => firebase
 	});
 
-	if (browser) {
-		onMount(() => {
-			try {
-				firebase = firebase || (getApps().length > 0 ? getApp() : null);
-				if (!firebase) {
-					throw Error(
-						'No firebase app was provided. You must provide an initialized Firebase app or make it available globally.'
-					);
-				} else {
-					// Init analytics
-					try {
-						analytics = getAnalytics(firebase);
-					} catch (error) {
-						analytics = initializeAnalytics(firebase);
-					}
+	onMount(() => {
+		// decided not to use Firebase Analytics and use the standalone google analytics because it can be used offline thanks to workbox
 
-					// Optional event to set additional config
-					dispatch('initializeApp', {
-						firebase
-					});
-
-					ready = true;
-				}
-			} catch (error) {
-				console.error(error);
-			}
+		// Optional event to set additional config
+		dispatch('initializeApp', {
+			firebase
 		});
-	}
+
+		ready = true;
+	});
 </script>
 
 <slot {analytics} />

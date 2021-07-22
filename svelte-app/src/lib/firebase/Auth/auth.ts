@@ -1,10 +1,17 @@
-import { getContext } from 'svelte';
-import { readable } from 'svelte/store'; //writable,
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { readable, writable } from 'svelte/store'; //writable,
+import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
 
-export function customerStore() {
-	const firebaseApp = getContext<FirebaseContext>('firebase').getFirebase();
+import { getFirebaseContext } from '../helpers';
+
+import type { FirebaseApp } from 'firebase/app';
+import type { User } from 'firebase/auth';
+
+export function authStore() {
+	const firebaseApp = getFirebaseContext();
+
 	const auth = getAuth(firebaseApp);
+
+	const logOut = () => signOut(auth);
 
 	const storageKey: string = 'customer';
 	const customer = localStorage?.getItem(storageKey);
@@ -22,25 +29,42 @@ export function customerStore() {
 
 	return {
 		subscribe,
+		logOut,
 		auth
 	};
 }
 
-export const customer = customerStore();
+// export const customer = customerStore();
 
-// const customer = customerStore();
+export function createAuthStore() {
+	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
+	const storageKey: string = 'customer';
+	const customer = storage?.getItem(storageKey);
+	const cached: User | null = customer ? JSON.parse(customer) : null;
 
-// const storageKey = 'customer';
-// const cached = JSON.parse(localStorage.getItem(storageKey));
+	const store = writable(cached);
 
-// localStorage && localStorage.setItem(storageKey, JSON.stringify(customer));
+	const { subscribe, set } = store;
 
-// const store = writable(cached, () => {
-// 	const teardown = onAuthStateChanged(auth, (customer: User) => {
-// 		set(customer);
-// 		localStorage && localStorage.setItem(storageKey, JSON.stringify(customer));
-// 	});
-// 	return () => teardown;
-// });
+	function init(app: FirebaseApp) {
+		const auth = getAuth(app);
 
-// const { subscribe, set } = store;
+		const deinit = onAuthStateChanged(auth, (customer) => {
+			set(customer);
+			storage?.setItem(storageKey, JSON.stringify(customer));
+		});
+
+		const logOut = () => signOut(auth);
+
+		return {
+			logOut,
+			deinit,
+			auth
+		};
+	}
+
+	return {
+		subscribe,
+		init
+	};
+}

@@ -2,7 +2,7 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
 /// <reference types="google.analytics" />
-// /// <reference types="gtag.js" />
+/// <reference types="gtag.js" />
 // /// <reference types="@stripe/stripe-js" />
 
 declare var dataLayer = [];
@@ -35,4 +35,9 @@ interface BeforeInstallPromptEvent extends Event {
 	 * This method returns a Promise.
 	 */
 	prompt(): Promise<void>;
+}
+
+interface PushSubscriptionChangeEvent extends ExtendableEvent {
+	readonly newSubscription: PushSubscription;
+	readonly oldSubscription: PushSubscription;
 }

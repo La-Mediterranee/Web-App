@@ -59,10 +59,12 @@
 	--top2: #062ba5; */
 	font-size: 16px;
 	--body-bg1: #5881a7;
-	--body-bg2: #284159;
+	/* --body-bg2: #284159; */
+	--body-bg2: #1e3953;
 	--top1: #5881a7;
-	--top2: #284159;
+	--top2: #1e3953;
 	--subtle: rgba(0, 0, 0, 0.1);
+	--cart-table-color: #ddd;
 	--carousel-item: 50%;
 }
 
@@ -115,6 +117,8 @@ body {
 .theme--custom {
 	/* overflow: hidden; */
 	/* --theme-surface: #212121; */
+	--tint-color: #729abe;
+	--theme-secondary-color: #1e3953;
 	--theme-surface: #4994f5e5;
 	--theme-icons-active: #ffffff;
 	--theme-icons-inactive: rgba(255, 255, 255, 0.5);
@@ -146,7 +150,6 @@ body {
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
 	/* --tint-color: rgb(76, 83, 221); */
-	--tint-color: #5881a7;
 	background-color: var(--theme-surface);
 	color: var(--theme-text-primary);
 }

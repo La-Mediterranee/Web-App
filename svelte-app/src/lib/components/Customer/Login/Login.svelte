@@ -11,7 +11,7 @@
 	import { Account, Key, Eye, EyeOff } from '$lib/Icons/filled';
 	import TextField from 'svelte-materialify/src/components/TextField/TextField.svelte';
 
-	import type { Auth } from 'firebase/auth';
+	import type { Auth, User } from 'firebase/auth';
 
 	const minLength = 8;
 
@@ -29,26 +29,50 @@
 		}
 	];
 
-	let auth: Auth;
+	export let auth: Auth;
 	let email: string = '';
 	let password: string = '';
 	let show: boolean = false;
 	let error: unknown = null;
 	let form: HTMLFormElement | null = null;
 
-	async function login() {
-		if (!validateInput()) {
-			return;
-		}
+	async function login(e: MouseEvent) {
+		let user: User | undefined;
 
-		console.log(email);
+		try {
+			const target = e.currentTarget as HTMLButtonElement;
+			const value = target.value;
 
-		if (auth != null) {
-			const user = await signIn(auth, email, password);
-
-			if (user) {
-				goto('/customer/profil');
+			switch (value) {
+				case 'login':
+					if (!validateInput()) {
+						return;
+					}
+					user = await signIn(auth, email, password);
+					break;
+				case 'facebook':
+					user = await signInWithFacebook(auth);
+					break;
+				case 'twitter':
+					user = await signInWithTwitter(auth);
+					break;
+				case 'google':
+					user = await signInWithGoogle(auth);
+					break;
+				case 'microsoft':
+					user = await signInWithMicrosoft(auth);
+					break;
+				default:
+					break;
 			}
+
+			if (auth != null) {
+				if (user) {
+					goto('/customer');
+				}
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	}
 
@@ -119,7 +143,7 @@
 			</TextField>
 		</div>
 
-		<button on:click|preventDefault={login}>Einloggen</button>
+		<button on:click|preventDefault={login} value="login">Einloggen</button>
 	</form>
 
 	<a id="register" href="/customer/register" role="button">Registrieren</a>
@@ -127,23 +151,23 @@
 
 <section>
 	<h2>Weiter Optionen:</h2>
-	<button id="google" class="provider" on:click={() => signInWithGoogle(auth)}>
+	<button id="google" type="button" class="provider" on:click={login} value="google">
 		<!-- <img src="/google.svg" alt="Google Logo" /> -->
 		<img src="/google.svg" alt="Google Logo" />
 		<span class="buttonText"> Anmelden mit Google</span>
 	</button>
 
-	<button id="facebook" class="provider" on:click={() => signInWithFacebook(auth)}>
+	<button id="facebook" type="button" class="provider" on:click={login} value="facebook">
 		<img src="/facebook.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Facebook</span>
 	</button>
 
-	<button id="microsoft" class="provider" on:click={() => signInWithMicrosoft(auth)}>
+	<button id="microsoft" type="button" class="provider" on:click={login} value="microsoft">
 		<img src="/microsoft.svg" alt="Microsoft Logo" />
 		<span class="buttonText"> Anmelden mit Microsoft</span>
 	</button>
 
-	<button id="twitter" class="provider" on:click={() => signInWithTwitter(auth)}>
+	<button id="twitter" type="button" class="provider" on:click={login} value="twitter">
 		<img src="/twitter.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Twitter</span>
 	</button>

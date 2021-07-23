@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+
 	import Magnify from '$lib/Icons/filled/Magnify.svelte';
 
 	export let routes: NavItem[] = [];
+
+	$: fixed = $page.path === '/';
 </script>
 
-<nav role="navigation">
+<nav role="navigation" class:fixed={fixed === true}>
 	<div id="nav-logo">
 		<img src="/Logos/V1.png" alt="" />
 	</div>
@@ -52,6 +56,10 @@
 		text-decoration: none;
 	}
 
+	.fixed {
+		position: fixed;
+	}
+
 	nav {
 		// background: linear-gradient(to right, #4050e0e5, #062ba5);
 		display: flex;
@@ -59,10 +67,14 @@
 		height: 72.5px;
 		width: 100%;
 		z-index: 10;
-		padding: 0.3em 0.5em;
-		position: fixed;
+		padding: 0.3em 0;
+		position: sticky;
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
+
+		@media screen and (min-width: $sm) {
+			padding: 0.3em 0.5em;
+		}
 	}
 
 	div {
@@ -71,15 +83,18 @@
 	}
 
 	#nav-logo {
-		width: 12%;
-	}
-
-	img {
+		display: flex;
 		width: 6.7em;
 		height: 3.8em;
+
+		img {
+			width: 6.7em;
+			height: 100%;
+		}
 	}
 
 	.nav-content {
+		display: flex;
 		width: 88%;
 	}
 
@@ -101,9 +116,9 @@
 
 		a {
 			display: flex;
-			flex-direction: column;
 			justify-content: center;
 			align-items: center;
+			flex-direction: row;
 		}
 
 		div {
@@ -115,17 +130,7 @@
 
 		span {
 			font-size: 14px;
-		}
-
-		@media screen and (min-width: 770px) {
-			a {
-				align-items: center;
-				flex-direction: row;
-			}
-
-			span {
-				margin-left: 5px;
-			}
+			margin-left: 5px;
 		}
 	}
 
@@ -135,10 +140,7 @@
 		justify-content: center;
 		height: 100%;
 		width: 100%;
-
-		@media screen and (min-width: $md) {
-			width: 20%;
-		}
+		justify-self: flex-start;
 
 		div {
 			height: 2.5em;
@@ -147,6 +149,10 @@
 			width: 90%;
 			background: $bg-color;
 			align-items: center;
+		}
+
+		@media screen and (min-width: $md) {
+			width: 20%;
 		}
 	}
 
@@ -169,6 +175,14 @@
 
 	#profile {
 		width: 65px;
-		height: 50px;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		margin-right: 0.5em;
+
+		img {
+			width: 100%;
+			height: 50px;
+		}
 	}
 </style>

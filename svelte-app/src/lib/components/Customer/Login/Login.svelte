@@ -9,7 +9,8 @@
 		signInWithTwitter
 	} from '$utils/login';
 	import { Account, Key, Eye, EyeOff } from '$lib/Icons/filled';
-	import TextField from 'svelte-materialify/src/components/TextField/TextField.svelte';
+	// import TextField from 'svelte-materialify/src/components/TextField/TextField.svelte';
+	import TextField from '$lib/components/Material/TextField';
 
 	import type { Auth, User } from 'firebase/auth';
 
@@ -121,6 +122,7 @@
 				type={show ? 'text' : 'password'}
 				rules={passwordRules}
 				counter={`${minLength}+`}
+				autocomplete="current-password"
 				rounded
 				filled
 			>
@@ -151,6 +153,7 @@
 
 <section>
 	<h2>Weiter Optionen:</h2>
+	<noscript> Diese Optionen sind nur mit JS verfügbar </noscript>
 	<button id="google" type="button" class="provider" on:click={login} value="google">
 		<!-- <img src="/google.svg" alt="Google Logo" /> -->
 		<img src="/google.svg" alt="Google Logo" />

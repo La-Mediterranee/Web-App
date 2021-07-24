@@ -1,22 +1,44 @@
 <script lang="ts">
-	import { getFirebaseContext } from '$lib/firebase/helpers';
+	import { goto } from '$app/navigation';
+	import { derived } from 'svelte/store';
 
-	import { signOut } from '@firebase/auth';
-	import type { User, Auth } from 'firebase/auth';
-	import { getContext } from 'svelte';
+	import Button from 'svelte-materialify/src/components/Button/Button.svelte';
 
-	export let user: User | null = null;
+	import type { User } from '@firebase/auth';
+	import type { FirebaseUser } from 'types/firebase';
 
-	export let auth: Auth = getContext('customer');
-	console.log(auth);
+	export let user: FirebaseUser;
+
+	export const profile = derived(user, ($user) => $user as User);
 </script>
 
 <div>
-	<img src={user?.photoURL ?? ''} alt={`${user?.displayName ?? 'User'} Profilbild`} />
+	<div>
+		<img src={$profile?.photoURL ?? ''} alt={`${$profile?.displayName ?? 'User'} Profilbild`} />
 
-	<button on:click={() => signOut(auth)} />
+		<h3>{$profile?.displayName}</h3>
+	</div>
+
+	<section>
+		<h3>Einstellungen</h3>
+	</section>
+
+	<Button
+		type="button"
+		size="x-large"
+		class="orange darken-1"
+		rounded
+		on:click={() => {
+			user.logOut();
+			goto('customer/login');
+		}}
+	>
+		Abmelden
+	</Button>
 </div>
 
 <style>
-	/* your styles go here */
+	div {
+		text-align: center;
+	}
 </style>

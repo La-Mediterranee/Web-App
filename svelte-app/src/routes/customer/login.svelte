@@ -1,9 +1,12 @@
 <script>
 	import Login from '$lib/components/Customer/Login';
+	import { getAuthContext } from '$lib/firebase/helpers';
+
+	const user = getAuthContext();
 </script>
 
 <div>
-	<Login />
+	<Login auth={user.auth} />
 </div>
 
 <style>

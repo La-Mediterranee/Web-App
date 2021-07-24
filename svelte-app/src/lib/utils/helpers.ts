@@ -1,7 +1,14 @@
+import { getContext } from 'svelte';
+import { StripeContext } from 'types/index';
+
 const API = 'http://localhost:3333';
 
 export async function fetchFromAPI(endpointURL: string, opt?: Object) {
-	const { method = 'POST', body = null } = { method: 'POST', body: null, ...opt };
+	const { method, body, ...rest } = {
+		method: 'POST',
+		body: null as Object | null,
+		...opt
+	};
 
 	// const customer = auth.currentUser;
 	// const token = customer && (await customer.getIdToken());
@@ -16,4 +23,8 @@ export async function fetchFromAPI(endpointURL: string, opt?: Object) {
 	});
 
 	return res.json();
+}
+
+export function getStripeContext() {
+	return getContext<StripeContext>('stripe')?.getStripe();
 }

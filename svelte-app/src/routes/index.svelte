@@ -22,7 +22,7 @@
 	<title>Essen Liferapp!</title>
 </svelte:head>
 
-<div>
+<div style="padding-top: 2.2em;">
 	<div class="head">
 		<img decoding="async" src={SHOP_LOGO} alt="" height="512" width="918" />
 		<h1>Herzlich Willkomen!</h1>

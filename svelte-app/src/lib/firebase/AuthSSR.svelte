@@ -2,7 +2,7 @@
 	import { browser } from '$app/env';
 	import { onMount, createEventDispatcher, setContext } from 'svelte';
 
-	import { createAuthStore } from './Auth';
+	import { createAuthStore } from './auth';
 	import { getFirebaseContext } from './helpers';
 
 	import type { Auth } from 'firebase/auth';

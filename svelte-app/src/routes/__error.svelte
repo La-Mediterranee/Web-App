@@ -1,4 +1,6 @@
 <script context="module" lang="ts">
+	import type { HttpStatusCode } from 'types/index';
+
 	interface Props {
 		error: Error;
 		status: HttpStatusCode;

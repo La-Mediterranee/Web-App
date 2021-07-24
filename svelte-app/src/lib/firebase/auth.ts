@@ -1,7 +1,7 @@
 import { readable, writable } from 'svelte/store'; //writable,
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
-import { getFirebaseContext } from '../helpers';
+import { getFirebaseContext } from './helpers';
 
 import type { FirebaseApp } from 'firebase/app';
 import type { User } from 'firebase/auth';

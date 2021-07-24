@@ -1,6 +1,12 @@
+import { Stripe } from '@stripe/stripe-js';
+
 interface Image {
 	readonly src: string;
 	readonly alt?: string;
+}
+
+interface StripeContext {
+	getStripe: () => Stripe;
 }
 
 type AnchorLinkTypes =

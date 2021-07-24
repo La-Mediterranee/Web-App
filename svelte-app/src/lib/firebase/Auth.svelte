@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from './Auth';
+	import { authStore } from './auth';
 	import { onMount, createEventDispatcher, setContext } from 'svelte';
 
 	import type { Unsubscriber } from 'svelte/store';

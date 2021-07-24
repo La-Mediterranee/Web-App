@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { loadStripe } from '@stripe/stripe-js';
-	import { onMount, setContext } from 'svelte';
+	import { setContext } from 'svelte';
 
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 
@@ -21,9 +21,7 @@
 		getStripe: () => stripe
 	});
 
-	onMount(async () => {
-		stripe = await loadStripe(STRIPE_PUBLIC_KEY);
-	});
+	loadStripe(STRIPE_PUBLIC_KEY).then((s) => (stripe = stripe));
 </script>
 
-<slot />
+<slot {stripe} />

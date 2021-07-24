@@ -3,8 +3,7 @@
 	import { dev } from '$app/env';
 	import { initializeApp, getApps, getApp } from 'firebase/app';
 
-	import Auth from '$lib/firebase/Auth.svelte';
-	import Firebase from '$lib/firebase/Firebase.svelte';
+	import { FirebaseApp as Firebase, Auth } from '$lib/firebase';
 	import Stripe from '$lib/components/Stripe/Stripe.svelte';
 	import MaterialApp from 'svelte-materialify/src/components/MaterialApp/MaterialAppMin.svelte';
 
@@ -31,16 +30,19 @@
 	<!-- {@html `<script src="/some-script.js"></script>`} -->
 </svelte:head>
 
-<noscript>
-	<iframe
-		aria-hidden="true"
-		title="Google Tag Manager"
-		src="https://www.googletagmanager.com/ns.html?id=GTM-5XN38L2"
-		height="0"
-		width="0"
-		style="display:none;visibility:hidden"
-	/>
-</noscript>
+{#if !dev}
+	<noscript>
+		<iframe
+			aria-hidden="true"
+			title="Google Tag Manager"
+			src="https://www.googletagmanager.com/ns.html?id=GTM-5XN38L2"
+			height="0"
+			width="0"
+			style="display:none;visibility:hidden"
+		/>
+	</noscript>
+{/if}
+
 <Firebase {firebase}>
 	<Auth>
 		<Stripe>

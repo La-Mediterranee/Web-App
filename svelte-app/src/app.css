@@ -68,37 +68,6 @@
 	--carousel-item: 50%;
 }
 
-@media screen and (min-width: 500px) and (max-width: 799px) {
-	:root {
-		--carousel-item: 33.333333%;
-	}
-}
-
-@media screen and (min-width: 800px) and (max-width: 1099px) {
-	:root {
-		--carousel-item: 25%;
-	}
-}
-
-/* @media screen and (min-width: 1100px) and (max-width: 1399px) {
-	:root {
-		--carousel-item: 20%;
-	}
-} */
-
-@media screen and (min-width: 1100px) {
-	:root {
-		--carousel-item: 20%;
-	}
-}
-
-/* 
-@media screen and (min-width: 1400px) {
-	:root {
-		--carousel-item: 16.66666667%;
-	}
-} */
-
 body {
 	height: 100%;
 	background: var(--body-bg1);
@@ -108,16 +77,9 @@ body {
 	color: black;
 }
 
-/* @media screen and (min-width: 770px) {
-	body {
-		margin-bottom: 0;
-	}
-} */
-
 .theme--custom {
-	/* overflow: hidden; */
-	/* --theme-surface: #212121; */
 	--tint-color: #729abe;
+	--theme-primary-color: #496e8f;
 	--theme-secondary-color: #1e3953;
 	--theme-surface: #4994f5e5;
 	--theme-icons-active: #ffffff;
@@ -146,7 +108,6 @@ body {
 	--theme-chips: #555555;
 	/* --theme-cards: #1e1e1e; */
 	--theme-cards: #263dd1;
-	/* --theme-app-bar: #272727; */
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
 	/* --tint-color: rgb(76, 83, 221); */
@@ -202,3 +163,40 @@ body {
 .w-100 {
 	width: 100%;
 }
+
+@media screen and (min-width: 500px) and (max-width: 799px) {
+	:root {
+		--carousel-item: 33.333333%;
+	}
+}
+
+@media screen and (min-width: 800px) and (max-width: 1099px) {
+	:root {
+		--carousel-item: 25%;
+	}
+}
+
+/* @media screen and (min-width: 1100px) and (max-width: 1399px) {
+	:root {
+		--carousel-item: 20%;
+	}
+} */
+
+@media screen and (min-width: 1100px) {
+	:root {
+		--carousel-item: 20%;
+	}
+}
+
+/* 
+@media screen and (min-width: 1400px) {
+	:root {
+		--carousel-item: 16.66666667%;
+	}
+} */
+
+/* @media screen and (min-width: 770px) {
+	body {
+		margin-bottom: 0;
+	}
+} */

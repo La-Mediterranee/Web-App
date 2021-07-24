@@ -12,6 +12,7 @@ export { default as Minus } from './Minus.svelte';
 export { default as Person } from './Person.svelte';
 export { default as Plus } from './Plus.svelte';
 export { default as Restaurant } from './Restaurant.svelte';
+export { default as Trash } from './Trash.svelte';
 //@endindex
 
 // import { SvelteComponentTyped } from 'svelte';

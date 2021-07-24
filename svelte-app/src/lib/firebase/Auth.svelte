@@ -1,53 +1,33 @@
 <script lang="ts">
-	import { browser } from '$app/env';
-	import { createAuthStore } from './Auth';
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { authStore } from './Auth';
+	import { onMount, createEventDispatcher, setContext } from 'svelte';
 
-	import { getFirebaseContext } from './helpers';
-
-	import type { Auth } from 'firebase/auth';
-	import type { Unsubscribe } from 'firebase/auth';
 	import type { Unsubscriber } from 'svelte/store';
-
-	const dispatch = createEventDispatcher();
-
-	const store = createAuthStore();
 
 	let unsub: Unsubscriber = () => {};
 
-	let auth: {
-		logOut: () => Promise<void>;
-		deinit: Unsubscribe;
-		auth: Auth;
-	};
+	const store = authStore();
+	const dispatch = createEventDispatcher();
 
-	const firebaseApp = getFirebaseContext();
+	setContext('user', {
+		getAuth: () => store
+	});
 
-	if (browser) {
-		onMount(() => {
-			unsub = store.subscribe((user) => {
-				dispatch('customer', {
-					user
-				});
+	onMount(() => {
+		unsub = store.subscribe((user) => {
+			dispatch('customer', {
+				user
 			});
-
-			auth = store.init(firebaseApp);
-
-			return () => {
-				unsub();
-				auth?.deinit();
-			};
 		});
-	}
+
+		return () => {
+			unsub();
+		};
+	});
 </script>
 
 <slot name="before" />
 
-<slot />
-<!-- {#if $customer}
-	<slot customer={$customer} auth={customer.auth} />
-{:else}
-	<slot name="signed-out" />
-{/if} -->
+<slot user={$store} auth={store.auth} />
 
 <slot name="after" />

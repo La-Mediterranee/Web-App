@@ -9,6 +9,7 @@
 	import Installprompt from '$lib/components/Installprompt';
 	import Providers from './_layoutProviders.svelte';
 
+	import { mediQueries } from '$lib/utils/constants';
 	import { navItems } from '$utils/navItems';
 	import LDTag from '$lib/components/LDTag';
 
@@ -24,6 +25,17 @@
 
 		gtag('js', new Date());
 		gtag('config', 'GA_MEASUREMENT_ID');
+
+		const mq = window.matchMedia(`(min-width: ${mediQueries.md})`);
+
+		mq.addEventListener('change', (e) => {
+			if (e.matches) {
+				mobile = false;
+				return;
+			}
+
+			mobile = true;
+		});
 	});
 </script>
 
@@ -46,7 +58,7 @@
 
 <style>
 	main {
-		padding-top: 50px;
+		padding-top: 1.2em;
 		min-height: 90vh;
 		position: relative;
 	}

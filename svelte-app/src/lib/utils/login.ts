@@ -1,5 +1,4 @@
 import {
-	signInWithRedirect,
 	signInWithPopup,
 	signInWithEmailAndPassword,
 	GoogleAuthProvider,
@@ -28,6 +27,8 @@ export async function signIn(auth: Auth, email: string, password: string) {
 	} catch (err: unknown) {
 		const errorCode = (err as AuthError).code;
 		const errorMessage = (err as AuthError).message;
+		console.error(errorCode);
+		console.error(errorMessage);
 	}
 }
 
@@ -45,13 +46,16 @@ export async function signInWithGoogle(auth: Auth) {
 		const user = result.user;
 		return user;
 	} catch (err) {
+		// The AuthCredential type that was used.
+		const credential = GoogleAuthProvider.credentialFromError(err);
+
 		// Handle Errors here.
 		const errorCode = err.code;
 		const errorMessage = err.message;
+		console.error(errorCode);
+		console.error(errorMessage);
 		// The email of the user's account used.
 		const email = err.email;
-		// The AuthCredential type that was used.
-		const credential = GoogleAuthProvider.credentialFromError(err);
 	}
 }
 export async function signInWithFacebook(auth: Auth) {
@@ -69,34 +73,30 @@ export async function signInWithFacebook(auth: Auth) {
 		// const credential = FacebookAuthProvider.credentialFromResult(result);
 		// const accessToken = credential.accessToken;
 	} catch (error) {
-		// Handle Errors here.
-		const errorCode = error.code;
-		const errorMessage = error.message;
-		// The email of the user's account used.
-		const email = error.email;
 		// The AuthCredential type that was used.
 		const credential = FacebookAuthProvider.credentialFromError(error);
+		const errorCode = error.code;
+		const errorMessage = error.message;
+		console.error(errorCode);
+		console.error(errorMessage);
+		// The email of the user's account used.
+		const email = error.email;
 	}
 }
 
 export async function signInWithMicrosoft(auth: Auth) {
 	const provider = new OAuthProvider('microsoft.com');
 	try {
-		const result = (await signInWithPopup(auth, provider)) as MicrosoftUserCredentials;
-		// const result = await signInWithRedirect(auth, provider);
+		const result = await signInWithPopup(auth, provider);
 		// The signed-in user info.
 		const user = result.user;
-		console.log(result.additionalUserInfo);
 		return user;
-		// User is signed in.
-		// IdP data available in result.additionalUserInfo.profile.
-
-		// // Get the OAuth access token and ID Token
-		// const credential = OAuthProvider.credentialFromResult(result);
-		// const accessToken = credential.accessToken;
-		// const idToken = credential.idToken;
 	} catch (error) {
-		// Handle error.
+		const credential = OAuthProvider.credentialFromError(error);
+		const errorCode = error.code;
+		const errorMessage = error.message;
+		console.error(errorCode);
+		console.error(errorMessage);
 	}
 }
 
@@ -108,7 +108,11 @@ export async function signInWithTwitter(auth: Auth) {
 		const user = result.user;
 		return user;
 	} catch (error) {
-		// Handle error.
 		const credential = TwitterAuthProvider.credentialFromError(error);
+		// Handle error.
+		const errorCode = error.code;
+		const errorMessage = error.message;
+		console.error(errorCode);
+		console.error(errorMessage);
 	}
 }

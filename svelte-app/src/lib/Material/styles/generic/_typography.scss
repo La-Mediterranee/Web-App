@@ -1,0 +1,39 @@
+@use '../variables' as vars;
+@use '../tools/breakpoints' as *;
+@use '../tools/functions' as *;
+
+@each $align in ('left', 'center', 'right') {
+  .text-#{$align} {
+    text-align: #{$align};
+  }
+}
+
+@each $align in ('left', 'center', 'right') {
+  @include create_breakpoints() using ($screen_size) {
+    .text-#{$screen_size}-#{$align} {
+      text-align: #{$align};
+    }
+  }
+}
+
+@each $decoration in ('none', 'overline', 'underline', 'line-through') {
+  .text-decoration-#{$decoration} {
+    text-decoration: #{$decoration};
+  }
+}
+
+@each $transform in ('lowercase', 'uppercase', 'capitalize') {
+  .text-#{$transform} {
+    text-transform: #{$transform};
+  }
+}
+
+@each $name, $value in vars.$font-weights {
+  .font-weight-#{$name} {
+    font-weight: $value;
+  }
+}
+
+.font-italic {
+  font-style: italic;
+}

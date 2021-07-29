@@ -6,6 +6,8 @@
 // /// <reference types="@stripe/stripe-js" />
 
 declare var dataLayer = [];
+var opr: string;
+var chrome: string;
 
 /**
  * The BeforeInstallPromptEvent is fired at the Window.onbeforeinstallprompt handler

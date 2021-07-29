@@ -18,11 +18,12 @@
 		"@mdi/js": "^5.9.55",
 		"@rollup/plugin-commonjs": "^19.0.0",
 		"@rollup/plugin-node-resolve": "^13.0.0",
-		"@sveltejs/adapter-netlify": "^1.0.0-next.19",
+		"@sveltejs/adapter-netlify": "^1.0.0-next.25",
 		"@sveltejs/adapter-node": "^1.0.0-next.32",
 		"@sveltejs/adapter-static": "^1.0.0-next.13",
 		"@sveltejs/kit": "next",
-		"@types/google.analytics": "0.0.41",
+		"@types/dotenv": "^8.2.0",
+		"@types/google.analytics": "^0.0.42",
 		"@types/gtag.js": "^0.0.7",
 		"@types/workbox-sw": "^4.3.2",
 		"@typescript-eslint/eslint-plugin": "^4.28.2",
@@ -33,7 +34,6 @@
 		"eslint-plugin-svelte3": "^3.2.0",
 		"firebase": "^9.0.0-beta.7",
 		"idb": "^6.0.0",
-		"localforage": "^1.9.0",
 		"postcss": "^8.3.5",
 		"rollup-plugin-visualizer": "^5.5.2",
 		"sass": "^1.35.2",
@@ -54,6 +54,7 @@
 	},
 	"dependencies": {
 		"@stripe/stripe-js": "^1.15.1",
+		"firebase-admin": "^9.11.0",
 		"lazysizes": "^5.3.2"
 	}
 }

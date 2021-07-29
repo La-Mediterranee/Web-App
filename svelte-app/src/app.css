@@ -82,20 +82,25 @@ body {
 	--theme-primary-color: #496e8f;
 	--theme-secondary-color: #1e3953;
 	--theme-surface: #4994f5e5;
+	/* --theme-surface: #d81717e5; */
 	--theme-icons-active: #ffffff;
 	--theme-icons-inactive: rgba(255, 255, 255, 0.5);
 	--theme-text-primary: #000000;
 	--theme-text-secondary: rgba(255, 255, 255, 0.7);
 	--theme-text-disabled: rgba(255, 255, 255, 0.5);
-	--theme-text-link: #82b1ff;
+	/* --theme-text-link: #82b1ff; */
+	--theme-text-link: #ddd;
 	--theme-inputs-box: #ffffff;
 	--theme-buttons-disabled: rgba(255, 255, 255, 0.3);
 	--theme-tabs: rgba(255, 255, 255, 0.6);
+	--theme-text-primary: #050435;
 	--theme-text-fields-filled: rgba(255, 255, 255, 0.08);
 	--theme-text-fields-filled-hover: rgba(255, 255, 255, 0.16);
 	--theme-text-fields-outlined: rgba(255, 255, 255, 0.24);
 	--theme-text-fields-outlined-disabled: rgba(255, 255, 255, 0.16);
 	--theme-text-fields-border: rgba(255, 255, 255, 0.7);
+	--theme-text-fields-border-width: 0.165em;
+	--theme-text-fields-border-width-hover: 0.165em;
 	--theme-controls-disabled: rgba(255, 255, 255, 0.3);
 	--theme-controls-thumb-inactive: #bdbdbd;
 	--theme-controls-thumb-disabled: #424242;
@@ -162,6 +167,10 @@ body {
 
 .w-100 {
 	width: 100%;
+}
+
+.visually-hidden {
+	visibility: hidden;
 }
 
 @media screen and (min-width: 500px) and (max-width: 799px) {

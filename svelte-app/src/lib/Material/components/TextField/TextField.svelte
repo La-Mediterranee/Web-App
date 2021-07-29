@@ -1,13 +1,13 @@
 <script lang="ts">
-	import Input from "../Input";
-	import Icon from "../Icon";
-	import uid from "../../internal/uid";
-	import clearIcon from "../../internal/Icons/close";
+	import Input from '../Input';
+	import Icon from '../Icon';
+	import uid from '../../internal/uid';
+	import clearIcon from '../../internal/Icons/close';
 
-	let klass = "";
+	let klass = '';
 	export { klass as class };
-	export let value = "";
-	export let color = "primary";
+	export let value = '';
+	export let color = 'primary';
 	export let filled = false;
 	export let solo = false;
 	export let outlined = false;
@@ -18,7 +18,7 @@
 	export let readonly = false;
 	export let disabled = false;
 	export let placeholder: string | undefined = undefined;
-	export let hint = "";
+	export let hint = '';
 	export let counter: boolean | number | string = false;
 	export let messages: string[] = [];
 	export let rules: Function[] = [];
@@ -27,9 +27,10 @@
 	export let error = false;
 	export let success = false;
 	export let id = `s-input-${uid(5)}`;
-	export let style: string = "";
+	export let style: string = '';
 	export let inputElement: HTMLInputElement | undefined = undefined;
-	export let autocomplete: HTMLAutoCompleteAttribute = "off";
+	export let autocomplete: HTMLAutoCompleteAttribute = 'off';
+	export let autofocus: true | undefined = undefined;
 
 	let focused = false;
 	let errorMessages: string[] = [];
@@ -39,7 +40,7 @@
 	export function validate() {
 		errorMessages = rules
 			.map((r) => r(value))
-			.filter((r) => typeof r === "string");
+			.filter((r) => typeof r === 'string');
 		if (errorMessages.length) error = true;
 		else {
 			error = false;
@@ -57,7 +58,7 @@
 	}
 
 	function clear() {
-		value = "";
+		value = '';
 	}
 
 	function onInput() {
@@ -94,14 +95,17 @@
 			</label>
 			<slot name="content" />
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
+			<!-- svelte-ignore a11y-autofocus -->
 			<input
-				type="text"
-				bind:this={inputElement}
-				bind:value
-				{placeholder}
 				{id}
+				type="text"
+				{placeholder}
 				{readonly}
 				{disabled}
+				{autofocus}
+				{autocomplete}
+				bind:this={inputElement}
+				bind:value
 				on:focus={onFocus}
 				on:blur={onBlur}
 				on:input={onInput}
@@ -112,12 +116,11 @@
 				on:keypress
 				on:keydown
 				on:keyup
-				{autocomplete}
 				{...$$restProps}
 			/>
 		</div>
 
-		{#if clearable && value !== ""}
+		{#if clearable && value !== ''}
 			<div on:click={clear} style="cursor:pointer">
 				<!-- Slot for the icon when `clearable` is true. -->
 				<slot name="clear-icon">

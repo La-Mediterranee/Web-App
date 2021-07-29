@@ -45,7 +45,7 @@
 		border-radius: inherit;
 		width: inherit;
 		bottom: -1px;
-		content: "";
+		content: '';
 		left: 0;
 		position: absolute;
 		transition: $primary-transition;
@@ -55,7 +55,7 @@
 	&::before {
 		border-color: var(--theme-text-fields-border);
 		border-style: solid;
-		border-width: thin 0 0 0;
+		border-width: var(--theme-text-fields-border-width) 0 0 0;
 	}
 
 	&::after {
@@ -69,6 +69,7 @@
 	&:hover {
 		&::before {
 			border-color: var(--theme-text-primary);
+			border-width: var(--theme-text-fields-border-width-hover);
 		}
 	}
 
@@ -83,11 +84,11 @@
 	}
 
 	& > {
-		[slot="prepend"] {
+		[slot='prepend'] {
 			margin-right: $text-field-prepend-append-margin;
 		}
 
-		[slot="append"] {
+		[slot='append'] {
 			margin-right: $text-field-prepend-append-margin;
 		}
 	}
@@ -95,7 +96,11 @@
 	&.outlined {
 		&::before {
 			top: 0;
-			border-width: thin;
+			border-width: var(--theme-text-fields-border-width);
+		}
+
+		&:hover::before {
+			border-width: var(--theme-text-fields-border-width-hover);
 		}
 
 		&:focus-within::before {

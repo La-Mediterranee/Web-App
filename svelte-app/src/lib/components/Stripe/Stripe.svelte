@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { loadStripe } from '@stripe/stripe-js';
-	import { setContext } from 'svelte';
+	import { loadStripe } from '@stripe/stripe-js/pure';
+	import { onMount, setContext } from 'svelte';
 
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 
 	import type { Stripe } from '@stripe/stripe-js';
-
-	// ID of the connected stripe account
-	// export let stripeAccount: string | undefined = undefined;
 
 	const key = 'stripe';
 
@@ -18,10 +15,16 @@
 	let stripe: Stripe | null = null;
 
 	setContext(key, {
-		getStripe: () => stripe
+		getStripe: () => stripe,
 	});
 
-	loadStripe(STRIPE_PUBLIC_KEY).then((s) => (stripe = stripe));
+	onMount(async () => {
+		try {
+			stripe = await loadStripe(STRIPE_PUBLIC_KEY);
+		} catch (error) {
+			console.error(error);
+		}
+	});
 </script>
 
 <slot {stripe} />

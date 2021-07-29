@@ -5,13 +5,13 @@
 
 	import { FirebaseApp as Firebase, Auth } from '$lib/firebase';
 	import Stripe from '$lib/components/Stripe/Stripe.svelte';
-	import MaterialApp from 'svelte-materialify/src/components/MaterialApp/MaterialAppMin.svelte';
+	import MaterialApp from '$material/components/MaterialApp/MaterialAppMin.svelte';
 
 	import { firebaseConfig, GA_MEASUREMENT_ID } from '$utils/constants';
 
 	import type { FirebaseApp } from 'firebase/app';
 
-	const firebase: FirebaseApp | null = !getApps().length
+	const firebase: FirebaseApp | null = !getApps()?.length
 		? initializeApp(firebaseConfig)
 		: getApp();
 

@@ -1,20 +1,24 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+		"esModuleInterop": true,
 		"noImplicitReturns": true,
-		"noUnusedLocals": true,
+		"noUnusedLocals": false,
 		"noImplicitAny": false,
-		"outDir": "lib",
+		"outDir": "dist",
 		"sourceMap": true,
 		"strict": true,
 		"target": "es2017",
 		"lib": ["ESNext"],
-		"strictNullChecks": false,
-		"esModuleInterop": true,
+		"strictNullChecks": true,
+		"baseUrl": "./",
 		"paths": {
-			"@consts": ["./src/util/consts.ts"]
+			"@config/*": ["src/config/*"],
+			"@util/*": ["src/util/*"],
+			"@routes/*": ["src/routes/*"]
 		}
 	},
 	"compileOnSave": true,
-	"include": ["src"]
+	"include": ["./src"]
 }

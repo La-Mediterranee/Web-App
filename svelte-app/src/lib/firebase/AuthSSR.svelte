@@ -14,7 +14,7 @@
 	const dispatch = createEventDispatcher();
 
 	setContext('firebaseAuth', {
-		getUser: () => user
+		getUser: () => user,
 	});
 
 	const store = createAuthStore();
@@ -31,7 +31,7 @@
 		onMount(() => {
 			unsub = store.subscribe((user) => {
 				dispatch('customer', {
-					user
+					user,
 				});
 			});
 
@@ -43,8 +43,6 @@
 			};
 		});
 	}
-
-	console.log($store);
 </script>
 
 <slot name="before" />

@@ -4,16 +4,16 @@
  * Options for customizing ripples
  */
 const defaults = {
-	color: "currentColor",
-	class: "",
+	color: 'currentColor',
+	class: '',
 	opacity: 0.1,
 	centered: false,
-	spreadingDuration: ".4s",
-	spreadingDelay: "0s",
-	spreadingTimingFunction: "linear",
-	clearingDuration: "1s",
-	clearingDelay: "0s",
-	clearingTimingFunction: "ease-in-out",
+	spreadingDuration: '.4s',
+	spreadingDelay: '0s',
+	spreadingTimingFunction: 'linear',
+	clearingDuration: '1s',
+	clearingDelay: '0s',
+	clearingTimingFunction: 'ease-in-out',
 };
 
 /**
@@ -29,9 +29,6 @@ export function RippleStart(
 	e.stopImmediatePropagation();
 	const opts = { ...defaults, ...options };
 
-	console.log(e instanceof MouseEvent);
-	console.log(e instanceof TouchEvent);
-
 	const isTouchEvent = e instanceof TouchEvent ? !!e.touches[0] : false;
 	// Parent element
 	const target = isTouchEvent
@@ -40,23 +37,23 @@ export function RippleStart(
 		: e.currentTarget;
 
 	// Create ripple
-	const ripple = document.createElement("div");
+	const ripple = document.createElement('div');
 	const rippleStyle = ripple.style;
 
 	// Adding default stuff
 	ripple.className = `material-ripple ${opts.class}`;
-	rippleStyle.position = "absolute";
-	rippleStyle.color = "inherit";
-	rippleStyle.borderRadius = "50%";
-	rippleStyle.pointerEvents = "none";
-	rippleStyle.width = "100px";
-	rippleStyle.height = "100px";
-	rippleStyle.marginTop = "-50px";
-	rippleStyle.marginLeft = "-50px";
+	rippleStyle.position = 'absolute';
+	rippleStyle.color = 'inherit';
+	rippleStyle.borderRadius = '50%';
+	rippleStyle.pointerEvents = 'none';
+	rippleStyle.width = '100px';
+	rippleStyle.height = '100px';
+	rippleStyle.marginTop = '-50px';
+	rippleStyle.marginLeft = '-50px';
 	target.appendChild(ripple);
 	rippleStyle.opacity = opts.opacity;
 	rippleStyle.transition = `transform ${opts.spreadingDuration} ${opts.spreadingTimingFunction} ${opts.spreadingDelay},opacity ${opts.clearingDuration} ${opts.clearingTimingFunction} ${opts.clearingDelay}`;
-	rippleStyle.transform = "scale(0) translate(0,0)";
+	rippleStyle.transform = 'scale(0) translate(0,0)';
 	rippleStyle.background = opts.color;
 
 	// Positioning ripple
@@ -87,9 +84,9 @@ export function RippleStart(
  */
 export function RippleStop(ripple: HTMLElement) {
 	if (ripple) {
-		ripple.addEventListener("transitionend", (e) => {
-			if (e.propertyName === "opacity") ripple.remove();
+		ripple.addEventListener('transitionend', (e) => {
+			if (e.propertyName === 'opacity') ripple.remove();
 		});
-		ripple.style.opacity = "" + 0;
+		ripple.style.opacity = '' + 0;
 	}
 }

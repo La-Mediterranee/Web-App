@@ -1,0 +1,28 @@
+form {
+	display: block;
+	width: 100%;
+	color: rgb(55, 243, 180);
+
+	div {
+		display: block;
+		width: 100%;
+
+		:global(div[class~='s-input']) {
+			padding: 0.5em 0.3em;
+		}
+
+		:global(div[class~='s-input__slot']) {
+			color: #ddd;
+		}
+	}
+}
+
+fieldset {
+	// padding: 0.75em;
+	margin-bottom: 1.2em;
+	border: 0;
+
+	legend {
+		font-size: 1.2rem;
+	}
+}

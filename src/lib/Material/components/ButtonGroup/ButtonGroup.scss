@@ -1,0 +1,30 @@
+@import './variables';
+
+.s-btn-group {
+  border-radius: $btn-group-border-radius;
+  display: inline-flex;
+  max-width: 100%;
+  flex: 0 1 auto;
+  position: relative;
+  transition: $primary-transition;
+
+  &:not(.elevated) {
+    .s-btn-group-item.s-btn {
+      box-shadow: none;
+    }
+  }
+
+  &.borderless {
+    .s-btn-group-item.s-btn {
+      border-width: 0;
+    }
+  }
+
+  &.tile {
+    border-radius: 0;
+  }
+
+  &.rounded {
+    border-radius: $btn-group-round-border-radius;
+  }
+}

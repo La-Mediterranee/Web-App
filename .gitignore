@@ -1,6 +1,9 @@
 node_modules
-
 .DS_Store
 .vscode
-
 build
+.svelte-kit/
+.env.local
+workers-site
+notes.txt
+service-account.json

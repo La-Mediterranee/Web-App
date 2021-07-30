@@ -1,0 +1,16 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"loose": true,
+				"modules": false,
+				"targets": {
+					// ! Very important. Target es6+
+					"esmodules": true
+				}
+			}
+		],
+		"@babel/preset-typescript"
+	]
+}

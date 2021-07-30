@@ -1,0 +1,12 @@
+name = "my-worker"
+account_id=""
+workers_dev=true
+# route = "example.com/*"
+
+[vars]
+FOO = "some value"
+BAR = "some other string"
+
+[site]
+bucket = "./build"
+entry-point = "./workers-site"

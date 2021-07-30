@@ -1,0 +1,31 @@
+@use '../variables' as *;
+
+@mixin create_breakpoints(
+  $screens: (
+    'sm',
+    'md',
+    'lg',
+    'xl',
+  )
+) {
+  $_breakpoints: (
+    'sm': map-get($display-breakpoints, 'sm-and-up'),
+    'md': map-get($display-breakpoints, 'md-and-up'),
+    'lg': map-get($display-breakpoints, 'lg-and-up'),
+    'xl': map-get($display-breakpoints, 'xl-only'),
+  );
+  @each $screen_size in $screens {
+    @if map-has-key($_breakpoints, $screen_size) {
+      @media #{map-get($_breakpoints, $screen_size)} {
+        @content ($screen_size);
+      }
+    }
+  }
+}
+
+/*
+Usage:
+@include create_breakpoints() using ($screen_size) {
+  .class-#{screen_size} {property: value}
+}
+*/

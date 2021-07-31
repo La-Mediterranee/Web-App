@@ -2,16 +2,17 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 
+	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
 	import Statusbar from '$lib/components/Statusbar';
+	import Modal from '$lib/components/Modal/Modal.svelte';
 	import Tabbar from '$lib/components/Tabbar/Tabbar.svelte';
 	import Installprompt from '$lib/components/Installprompt';
 	import Providers from './_layoutProviders.svelte';
 
 	import { mediQueries } from '$lib/utils/constants';
 	import { navItems } from '$utils/navItems';
-	import LDTag from '$lib/components/LDTag';
 
 	let online: boolean = true;
 	let mobile: boolean = true;
@@ -44,16 +45,19 @@
 <!-- <LDTag {}/> -->
 
 <Providers>
-	<Statusbar {online} />
-	<Navbar routes={navItems} />
-	<main>
-		<Installprompt installSource={'LayoutInstallButton'} />
-		<slot />
-	</main>
-	{#if mobile}
-		<Tabbar routes={navItems} />
-	{/if}
-	<Footer />
+	<div id="mainContent">
+		<Statusbar {online} />
+		<Navbar routes={navItems} />
+		<main>
+			<Installprompt installSource={'LayoutInstallButton'} />
+			<slot />
+		</main>
+		{#if mobile}
+			<Tabbar routes={navItems} />
+		{/if}
+		<Footer />
+	</div>
+	<Modal />
 </Providers>
 
 <style>

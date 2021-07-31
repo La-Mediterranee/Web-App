@@ -15,7 +15,9 @@
 
 	onMount(async () => {
 		if (typeof IntersectionObserver !== 'undefined') {
-			window.IntersectionObserver = (await import(intersectionPolyfill)).default;
+			window.IntersectionObserver = (
+				await import(intersectionPolyfill)
+			).default;
 
 			const rootMargin = `${bottom}px ${left}px ${top}px ${right}px`;
 

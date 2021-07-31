@@ -1,22 +1,3 @@
-<script context="module" lang="ts">
-	export function bind(
-		Component: SvelteComponentConstructor<any, any>,
-		props = {}
-	) {
-		return function ModalComponent(options: {
-			props: any;
-		}): SvelteComponent {
-			return new Component({
-				...options,
-				props: {
-					...props,
-					...options.props,
-				},
-			});
-		};
-	}
-</script>
-
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher, onMount, setContext } from 'svelte';
@@ -27,8 +8,6 @@
 
 	let Component: SvelteComponent | null;
 	let ComponentProps = {};
-	let content: SvelteComponent | null;
-	let contentProps = {};
 	let isMounted = false;
 	let opened = false;
 
@@ -81,7 +60,7 @@
 		// currentTransitionWindow = state.transitionWindow;
 	};
 
-	interface OnOpen {
+	interface OpenParams {
 		Component: SvelteComponent;
 		props?: Object;
 		options?: Object;
@@ -98,7 +77,7 @@
 		props: newProps = {},
 		options = {},
 		callback = {},
-	}: OnOpen) {
+	}: OpenParams) {
 		Component = NewComponent;
 		ComponentProps = newProps;
 		updateStyleTransition();
@@ -106,12 +85,10 @@
 		(onOpen = (event) => {
 			if (callback.onOpen) callback.onOpen(event);
 			dispatch('open');
-			dispatch('opening'); // Deprecated. Do not use!
 		}),
 			(onClose = (event) => {
 				if (callback.onClose) callback.onClose(event);
 				dispatch('close');
-				dispatch('closing'); // Deprecated. Do not use!
 			}),
 			(onOpened = (event) => {
 				if (callback.onOpened) callback.onOpened(event);
@@ -123,22 +100,20 @@
 		};
 	}
 
-	function close(
-		callback:
-			| {
-					onClose?: (event: Event) => void;
-					onClosed?: (event: Event) => void;
-			  }
-			| MouseEvent = {}
-	) {
+	type CloseParam =
+		| {
+				onClose?: (event: Event) => void;
+				onClosed?: (event: Event) => void;
+		  }
+		| MouseEvent;
+
+	function close(callback?: CloseParam) {
 		onClose =
-			callback instanceof MouseEvent ||
-			typeof callback.onClose === 'undefined'
+			callback instanceof MouseEvent || callback?.onClose == null
 				? onClose
 				: callback.onClose;
 		onClosed =
-			callback instanceof MouseEvent ||
-			typeof callback.onClosed === 'undefined'
+			callback instanceof MouseEvent || callback?.onClosed == null
 				? onClosed
 				: callback.onClosed;
 		Component = null;
@@ -166,6 +141,7 @@
 
 	function enableScroll() {
 		const main = document.getElementById('mainContent') as HTMLDivElement;
+		main.setAttribute('aria-hidden', 'false');
 		document.body.style.position = prevBodyPosition || '';
 		document.body.style.top = '';
 		document.body.style.overflow = prevBodyOverflow || '';
@@ -184,11 +160,19 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-{#if opened}
+<slot />
+
+{#if Component}
 	<div class="overlay">
-		<div aria-labelledby="" aria-modal="true" role="dialog" tabindex="0">
+		<div
+			aria-labelledby=""
+			aria-hidden={isMounted ? undefined : true}
+			aria-modal="true"
+			role="dialog"
+			tabindex="0"
+		>
 			<button on:click={close} class="close" />
-			<svelte:component this={content} />
+			<svelte:component this={Component} />
 		</div>
 	</div>
 {/if}

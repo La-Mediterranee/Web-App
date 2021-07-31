@@ -91,11 +91,12 @@ body {
 
 	--theme-primary-color: #496e8f;
 	--theme-secondary-color: #1e3953;
-
+	--theme-focus-visible: #ddd;
 	/* --theme-text-primary: #38a0c9e5; */
 	--theme-text-primary: rgb(241, 241, 241);
 	/* --theme-text-primary: #050435; */
 
+	--theme-card-border-radius: 1em;
 	--theme-text-secondary: rgba(255, 255, 255, 0.7);
 	--theme-text-disabled: rgba(255, 255, 255, 0.5);
 	--theme-text-fields-filled: rgba(255, 255, 255, 0.08);
@@ -167,6 +168,10 @@ body {
 
 .m-2 {
 	margin: 8px !important;
+}
+
+.ma-auto {
+	margin: auto;
 }
 
 .ml-auto {

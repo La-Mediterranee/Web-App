@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { derived } from 'svelte/store';
 
-	import Button from '$material/components/Button/Button.svelte';
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 
 	import type { User } from '@firebase/auth';
 	import type { FirebaseUser } from 'types/firebase';

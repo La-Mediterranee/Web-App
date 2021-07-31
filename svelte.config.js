@@ -45,6 +45,7 @@ const config = {
 		prerender: {
 			enabled: true,
 			crawl: true,
+			// @ts-ignore
 			onError: 'continue',
 			pages: ['*'],
 		},
@@ -81,7 +82,6 @@ const config = {
 					$firebase: path.resolve('./src/lib/utils/firebase.ts'),
 					$stores: path.resolve('./src/lib/stores'),
 					$components: path.resolve('./src/lib/components'),
-					$material: path.resolve('./src/lib/Material'),
 				},
 			},
 		}),

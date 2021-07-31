@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loadStripe } from '@stripe/stripe-js/pure';
+	import { loadStripe } from '@stripe/stripe-js/pure.js';
 	import { onMount, setContext } from 'svelte';
 
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';

@@ -8,14 +8,25 @@
 	import LDTag from '../LDTag';
 
 	import type { WithContext, Product as DTSProduct } from 'schema-dts';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import star from '$lib/Icons/outline/star';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
 	export let currency: string = 'EUR';
 	export let style: string;
 
-	let amount = 1;
 	let tabindex = -1;
+
+	const action = `/products${
+		typeof product.categories !== 'undefined'
+			? product.categories instanceof Array
+				? '/' + product.categories[0]
+				: '/' + product.categories
+			: ''
+	}/${product.name}`;
+
+	console.log(action);
 
 	const { image, name, price, sku, rating } = product;
 
@@ -24,13 +35,7 @@
 		currency,
 	}).format(price);
 
-	function increment() {
-		++amount;
-	}
-
-	function decrement() {
-		--amount;
-	}
+	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
 	const jsonLd: WithContext<DTSProduct> = {
 		'@context': 'https://schema.org',
@@ -50,16 +55,23 @@
 			reviewCount: rating?.count,
 		},
 	};
+
+	function openPopUp(e: Event) {
+		console.log(e);
+	}
 </script>
 
 <LDTag schema={jsonLd} />
 
-<div
+<form
 	class="card-container"
 	tabindex="0"
-	{style}
+	method="GET"
 	on:focus={() => (tabindex = 0)}
 	on:blur={() => (tabindex = -1)}
+	on:submit|preventDefault={openPopUp}
+	{action}
+	{style}
 >
 	<Card raised>
 		<div class="inner-card">
@@ -80,10 +92,18 @@
 				<span class="price" content={`${_price}`}>{_price}</span>
 			</div>
 
-			<meter min="0" value={`${rating?.value ?? 0}`} max="5">
-				Rated {`${rating?.value}`}/5
+			<meter
+				min="0"
+				max="5"
+				value={`${rating?.value ?? 0}`}
+				aria-label={ratingAriaLabel}
+			>
+				{#each Array(5).fill('star') as _star}
+					<Icon path={star} />
+				{/each}
 			</meter>
-			<span>{rating?.count}</span>
+
+			<span>{rating?.count ?? 0}</span>
 
 			<div class="actionsContainer">
 				<svg
@@ -100,8 +120,8 @@
 
 				<CardActions>
 					<Button
+						type="submit"
 						{tabindex}
-						role="link"
 						aria-haspopup="dialog"
 						class="orange darken-1 ma-auto"
 						text
@@ -113,7 +133,7 @@
 			</div>
 		</div>
 	</Card>
-</div>
+</form>
 
 <style lang="scss">
 	img {
@@ -121,8 +141,34 @@
 		transition: transform 500ms ease;
 	}
 
+	form,
 	div {
 		position: relative;
+	}
+
+	meter {
+		background: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		color: white;
+		display: inline-block;
+		border: 1px solid #ccc;
+		padding: 5px;
+		border-radius: 5px;
+		margin: 0 10px;
+		width: auto;
+		height: auto;
+		overflow: hidden;
+
+		&::-webkit-meter-bar,
+		&::-webkit-meter-inner-element {
+			background: none;
+		}
+	}
+
+	::-moz-meter-bar {
+		-moz-appearance: none;
 	}
 
 	.actionsContainer {
@@ -139,6 +185,7 @@
 		left: 0;
 		width: 200%;
 		animation: wave linear 3s infinite;
+
 		@media (prefers-reduced-motion) {
 			animation-play-state: paused;
 		}
@@ -167,13 +214,15 @@
 				padding: 16px;
 			}
 
-			&:focus-within {
+			&:focus-visible {
 				box-shadow: 0 0 0 0.25rem var(--theme-focus-visible);
 				border-radius: var(--theme-card-border-radius);
 			}
 
 			&:hover,
-			&:focus-within {
+			&:focus-visible,
+			&:focus-within,
+			&:focus {
 				img {
 					transform: scale(1.1);
 				}

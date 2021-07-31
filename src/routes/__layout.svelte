@@ -42,22 +42,23 @@
 
 <svelte:window bind:online />
 
-<!-- <LDTag {}/> -->
+<!-- <LDTag {}/>  -->
 
 <Providers>
-	<div id="mainContent">
-		<Statusbar {online} />
-		<Navbar routes={navItems} />
-		<main>
-			<Installprompt installSource={'LayoutInstallButton'} />
-			<slot />
-		</main>
-		{#if mobile}
-			<Tabbar routes={navItems} />
-		{/if}
-		<Footer />
-	</div>
-	<Modal />
+	<Modal>
+		<div id="mainContent">
+			<Statusbar {online} />
+			<Navbar routes={navItems} />
+			<main>
+				<Installprompt installSource={'LayoutInstallButton'} />
+				<slot />
+			</main>
+			{#if mobile}
+				<Tabbar routes={navItems} />
+			{/if}
+			<Footer />
+		</div>
+	</Modal>
 </Providers>
 
 <style>

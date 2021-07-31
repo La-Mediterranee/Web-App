@@ -1,4 +1,4 @@
-import { decodeJWT } from './server/helper';
+// import { decodeJWT } from './server/helper';
 
 import type { Request } from '@sveltejs/kit';
 import type { MaybePromise } from '@sveltejs/kit/types/helper';
@@ -16,7 +16,7 @@ export async function handle({
 	// request.locals.user = cookies.user
 
 	// code here happends before the endpoint or page is called
-	await decodeJWT(request);
+	// await decodeJWT(request);
 
 	const response = await resolve(request);
 

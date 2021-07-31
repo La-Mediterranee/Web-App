@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Minus, Plus } from '$lib/Icons';
-	import Card from '$material/components/Card/Card.svelte';
-	import CardActions from '$material/components/Card/CardActions.svelte';
-	import CardTitle from '$material/components/Card/CardTitle.svelte';
-	import Button from '$material/components/Button/Button.svelte';
-	import Chip from '$material/components/Chip/Chip.svelte';
+	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
+	import CardActions from 'svelte-material-components/src/components/Card/CardActions.svelte';
+	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import Chip from 'svelte-material-components/src/components/Chip/Chip.svelte';
 	import LDTag from '../LDTag';
 
 	import type { WithContext, Product as DTSProduct } from 'schema-dts';
@@ -15,6 +15,7 @@
 	export let style: string;
 
 	let amount = 1;
+	let tabindex = -1;
 
 	const { image, name, price, sku, rating } = product;
 
@@ -53,7 +54,13 @@
 
 <LDTag schema={jsonLd} />
 
-<div class="card-container" {style}>
+<div
+	class="card-container"
+	tabindex="0"
+	{style}
+	on:focus={() => (tabindex = 0)}
+	on:blur={() => (tabindex = -1)}
+>
 	<Card raised>
 		<div class="inner-card">
 			<!-- style="background-image: url('https://images.placeholders.dev/?width=1055&height=100&text=%22%20%22&bgColor=%23f7f6f6&textColor=%236d6e71');" -->
@@ -93,26 +100,14 @@
 
 				<CardActions>
 					<Button
-						disabled={amount === 1 ? true : false}
+						{tabindex}
+						role="link"
+						aria-haspopup="dialog"
+						class="orange darken-1 ma-auto"
 						text
-						fab
-						size="small"
-						class="orange darken-1"
-						on:click={decrement}
+						rounded
 					>
-						<Minus />
-					</Button>
-					<Chip class="w-100 m-2 justify-center">
-						{amount}
-					</Chip>
-					<Button
-						text
-						fab
-						size="small"
-						class="ml-auto orange darken-1"
-						on:click={increment}
-					>
-						<Plus />
+						In den Warenkorb
 					</Button>
 				</CardActions>
 			</div>
@@ -132,7 +127,8 @@
 
 	.actionsContainer {
 		width: 100%;
-		padding-top: 1.25em;
+		// padding-top: 1.25em;
+		padding-top: 2em;
 		position: relative;
 		overflow: hidden;
 	}
@@ -150,6 +146,7 @@
 
 	.card-container {
 		flex: 0 0 auto;
+		outline: none;
 
 		:global(.s-card-title) {
 			padding: 0 16px;
@@ -170,7 +167,13 @@
 				padding: 16px;
 			}
 
-			&:hover {
+			&:focus-within {
+				box-shadow: 0 0 0 0.25rem var(--theme-focus-visible);
+				border-radius: var(--theme-card-border-radius);
+			}
+
+			&:hover,
+			&:focus-within {
 				img {
 					transform: scale(1.1);
 				}
@@ -199,6 +202,7 @@
 		.actionsContainer {
 			position: absolute;
 			transition: transform 750ms ease;
+			// padding-top: 4.2em;
 		}
 	}
 

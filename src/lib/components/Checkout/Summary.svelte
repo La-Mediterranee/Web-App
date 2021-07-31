@@ -1,11 +1,13 @@
 <script lang="ts">
-	import ExpansionPanel from '$material/components/ExpansionPanels/ExpansionPanel.svelte';
-	import ExpansionPanels from '$material/components/ExpansionPanels/ExpansionPanels.svelte';
+	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
+	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
 	import Image from '../Image/Image.svelte';
 
 	let showSummary = false;
 	let ariaLabel = 'Bestellzusammenfassung';
 	let quantity = 0;
+
+	const headers = ['Produktbild', 'Beschreibung', 'Anzahl', 'Preis'];
 
 	const cartItems = [
 		{
@@ -29,16 +31,13 @@
 	</button>
 	<table>
 		<caption class="visually-hidden">Warenkorb</caption>
-		<thead class="product-table__header">
+		<thead>
 			<tr>
-				<th scope="col">
-					<span class="visually-hidden">Produktbild</span>
-				</th>
-				<th scope="col">
-					<span class="visually-hidden">Beschreibung</span>
-				</th>
-				<th scope="col"><span class="visually-hidden">Anzahl</span></th>
-				<th scope="col"><span class="visually-hidden">Preis</span></th>
+				{#each headers as header}
+					<th scope="col">
+						<span class="visually-hidden">{header}</span>
+					</th>
+				{/each}
 			</tr>
 		</thead>
 		<tbody>
@@ -58,20 +57,32 @@
 							{item.quantity}
 						</span>
 					</td>
-					<td>
-						<span class="sum">
+					<td class="sum">
+						<span>
 							{item.price * item.quantity} €
 						</span>
 					</td>
 				</tr>
 			{/each}
 		</tbody>
+		<tfoot>
+			<tr>
+				<th scope="row" colspan={headers.length - 1}>
+					Summe <em>(inkl. MwSt.)</em>
+				</th>
+				<td> 30 €</td>
+			</tr>
+		</tfoot>
 	</table>
 </aside>
 
-<style>
+<style lang="scss">
 	button {
 		width: 100%;
+
+		@media (min-width: 960px) {
+			display: none;
+		}
 	}
 
 	aside {
@@ -83,6 +94,22 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
+	}
+
+	td,
+	th {
+		white-space: nowrap;
+	}
+
+	tfoot {
+		td,
+		th {
+			padding: 0.7em 0;
+		}
+
+		th {
+			text-align: left;
+		}
 	}
 
 	.item {
@@ -115,6 +142,7 @@
 
 	.sum {
 		width: 100%;
+		white-space: nowrap;
 	}
 
 	.quantity {

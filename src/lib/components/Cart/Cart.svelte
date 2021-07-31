@@ -52,7 +52,7 @@
 						{/each}
 					</tr>
 				</thead>
-				<tbody>
+				<tbody aria-live="polite">
 					{#each items as item}
 						<CartItemComponent {item} quantity={item.quantity} />
 					{/each}

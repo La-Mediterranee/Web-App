@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TextField from '$material/components/TextField';
+	import TextField from 'svelte-material-components/src/components/TextField';
 
 	export let value: number[];
 	export let currentValue = 0;

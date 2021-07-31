@@ -1,7 +1,7 @@
 <script lang="ts">
-	import TextField from '$material/components/TextField';
-	import ExpansionPanel from '$material/components/ExpansionPanels/ExpansionPanel.svelte';
-	import ExpansionPanels from '$material/components/ExpansionPanels/ExpansionPanels.svelte';
+	import TextField from 'svelte-material-components/src/components/TextField';
+	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
+	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
 
 	export let value: number[];
 	export let currentValue = 2;

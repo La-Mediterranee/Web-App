@@ -41,7 +41,7 @@
 </script>
 
 <script lang="ts">
-	import TextField from '$material/components/TextField';
+	import TextField from 'svelte-material-components/src/components/TextField';
 	import { Account, Key, Eye, EyeOff } from '$lib/Icons/filled';
 
 	import type { Auth, User } from 'firebase/auth';
@@ -58,7 +58,7 @@
 	// 	flash(form as HTMLFormElement);
 	// });
 
-	async function login(e: MouseEvent) {
+	async function login(e: MouseEvent | Event) {
 		let user: User | undefined;
 
 		try {
@@ -122,8 +122,13 @@
 
 <h1>Login</h1>
 
-<section>
-	<form bind:this={form} name="login" novalidate>
+<section id="emailPassword">
+	<form
+		bind:this={form}
+		on:submit|preventDefault={login}
+		name="login"
+		novalidate
+	>
 		<div class="wrapper">
 			<TextField
 				bind:value={email}
@@ -171,7 +176,7 @@
 			</TextField>
 		</div>
 
-		<button on:click|preventDefault={login} value="login">Einloggen</button>
+		<button value="login">Einloggen</button>
 	</form>
 
 	<a id="register" href="/customer/register" role="button">Registrieren</a>

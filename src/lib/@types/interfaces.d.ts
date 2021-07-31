@@ -5,6 +5,7 @@ interface Product {
 	readonly name: string;
 	readonly price: number;
 	readonly image: Image;
+	readonly categories: string | string [];
 	readonly rating?: {
 		readonly value: number;
 		readonly count: number;

@@ -1,36 +1,9 @@
-<!-- <script context="module" lang="ts">
-	// const passwordRules = [
-	// 	(v: string) => !!v || 'Required',
-	// 	(v: string) => v.length >= minLength || `Min ${minLength} characters`,
-	// ];
-
-	// const emailRules = [
-	// 	(v: string) => !!v || 'Required',
-	// 	(v: string) => {
-	// 		const pattern =
-	// 			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	// 		return pattern.test(v) || 'Invalid e-mail.';
-	// 	},
-	// ];
-
-	// function validateInput(email: string, password: string): boolean {
-	// 	for (const rule of emailRules) {
-	// 		if (rule(email) !== true) return false;
-	// 	}
-
-	// 	for (const rule of passwordRules) {
-	// 		if (rule(password) !== true) return false;
-	// 	}
-
-	// 	return true;
-	// }
-</script> -->
 <script lang="ts">
 	import Summary from './Summary.svelte';
 	import Details from './checkout-sections/Details.svelte';
 	import Payment from './checkout-sections/Payment.svelte';
-	import ExpansionPanel from '$material/components/ExpansionPanels/ExpansionPanel.svelte';
-	import ExpansionPanels from '$material/components/ExpansionPanels/ExpansionPanels.svelte';
+	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
+	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
 
 	import type { User } from '@firebase/auth';
 
@@ -89,20 +62,27 @@
 	#checkout {
 		padding: 1em;
 		display: block;
+		max-width: 40em;
+		margin: 0 auto;
 
 		* {
 			color: #ddd;
 		}
 
 		div {
-			// margin-top: 1em;
-			margin-right: 1em;
+			margin-top: 1em;
 		}
 
 		@media screen and (min-width: $md) {
 			padding: 3em;
 			display: flex;
 			flex-direction: row-reverse;
+			max-width: 78em;
+
+			div {
+				margin-top: 0;
+				margin-right: 1em;
+			}
 		}
 	}
 </style>

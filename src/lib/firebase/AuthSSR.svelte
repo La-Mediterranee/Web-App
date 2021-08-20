@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/env';
 	import { onMount, createEventDispatcher, setContext } from 'svelte';
 

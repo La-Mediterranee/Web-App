@@ -1,5 +1,9 @@
-<script>
-	import { Trash } from '$lib/Icons/filled';
+<script lang="ts">
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+
+	import { trash } from '$lib/Icons/filled';
+
+	import type { Product } from 'types/interfaces';
 
 	export let item: Product;
 	export let quantity: number;
@@ -32,7 +36,7 @@
 			on:click={() => console.log('delete')}
 			aria-label="Produkt vom Warenkorb entfernen"
 		>
-			<Trash />
+			<Icon path={trash} />
 		</button>
 	</td>
 </tr>

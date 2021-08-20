@@ -4,14 +4,18 @@
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$lib/utils/constants';
 	import ProductCard from '$lib/components/ProductCard';
+	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
+
+	import type { Product } from 'types/interfaces';
+	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
 
 	// import Carousel from '$lib/Carousel.svelte';w
 	// import SliderItem from '$lib/components/Slider/SliderItem.svelte';
-	// import {Carousel,CarouselItem} from '$lib/components/Carousel';
-
+	// import {Carousel,CarouselItem} from '$lib/components/Carousel'
 	const burger: Product = {
 		name: 'Hamburger',
 		price: 4.5,
+		categories: ['burger'],
 		image: { src: '/burger.webp', alt: 'Bild von einem Burger' },
 	};
 
@@ -42,7 +46,18 @@
 </section> -->
 <section>
 	<h2 class="row-header">Essen</h2>
-	<ProductCard product={burger} style="min-width: 220px; max-width: 250px;" />
+	<div>
+		<SlideGroup centerActive activeClass="white-text">
+			{#each Array(15) as _, i}
+				<SlideItem let:active>
+					<ProductCard
+						product={burger}
+						style="min-width: 220px; max-width: 250px;"
+					/>
+				</SlideItem>
+			{/each}
+		</SlideGroup>
+	</div>
 </section>
 
 <section>
@@ -67,6 +82,22 @@
 	section {
 		padding: 0 1.2em;
 		margin-bottom: 1em;
+
+		div {
+			display: inline-flex;
+
+			> :global(*) {
+				margin: 0.5em;
+
+				&:first-child {
+					margin-left: 0;
+				}
+
+				&:last-child {
+					margin-right: 0;
+				}
+			}
+		}
 	}
 
 	.head {

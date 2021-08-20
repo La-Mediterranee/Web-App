@@ -6,16 +6,14 @@
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
 	import Statusbar from '$lib/components/Statusbar';
+	import Providers from './_layoutProviders.svelte';
 	import Modal from '$lib/components/Modal/Modal.svelte';
 	import Tabbar from '$lib/components/Tabbar/Tabbar.svelte';
 	import Installprompt from '$lib/components/Installprompt';
-	import Providers from './_layoutProviders.svelte';
 
-	import { mediQueries } from '$lib/utils/constants';
 	import { navItems } from '$utils/navItems';
 
 	let online: boolean = true;
-	let mobile: boolean = true;
 
 	onMount(() => {
 		window.dataLayer = window.dataLayer || [];
@@ -26,17 +24,6 @@
 
 		gtag('js', new Date());
 		gtag('config', 'GA_MEASUREMENT_ID');
-
-		const mq = window.matchMedia(`(min-width: ${mediQueries.md})`);
-
-		mq.addEventListener('change', (e) => {
-			if (e.matches) {
-				mobile = false;
-				return;
-			}
-
-			mobile = true;
-		});
 	});
 </script>
 
@@ -53,9 +40,7 @@
 				<Installprompt installSource={'LayoutInstallButton'} />
 				<slot />
 			</main>
-			{#if mobile}
-				<Tabbar routes={navItems} />
-			{/if}
+			<Tabbar routes={navItems} />
 			<Footer />
 		</div>
 	</Modal>

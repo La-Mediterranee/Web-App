@@ -1,12 +1,11 @@
 import * as path from 'path';
 import sveltePreprocess from 'svelte-preprocess';
+import autoprefixer from 'autoprefixer';
 import node from '@sveltejs/adapter-node';
-import vercel from '@sveltejs/adapter-vercel';
 import netlify from '@sveltejs/adapter-netlify';
 import adapterStatic from '@sveltejs/adapter-static';
 
 import { visualizer } from 'rollup-plugin-visualizer';
-import autoprefixer from 'autoprefixer';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -31,7 +30,7 @@ const config = {
 			style: 'scss',
 		},
 		scss: {
-			includePaths: ['theme', 'node_modules', 'src/styles'],
+			includePaths: ['theme', 'src/styles', 'node_modules'],
 		},
 		postcss: {
 			plugins: [autoprefixer()],
@@ -40,8 +39,7 @@ const config = {
 	}),
 	kit: {
 		// adapter: netlify(),
-		// adapter: node(),
-		adapter: vercel(),
+		adapter: node(),
 		// adapter: adapterStatic(),
 		target: '#svelte',
 		// router: false,

@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { loadStripe } from '@stripe/stripe-js/pure.js';
 	import { onMount, setContext } from 'svelte';
+	import { writable } from 'svelte/store';
+	import { loadStripe } from '@stripe/stripe-js/pure.js';
 
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 
-	import type { Stripe } from '@stripe/stripe-js';
+	import type { Stripe, StripeConstructor } from '@stripe/stripe-js';
 
 	const key = 'stripe';
 
@@ -12,19 +13,38 @@
 		throw new Error('VITE_STRIPE_PUBLIC_KEY must be added to .env');
 	}
 
-	let stripe: Stripe | null = null;
+	const stripeStore = writable<Stripe | null>(null);
+	const { subscribe, set } = stripeStore;
 
 	setContext(key, {
-		getStripe: () => stripe,
+		subscribe,
 	});
+
+	function stripeLoaded(e: Event) {
+		const stripe: Stripe = (window.Stripe as StripeConstructor)(
+			STRIPE_PUBLIC_KEY
+		);
+		console.log('stripe loaded');
+		set(stripe);
+	}
 
 	onMount(async () => {
 		try {
-			stripe = await loadStripe(STRIPE_PUBLIC_KEY);
+			const stripe = await loadStripe(STRIPE_PUBLIC_KEY);
+			console.log('stripe loaded');
+			set(stripe);
 		} catch (error) {
 			console.error(error);
 		}
 	});
 </script>
 
-<slot {stripe} />
+<!-- <svelte:head>
+	<script
+		defer
+		async
+		src="https://js.stripe.com/v3/"
+		on:load={stripeLoaded}></script>
+</svelte:head> -->
+
+<slot stripe={stripeStore} />

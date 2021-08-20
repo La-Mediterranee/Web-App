@@ -5,10 +5,32 @@
 		<link rel="icon" href="/favicon.ico" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+		<meta
+			name="theme-color"
+			media="(prefers-color-scheme: light)"
+			content="white"
+		/>
+		<meta
+			name="theme-color"
+			media="(prefers-color-scheme: dark)"
+			content="black"
+		/>
 
 		<script>
+			if (
+				(window.CSS
+					? CSS.supports('color', 'var(--fake-var)')
+					: false) === false
+			) {
+				const polyfill =
+					'https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2.4.6/dist/css-vars-ponyfill.min.js';
+				const js = document.createElement('script');
+				js.src = polyfill;
+				document.head.appendChild(js);
+			}
+		</script>
+
+		<!-- <script>
 			if (typeof IntersectionObserver === undefined) {
 				const intersectionPolyfill =
 					'https://cdn.jsdelivr.net/npm/intersection-observer@0.12.0/intersection-observer.min.js';
@@ -16,7 +38,7 @@
 				js.src = intersectionPolyfill;
 				document.head.appendChild(js);
 			}
-		</script>
+		</script> -->
 		<!-- You can remove this is you don't want to make your PWA installable -->
 		<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script> -->
 		%svelte.head%

@@ -1,3 +1,5 @@
+import { Image } from './index';
+
 type SKU = string;
 
 interface Product {
@@ -5,7 +7,7 @@ interface Product {
 	readonly name: string;
 	readonly price: number;
 	readonly image: Image;
-	readonly categories: string | string [];
+	readonly categories: string[];
 	readonly rating?: {
 		readonly value: number;
 		readonly count: number;

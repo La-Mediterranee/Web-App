@@ -1,4 +1,6 @@
-import { Home, Person, Fastfood, Cart } from '../Icons';
+import { home, person, fastfood, cart } from '../Icons';
+
+import type { NavItem } from 'types/index';
 
 // const food: NavItem<typeof Fastfood> = {
 // 	icon: Fastfood,
@@ -8,34 +10,34 @@ import { Home, Person, Fastfood, Cart } from '../Icons';
 
 export const navItems: NavItem[] = [
 	{
-		icon: Fastfood,
+		icon: fastfood,
 		text: 'Essen',
 		href: '/food',
 		size: {
 			width: 27,
-			height: 27
-		}
+			height: 27,
+		},
 	},
 	{
-		icon: Person,
+		icon: person,
 		text: 'Profil',
-		href: '/drinks'
+		href: '/drinks',
 	},
 	{
-		icon: Home,
+		icon: home,
 		text: 'Startseite',
-		href: '/'
+		href: '/',
 	},
 	{
-		icon: Person,
+		icon: person,
 		text: 'Profil',
 		href: '/customer',
-		rel: ['nofollow', 'ugc']
+		rel: ['nofollow', 'ugc'],
 	},
 	{
-		icon: Cart,
+		icon: cart,
 		text: 'Warenkorb',
 		href: '/cart',
-		rel: ['nofollow', 'ugc']
-	}
+		rel: ['nofollow', 'ugc'],
+	},
 ];

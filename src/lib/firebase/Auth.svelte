@@ -10,13 +10,13 @@
 	const dispatch = createEventDispatcher();
 
 	setContext('user', {
-		getAuth: () => store
+		getAuth: () => store,
 	});
 
 	onMount(() => {
 		unsub = store.subscribe((user) => {
 			dispatch('customer', {
-				user
+				user,
 			});
 		});
 

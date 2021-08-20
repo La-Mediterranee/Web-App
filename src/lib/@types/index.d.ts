@@ -1,15 +1,20 @@
-import { Stripe } from '@stripe/stripe-js';
+import type { Stripe } from '@stripe/stripe-js';
+import type { Readable, Unsubscriber, Subscriber } from 'svelte/store';
 
-interface Image {
+export declare interface Image {
 	readonly src: string;
 	readonly alt?: string;
 }
 
-interface StripeContext {
-	getStripe: () => Stripe;
+export declare interface StripeContext {
+	subscribe: (
+		this: void,
+		run: Subscriber<Stripe | null>,
+		invalidate?: Invalidator<Stripe | null> | undefined
+	) => Unsubscriber;
 }
 
-type AnchorLinkTypes =
+export type AnchorLinkTypes =
 	| 'alternate'
 	| 'author'
 	| 'bookmark'
@@ -26,8 +31,8 @@ type AnchorLinkTypes =
 	| 'ugc'
 	| 'tag';
 
-interface NavItem {
-	readonly icon: unknown;
+export interface NavItem {
+	readonly icon: string;
 	readonly text: string;
 	readonly href: string;
 	readonly rel?: AnchorLinkTypes | AnchorLinkTypes[];
@@ -37,7 +42,7 @@ interface NavItem {
 	};
 }
 
-enum HttpStatusCode {
+export enum HttpStatusCode {
 	/**
 	 * The server has received the request headers and the client should proceed to send the request body
 	 * (in the case of a request for which a body needs to be sent; for example, a POST request).
@@ -409,5 +414,5 @@ enum HttpStatusCode {
 	 * Intended for use by intercepting proxies used to control access to the network (e.g., "captive portals" used
 	 * to require agreement to Terms of Service before granting full Internet access via a Wi-Fi hotspot).
 	 */
-	NETWORK_AUTHENTICATION_REQUIRED = 511
+	NETWORK_AUTHENTICATION_REQUIRED = 511,
 }

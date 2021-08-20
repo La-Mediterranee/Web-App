@@ -1,11 +1,16 @@
-<script>
+<script lang="ts">
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+
+	import CartItemComponent from './CartItem.svelte';
 	import { cart } from '$lib/stores/cart';
 	import { enhance } from './action';
-	import CartItemComponent from './CartItem.svelte';
+
+	import type { CartItem } from 'types/interfaces';
 
 	const items: CartItem[] = [
 		{
 			name: 'Burger',
+			categories: ['burger'],
 			image: {
 				src: '/burger.webp',
 			},
@@ -14,6 +19,7 @@
 		},
 		{
 			name: 'Burger',
+			categories: ['burger'],
 			image: {
 				src: '/burger.webp',
 			},
@@ -79,16 +85,19 @@
 							Summe ({$cart.length} Produkte): {$cart.length}
 						</td>
 						<td colspan="2">
-							<button> Zur Kasse </button>
+							<Button
+								type="submit"
+								class="orange darken-1"
+								rounded
+							>
+								Zur Kasse
+							</Button>
 						</td>
 					</tr>
 				</tfoot>
 			</table>
 		</form>
 	{/if}
-	<!-- <div class="total-label">
-		<h2>Gesamt: {$cart.length}</h2>
-	</div> -->
 </div>
 
 <style lang="scss">
@@ -159,6 +168,10 @@
 			text-align: center;
 			width: 100%;
 
+			div {
+				text-align: left;
+			}
+
 			td {
 				width: 100%;
 				padding: 1em;
@@ -183,11 +196,6 @@
 		padding-bottom: 12px;
 		text-align: center;
 		color: var(--cart-table-color);
-	}
-
-	button {
-		width: 100%;
-		text-align: center;
 	}
 
 	@media screen and (min-width: 460px) {

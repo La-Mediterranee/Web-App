@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 
 	import type { NavItem } from 'types/index';
 
@@ -29,14 +30,14 @@
 				<div class="bubble" />
 				<div class="mini-bubble" />
 				<div class="image">
-					<svelte:component
-						this={icon}
+					<Icon
+						path={icon}
 						width={size ? size.width : 30}
 						height={size ? size.height : 30}
-						color={activeRoute !== href
-							? 'var(--tint-color)'
-							: 'var(--bar-color)'}
 					/>
+					<!-- color={activeRoute !== href
+						? 'var(--tint-color)'
+						: 'var(--bar-color)'} -->
 				</div>
 			</div>
 			<div class="title-container">
@@ -51,12 +52,15 @@
 </nav>
 
 <style lang="scss">
+	@use "./variables.scss" as *;
+
 	* {
 		--bar-color: var(--body-bg2);
 		display: flex;
 	}
 
 	nav {
+		display: flex;
 		height: 60px;
 		width: 100%;
 		bottom: 0;
@@ -65,6 +69,10 @@
 		position: fixed;
 		align-items: center;
 		justify-content: space-around;
+
+		@media (min-width: $md) {
+			display: none;
+		}
 	}
 
 	span {

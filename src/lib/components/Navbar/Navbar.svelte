@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	import Magnify from '$lib/Icons/filled/Magnify.svelte';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import type { NavItem } from 'types/index';
 
 	export let routes: NavItem[] = [];
@@ -23,11 +23,9 @@
 						rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
 					>
 						<div>
-							<svelte:component
-								this={icon}
-								width={30}
-								height={30}
-							/>
+							<Icon path={icon} width={30} height={30} />
+							<!-- color="#fff" -->
+							<!-- color={'var(--tint-color)'} -->
 						</div>
 						<span>
 							{text}
@@ -37,14 +35,16 @@
 			{/each}
 		</ul>
 
+		<!-- class="orange darken-4" -->
+		<!-- 
 		<form>
 			<div>
 				<input type="text" />
 				<button aria-label="Suchen">
-					<Magnify color="#fff" />
+					<Icon path={magnify} color="#fff" />
 				</button>
 			</div>
-		</form>
+		</form> -->
 
 		<div id="profile">
 			<img src="" alt="" />
@@ -56,7 +56,8 @@
 	// box-shadow: 0 2px 20px 0 var(--subtle);
 	@use "./variables.scss" as *;
 
-	$text-color: var(--tint-color);
+	// $text-color: var(--tint-color);
+	$text-color: #fff;
 	$bg-color: #000;
 
 	a {
@@ -102,16 +103,20 @@
 	}
 
 	.nav-content {
-		display: flex;
 		width: 88%;
+		justify-content: flex-end;
+
+		@media (min-width: $md) {
+			justify-content: center;
+		}
 	}
 
 	ul {
-		width: 80%;
+		width: 100%;
 		height: 100%;
 		padding: 0.5em;
 		display: none;
-		justify-content: space-around;
+		justify-content: space-evenly;
 		align-items: center;
 
 		@media screen and (min-width: $md) {
@@ -142,44 +147,45 @@
 		}
 	}
 
-	form {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		width: 100%;
-		justify-self: flex-start;
+	// form {
+	// 	display: flex;
+	// 	align-items: center;
+	// 	justify-content: center;
+	// 	height: 100%;
+	// 	width: 100%;
+	// 	justify-self: flex-start;
 
-		div {
-			height: 2.5em;
-			padding: 0.5em 0.7em;
-			border-radius: 1.3em;
-			width: 90%;
-			background: $bg-color;
-			align-items: center;
-		}
+	// 	div {
+	// 		height: 2.5em;
+	// 		padding: 0.5em 0.7em;
+	// 		border-radius: 1.3em;
+	// 		width: 90%;
+	// 		// background: $bg-color;
+	// 		background: var(--tint-color);
+	// 		align-items: center;
+	// 	}
 
-		@media screen and (min-width: $md) {
-			width: 20%;
-		}
-	}
+	// 	@media screen and (min-width: $md) {
+	// 		width: 20%;
+	// 	}
+	// }
 
-	input {
-		display: flex;
-		align-content: center;
-		align-items: center;
-		color: $text-color;
-		height: 100%;
-		width: calc(100% - 30px);
-	}
+	// input {
+	// 	display: flex;
+	// 	align-content: center;
+	// 	align-items: center;
+	// 	color: $text-color;
+	// 	height: 100%;
+	// 	width: calc(100% - 30px);
+	// }
 
-	button {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 30px;
-		height: 30px;
-	}
+	// button {
+	// 	display: flex;
+	// 	justify-content: center;
+	// 	align-items: center;
+	// 	width: 30px;
+	// 	height: 30px;
+	// }
 
 	#profile {
 		width: 65px;

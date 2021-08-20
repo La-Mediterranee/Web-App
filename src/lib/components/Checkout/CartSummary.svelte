@@ -3,9 +3,25 @@
 	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
 	import Image from '../Image/Image.svelte';
 
+	export let cart: CartItem[];
+	//  = [
+	// 	{
+	// 		name: 'Burger',
+	// 		image: {
+	// 			src: '/burger.webp',
+	// 		},
+	// 		price: 3,
+	// 		quantity: 4,
+	// 		categories: [''],
+	// 	},
+	// ];
+
+	export let total: number;
+	export let quantity: number;
+
 	let showSummary = false;
 	let ariaLabel = 'Bestellzusammenfassung';
-	let quantity = 0;
+	// let quantity = 0;
 
 	const headers = ['Produktbild', 'Beschreibung', 'Anzahl', 'Preis'];
 
@@ -88,7 +104,7 @@
 	aside {
 		position: relative;
 		width: 100%;
-		flex: 0 1 40%;
+		flex: 1 0 37%;
 	}
 
 	table {

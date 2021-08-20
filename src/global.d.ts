@@ -3,12 +3,13 @@
 /// <reference types="vite/client" />
 /// <reference types="google.analytics" />
 /// <reference types="gtag.js" />
-// /// <reference types="@stripe/stripe-js" />
+/// <reference types="@stripe/stripe-js" />
+type Invalidator<T> = (value?: T) => void;
 
 declare var dataLayer = [];
 var opr: string;
 var chrome: string;
-
+// var Stripe: Stripe;
 /**
  * The BeforeInstallPromptEvent is fired at the Window.onbeforeinstallprompt handler
  * before a user is prompted to "install" a web site to a home screen on mobile.
@@ -43,3 +44,24 @@ interface PushSubscriptionChangeEvent extends ExtendableEvent {
 	readonly newSubscription: PushSubscription;
 	readonly oldSubscription: PushSubscription;
 }
+
+type USVString = string;
+
+interface PasswordCredentialData extends Credential {
+	id: USVString;
+	password: USVString;
+	name?: USVString;
+	iconURL?: USVString;
+}
+
+interface PasswordCredential extends Credential {
+	readonly iconURL: USVString;
+	readonly name: USVString;
+	readonly password: USVString;
+}
+
+declare var PasswordCredential: {
+	prototype: PasswordCredential;
+	new (htmlFormElement: HTMLFormElement): PasswordCredential;
+	new (passwordCredentialData: PasswordCredentialData): PasswordCredential;
+};

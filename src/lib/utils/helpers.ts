@@ -1,5 +1,9 @@
 import { getContext } from 'svelte';
-import { StripeContext } from 'types/index';
+import type { StripeContext } from 'types/index';
+import type {
+	open as modalOpen,
+	close as modalClose,
+} from '$components/Modal/Modal.svelte';
 
 const API = 'http://localhost:3333';
 
@@ -7,7 +11,7 @@ export async function fetchFromAPI(endpointURL: string, opt?: Object) {
 	const { method, body, ...rest } = {
 		method: 'POST',
 		body: null as Object | null,
-		...opt
+		...opt,
 	};
 
 	// const customer = auth.currentUser;
@@ -17,9 +21,9 @@ export async function fetchFromAPI(endpointURL: string, opt?: Object) {
 		method,
 		...(body && { body: JSON.stringify(body) }),
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 			// Authorization: `Bearer ${token}`,
-		}
+		},
 	});
 
 	return res.json();
@@ -47,7 +51,9 @@ export function promiseEvent<T>(
 	});
 }
 
-export async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any | null]> {
+export async function runAsync<T>(
+	promise: Promise<T>
+): Promise<[T | null, any | null]> {
 	try {
 		const data = await promise;
 		return [data, null];
@@ -58,5 +64,14 @@ export async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any |
 }
 
 export function getStripeContext() {
-	return getContext<StripeContext>('stripe')?.getStripe();
+	return getContext<StripeContext>('stripe');
+}
+
+interface ModalContext {
+	open: modalOpen;
+	close: modalClose;
+}
+
+export function getModalContext() {
+	return getContext<ModalContext>('modal');
 }

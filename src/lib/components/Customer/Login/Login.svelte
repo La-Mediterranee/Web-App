@@ -1,7 +1,4 @@
 <script context="module" lang="ts">
-	import { goto } from '$app/navigation';
-	import { afterUpdate } from 'svelte';
-	import flash from '$lib/utils/flash';
 	import {
 		signIn,
 		signInWithGoogle,
@@ -41,8 +38,12 @@
 </script>
 
 <script lang="ts">
+	import Icon from 'svelte-material-components/src/components/Icon';
 	import TextField from 'svelte-material-components/src/components/TextField';
-	import { Account, Key, Eye, EyeOff } from '$lib/Icons/filled';
+	import { VITE_SERVER_URL } from '$lib/utils/constants';
+	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
+
+	import { getAdditionalUserInfo } from 'firebase/auth';
 
 	import type { Auth, User } from 'firebase/auth';
 
@@ -65,27 +66,42 @@
 			const target = e.currentTarget as HTMLButtonElement;
 			const value = target.value;
 
+			// new window.AbortSignal();
+
+			let userObject:
+				| {
+						user: User;
+						newUser: boolean | undefined;
+				  }
+				| undefined;
+
 			switch (value) {
 				case 'login':
 					if (!validateInput(email, password)) {
 						return;
 					}
-					user = await signIn(auth, email, password);
+					userObject = await signIn(auth, email, password);
+					// const passwordcred = new PasswordCredential({
+					// 	id: 'alice',
+					// 	type: 'password',
+					// 	password: 'VeryRandomPassword123456',
+					// });
+					// await navigator.credentials.store(passwordcred);
 					break;
 				case 'facebook':
-					user = await signInWithFacebook(auth);
+					userObject = await signInWithFacebook(auth);
 					break;
 				case 'twitter':
-					user = await signInWithTwitter(auth);
+					userObject = await signInWithTwitter(auth);
 					break;
 				case 'google':
-					user = await signInWithGoogle(auth);
+					userObject = await signInWithGoogle(auth);
 					break;
 				case 'github':
-					user = await signInWithGithub(auth);
+					userObject = await signInWithGithub(auth);
 					break;
 				case 'discord':
-					user = await signInWithDiscord(auth);
+					userObject = await signInWithDiscord(auth);
 					break;
 				case 'microsoft':
 					const result = await signInWithMicrosoft(auth);
@@ -100,11 +116,18 @@
 					break;
 			}
 
+			user = userObject?.user;
+
 			if (user) {
 				const token = await user.getIdToken();
-				await fetch(`/koa/auth/login?provider=firebase`, {
+				await fetch(`${VITE_SERVER_URL}/auth/login?provider=firebase`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
+
+				// if (userObject?.newUser) {
+				// 	db.collection('users').doc(user.uid).set({ email });
+				// }
+
 				error = false;
 			} else {
 				error = true;
@@ -140,7 +163,7 @@
 				rounded
 			>
 				<div slot="prepend">
-					<Account color="#fff" />
+					<Icon style="color:#fff" path={account} />
 				</div>
 				Email
 			</TextField>
@@ -158,7 +181,7 @@
 				filled
 			>
 				<div slot="prepend">
-					<Key color="#fff" />
+					<Icon style="color:#fff" path={key} />
 				</div>
 				Passwort
 				<div
@@ -167,11 +190,10 @@
 						show = !show;
 					}}
 				>
-					{#if show}
-						<Eye style="cursor: pointer;" color="#fff" />
-					{:else}
-						<EyeOff style="cursor: pointer;" color="#fff" />
-					{/if}
+					<Icon
+						style="cursor: pointer; color:#fff;"
+						path={show ? eye : eyeOff}
+					/>
 				</div>
 			</TextField>
 		</div>

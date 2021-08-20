@@ -1,18 +1,19 @@
-// @index('./*.svelte', (f) => `export { default as ${f.name} } from '${f.path}${f.ext}'`)
-export { default as Account } from './Account.svelte';
-export { default as Cart } from './Cart.svelte';
-export { default as Eye } from './Eye.svelte';
-export { default as EyeOff } from './EyeOff.svelte';
-export { default as Fastfood } from './Fastfood.svelte';
-export { default as Halal } from './Halal.svelte';
-export { default as Home } from './Home.svelte';
-export { default as Key } from './Key.svelte';
-export { default as Magnify } from './Magnify.svelte';
-export { default as Minus } from './Minus.svelte';
-export { default as Person } from './Person.svelte';
-export { default as Plus } from './Plus.svelte';
-export { default as Restaurant } from './Restaurant.svelte';
-export { default as Trash } from './Trash.svelte';
+// @index('./*.ts', (f) => `export { default as ${f.name} } from '${f.path}'`)
+export { default as account } from './account';
+export { default as cart } from './cart';
+export { default as eye } from './eye';
+export { default as eyeOff } from './eyeOff';
+export { default as fastfood } from './fastfood';
+export { default as halal } from './halal';
+export { default as home } from './home';
+export { default as key } from './key';
+export { default as magnify } from './magnify';
+export { default as minus } from './minus';
+export { default as person } from './person';
+export { default as plus } from './plus';
+export { default as restaurant } from './restaurant';
+export { default as starHalf } from './star-half';
+export { default as trash } from './trash';
 //@endindex
 
 // import { SvelteComponentTyped } from 'svelte';

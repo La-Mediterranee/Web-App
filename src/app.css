@@ -58,6 +58,7 @@
 	/* --top1: #4050e0e5;
 	--top2: #062ba5; */
 	font-size: 16px;
+	font-style: normal;
 	--body-bg1: #5881a7;
 	/* --body-bg2: #284159; */
 	--body-bg2: #1e3953;
@@ -79,6 +80,7 @@ body {
 
 .theme--custom {
 	--tint-color: #729abe;
+	--modal-bg: white;
 	--theme-tabs: rgba(255, 255, 255, 0.6);
 	/* --theme-surface: #d81717e5; */
 	--theme-surface: #4994f5e5;
@@ -103,10 +105,6 @@ body {
 	--theme-text-fields-filled-hover: rgba(255, 255, 255, 0.16);
 	--theme-text-fields-outlined: rgba(255, 255, 255, 0.24);
 	--theme-text-fields-outlined-disabled: rgba(255, 255, 255, 0.16);
-	--theme-text-fields-border: rgba(255, 255, 255, 0.7);
-	--theme-text-fields-border-hover: #38a0c9e5;
-	--theme-text-fields-border-width: 0.165em;
-	--theme-text-fields-border-width-hover: 0.165em;
 
 	--theme-controls-disabled: rgba(255, 255, 255, 0.3);
 	--theme-controls-thumb-inactive: #bdbdbd;
@@ -124,9 +122,17 @@ body {
 	--theme-cards: #263dd1;
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
+
 	/* --tint-color: rgb(76, 83, 221); */
 	background-color: var(--theme-surface);
 	color: var(--theme-text-primary);
+}
+
+::before {
+	--theme-text-fields-border: rgba(255, 255, 255, 0.7);
+	--theme-text-fields-border-hover: #38a0c9e5;
+	--theme-text-fields-border-width: 0.165em;
+	--theme-text-fields-border-width-hover: 0.165em;
 }
 
 .text-center {
@@ -135,6 +141,10 @@ body {
 
 .s-row {
 	position: relative;
+}
+
+a {
+	color: var(--theme-text-primary);
 }
 
 .h2 {

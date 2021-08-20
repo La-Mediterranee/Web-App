@@ -11,7 +11,7 @@
 			svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
 			to enforce using \`import type\` instead of \`import\` for Types.
 			*/
-		"importsNotUsedAsValues": "preserve",
+		"importsNotUsedAsValues": "error",
 		"isolatedModules": true,
 		"resolveJsonModule": true,
 		/**
@@ -34,6 +34,7 @@
 			"$stores/*": ["src/lib/stores/*"]
 		}
 	},
+	"types": ["svelte", "@sveltejs/kit"],
 	"include": [
 		"src/**/*.d.ts",
 		"src/**/*.js",

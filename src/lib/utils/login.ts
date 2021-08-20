@@ -9,6 +9,7 @@ import {
 	FacebookAuthProvider,
 	GithubAuthProvider,
 	TwitterAuthProvider,
+	getAdditionalUserInfo,
 } from 'firebase/auth';
 
 import type { Auth, UserCredential } from 'firebase/auth';
@@ -33,7 +34,7 @@ export async function signIn(auth: Auth, email: string, password: string) {
 			password
 		);
 		const user = userCredential.user;
-		return user;
+		return { user, newUser: false };
 	} catch (err: unknown) {
 		const errorCode = (err as AuthError).code;
 		const errorMessage = (err as AuthError).message;
@@ -46,15 +47,11 @@ export async function signInWithGoogle(auth: Auth) {
 	const provider = new GoogleAuthProvider();
 
 	try {
-		const result = await signInWithPopup(auth, provider);
+		const userCredential = await signInWithPopup(auth, provider);
+		const info = getAdditionalUserInfo(userCredential);
+		const user = userCredential.user;
 
-		// This gives you a Google Access Token. You can use it to access the Google API.
-		// const credential = GoogleAuthProvider.credentialFromResult(result);
-		// const token = credential?.accessToken;
-
-		// The signed-in user info.
-		const user = result.user;
-		return user;
+		return { user, newUser: info?.isNewUser };
 	} catch (error) {
 		// // The AuthCredential type that was used.
 		// const credential = GoogleAuthProvider.credentialFromError(error);
@@ -68,13 +65,11 @@ export async function signInWithFacebook(auth: Auth) {
 	const provider = new FacebookAuthProvider();
 
 	try {
-		const result = await signInWithPopup(auth, provider);
-		// The signed-in user info.
-		const user = result.user;
-		return user;
-		// // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-		// const credential = FacebookAuthProvider.credentialFromResult(result);
-		// const accessToken = credential.accessToken;
+		const userCredential = await signInWithPopup(auth, provider);
+		const info = getAdditionalUserInfo(userCredential);
+		const user = userCredential.user;
+
+		return { user, newUser: info?.isNewUser };
 	} catch (error) {
 		// The AuthCredential type that was used.
 		// const credential = FacebookAuthProvider.credentialFromError(error);
@@ -89,8 +84,10 @@ export async function signInWithMicrosoft(auth: Auth) {
 	const provider = new OAuthProvider('microsoft.com');
 
 	try {
-		const result = await signInWithPopup(auth, provider);
-		const credential = OAuthProvider.credentialFromResult(result);
+		const userCredential = await signInWithPopup(auth, provider);
+		const credential = OAuthProvider.credentialFromResult(userCredential);
+		const info = getAdditionalUserInfo(userCredential);
+		const user = userCredential.user;
 		const accessToken = credential?.accessToken;
 
 		const res = await fetch(
@@ -105,9 +102,7 @@ export async function signInWithMicrosoft(auth: Auth) {
 		const data = await res.blob();
 		const imageUrl = window.URL.createObjectURL(data);
 
-		// The signed-in user info.
-		const user = result.user;
-		return { user, imageUrl };
+		return { user, imageUrl, newUser: info?.isNewUser };
 	} catch (error) {
 		// const credential = OAuthProvider.credentialFromError(error);
 		const errorCode = error.code;
@@ -121,9 +116,11 @@ export async function signInWithTwitter(auth: Auth) {
 	const provider = new TwitterAuthProvider();
 
 	try {
-		const result = await signInWithPopup(auth, provider);
-		const user = result.user;
-		return user;
+		const userCredential = await signInWithPopup(auth, provider);
+		const info = getAdditionalUserInfo(userCredential);
+		const user = userCredential.user;
+
+		return { user, newUser: info?.isNewUser };
 	} catch (error) {
 		// const credential = TwitterAuthProvider.credentialFromError(error);
 		const errorCode = error.code;
@@ -136,9 +133,11 @@ export async function signInWithTwitter(auth: Auth) {
 export async function signInWithGithub(auth: Auth) {
 	const provider = new GithubAuthProvider();
 	try {
-		const result = await signInWithPopup(auth, provider);
-		const user = result.user;
-		return user;
+		const userCredential = await signInWithPopup(auth, provider);
+		const info = getAdditionalUserInfo(userCredential);
+		const user = userCredential.user;
+
+		return { user, newUser: info?.isNewUser };
 	} catch (error) {
 		// const credential = GithubAuthProvider.credentialFromError(error);
 		const errorCode = error.code;
@@ -150,7 +149,7 @@ export async function signInWithGithub(auth: Auth) {
 
 export async function signInWithDiscord(auth: Auth) {
 	try {
-		const result = await withPopup(
+		const userCredential = await withPopup(
 			auth,
 			'http://localhost:8080/auth/login?provider=discord',
 			'Discord Auth',
@@ -158,8 +157,10 @@ export async function signInWithDiscord(auth: Auth) {
 				height: 740,
 			}
 		);
-		const user = result.user;
-		return user;
+		const info = getAdditionalUserInfo(userCredential);
+		const user = userCredential.user;
+
+		return { user, newUser: info?.isNewUser };
 	} catch (error) {
 		const errorCode = error.code;
 		const errorMessage = error.message;
@@ -258,6 +259,8 @@ function waitForPopupLogin<T>(origin: string): Promise<T> {
 		}
 	});
 }
+
+async function registerCredential() {}
 
 async function runAsyncLogin<T>(
 	promise: Promise<T>

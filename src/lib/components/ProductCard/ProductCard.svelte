@@ -1,15 +1,18 @@
 <script lang="ts">
-	import { Minus, Plus } from '$lib/Icons';
+	import { afterUpdate } from 'svelte';
 	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
-	import CardActions from 'svelte-material-components/src/components/Card/CardActions.svelte';
-	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 	import Chip from 'svelte-material-components/src/components/Chip/Chip.svelte';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
+
+	import { getModalContext } from '$lib/utils/helpers';
 	import LDTag from '../LDTag';
+	import star from '$lib/Icons/outline/star';
+	import flash from '$lib/utils/flash';
 
 	import type { WithContext, Product as DTSProduct } from 'schema-dts';
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
-	import star from '$lib/Icons/outline/star';
+	import type { Product } from 'types/interfaces';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
@@ -17,18 +20,15 @@
 	export let style: string;
 
 	let tabindex = -1;
+	let container: HTMLFormElement;
+
+	const { open } = getModalContext();
+
+	const { image, name, price, sku, rating, categories } = product;
 
 	const action = `/products${
-		typeof product.categories !== 'undefined'
-			? product.categories instanceof Array
-				? '/' + product.categories[0]
-				: '/' + product.categories
-			: ''
-	}/${product.name}`;
-
-	console.log(action);
-
-	const { image, name, price, sku, rating } = product;
+		categories != null ? '/' + categories[0] : ''
+	}/${name}`;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -56,14 +56,25 @@
 		},
 	};
 
+	afterUpdate(() => {
+		flash(container as HTMLFormElement);
+	});
+
 	function openPopUp(e: Event) {
 		console.log(e);
+		open({
+			Component: Chip,
+			props: {
+				slot: 'hi',
+			},
+		});
 	}
 </script>
 
 <LDTag schema={jsonLd} />
 
 <form
+	bind:this={container}
 	class="card-container"
 	tabindex="0"
 	method="GET"
@@ -87,23 +98,29 @@
 				{name}
 			</CardTitle>
 
-			<div>
-				<span content="EUR">€</span>
-				<span class="price" content={`${_price}`}>{_price}</span>
+			<div class="content">
+				<div class="price">
+					<!-- <span content="EUR">€</span> -->
+					<span class="price" content={`${_price}`}>{_price}</span>
+				</div>
+
+				{#if rating}
+					<div class="ratings">
+						<meter
+							min="0"
+							max="5"
+							value={`${rating?.value ?? 0}`}
+							aria-label={ratingAriaLabel}
+						>
+							{#each Array(5).fill('star') as _star}
+								<Icon path={star} />
+							{/each}
+						</meter>
+
+						<span>{rating?.count ?? 0}</span>
+					</div>
+				{/if}
 			</div>
-
-			<meter
-				min="0"
-				max="5"
-				value={`${rating?.value ?? 0}`}
-				aria-label={ratingAriaLabel}
-			>
-				{#each Array(5).fill('star') as _star}
-					<Icon path={star} />
-				{/each}
-			</meter>
-
-			<span>{rating?.count ?? 0}</span>
 
 			<div class="actionsContainer">
 				<svg
@@ -118,7 +135,7 @@
 					/>
 				</svg>
 
-				<CardActions>
+				<div class="card-actions">
 					<Button
 						type="submit"
 						{tabindex}
@@ -129,13 +146,17 @@
 					>
 						In den Warenkorb
 					</Button>
-				</CardActions>
+				</div>
 			</div>
 		</div>
 	</Card>
 </form>
 
 <style lang="scss">
+	* {
+		text-align: center;
+	}
+
 	img {
 		width: 100%;
 		transition: transform 500ms ease;
@@ -171,6 +192,11 @@
 		-moz-appearance: none;
 	}
 
+	.card-actions {
+		display: flex;
+		padding: 0.7em;
+	}
+
 	.actionsContainer {
 		width: 100%;
 		// padding-top: 1.25em;
@@ -196,8 +222,24 @@
 		outline: none;
 
 		:global(.s-card-title) {
-			padding: 0 16px;
+			// padding: 0 1em;
+			padding: 0;
 		}
+	}
+
+	.content {
+		width: 100%;
+		color: var(--theme-text-secondary);
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.375rem;
+		letter-spacing: 0.0071428571em;
+		padding: 0.4em 1em 1em 1em;
+	}
+
+	.price {
+		font-size: 1.2rem;
+		padding: 0 0 0.3em 0;
 	}
 
 	@media (pointer: fine) {
@@ -210,9 +252,9 @@
 		}
 
 		.card-container {
-			:global(.s-card-title) {
-				padding: 16px;
-			}
+			// :global(.s-card-title) {
+			// 	padding: 16px;
+			// }
 
 			&:focus-visible {
 				box-shadow: 0 0 0 0.25rem var(--theme-focus-visible);
@@ -220,16 +262,16 @@
 			}
 
 			&:hover,
-			&:focus-visible,
-			&:focus-within,
-			&:focus {
+			&:focus-within {
 				img {
 					transform: scale(1.1);
 				}
+
 				.actionsContainer {
 					opacity: 1;
 					transform: translateY(-100%);
 				}
+
 				.wave {
 					animation-play-state: running;
 					@media (prefers-reduced-motion) {

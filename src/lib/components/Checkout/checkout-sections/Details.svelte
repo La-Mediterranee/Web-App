@@ -1,12 +1,12 @@
 <script lang="ts">
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+
 	import TextField from 'svelte-material-components/src/components/TextField';
+	import type { CustomerInfo } from '../Checkout.svelte';
 
 	export let value: number[];
 	export let currentValue = 0;
-
-	let customerInfo: HTMLFormElement | null = null;
-	let street: string = '';
-	let city: string = '';
+	export let customer: CustomerInfo;
 
 	function checkOrderDeatils(e: Event) {
 		const form = e.currentTarget as HTMLFormElement;
@@ -19,7 +19,6 @@
 <form
 	novalidate
 	action="/checkout-info"
-	bind:this={customerInfo}
 	on:submit|preventDefault={checkOrderDeatils}
 >
 	<fieldset>
@@ -29,6 +28,7 @@
 				type="email"
 				name="email"
 				autocomplete="email"
+				bind:value={customer.email}
 				required
 				rounded
 				outlined
@@ -39,6 +39,7 @@
 				type="tel"
 				name="tel"
 				autocomplete="tel"
+				bind:value={customer.number}
 				required
 				rounded
 				outlined
@@ -50,6 +51,7 @@
 			<TextField
 				name="name"
 				autocomplete="given-name"
+				bind:value={customer.name}
 				required
 				rounded
 				outlined
@@ -59,6 +61,7 @@
 			<TextField
 				name="surname"
 				autocomplete="family-name"
+				bind:value={customer.surname}
 				required
 				rounded
 				outlined
@@ -73,6 +76,7 @@
 			<TextField
 				name="address"
 				autocomplete="street-address"
+				bind:value={customer.address}
 				required
 				outlined
 				rounded
@@ -82,8 +86,9 @@
 		</div>
 		<div>
 			<TextField
-				name="zip"
+				name="postalCode"
 				autocomplete="postal-code"
+				bind:value={customer.postalCode}
 				required
 				outlined
 				rounded
@@ -93,6 +98,7 @@
 			<TextField
 				name="city"
 				autocomplete="address-level2"
+				bind:value={customer.city}
 				required
 				outlined
 				rounded
@@ -101,7 +107,11 @@
 			</TextField>
 		</div>
 	</fieldset>
-	<button> Weiter zur Zahlung </button>
+	<div class="actions">
+		<Button type="submit" class="orange darken-1" rounded>
+			Weiter zur Zahlung
+		</Button>
+	</div>
 </form>
 
 <style src="./Details.scss" lang="scss">

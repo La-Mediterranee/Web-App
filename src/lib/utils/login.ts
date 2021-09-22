@@ -10,16 +10,23 @@ import {
 	GithubAuthProvider,
 	TwitterAuthProvider,
 	getAdditionalUserInfo,
+	browserPopupRedirectResolver,
+	AuthProvider,
 } from 'firebase/auth';
 
-import type { Auth, UserCredential } from 'firebase/auth';
+import type { User, Auth, UserCredential } from 'firebase/auth';
 
 interface AuthError {
 	code: string;
 	message: string;
 }
 
-interface OAuthUser {
+export interface LoginInfo {
+	user: User;
+	newUser: boolean;
+}
+
+export interface OAuthUser {
 	token: string;
 	email: string;
 	displayName: string;
@@ -27,7 +34,7 @@ interface OAuthUser {
 }
 
 export async function signIn(auth: Auth, email: string, password: string) {
-	try {
+	return await runAsyncLogin(async () => {
 		const userCredential = await signInWithEmailAndPassword(
 			auth,
 			email,
@@ -35,120 +42,89 @@ export async function signIn(auth: Auth, email: string, password: string) {
 		);
 		const user = userCredential.user;
 		return { user, newUser: false };
-	} catch (err: unknown) {
-		const errorCode = (err as AuthError).code;
-		const errorMessage = (err as AuthError).message;
-		console.error(errorCode);
-		console.error(errorMessage);
-	}
+	});
 }
 
 export async function signInWithGoogle(auth: Auth) {
 	const provider = new GoogleAuthProvider();
-
-	try {
-		const userCredential = await signInWithPopup(auth, provider);
-		const info = getAdditionalUserInfo(userCredential);
-		const user = userCredential.user;
-
-		return { user, newUser: info?.isNewUser };
-	} catch (error) {
-		// // The AuthCredential type that was used.
-		// const credential = GoogleAuthProvider.credentialFromError(error);
-		const errorCode = error.code;
-		const errorMessage = error.message;
-		console.error(errorCode);
-		console.error(errorMessage);
-	}
+	return await runProviderLogin(
+		auth,
+		provider,
+		async (userCredential, newUser) => {
+			return { user: userCredential.user, newUser };
+		}
+	);
 }
+
 export async function signInWithFacebook(auth: Auth) {
 	const provider = new FacebookAuthProvider();
-
-	try {
-		const userCredential = await signInWithPopup(auth, provider);
-		const info = getAdditionalUserInfo(userCredential);
-		const user = userCredential.user;
-
-		return { user, newUser: info?.isNewUser };
-	} catch (error) {
-		// The AuthCredential type that was used.
-		// const credential = FacebookAuthProvider.credentialFromError(error);
-		const errorCode = error.code;
-		const errorMessage = error.message;
-		console.error(errorCode);
-		console.error(errorMessage);
-	}
-}
-
-export async function signInWithMicrosoft(auth: Auth) {
-	const provider = new OAuthProvider('microsoft.com');
-
-	try {
-		const userCredential = await signInWithPopup(auth, provider);
-		const credential = OAuthProvider.credentialFromResult(userCredential);
-		const info = getAdditionalUserInfo(userCredential);
-		const user = userCredential.user;
-		const accessToken = credential?.accessToken;
-
-		const res = await fetch(
-			'https://graph.microsoft.com/beta/me/photos/96x96/$value',
-			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			}
-		);
-
-		const data = await res.blob();
-		const imageUrl = window.URL.createObjectURL(data);
-
-		return { user, imageUrl, newUser: info?.isNewUser };
-	} catch (error) {
-		// const credential = OAuthProvider.credentialFromError(error);
-		const errorCode = error.code;
-		const errorMessage = error.message;
-		console.error(errorCode);
-		console.error(errorMessage);
-	}
+	return await runProviderLogin(
+		auth,
+		provider,
+		async (userCredential, newUser) => {
+			return { user: userCredential.user, newUser };
+		}
+	);
 }
 
 export async function signInWithTwitter(auth: Auth) {
 	const provider = new TwitterAuthProvider();
-
-	try {
-		const userCredential = await signInWithPopup(auth, provider);
-		const info = getAdditionalUserInfo(userCredential);
-		const user = userCredential.user;
-
-		return { user, newUser: info?.isNewUser };
-	} catch (error) {
-		// const credential = TwitterAuthProvider.credentialFromError(error);
-		const errorCode = error.code;
-		const errorMessage = error.message;
-		console.error(errorCode);
-		console.error(errorMessage);
-	}
+	return await runProviderLogin(
+		auth,
+		provider,
+		async (userCredential, newUser) => {
+			return { user: userCredential.user, newUser };
+		}
+	);
 }
 
 export async function signInWithGithub(auth: Auth) {
 	const provider = new GithubAuthProvider();
-	try {
-		const userCredential = await signInWithPopup(auth, provider);
-		const info = getAdditionalUserInfo(userCredential);
-		const user = userCredential.user;
+	return await runProviderLogin(
+		auth,
+		provider,
+		async (userCredential, newUser) => {
+			return { user: userCredential.user, newUser };
+		}
+	);
+}
 
-		return { user, newUser: info?.isNewUser };
-	} catch (error) {
-		// const credential = GithubAuthProvider.credentialFromError(error);
-		const errorCode = error.code;
-		const errorMessage = error.message;
-		console.error(errorCode);
-		console.error(errorMessage);
-	}
+export async function signInWithMicrosoft(auth: Auth) {
+	const provider = new OAuthProvider('microsoft.com');
+	return await runProviderLogin(
+		auth,
+		provider,
+		async (userCredential, newUser) => {
+			const credential =
+				OAuthProvider.credentialFromResult(userCredential);
+			const accessToken = credential?.accessToken;
+
+			const res = await fetch(
+				// "https://graph.microsoft.com/v1.0/me/photos/96x96/$value",
+				'https://graph.microsoft.com/beta/me/photos/96x96/$value',
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				}
+			);
+
+			const url = window.URL || window.webkitURL;
+			const data = await res.blob();
+			const imageUrl = url.createObjectURL(data);
+
+			if (auth.currentUser) {
+				//@ts-ignore
+				auth.currentUser.photoURL = imageUrl;
+			}
+
+			return { user: userCredential.user, newUser };
+		}
+	);
 }
 
 export async function signInWithDiscord(auth: Auth) {
-	try {
+	return await runAsyncLogin(async () => {
 		const userCredential = await withPopup(
 			auth,
 			'http://localhost:8080/auth/login?provider=discord',
@@ -160,12 +136,40 @@ export async function signInWithDiscord(auth: Auth) {
 		const info = getAdditionalUserInfo(userCredential);
 		const user = userCredential.user;
 
-		return { user, newUser: info?.isNewUser };
+		return { user, newUser: info?.isNewUser ?? false };
+	});
+}
+
+async function runProviderLogin(
+	auth: Auth,
+	provider: AuthProvider,
+	cb: (userCredential: UserCredential, newUser: boolean) => Promise<LoginInfo>
+) {
+	return await runAsyncLogin(async () => {
+		const userCredential = await signInWithPopup(
+			auth,
+			provider,
+			browserPopupRedirectResolver
+		);
+
+		const info = getAdditionalUserInfo(userCredential);
+
+		return await cb(userCredential, info?.isNewUser ?? true);
+	});
+}
+
+async function runAsyncLogin(
+	promise: () => Promise<LoginInfo>
+): Promise<LoginInfo | null> {
+	try {
+		const data = await promise();
+		return data;
 	} catch (error) {
-		const errorCode = error.code;
-		const errorMessage = error.message;
+		const errorCode = (error as AuthError).code;
+		const errorMessage = (error as AuthError).message;
 		console.error(errorCode);
 		console.error(errorMessage);
+		return null;
 	}
 }
 
@@ -227,19 +231,22 @@ async function withPopup(
 		const userCredential = await signInWithCustomToken(auth, data.token);
 		const user = userCredential.user;
 
-		Promise.all([
-			updateEmail(user, data.email),
-			updateProfile(user, {
-				displayName: data.displayName,
-				photoURL: data.photoURL,
-			}),
-		]);
+		const info = getAdditionalUserInfo(userCredential);
+
+		info?.isNewUser &&
+			Promise.all([
+				updateEmail(user, data.email),
+				updateProfile(user, {
+					displayName: data.displayName,
+					photoURL: data.photoURL,
+				}),
+			]);
 
 		authWindow?.close();
 		return userCredential;
 	} catch (error) {
 		console.error(error);
-		throw new Error(error);
+		throw new Error((error as Error).message);
 	}
 }
 
@@ -255,22 +262,24 @@ function waitForPopupLogin<T>(origin: string): Promise<T> {
 			window.addEventListener('message', listener, false);
 		} catch (error) {
 			window.removeEventListener('message', listener);
-			reject(new Error(error));
+			reject(error);
 		}
 	});
 }
 
 async function registerCredential() {}
 
-async function runAsyncLogin<T>(
-	promise: Promise<T>
-): Promise<[T | null, any | null]> {
-	try {
-		const data = await promise;
-		return [data, null];
-	} catch (error) {
-		console.error(error.code);
-		console.error(error.message);
-		return [null, error];
-	}
-}
+// async function runAsyncLogin<T>(
+// 	promise: Promise<T> // | (() => Promise<T>)
+// ): Promise<[T | null, any | null]> {
+// 	try {
+// 		const data = await promise;
+// 		return [data, null];
+// 	} catch (error) {
+// 		const errorCode = (error as AuthError).code;
+// 		const errorMessage = (error as AuthError).message;
+// 		console.error(errorCode);
+// 		console.error(errorMessage);
+// 		return [null, error];
+// 	}
+// }

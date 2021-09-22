@@ -2,11 +2,15 @@
 	import { authStore } from './auth';
 	import { onMount, createEventDispatcher, setContext } from 'svelte';
 
+	import { getFirebaseContext } from './helpers';
+
 	import type { Unsubscriber } from 'svelte/store';
 
 	let unsub: Unsubscriber = () => {};
 
-	const store = authStore();
+	const firebaseApp = getFirebaseContext();
+	const store = authStore(firebaseApp);
+
 	const dispatch = createEventDispatcher();
 
 	setContext('user', {

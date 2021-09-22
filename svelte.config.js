@@ -46,9 +46,8 @@ const config = {
 		prerender: {
 			enabled: true,
 			crawl: true,
-			// @ts-ignore
 			onError: 'continue',
-			pages: ['*'],
+			entries: ['*'],
 		},
 		vite: () => ({
 			// build: {

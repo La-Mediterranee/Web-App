@@ -8,6 +8,33 @@
 		signInWithGithub,
 		signInWithDiscord,
 	} from '$utils/login';
+
+	import type { LoginInfo } from '$utils/login';
+
+	type LoginCallback = (auth: Auth) => Promise<LoginInfo | null>;
+
+	// A Map or Object should theoretically be faster than a switch statement
+
+	const providerMethods: {
+		[provider: string]: LoginCallback;
+	} = Object.create(null, {
+		google: { value: signInWithGoogle },
+		facebook: { value: signInWithFacebook },
+		twitter: { value: signInWithTwitter },
+		microsoft: { value: signInWithMicrosoft },
+		github: { value: signInWithGithub },
+		discord: { value: signInWithDiscord },
+	});
+
+	// const providerMethods = {
+	// 	google: signInWithGoogle,
+	// 	facebook: signInWithFacebook,
+	// 	twitter: signInWithTwitter,
+	// 	microsoft: signInWithMicrosoft,
+	// 	github: signInWithGithub,
+	// 	discord: signInWithDiscord,
+	// };
+
 	const minLength = 8;
 
 	const passwordRules = [
@@ -43,8 +70,6 @@
 	import { VITE_SERVER_URL } from '$lib/utils/constants';
 	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
 
-	import { getAdditionalUserInfo } from 'firebase/auth';
-
 	import type { Auth, User } from 'firebase/auth';
 
 	export let auth: Auth;
@@ -55,68 +80,33 @@
 	let show: boolean = false;
 	let error: unknown = null;
 
-	// afterUpdate(() => {
-	// 	flash(form as HTMLFormElement);
-	// });
-
 	async function login(e: MouseEvent | Event) {
 		let user: User | undefined;
 
 		try {
+			let userObject: LoginInfo | null = null;
+
 			const target = e.currentTarget as HTMLButtonElement;
 			const value = target.value;
-
 			// new window.AbortSignal();
 
-			let userObject:
-				| {
-						user: User;
-						newUser: boolean | undefined;
-				  }
-				| undefined;
-
-			switch (value) {
-				case 'login':
-					if (!validateInput(email, password)) {
-						return;
-					}
-					userObject = await signIn(auth, email, password);
-					// const passwordcred = new PasswordCredential({
-					// 	id: 'alice',
-					// 	type: 'password',
-					// 	password: 'VeryRandomPassword123456',
-					// });
-					// await navigator.credentials.store(passwordcred);
-					break;
-				case 'facebook':
-					userObject = await signInWithFacebook(auth);
-					break;
-				case 'twitter':
-					userObject = await signInWithTwitter(auth);
-					break;
-				case 'google':
-					userObject = await signInWithGoogle(auth);
-					break;
-				case 'github':
-					userObject = await signInWithGithub(auth);
-					break;
-				case 'discord':
-					userObject = await signInWithDiscord(auth);
-					break;
-				case 'microsoft':
-					const result = await signInWithMicrosoft(auth);
-					user = result?.user;
-					if (!auth.currentUser) {
-						break;
-					}
-					//@ts-ignore
-					auth.currentUser.photoURL = result?.imageUrl;
-					break;
-				default:
-					break;
+			if (value === 'login') {
+				if (!validateInput(email, password)) {
+					return;
+				}
+				userObject = await signIn(auth, email, password);
+				// const passwordcred = new PasswordCredential({
+				// 	id: email,
+				// 	type: 'password',
+				// 	password: password,
+				// });
+				// await navigator.credentials.store(passwordcred);
+			} else if (value !== null) {
+				const cb = providerMethods[value] as LoginCallback;
+				userObject = await cb(auth);
 			}
 
-			user = userObject?.user;
+			const user = userObject?.user;
 
 			if (user) {
 				const token = await user.getIdToken();

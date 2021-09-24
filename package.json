@@ -2,6 +2,7 @@
 	"name": "food-delivery",
 	"version": "0.2.0",
 	"type": "module",
+	"license": "MIT",
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"build:remove": "rm -rf ./build",

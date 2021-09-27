@@ -1,12 +1,16 @@
 <script lang="ts">
 	// [START auth_signup_password_modular]
-	import { getAuth, createUserWithEmailAndPassword } from '@firebase/auth';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 	const auth = getAuth();
 
 	async function signUp(email: string, password: string) {
 		try {
-			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
 			const user = userCredential.user;
 		} catch (error) {
 			const errorCode = error.code;

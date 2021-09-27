@@ -172,6 +172,10 @@ a {
 	justify-content: center !important;
 }
 
+.pt-2 {
+	padding-top: 8px !important;
+}
+
 .p-2 {
 	padding: 8px !important;
 }
@@ -202,14 +206,6 @@ a {
 	padding: 0;
 	position: absolute;
 	white-space: nowrap;
-
-	/* clip: rect(0 0 0 0); 
-	clip-path: inset(50%);
-	height: 1px;
-	overflow: hidden;
-	position: absolute;
-	white-space: nowrap; 
-	width: 1px; */
 }
 
 @media screen and (min-width: 500px) and (max-width: 799px) {
@@ -235,16 +231,3 @@ a {
 		--carousel-item: 20%;
 	}
 }
-
-/* 
-@media screen and (min-width: 1400px) {
-	:root {
-		--carousel-item: 16.66666667%;
-	}
-} */
-
-/* @media screen and (min-width: 770px) {
-	body {
-		margin-bottom: 0;
-	}
-} */

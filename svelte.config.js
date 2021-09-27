@@ -48,7 +48,15 @@ const config = {
 		// 	precompress: true,
 		// }),
 		// adapter: adapterStatic(),
-		adapter: cvWorker(),
+		adapter: cvWorker({
+			esbuild(defaultOptions) {
+				return {
+					...defaultOptions,
+					target: 'es2015',
+					plugins: [],
+				};
+			},
+		}),
 
 		target: '#svelte',
 		// router: false,

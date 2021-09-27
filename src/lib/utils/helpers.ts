@@ -1,9 +1,7 @@
 import { getContext } from 'svelte';
+import { MODAL, PRODUCT_MODAL } from './constants';
+
 import type { StripeContext } from 'types/index';
-import type {
-	open as modalOpen,
-	close as modalClose,
-} from '$components/Modal/Modal.svelte';
 
 const API = 'http://localhost:3333';
 
@@ -68,10 +66,14 @@ export function getStripeContext() {
 }
 
 interface ModalContext {
-	open: modalOpen;
-	close: modalClose;
+	open: () => {};
+	close: () => {};
 }
 
 export function getModalContext() {
-	return getContext<ModalContext>('modal');
+	return getContext<ModalContext>(MODAL);
+}
+
+export function getProductModalContext() {
+	return getContext<ModalContext>(PRODUCT_MODAL);
 }

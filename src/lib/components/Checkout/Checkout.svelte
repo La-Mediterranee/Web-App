@@ -9,7 +9,7 @@
 
 	import { createPaymentRequest } from './helper';
 
-	import type { User } from '@firebase/auth';
+	import type { User } from 'firebase/auth';
 
 	export interface CustomerInfo {
 		name: string;
@@ -31,6 +31,7 @@
 
 	import { cart } from '$lib/stores/cart';
 	import { getStripeContext } from '$lib/utils/helpers';
+
 	import CartSummary from './CartSummary.svelte';
 	import Details from './checkout-sections/Details.svelte';
 	import Payment from './checkout-sections/Payment.svelte';

@@ -1,7 +1,12 @@
-import type { CollectionReference, DocumentData, Query } from 'firebase/firestore';
+import type {
+	CollectionReference,
+	DocumentData,
+	Query,
+} from 'firebase/firestore';
 import type { FirebaseApp } from 'firebase/app';
 import type { Auth } from 'firebase/auth';
 import type { Unsubscriber, Subscriber } from 'svelte/store';
+import type { authStore } from '$lib/firebase/auth';
 
 declare type Invalidator<T> = (value?: T) => void;
 
@@ -13,13 +18,13 @@ interface Options<T> {
 }
 
 interface FirebaseUser {
-	subscribe: (
+	readonly subscribe: (
 		this: void,
 		run: Subscriber<any>,
 		invalidate?: Invalidator<any> | undefined
 	) => Unsubscriber;
-	logOut: () => Promise<void>;
-	auth: Auth;
+	readonly logOut: () => Promise<void>;
+	readonly auth: Auth;
 }
 
 interface StorageOptions extends Options<Object> {
@@ -33,5 +38,5 @@ interface FirebaseContext {
 }
 
 interface FirebaseAuthContext {
-	getAuth: () => FirebaseUser;
+	getAuth: () => ReturnType<typeof authStore>;
 }

@@ -2,10 +2,16 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"module": "es2020",
-		"lib": ["es2020", "dom", "DOM.Iterable", "WebWorker"],
+		"lib": [
+			"es2020",
+			"dom",
+			"DOM.Iterable",
+			"WebWorker",
+			"WebWorker.ImportScripts"
+		],
 		"target": "ES6",
 		"removeComments": true,
-		"importHelpers": true,
+		// "importHelpers": true,
 		"strict": true,
 		/**
 			svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
@@ -34,7 +40,13 @@
 			"$stores/*": ["src/lib/stores/*"]
 		}
 	},
-	"types": ["svelte", "@sveltejs/kit"],
+	"types": [
+		"svelte",
+		"@sveltejs/kit",
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.svelte"
+	],
 	"include": [
 		"src/**/*.d.ts",
 		"src/**/*.js",

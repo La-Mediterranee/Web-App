@@ -1,20 +1,27 @@
-<script lang="ts">
+<script context="module" lang="ts">
 	import { page } from '$app/stores';
+	import { getAuthContext } from '$lib/firebase/helpers';
 
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import type { NavItem } from 'types/index';
+</script>
+
+<script lang="ts">
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Image from '../Image/Image.svelte';
 
 	export let routes: NavItem[] = [];
+
+	const user = getAuthContext();
 
 	$: fixed = $page.path === '/';
 </script>
 
-<nav role="navigation" class:fixed={fixed === true}>
+<header class:fixed>
 	<div id="nav-logo">
 		<img src="/Logos/V1_210.webp" alt="" />
 	</div>
 
-	<div class="nav-content">
+	<nav aria-label="desktop primary">
 		<ul>
 			{#each routes as { text, icon, href, rel } (href)}
 				<li class="nav-item">
@@ -24,8 +31,7 @@
 					>
 						<div>
 							<Icon path={icon} width={30} height={30} />
-							<!-- color="#fff" -->
-							<!-- color={'var(--tint-color)'} -->
+							<!-- color={'var(--tint-color, #fff)'} -->
 						</div>
 						<span>
 							{text}
@@ -34,23 +40,30 @@
 				</li>
 			{/each}
 		</ul>
+		<!-- <div class="nav-content">
+		</div> -->
+	</nav>
 
-		<!-- class="orange darken-4" -->
-		<!-- 
-		<form>
-			<div>
-				<input type="text" />
-				<button aria-label="Suchen">
-					<Icon path={magnify} color="#fff" />
-				</button>
-			</div>
-		</form> -->
-
-		<div id="profile">
-			<img src="" alt="" />
-		</div>
+	<!-- <form role="search">
+	<div>
+		<input type="search" aria-label="essen oder getränke" size="20" />
+		<button aria-label="suchen">
+			<Icon path={magnify} color="#fff" />
+		</button>
 	</div>
-</nav>
+	</form> -->
+
+	<div id="profile">
+		<Image
+			src={$user?.photoURL ||
+				`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
+			alt=""
+			loading="eager"
+			width={50}
+			height={50}
+		/>
+	</div>
+</header>
 
 <style lang="scss">
 	// box-shadow: 0 2px 20px 0 var(--subtle);
@@ -69,7 +82,8 @@
 		position: fixed;
 	}
 
-	nav {
+	// nav,
+	header {
 		// background: linear-gradient(to right, #4050e0e5, #062ba5);
 		display: flex;
 		top: 0;
@@ -102,7 +116,8 @@
 		}
 	}
 
-	.nav-content {
+	// .nav-content,
+	nav {
 		width: 88%;
 		justify-content: flex-end;
 
@@ -116,7 +131,7 @@
 		height: 100%;
 		padding: 0.5em;
 		display: none;
-		justify-content: space-evenly;
+		justify-content: flex-start;
 		align-items: center;
 
 		@media screen and (min-width: $md) {
@@ -126,6 +141,10 @@
 
 	.nav-item {
 		list-style: none;
+		// margin-right: 0.75rem;
+		+ .nav-item {
+			margin-left: 1.15rem;
+		}
 
 		a {
 			display: flex;
@@ -137,13 +156,13 @@
 		div {
 			display: block;
 			height: fit-content;
-			width: 30px;
+			width: 27px;
 			height: 30px;
 		}
 
 		span {
 			font-size: 14px;
-			margin-left: 5px;
+			// margin-left: 5px;
 		}
 	}
 
@@ -194,9 +213,15 @@
 		align-items: center;
 		margin-right: 0.5em;
 
-		img {
-			width: 100%;
-			height: 50px;
+		// :global(img) {
+		// 	// width: 100%;
+		// 	width: 50px;
+		// 	height: 50px;
+		// }
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		#profile:hover {
 		}
 	}
 </style>

@@ -8,26 +8,31 @@
 
 	let unsub: Unsubscriber = () => {};
 
-	const firebaseApp = getFirebaseContext();
-	const store = authStore(firebaseApp);
-
 	const dispatch = createEventDispatcher();
 
-	setContext('user', {
-		getAuth: () => store,
-	});
+	const firebaseApp = getFirebaseContext();
+	let store: ReturnType<typeof authStore>;
 
-	onMount(() => {
-		unsub = store.subscribe((user) => {
-			dispatch('customer', {
-				user,
-			});
+	try {
+		store = authStore(firebaseApp);
+		setContext('user', {
+			getAuth: () => store,
 		});
 
-		return () => {
-			unsub();
-		};
-	});
+		onMount(() => {
+			unsub = store.subscribe((user) => {
+				dispatch('customer', {
+					user,
+				});
+			});
+
+			return () => {
+				unsub();
+			};
+		});
+	} catch (error) {
+		console.error('authStore:', error);
+	}
 </script>
 
 <slot name="before" />

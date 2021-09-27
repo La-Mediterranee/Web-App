@@ -1,36 +1,107 @@
-import { readable, writable } from 'svelte/store'; //writable,
-// import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { readable } from 'svelte/store'; //writable,
 import {
-	initializeAuth,
 	onAuthStateChanged,
 	signOut,
+	// getAuth,
+	initializeAuth,
+	inMemoryPersistence,
 	indexedDBLocalPersistence,
-	browserLocalPersistence,
+	browserPopupRedirectResolver,
 } from 'firebase/auth';
-
-// import { getFirebaseContext } from './helpers';
+// @ts-ignore
+import { _getProvider } from '@firebase/app';
 
 import type { FirebaseApp } from 'firebase/app';
-// import type { User } from 'firebase/auth';
+import type { User, Auth } from 'firebase/auth';
+
+export type AuthStore = ReturnType<typeof authStore>;
+
+const DB_OBJECTSTORE_NAME = 'firebaseLocalStorage';
+const DB_NAME = 'firebaseLocalStorageDb';
+
+interface DBObject {
+	fbase_key: string;
+	value: User;
+}
 
 export function authStore(app: FirebaseApp) {
-	// const auth = getAuth(firebaseApp);
-	const auth = initializeAuth(app, {
-		persistence: [indexedDBLocalPersistence, browserLocalPersistence],
-	});
+	let auth: Auth;
+	try {
+		const provider = _getProvider(app, 'auth');
+
+		auth = provider.isInitialized()
+			? provider.getImmediate()
+			: initializeAuth(app, {
+					...(typeof window === 'undefined'
+						? {
+								persistence: [inMemoryPersistence],
+						  }
+						: {
+								popupRedirectResolver:
+									browserPopupRedirectResolver,
+								persistence: [indexedDBLocalPersistence],
+						  }),
+			  });
+		// console.log('auth:', auth);
+	} catch (error) {
+		console.error('authStore:', error);
+		throw Error('authStore:' + error);
+	}
 
 	const logOut = () => signOut(auth);
 
-	const storageKey: string = 'customer';
-	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
-	const customer = storage?.getItem(storageKey);
-	const cached = customer ? JSON.parse(customer) : '';
+	const cached = null;
 
-	const store = readable(cached, (set) => {
-		const teardown = onAuthStateChanged(auth, (customer) => {
-			set(customer);
-			storage?.setItem(storageKey, JSON.stringify(customer));
+	const store = readable<User | null>(cached, (set) => {
+		if (typeof window !== 'undefined') {
+			const idb = indexedDB.open(DB_NAME);
+			idb.onsuccess = function (e) {
+				// const db = (e.target as IDBRequest<IDBDatabase>).result;
+
+				// const dbReq = db
+				// 	.transaction(DB_OBJECTSTORE_NAME)
+				// 	.objectStore(DB_OBJECTSTORE_NAME)
+				// 	.getAll();
+
+				// dbReq.onsuccess = (e) => {
+				// 	const target = e.target as IDBRequest<any[]>;
+				// 	const user = target.result[0]?.value as User;
+				// 	set(user);
+				// };
+
+				this.result
+					.transaction(DB_OBJECTSTORE_NAME)
+					.objectStore(DB_OBJECTSTORE_NAME)
+					.getAll().onsuccess = (e) => {
+					const target = e.target as IDBRequest<DBObject[]>;
+					const user = target.result[0]?.value;
+					set(user);
+				};
+
+				this.result.onerror = function (e) {
+					console.error('Database error: ' + e.target);
+				};
+			};
+
+			idb.onerror = function (e) {
+				console.error('idb:', this.error);
+				// console.error(
+				// 	'idb:',
+				// 	(e.target as IDBRequest<IDBDatabase>).error
+				// );
+			};
+		}
+
+		const teardown = onAuthStateChanged(auth, (user) => {
+			try {
+				console.log(user);
+				set(user);
+			} catch (error) {
+				console.error('onAuthState:', error);
+				set(null);
+			}
 		});
+
 		return () => teardown;
 	});
 
@@ -40,38 +111,5 @@ export function authStore(app: FirebaseApp) {
 		subscribe,
 		logOut,
 		auth,
-	};
+	} as const;
 }
-
-// export function createAuthStore() {
-// 	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
-// 	const storageKey: string = 'customer';
-// 	const customer = storage?.getItem(storageKey);
-// 	const cached: User | null = customer ? JSON.parse(customer) : null;
-
-// 	const store = writable(cached);
-
-// 	const { subscribe, set } = store;
-
-// 	function init(app: FirebaseApp) {
-// 		const auth = getAuth(app);
-
-// 		const deinit = onAuthStateChanged(auth, (customer) => {
-// 			set(customer);
-// 			storage?.setItem(storageKey, JSON.stringify(customer));
-// 		});
-
-// 		const logOut = () => signOut(auth);
-
-// 		return {
-// 			logOut,
-// 			deinit,
-// 			auth,
-// 		};
-// 	}
-
-// 	return {
-// 		subscribe,
-// 		init,
-// 	};
-// }

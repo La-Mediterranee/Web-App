@@ -21,19 +21,26 @@ import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { enable as navigationPreloadEnable } from 'workbox-navigation-preload';
 import { setCacheNameDetails, skipWaiting, clientsClaim } from 'workbox-core';
-import { NetworkOnly, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import {
+	NetworkOnly,
+	NetworkFirst,
+	StaleWhileRevalidate,
+} from 'workbox-strategies';
 
 import { SHOP_URL } from '$utils/constants';
 
 import type { DBSchema, StoreNames, IDBPDatabase } from 'idb';
-import type { RouteMatchCallbackOptions, RouteHandlerCallbackOptions } from 'workbox-core';
+import type {
+	RouteMatchCallbackOptions,
+	RouteHandlerCallbackOptions,
+} from 'workbox-core';
 
 interface ChacheNames {
 	/** generated js and css files from sveltekit */
 	readonly pages: string;
 	/** files in the static folder from sveltekit */
 	readonly static: string;
-	/** images from cdns,storages,etc. saved in IndexedDB */
+	/** images from cdns, storages, etc. saved in IndexedDB */
 	readonly images: string;
 	/** offline Page */
 	readonly offline: string;
@@ -59,10 +66,12 @@ const cacheNames: ChacheNames = {
 	images: `images_v${OFFLINE_VERSION}`,
 	offline: `offline_v${OFFLINE_VERSION}`,
 	pages: `pages_v${OFFLINE_VERSION}`,
-	static: `static_${OFFLINE_VERSION}`
+	static: `static_${OFFLINE_VERSION}`,
 };
 
-const toCache = exclude.map((path) => build.filter((file) => !file.includes(path)))[0];
+const toCache = exclude.map((path) =>
+	build.filter((file) => !file.includes(path))
+)[0];
 
 let precachedFiles: string[] = [];
 let basePaths: StoragePaths | null = null;
@@ -93,12 +102,16 @@ function routeAndCacheJsAndCSS(urls: RegExp) {
 			}
 			return (
 				url.pathname.match(/\.(?:js|css)/i) &&
-				precachedFiles.indexOf(url.pathname.split('?').shift() as string) === -1 &&
-				precachedFiles.indexOf(url.href.split('?').shift() as string) === -1
+				precachedFiles.indexOf(
+					url.pathname.split('?').shift() as string
+				) === -1 &&
+				precachedFiles.indexOf(
+					url.href.split('?').shift() as string
+				) === -1
 			);
 		},
 		new StaleWhileRevalidate({
-			cacheName: cacheNames.pages
+			cacheName: cacheNames.pages,
 		})
 	);
 }
@@ -119,7 +132,10 @@ function cacheAndRoute(entries: Entries[]) {
  *  Limit cache usage to [rotationCount] images with LRU updating logic.
  *  Limit images validity to [daysDuration].
  */
-async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 30 }) {
+async function routeAndCacheProductImages({
+	rotationCount = 200,
+	daysDuration = 30,
+}) {
 	// const currentImgDb = await openDB(cacheNames.images, 1);
 	// const imgExpDb = await openDB(`${cacheNames.images}-exp`, 1);
 	const imgDbs = [currentImgDb, imgExpDb];
@@ -149,10 +165,13 @@ async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 
 		const key = `${url}`;
 		const [blob, timestamp] = await Promise.all([
 			currentImgDb.get(storeName, key),
-			imgExpDb.get(storeName, key)
+			imgExpDb.get(storeName, key),
 		]);
 
-		if ((timestamp as number) + daysDuration * 24 * 60 * 60 * 1000 < Date.now()) {
+		if (
+			(timestamp as number) + daysDuration * 24 * 60 * 60 * 1000 <
+			Date.now()
+		) {
 			imgDbs.forEach((db) => db.delete(storeName, key));
 		} else {
 			result = blob as Blob;
@@ -167,8 +186,12 @@ async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 
 				url.hostname.match(/.*(?:la-mediterranee)\.at/) &&
 				url.pathname.match(/.*\.(?:png|gif|jpg|jpeg|webp|svg)/) &&
 				url.search.match(/impolicy=product/) &&
-				precachedFiles.indexOf(url.pathname.split('?').shift() as string) === -1 &&
-				precachedFiles.indexOf(url.href.split('?').shift() as string) === -1
+				precachedFiles.indexOf(
+					url.pathname.split('?').shift() as string
+				) === -1 &&
+				precachedFiles.indexOf(
+					url.href.split('?').shift() as string
+				) === -1
 			);
 		},
 		async ({ url }) => {
@@ -178,16 +201,15 @@ async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 
 				return response;
 			} catch (error) {
 				const blob = await read(url);
-				// if (blob) {
-				// 	return new Response(blob);
-				// }
 				return new Response(blob);
 			}
 		}
 	);
 }
 
-async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any | null]> {
+async function runAsync<T>(
+	promise: Promise<T>
+): Promise<[T | null, any | null]> {
 	try {
 		const data = await promise;
 		return [data, null];
@@ -203,14 +225,7 @@ async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any | null]>
  */
 async function resetCaches() {
 	const keys = await caches.keys();
-	// delete old caches
-	// for (const property in cacheNames) {
-	// 	const key = property as keyof ChacheNames;
-	// 	if (caches.has(cacheNames[key])) {
-	// 		//@ts-ignore
-	// 		caches.delete(caches[key]);
-	// 	}
-	// }
+
 	return Promise.all(
 		keys.map((cacheName) => {
 			if (Object.values(cacheNames).indexOf(cacheName) === -1) {
@@ -221,7 +236,7 @@ async function resetCaches() {
 	);
 }
 
-const routeResourcesNetworkFirst = () => {
+function routeResourcesNetworkFirst() {
 	const matcher = ({ url }: RouteMatchCallbackOptions) => {
 		if (!url.hostname.match(SHOP_URL) || url.pathname.match(/__SYSTEM__/)) {
 			return false;
@@ -235,18 +250,23 @@ const routeResourcesNetworkFirst = () => {
 			return await fetch(eventRequest.request);
 		} catch (error) {
 			const cache = await caches.open(cacheNames.offline);
-			return cache.match(eventRequest.request, { ignoreSearch: true }) as Promise<Response>;
+			return cache.match(eventRequest.request, {
+				ignoreSearch: true,
+			}) as Promise<Response>;
 		}
 	};
 
 	registerRoute(matcher, handler);
-};
+}
 
 /**
  * Route requests of type 'navigate' with a NetworkOnly strategy, fallback to offline page if
  * network fail.
  */
-const routePagesOrServeOffline = ({ daysDuration = 7, isNavigationEnabled = false }) => {
+const routePagesOrServeOffline = ({
+	daysDuration = 7,
+	isNavigationEnabled = false,
+}) => {
 	let strategy: NetworkFirst | NetworkOnly;
 
 	if (isNavigationEnabled) {
@@ -254,9 +274,9 @@ const routePagesOrServeOffline = ({ daysDuration = 7, isNavigationEnabled = fals
 			cacheName: 'pages',
 			plugins: [
 				new ExpirationPlugin({
-					maxAgeSeconds: daysDuration * 24 * 60 * 60
-				})
-			]
+					maxAgeSeconds: daysDuration * 24 * 60 * 60,
+				}),
+			],
 		});
 	} else {
 		strategy = new NetworkOnly();
@@ -277,69 +297,72 @@ const routePagesOrServeOffline = ({ daysDuration = 7, isNavigationEnabled = fals
 	registerRoute(matcher, handler);
 };
 
-function init(paths: StoragePaths, caching: { images: Object; offline: Object }) {
-	basePaths = paths;
+async function init(
+	paths: StoragePaths,
+	caching: { images: Object; offline: Object }
+) {
+	try {
+		basePaths = paths;
 
-	// workbox.setConfig({ debug: false });
+		// workbox.setConfig({ debug: false });
 
-	openDB(cacheNames.images, 1, {
-		upgrade(db) {
-			db.createObjectStore('keyvaluepairs');
-		}
-	}).then((db) => {
-		imgExpDb = db;
-	});
+		imgExpDb = await openDB(cacheNames.images, 1, {
+			upgrade(db) {
+				db.createObjectStore('keyvaluepairs');
+			},
+		});
 
-	openDB(`${cacheNames.images}-exp`, 1, {
-		upgrade(db) {
-			db.createObjectStore('keyvaluepairs');
-		}
-	}).then((db) => {
-		imgExpDb = db;
-	});
+		imgExpDb = await openDB(`${cacheNames.images}-exp`, 1, {
+			upgrade(db) {
+				db.createObjectStore('keyvaluepairs');
+			},
+		});
 
-	// localforage.config({ name: cacheNames.images });
-	// localforage.createInstance({ name: `${cacheNames.images}-exp` });
+		// localforage.config({ name: cacheNames.images });
+		// localforage.createInstance({ name: `${cacheNames.images}-exp` });
 
-	resetCaches();
+		resetCaches();
 
-	navigationPreloadEnable();
+		navigationPreloadEnable();
 
-	setCacheNameDetails({
-		prefix: 'shop',
-		postfix: '',
-		precache: 'assets'
-	});
+		setCacheNameDetails({
+			prefix: 'shop',
+			postfix: '',
+			precache: 'assets',
+		});
 
-	skipWaiting();
-	clientsClaim();
+		skipWaiting();
+		clientsClaim();
 
-	googleAnalytics.initialize();
+		googleAnalytics.initialize();
 
-	setCatchHandler(async () => {
-		return new Response(null, { status: 404 });
-	});
+		setCatchHandler(async () => {
+			return new Response(null, { status: 404 });
+		});
 
-	cacheAndRoute([
-		...build.map((asset) => {
-			console.log(`=== $service-worker build === ${asset}`);
-			return {
-				url: asset,
-				revision: null
-			} as Entries;
-		}),
-		...files.map((file) => {
-			console.log(`=== $service-worker files === ${file}`);
-			return {
-				url: file,
-				revision: `${timestamp}`
-			} as Entries;
-		})
-	]);
-	routePagesOrServeOffline(caching.offline);
-	routeResourcesNetworkFirst();
-	routeAndCacheJsAndCSS(/la-mediterranee\.at/);
-	routeAndCacheProductImages(caching.images);
+		cacheAndRoute([
+			...build.map((asset) => {
+				console.log(`=== $service-worker build === ${asset}`);
+				return {
+					url: asset,
+					revision: null,
+				} as Entries;
+			}),
+			...files.map((file) => {
+				console.log(`=== $service-worker files === ${file}`);
+				return {
+					url: file,
+					revision: `${timestamp}`,
+				} as Entries;
+			}),
+		]);
+		routePagesOrServeOffline(caching.offline);
+		routeResourcesNetworkFirst();
+		routeAndCacheJsAndCSS(/la-mediterranee\.at/);
+		routeAndCacheProductImages(caching.images);
+	} catch (error) {
+		console.error('sw: ', error);
+	}
 }
 
 // init()

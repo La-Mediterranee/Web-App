@@ -1,29 +1,31 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { derived } from 'svelte/store';
 
 	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 
-	import type { User } from '@firebase/auth';
-	import type { FirebaseUser } from 'types/firebase';
+	import type { AuthStore } from '$lib/firebase/auth';
 
-	export let user: FirebaseUser;
-
-	export const profile = derived(user, ($user) => $user as User);
+	export let user: AuthStore;
 </script>
 
 <div>
-	<div>
-		<img
-			src={`${$profile?.photoURL || ''}`}
-			alt={`${$profile?.displayName || 'User'} Profilbild`}
-		/>
-
-		<h3>{$profile?.displayName}</h3>
-	</div>
+	<h1>Profil</h1>
 
 	<section>
-		<h3>Einstellungen</h3>
+		<img
+			src={`${$user?.photoURL || ''}`}
+			alt={`${$user?.displayName || 'Users'} Profilbild`}
+		/>
+
+		<h3>{$user?.displayName}</h3>
+	</section>
+
+	<section>
+		<h2>Einstellungen</h2>
+
+		<section>
+			<h3>Zahlunungmethoden</h3>
+		</section>
 	</section>
 
 	<Button
@@ -31,9 +33,9 @@
 		size="x-large"
 		class="orange darken-1"
 		rounded
-		on:click={() => {
-			user.logOut();
-			goto('customer/login');
+		on:click={async () => {
+			await user.logOut();
+			goto('/customer/login');
 		}}
 	>
 		Abmelden
@@ -48,5 +50,9 @@
 
 	div {
 		text-align: center;
+	}
+
+	section {
+		margin-bottom: 0.75rem;
 	}
 </style>

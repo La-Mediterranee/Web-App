@@ -26,6 +26,7 @@ const config = {
 		// 	]
 		// },
 		defaults: {
+			markup: 'html',
 			script: 'typescript',
 			style: 'scss',
 		},
@@ -43,6 +44,7 @@ const config = {
 		// adapter: adapterStatic(),
 		target: '#svelte',
 		// router: false,
+
 		prerender: {
 			enabled: true,
 			crawl: true,
@@ -50,19 +52,29 @@ const config = {
 			entries: ['*'],
 		},
 		vite: () => ({
-			// build: {
-			// 	// target: 'es2015',
-			// 	sourcemap: true,
-			// 	rollupOptions: {
-			// 		plugins: [
-			// 			visualizer({
-			// 				template: 'treemap',
-			// 				sourcemap: true,
-			// 				gzipSize: true
-			// 			})
-			// 		]
-			// 	}
-			// },
+			build: {
+				// target: 'es2015',
+				terserOptions: {
+					ecma: 2015,
+					module: true,
+					compress: {
+						keep_fargs: false,
+					},
+					format: {
+						comments: false,
+					},
+				},
+				// sourcemap: true,
+				// rollupOptions: {
+				// 	plugins: [
+				// 		visualizer({
+				// 			template: 'treemap',
+				// 			sourcemap: true,
+				// 			gzipSize: true
+				// 		})
+				// 	]
+				// }
+			},
 			server: {
 				proxy: {
 					'/api': {

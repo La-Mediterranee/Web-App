@@ -1,0 +1,13 @@
+name = "my-worker"
+account_id=""
+type="JavaScript"
+# workers_dev=true
+# route = "example.com/*"
+
+[site]
+bucket = "./build"
+entry-point = "./workers-site"
+
+[vars]
+FOO = "some value"
+BAR = "some other string"

@@ -10,16 +10,7 @@
 	let intersecting = false;
 	let container: HTMLDivElement;
 
-	const intersectionPolyfill =
-		'https://cdn.jsdelivr.net/npm/intersection-observer@0.12.0/intersection-observer.min.js';
-
 	onMount(async () => {
-		if (typeof IntersectionObserver === 'undefined') {
-			window.IntersectionObserver = (
-				await import(intersectionPolyfill)
-			).default;
-		}
-
 		const rootMargin = `${bottom}px ${left}px ${top}px ${right}px`;
 
 		const observer = new IntersectionObserver(

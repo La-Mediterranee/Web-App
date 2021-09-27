@@ -9,3 +9,4 @@ import admin from 'firebase-admin';
 
 // export const firebase = getFirebaseApp();
 // export const auth = firebase?.auth();
+// export const firestore = firebase?.firestore();

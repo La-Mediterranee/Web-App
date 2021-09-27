@@ -11,10 +11,9 @@ import {
 	TwitterAuthProvider,
 	getAdditionalUserInfo,
 	browserPopupRedirectResolver,
-	AuthProvider,
 } from 'firebase/auth';
 
-import type { User, Auth, UserCredential } from 'firebase/auth';
+import type { User, Auth, UserCredential, AuthProvider } from 'firebase/auth';
 
 interface AuthError {
 	code: string;

@@ -1,32 +1,37 @@
-<script lang="ts">
-	import '../app.css';
+<script context="module" lang="ts">
 	import { dev } from '$app/env';
 	import { initializeApp, getApps, getApp } from 'firebase/app';
 
-	import { FirebaseApp as Firebase, Auth } from '$lib/firebase';
 	import { firebaseConfig, GA_MEASUREMENT_ID } from '$utils/constants';
-	import Stripe from '$lib/components/Stripe/Stripe.svelte';
-	import MaterialApp from 'svelte-material-components/src/components/MaterialApp/MaterialAppMin.svelte';
 
 	import type { FirebaseApp } from 'firebase/app';
-
-	const firebase: FirebaseApp | null = !getApps()?.length
-		? initializeApp(firebaseConfig)
-		: getApp();
 
 	function loaded() {
 		console.log('gtag');
 	}
 </script>
 
+<script lang="ts">
+	import '../app.css';
+	import Auth from '$lib/firebase/Auth.svelte';
+	import Firebase from '$lib/firebase/Firebase.svelte';
+	import Stripe from '$lib/components/Stripe/Stripe.svelte';
+
+	import MaterialApp from 'svelte-material-components/src/components/MaterialApp/MaterialAppMin.svelte';
+
+	const firebase: FirebaseApp = !getApps()?.length
+		? initializeApp(firebaseConfig)
+		: getApp();
+</script>
+
 <svelte:head>
 	{#if !dev}
 		<script
-			on:load={loaded}
+			defer
 			async
-			src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+			src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+			on:load={loaded}></script>
 	{/if}
-	<!-- {@html `<script src="/some-script.js"></script>`} -->
 </svelte:head>
 
 {#if !dev}
@@ -34,7 +39,7 @@
 		<iframe
 			aria-hidden="true"
 			title="Google Tag Manager"
-			src="https://www.googletagmanager.com/ns.html?id=GTM-5XN38L2"
+			src={`https://www.googletagmanager.com/ns.html?id=${GA_MEASUREMENT_ID}`}
 			height="0"
 			width="0"
 			style="display:none;visibility:hidden"

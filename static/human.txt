@@ -1,1 +1,19 @@
-https://materialdesignicons.com/
+libs: 
+	https://materialdesignicons.com/
+	https://firebase.google.com/
+	https://kit.svelte.dev/
+	https://svelte-materialify.vercel.app/  sort of foked into github:abdo643-HULK/svelte-material
+
+resources:
+	https://web.dev/
+	https://fireship.io/
+	https://stackoverflow.com/
+
+inspiration: 
+	https://www.mjam.net/
+	https://www.lieferservice.at/
+	https://www.humblebundle.com/
+	https://www.minante.at/en/menu
+	https://www.dominos.at/en/
+	https://burger-delivery.net/
+	https://www.wienerboerger.at/

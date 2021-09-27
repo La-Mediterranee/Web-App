@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/env';
+
 	import { onMount } from 'svelte';
 	import IntersectionObserver from './IntersectionObserver.svelte';
 
@@ -8,6 +10,10 @@
 	export let height: number;
 	export let loading: 'eager' | 'lazy' = 'lazy';
 	export let decoding: 'async' | 'sync' | 'auto' = 'async';
+
+	let image: HTMLImageElement;
+	let loaded = false;
+	let nativeLoading = false;
 
 	if (!src) {
 		throw new Error('Image source must be defined');
@@ -19,15 +25,9 @@
 		);
 	}
 
-	let image: HTMLImageElement;
-	let loaded = false;
-	let nativeLoading = false;
-
-	onMount(() => {
-		if ('loading' in HTMLImageElement.prototype) {
-			nativeLoading = true;
-		}
-	});
+	if (browser && 'loading' in HTMLImageElement.prototype) {
+		nativeLoading = true;
+	}
 </script>
 
 <IntersectionObserver once={true} let:intersecting>

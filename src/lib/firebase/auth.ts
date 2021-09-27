@@ -37,8 +37,8 @@ export function authStore(app: FirebaseApp) {
 								persistence: [inMemoryPersistence],
 						  }
 						: {
-								popupRedirectResolver:
-									browserPopupRedirectResolver,
+								// popupRedirectResolver:
+								// 	browserPopupRedirectResolver,
 								persistence: [indexedDBLocalPersistence],
 						  }),
 			  });

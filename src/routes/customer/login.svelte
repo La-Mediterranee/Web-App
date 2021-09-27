@@ -4,13 +4,10 @@
 
 <script lang="ts">
 	import Login from '$lib/components/Customer/Login';
-	import { getAuthContext } from '$lib/firebase/helpers';
-
-	const user = getAuthContext();
 </script>
 
 <div>
-	<Login auth={user.auth} />
+	<Login />
 </div>
 
 <style>

@@ -28,7 +28,7 @@ export async function handle({
 
 export function getSession(request: Request) {
 	const user = request.locals.user as adminAuth.DecodedIdToken;
-	console.log(user);
+	// console.log(user);
 
 	return user
 		? {
@@ -43,3 +43,43 @@ export function getSession(request: Request) {
 		  }
 		: {};
 }
+
+// import * as cookie from 'cookie';
+// import { firestore } from './server/firebase';
+
+// export async function getContext({ headers }) {
+// 	let user = null;
+// 	try {
+// 		const cookies = cookie.parse(headers.cookie || '');
+// 		const sessionId = cookies['__session'];
+// 		if (!sessionId) {
+// 			return {
+// 				context: { user },
+// 			};
+// 		}
+// 		const sessDoc = firestore.collection(`sessions`).doc(sessionId);
+// 		const session = (await sessDoc.get()).data();
+// 		if (!session) {
+// 			return {
+// 				context: { user },
+// 			};
+// 		}
+// 		user = JSON.parse(session.sess);
+// 		const { uid } = user;
+// 		const userSnap = await firestore.collection('users').doc(uid).get();
+// 		const userData = userSnap.data();
+
+// 		return {
+// 			context: { user, userData },
+// 		};
+// 	} catch (e) {
+// 		console.error('hooks.js', e);
+// 		return {
+// 			context: { user },
+// 		};
+// 	}
+// }
+
+// export async function getSession({ context }) {
+// 	return context;
+// }

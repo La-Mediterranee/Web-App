@@ -2,7 +2,7 @@
 	export let online = true;
 </script>
 
-<div class:offline={online === false}>
+<div role="status" aria-live="polite" class:offline={online === false}>
 	<em>Sie sind derzeit offline</em>
 </div>
 

@@ -6,12 +6,13 @@
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
 	import Statusbar from '$lib/components/Statusbar';
-	import Providers from './_layoutProviders.svelte';
-	import Modal from '$lib/components/Modal/Modal.svelte';
 	import Tabbar from '$lib/components/Tabbar/Tabbar.svelte';
 	import Installprompt from '$lib/components/Installprompt';
 
-	import { navItems } from '$utils/navItems';
+	import Modals from './_Modals.svelte';
+	import Providers from './_layoutProviders.svelte';
+
+	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	let online: boolean = true;
 
@@ -32,21 +33,21 @@
 <!-- <LDTag {}/>  -->
 
 <Providers>
-	<Modal>
+	<Modals>
 		<div id="mainContent">
 			<Statusbar {online} />
-			<Navbar routes={navItems} />
+			<Navbar routes={desktopNavItems} />
 			<main>
 				<Installprompt installSource={'LayoutInstallButton'} />
 				<slot />
 			</main>
-			<Tabbar routes={navItems} />
+			<Tabbar routes={mobileNavItems} />
 			<Footer />
 		</div>
-	</Modal>
+	</Modals>
 </Providers>
 
-<style>
+<style global>
 	main {
 		padding-top: 1.2em;
 		min-height: 90vh;

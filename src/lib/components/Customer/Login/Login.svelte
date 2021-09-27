@@ -9,12 +9,18 @@
 		signInWithDiscord,
 	} from '$utils/login';
 
+	import { slide } from 'svelte/transition';
+	import { mdiAlert } from '@mdi/js';
+
+	import { goto } from '$app/navigation';
+	import { getAuthContext } from '$lib/firebase/helpers';
+	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
+
 	import type { LoginInfo } from '$utils/login';
 
 	type LoginCallback = (auth: Auth) => Promise<LoginInfo | null>;
 
 	// A Map or Object should theoretically be faster than a switch statement
-
 	const providerMethods: {
 		[provider: string]: LoginCallback;
 	} = Object.create(null, {
@@ -25,15 +31,6 @@
 		github: { value: signInWithGithub },
 		discord: { value: signInWithDiscord },
 	});
-
-	// const providerMethods = {
-	// 	google: signInWithGoogle,
-	// 	facebook: signInWithFacebook,
-	// 	twitter: signInWithTwitter,
-	// 	microsoft: signInWithMicrosoft,
-	// 	github: signInWithGithub,
-	// 	discord: signInWithDiscord,
-	// };
 
 	const minLength = 8;
 
@@ -66,19 +63,23 @@
 
 <script lang="ts">
 	import Icon from 'svelte-material-components/src/components/Icon';
+	import Alert from 'svelte-material-components/src/components/Alert';
 	import TextField from 'svelte-material-components/src/components/TextField';
-	import { VITE_SERVER_URL } from '$lib/utils/constants';
-	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
 
 	import type { Auth, User } from 'firebase/auth';
 
-	export let auth: Auth;
+	const user = getAuthContext();
+	const auth = user?.auth;
 
 	let form: HTMLFormElement | null = null;
 	let email: string = '';
 	let password: string = '';
 	let show: boolean = false;
-	let error: unknown = null;
+	let error: boolean = false;
+
+	$: if ($user) {
+		goto('/customer');
+	}
 
 	async function login(e: MouseEvent | Event) {
 		let user: User | undefined;
@@ -95,28 +96,33 @@
 					return;
 				}
 				userObject = await signIn(auth, email, password);
-				// const passwordcred = new PasswordCredential({
-				// 	id: email,
-				// 	type: 'password',
-				// 	password: password,
-				// });
-				// await navigator.credentials.store(passwordcred);
-			} else if (value !== null) {
-				const cb = providerMethods[value] as LoginCallback;
+				if (typeof PasswordCredential !== 'undefined') {
+					const passwordcred = new PasswordCredential({
+						id: email,
+						type: 'password',
+						password: password,
+						iconURL: userObject?.user.photoURL ?? '',
+					});
+					await navigator.credentials.store(passwordcred);
+				}
+			} else if (value != null && typeof value === 'string') {
+				const cb = providerMethods[value];
 				userObject = await cb(auth);
 			}
 
 			const user = userObject?.user;
 
 			if (user) {
-				const token = await user.getIdToken();
-				await fetch(`${VITE_SERVER_URL}/auth/login?provider=firebase`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
+				// const token = await user.getIdToken();
+				// await fetch(`${VITE_SERVER_URL}/auth/login?provider=firebase`, {
+				// 	headers: { Authorization: `Bearer ${token}` },
+				// });
 
 				// if (userObject?.newUser) {
 				// 	db.collection('users').doc(user.uid).set({ email });
 				// }
+
+				goto('/customer');
 
 				error = false;
 			} else {
@@ -129,9 +135,19 @@
 	}
 </script>
 
-{#if error}
-	<div id="error">Es gab ein Fehler beim Einloggen</div>
-{/if}
+<div class="login-error" on:click={() => (error = !error)}>
+	<Alert
+		class="error-color"
+		transition={slide}
+		transitionOpts={{ duration: 500 }}
+		bind:visible={error}
+	>
+		<div slot="icon">
+			<Icon path={mdiAlert} />
+		</div>
+		Es gab ein Fehler beim Einloggen.
+	</Alert>
+</div>
 
 <h1>Login</h1>
 
@@ -201,10 +217,9 @@
 		id="google"
 		type="button"
 		class="provider"
-		on:click={login}
 		value="google"
+		on:click={login}
 	>
-		<!-- <img src="/google.svg" alt="Google Logo" /> -->
 		<img src="/google.svg" alt="Google Logo" />
 		<span class="buttonText"> Anmelden mit Google</span>
 	</button>

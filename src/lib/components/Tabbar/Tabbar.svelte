@@ -12,7 +12,7 @@
 	// console.log(activeRoute);
 </script>
 
-<nav role="navigation">
+<nav aria-label="mobile primary">
 	{#each routes as { text, icon, href, size, rel } (href)}
 		<a
 			{href}

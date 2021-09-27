@@ -1,3 +1,5 @@
+<svelte:options immutable={true} />
+
 <script lang="ts">
 	import { afterUpdate } from 'svelte';
 	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
@@ -6,7 +8,7 @@
 	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
 
-	import { getModalContext } from '$lib/utils/helpers';
+	import { getProductModalContext } from '$lib/utils/helpers';
 	import LDTag from '../LDTag';
 	import star from '$lib/Icons/outline/star';
 	import flash from '$lib/utils/flash';
@@ -22,7 +24,7 @@
 	let tabindex = -1;
 	let container: HTMLFormElement;
 
-	const { open } = getModalContext();
+	const { open } = getProductModalContext();
 
 	const { image, name, price, sku, rating, categories } = product;
 
@@ -242,7 +244,13 @@
 		padding: 0 0 0.3em 0;
 	}
 
-	@media (pointer: fine) {
+	@media (prefers-reduced-motion) {
+		.wave {
+			animation-play-state: paused;
+		}
+	}
+
+	@media (hover: hover) and (pointer: fine) {
 		img {
 			margin-bottom: 10px;
 		}
@@ -274,9 +282,6 @@
 
 				.wave {
 					animation-play-state: running;
-					@media (prefers-reduced-motion) {
-						animation-play-state: paused;
-					}
 				}
 			}
 		}

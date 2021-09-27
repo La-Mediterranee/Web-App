@@ -15,12 +15,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	let ready = false;
 	let analytics: Analytics;
 
 	// Must be a function to ensure changes after initialization are caught
 	setContext('firebase', {
-		getFirebase: () => firebase
+		getFirebase: () => firebase,
 	});
 
 	onMount(() => {
@@ -28,10 +27,8 @@
 
 		// Optional event to set additional config
 		dispatch('initializeApp', {
-			firebase
+			firebase,
 		});
-
-		ready = true;
 	});
 </script>
 

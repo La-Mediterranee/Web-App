@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { loadStripe } from '@stripe/stripe-js/pure';
+	import { loadStripe } from '@stripe/stripe-js';
 
 	import { fetchFromAPI } from '$utils/helpers';
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';

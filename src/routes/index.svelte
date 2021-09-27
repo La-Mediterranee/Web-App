@@ -2,16 +2,15 @@
 	import { onMount } from 'svelte';
 
 	import { Wave } from '$lib/Icons';
-	import { SHOP_LOGO } from '$lib/utils/constants';
-	import ProductCard from '$lib/components/ProductCard';
-	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
+	import { SHOP_LOGO } from '$utils/constants';
 
-	import type { Product } from 'types/interfaces';
+	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
 	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
 
-	// import Carousel from '$lib/Carousel.svelte';w
-	// import SliderItem from '$lib/components/Slider/SliderItem.svelte';
-	// import {Carousel,CarouselItem} from '$lib/components/Carousel'
+	import ProductCard from '$components/ProductCard';
+
+	import type { Product } from 'types/interfaces';
+
 	const burger: Product = {
 		name: 'Hamburger',
 		price: 4.5,
@@ -34,25 +33,15 @@
 	<Wave />
 </div>
 
-<!-- <section class="loloRow">
-	<h2 class="row-header">Essen</h2>
-	<Carousel>
-		{#each list as image, i}
-			<CarouselItem>
-				<ProductCard {image} style="width: var(--carousel-item);" />
-			</CarouselItem>
-		{/each}
-	</Carousel>
-</section> -->
 <section>
 	<h2 class="row-header">Essen</h2>
 	<div>
-		<SlideGroup centerActive activeClass="white-text">
+		<SlideGroup>
 			{#each Array(15) as _, i}
 				<SlideItem let:active>
 					<ProductCard
 						product={burger}
-						style="min-width: 220px; max-width: 250px;"
+						style="min-width: 220px; max-width: 250px; margin: 0 10px;"
 					/>
 				</SlideItem>
 			{/each}
@@ -65,15 +54,6 @@
 </section>
 
 <style lang="scss">
-	:global {
-		.loloRow {
-			// margin: 3vw 0;
-			// padding: 0;
-			padding: 0 4%;
-			font-size: 1.35rem;
-		}
-	}
-
 	h1 {
 		margin-top: 1em;
 		text-transform: uppercase;
@@ -85,6 +65,7 @@
 
 		div {
 			display: inline-flex;
+			max-width: 100%;
 
 			> :global(*) {
 				margin: 0.5em;

@@ -1,10 +1,9 @@
-<script context="module">
+<script context="module" lang="ts">
 	export const prerender = true;
+	import { onMount } from 'svelte';
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	let counter = 3;
 	let indicator: HTMLSpanElement;
 
@@ -49,8 +48,12 @@
 
 <section>
 	<h3>Sie sind derzeit Offline</h3>
-	<div>Erneut verbinden in <span id="indicator" bind:this={indicator}>3</span></div>
-	<button type="button" on:click={window.location.reload}>⤾ Aktualisieren</button>
+	<div>
+		Erneut verbinden in <span id="indicator" bind:this={indicator}>3</span>
+	</div>
+	<button type="button" on:click={window.location.reload}
+		>⤾ Aktualisieren</button
+	>
 </section>
 
 <style>

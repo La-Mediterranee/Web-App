@@ -64,12 +64,12 @@
 
 	function openPopUp(e: Event) {
 		console.log(e);
-		open({
-			Component: Chip,
-			props: {
-				slot: 'hi',
-			},
-		});
+		// open({
+		// 	Component: Chip,
+		// 	props: {
+		// 		slot: 'hi',
+		// 	},
+		// });
 	}
 </script>
 

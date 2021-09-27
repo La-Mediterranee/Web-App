@@ -4,8 +4,8 @@
 
 	import { createInstallStore } from '$lib/stores/install';
 
-	import type { InstallStore } from '$lib/stores/install';
 	import type { Unsubscriber } from 'svelte/store';
+	import type { InstallStore } from '$lib/stores/install';
 
 	export let installSource: string;
 
@@ -14,12 +14,9 @@
 	let showInstallPromo: boolean;
 
 	if (browser) {
-		console.log(browser);
 		store = createInstallStore(installSource);
 		unsub = store.subscribe((v) => (showInstallPromo = v));
-	}
 
-	if (browser) {
 		onDestroy(() => unsub());
 	}
 
@@ -31,7 +28,7 @@
 </script>
 
 {#if showInstallPromo}
-	<div>
+	<div aria-live="polite">
 		<button type="button" on:click={installPWA}> Install </button>
 	</div>
 {/if}

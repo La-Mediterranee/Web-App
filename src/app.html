@@ -5,6 +5,8 @@
 		<link rel="icon" href="/favicon.ico" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<!-- <meta
 			name="theme-color"
 			media="(prefers-color-scheme: light)"
@@ -15,20 +17,7 @@
 			media="(prefers-color-scheme: dark)"
 			content="black"
 		/> -->
-
-		<script>
-			if (
-				(window.CSS
-					? CSS.supports('color', 'var(--fake-var)')
-					: false) === false
-			) {
-				const polyfill =
-					'https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2.4.6/dist/css-vars-ponyfill.min.js';
-				const js = document.createElement('script');
-				js.src = polyfill;
-				document.head.appendChild(js);
-			}
-		</script>
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=AbortController%2CIntersectionObserver%2CIntl.Locale"></script>
 
 		<!-- <script>
 			if (typeof IntersectionObserver === undefined) {

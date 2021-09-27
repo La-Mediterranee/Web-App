@@ -1,13 +1,19 @@
 name = "my-worker"
 account_id=""
-type="JavaScript"
-# workers_dev=true
+type="webpack"
+workers_dev=true
+compatibility_date = "2021-09-27"
 # route = "example.com/*"
+
+[vars]
+FOO = "some value"
+BAR = "some other string"
+
+# [build]
+# command = "npm ci && npm run build"
+# upload = { format = "service-worker" }
 
 [site]
 bucket = "./build"
 entry-point = "./workers-site"
 
-[vars]
-FOO = "some value"
-BAR = "some other string"

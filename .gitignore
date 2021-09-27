@@ -4,6 +4,7 @@ node_modules
 build
 .svelte-kit/
 .env.local
+dist/
 workers-site
 notes.txt
 service-account.json

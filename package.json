@@ -7,7 +7,7 @@
 		"dev": "svelte-kit dev",
 		"build:remove": "rm -rf ./build",
 		"build": "npm run build:remove && svelte-kit build",
-		"preview": "svelte-kit preview",
+		"preview": "npm run build && svelte-kit preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "eslint --ignore-path .gitignore ."
@@ -49,12 +49,12 @@
 		"tslib": "^2.3.0",
 		"typescript": "^4.4.3",
 		"vite": "^2.4.1",
-		"vite-plugin-compression": "^0.3.5",
 		"workbox-core": "^6.3.0",
 		"workbox-expiration": "^6.3.0",
 		"workbox-google-analytics": "^6.3.0",
 		"workbox-navigation-preload": "^6.3.0",
 		"workbox-precaching": "^6.3.0",
+		"workbox-recipes": "^6.3.0",
 		"workbox-strategies": "^6.3.0"
 	}
 }

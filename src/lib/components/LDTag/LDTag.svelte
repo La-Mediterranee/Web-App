@@ -2,10 +2,13 @@
 	import { serializeSchema } from '../../utils/json-ld';
 
 	import type { Schema } from 'types/utils/json-ld';
+	import { browser } from '$app/env';
 
 	export let schema: Schema;
 </script>
 
 <svelte:head>
-	{@html serializeSchema(schema)}
+	{#if !browser}
+		{@html serializeSchema(schema)}
+	{/if}
 </svelte:head>

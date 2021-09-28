@@ -95,6 +95,8 @@
 				loading="lazy"
 				src={image?.src}
 				alt={image?.alt || name}
+				width="250"
+				height="181"
 			/>
 			<CardTitle itemprop="name" class="justify-center h4">
 				{name}

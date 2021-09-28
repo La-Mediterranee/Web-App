@@ -26,7 +26,7 @@
 		onMount(async () => {
 			try {
 				const stripe = await loadStripe(STRIPE_PUBLIC_KEY);
-				console.info('stripe loaded', stripe);
+				console.info('stripe loaded');
 				stripeStore.set(stripe);
 			} catch (error) {
 				console.error(error);

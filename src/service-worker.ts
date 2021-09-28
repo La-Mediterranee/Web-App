@@ -17,10 +17,12 @@ import * as googleAnalytics from 'workbox-google-analytics';
 
 import { openDB } from 'idb';
 import { ExpirationPlugin } from 'workbox-expiration';
-import { precacheAndRoute } from 'workbox-precaching';
+import { matchPrecache, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { enable as navigationPreloadEnable } from 'workbox-navigation-preload';
-import { setCacheNameDetails, skipWaiting, clientsClaim } from 'workbox-core';
+import { setCacheNameDetails, clientsClaim } from 'workbox-core';
+import { offlineFallback, googleFontsCache } from 'workbox-recipes';
+
 import {
 	NetworkOnly,
 	NetworkFirst,
@@ -36,9 +38,9 @@ import type {
 } from 'workbox-core';
 
 interface ChacheNames {
-	/** generated js and css files from sveltekit */
+	/** html files in the static folder or prerendered pages from sveltekit */
 	readonly pages: string;
-	/** files in the static folder from sveltekit */
+	/** generated js and css files from sveltekit */
 	readonly static: string;
 	/** images from cdns, storages, etc. saved in IndexedDB */
 	readonly images: string;
@@ -54,7 +56,7 @@ interface StoragePaths {
 	readonly offlinePage: string;
 }
 
-interface Entries {
+interface Entry {
 	url: string;
 	revision: string | null;
 }
@@ -73,10 +75,24 @@ const toCache = exclude.map((path) =>
 	build.filter((file) => !file.includes(path))
 )[0];
 
+const imgStoreName = 'keyvaluepairs';
+
 let precachedFiles: string[] = [];
 let basePaths: StoragePaths | null = null;
 let imgExpDb: IDBPDatabase;
 let currentImgDb: IDBPDatabase;
+
+async function runAsync<T>(
+	promise: Promise<T>
+): Promise<[T | null, any | null]> {
+	try {
+		const data = await promise;
+		return [data, null];
+	} catch (error) {
+		console.error(error);
+		return [null, error];
+	}
+}
 
 /**
  * Returns the registered offline page from the precache cache
@@ -90,13 +106,47 @@ async function getOfflinePage(): Promise<Response> {
 }
 
 /**
+ * Removes existing live caches.
+ * This is to be called on swLogicInit only.
+ */
+async function resetCaches() {
+	const keys = await caches.keys();
+
+	return Promise.all(
+		keys.map((cacheName) => {
+			if (Object.values(cacheNames).indexOf(cacheName) === -1) {
+				console.log('[ServiceWorker] Removing old cache', cacheName);
+				return caches.delete(cacheName);
+			}
+		})
+	);
+}
+
+function cacheAndRoute(entries: Entry[]) {
+	entries.forEach((entry) => {
+		entry.url = `${basePaths?.root || SHOP_URL}${entry.url}`;
+		precachedFiles.push(entry.url);
+	});
+
+	return precacheAndRoute(entries); //, { ignoreURLParametersMatching: [/.*/] }
+}
+
+/**
  *  Respond to JS/CSS requests as quickly as possible with a cached response if available,
  *  falling back to the network request if it’s not cached.
  *  The network request is then used to update the cache.
  */
-function routeAndCacheJsAndCSS(urls: RegExp) {
+function routeAndCacheJsAndCSS(urls: RegExp | string) {
 	return registerRoute(
-		({ url }) => {
+		({ url, request }) => {
+			console.log(url.hostname.match(urls));
+
+			return (
+				request.destination === 'style' ||
+				request.destination === 'script' ||
+				request.destination === 'worker'
+			);
+
 			if (!url.hostname.match(urls)) {
 				return false;
 			}
@@ -111,18 +161,9 @@ function routeAndCacheJsAndCSS(urls: RegExp) {
 			);
 		},
 		new StaleWhileRevalidate({
-			cacheName: cacheNames.pages,
+			cacheName: cacheNames.static,
 		})
 	);
-}
-
-function cacheAndRoute(entries: Entries[]) {
-	entries.forEach((entry) => {
-		entry.url = `${basePaths?.root}/${entry.url}`;
-		precachedFiles.push(entry.url);
-	});
-
-	return precacheAndRoute(entries, { ignoreURLParametersMatching: [/.*/] });
 }
 
 /**
@@ -139,24 +180,23 @@ async function routeAndCacheProductImages({
 	// const currentImgDb = await openDB(cacheNames.images, 1);
 	// const imgExpDb = await openDB(`${cacheNames.images}-exp`, 1);
 	const imgDbs = [currentImgDb, imgExpDb];
-	const storeName = 'keyvaluepairs';
 
 	const save = async (url: URL, blob: Promise<Blob>) => {
 		const key = `${url}`;
 		const timestamp = Date.now();
 
-		const size = (await currentImgDb.getAllKeys(storeName)).length;
+		const size = (await currentImgDb.getAllKeys(imgStoreName)).length;
 
 		if (size >= rotationCount && rotationCount > 0) {
-			const keys = await currentImgDb.getAllKeys(storeName);
+			const keys = await currentImgDb.getAllKeys(imgStoreName);
 			const outdatedItemKey = keys[0];
-			imgDbs.forEach((db) => db.delete(storeName, outdatedItemKey));
+			imgDbs.forEach((db) => db.delete(imgStoreName, outdatedItemKey));
 			return outdatedItemKey;
 		}
 
-		imgExpDb.add(storeName, timestamp, key);
+		imgExpDb.add(imgStoreName, timestamp, key);
 
-		return currentImgDb.add(storeName, blob, key);
+		return currentImgDb.add(imgStoreName, blob, key);
 	};
 
 	const read = async (url: URL): Promise<Blob | null> => {
@@ -164,15 +204,15 @@ async function routeAndCacheProductImages({
 
 		const key = `${url}`;
 		const [blob, timestamp] = await Promise.all([
-			currentImgDb.get(storeName, key),
-			imgExpDb.get(storeName, key),
+			currentImgDb.get(imgStoreName, key),
+			imgExpDb.get(imgStoreName, key),
 		]);
 
 		if (
-			(timestamp as number) + daysDuration * 24 * 60 * 60 * 1000 <
+			(timestamp as number) + daysDuration * 24 * 3600 * 1000 <
 			Date.now()
 		) {
-			imgDbs.forEach((db) => db.delete(storeName, key));
+			imgDbs.forEach((db) => db.delete(imgStoreName, key));
 		} else {
 			result = blob as Blob;
 		}
@@ -183,9 +223,9 @@ async function routeAndCacheProductImages({
 	registerRoute(
 		({ url }) => {
 			return (
-				url.hostname.match(/.*(?:la-mediterranee)\.at/) &&
+				// url.hostname.match(/.*(?:la-mediterranee)\.at/) &&
 				url.pathname.match(/.*\.(?:png|gif|jpg|jpeg|webp|svg)/) &&
-				url.search.match(/impolicy=product/) &&
+				// url.search.match(/impolicy=product/) &&
 				precachedFiles.indexOf(
 					url.pathname.split('?').shift() as string
 				) === -1 &&
@@ -204,35 +244,6 @@ async function routeAndCacheProductImages({
 				return new Response(blob);
 			}
 		}
-	);
-}
-
-async function runAsync<T>(
-	promise: Promise<T>
-): Promise<[T | null, any | null]> {
-	try {
-		const data = await promise;
-		return [data, null];
-	} catch (error) {
-		console.error(error);
-		return [null, error];
-	}
-}
-
-/**
- * Removes existing live caches.
- * This is to be called on swLogicInit only.
- */
-async function resetCaches() {
-	const keys = await caches.keys();
-
-	return Promise.all(
-		keys.map((cacheName) => {
-			if (Object.values(cacheNames).indexOf(cacheName) === -1) {
-				console.log('[ServiceWorker] Removing old cache', cacheName);
-				return caches.delete(cacheName);
-			}
-		})
 	);
 }
 
@@ -271,7 +282,7 @@ const routePagesOrServeOffline = ({
 
 	if (isNavigationEnabled) {
 		strategy = new NetworkFirst({
-			cacheName: 'pages',
+			cacheName: cacheNames.pages,
 			plugins: [
 				new ExpirationPlugin({
 					maxAgeSeconds: daysDuration * 24 * 60 * 60,
@@ -306,20 +317,17 @@ async function init(
 
 		// workbox.setConfig({ debug: false });
 
-		imgExpDb = await openDB(cacheNames.images, 1, {
+		currentImgDb = await openDB(cacheNames.images, undefined, {
 			upgrade(db) {
-				db.createObjectStore('keyvaluepairs');
+				db.createObjectStore(imgStoreName);
 			},
 		});
 
-		imgExpDb = await openDB(`${cacheNames.images}-exp`, 1, {
+		imgExpDb = await openDB(`${cacheNames.images}-exp`, undefined, {
 			upgrade(db) {
-				db.createObjectStore('keyvaluepairs');
+				db.createObjectStore(imgStoreName);
 			},
 		});
-
-		// localforage.config({ name: cacheNames.images });
-		// localforage.createInstance({ name: `${cacheNames.images}-exp` });
 
 		resetCaches();
 
@@ -327,17 +335,30 @@ async function init(
 
 		setCacheNameDetails({
 			prefix: 'shop',
-			postfix: '',
 			precache: 'assets',
+			postfix: '',
 		});
 
-		skipWaiting();
+		self.skipWaiting();
 		clientsClaim();
+
+		googleFontsCache();
+		// offlineFallback({
+		// pageFallback: '/_offline.html',
+		// });
 
 		googleAnalytics.initialize();
 
-		setCatchHandler(async () => {
-			return new Response(null, { status: 404 });
+		setCatchHandler(async (e) => {
+			// Return the precached offline page if a document is being requested
+			if (e.request.destination === 'document') {
+				return (
+					(await matchPrecache('/_offline.html')) || Response.error()
+				);
+			}
+
+			return Response.error();
+			// return new Response(null, { status: 404 });
 		});
 
 		cacheAndRoute([
@@ -346,23 +367,39 @@ async function init(
 				return {
 					url: asset,
 					revision: null,
-				} as Entries;
+				} as Entry;
 			}),
 			...files.map((file) => {
-				console.log(`=== $service-worker files === ${file}`);
+				// console.log(`=== $service-worker files === ${file}`);
 				return {
 					url: file,
 					revision: `${timestamp}`,
-				} as Entries;
+				} as Entry;
 			}),
 		]);
-		routePagesOrServeOffline(caching.offline);
 		routeResourcesNetworkFirst();
-		routeAndCacheJsAndCSS(/la-mediterranee\.at/);
+		routePagesOrServeOffline(caching.offline);
+		routeAndCacheJsAndCSS(SHOP_URL); //la-mediterranee\.at/
 		routeAndCacheProductImages(caching.images);
 	} catch (error) {
 		console.error('sw: ', error);
 	}
 }
 
-// init()
+const config = {
+	paths: {
+		root: 'https://my-worker.abdo-shehata1504.workers.dev',
+		jsScope: 'https://my-worker.abdo-shehata1504.workers.dev/js',
+		cssScope: 'https://my-worker.abdo-shehata1504.workers.dev/css',
+		imgScope: 'https://my-worker.abdo-shehata1504.workers.dev/img',
+		offlinePage: '/_offline.html',
+	},
+	caching: {
+		images: {},
+		offline: {
+			isNavigationEnabled: false,
+		},
+	},
+};
+
+init(config.paths, config.caching);

@@ -1,13 +1,8 @@
-<script lang="ts">
+<script context="module" lang="ts">
 	import { onMount } from 'svelte';
 
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
-
-	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
-	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
-
-	import ProductCard from '$components/ProductCard';
 
 	import type { Product } from 'types/interfaces';
 
@@ -17,8 +12,13 @@
 		categories: ['burger'],
 		image: { src: '/burger.webp', alt: 'Bild von einem Burger' },
 	};
+</script>
 
-	const list = Array(10).fill(burger);
+<script lang="ts">
+	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
+	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
+
+	import ProductCard from '$components/ProductCard';
 </script>
 
 <svelte:head>

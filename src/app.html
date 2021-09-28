@@ -2,13 +2,9 @@
 <html lang="de">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-		<link rel="manifest" href="manifest.webmanifest" />
-
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<meta name="theme-color" content="aliceblue" />
 		<!-- <meta
 			name="theme-color"
 			media="(prefers-color-scheme: light)"
@@ -19,22 +15,67 @@
 			media="(prefers-color-scheme: dark)"
 			content="black"
 		/> -->
-		<script src="https://polyfill.io/v3/polyfill.min.js?features=AbortController%2CIntersectionObserver%2CIntl.Locale"></script>
 
-		<!-- <script>
-			if (typeof IntersectionObserver === undefined) {
-				const intersectionPolyfill =
-					'https://cdn.jsdelivr.net/npm/intersection-observer@0.12.0/intersection-observer.min.js';
-				const js = document.createElement('script');
-				js.src = intersectionPolyfill;
-				document.head.appendChild(js);
+		<link rel="icon" href="/favicon.ico" />
+		<link rel="manifest" href="site.webmanifest" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+
+		<script>
+			function hasIntlGetCanonicalLocalesBug() {
+				try {
+					return (
+						new Intl.Locale('und-x-private').toString() ===
+						'x-private'
+					);
+				} catch (e) {
+					return true;
+				}
 			}
-		</script> -->
+
+			const polyfills = [];
+
+			if (!('AbortController' in window)) {
+				polyfills.push('AbortController');
+			}
+
+			if (
+				!(
+					'IntersectionObserver' in window &&
+					'IntersectionObserverEntry' in window &&
+					'intersectionRatio' in
+						window.IntersectionObserverEntry.prototype
+				)
+			) {
+				polyfills.push('IntersectionObserver');
+			}
+
+			if (!('Locale' in Intl) || hasIntlGetCanonicalLocalesBug()) {
+				polyfills.push('Intl.Locale');
+			}
+
+			if (polyfills.length > 0) {
+				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join(
+					'%2C'
+				)}`;
+				const script = document.createElement('script');
+				script.src = src;
+				document.head.appendChild(script);
+			}
+		</script>
+		<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=AbortController%2CIntersectionObserver%2CIntl.Locale"></script> -->
+
 		<!-- You can remove this is you don't want to make your PWA installable -->
 		<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script> -->
 		%svelte.head%
 	</head>
 	<body>
 		<div id="svelte">%svelte.body%</div>
+		<!-- <script defer async src="https://js.stripe.com/v3/"></script>
+		<script
+			defer
+			async
+			src="https://www.googletagmanager.com/gtag/js?id="
+		></script> -->
 	</body>
 </html>

@@ -1,12 +1,10 @@
 import * as path from 'path';
 
-import viteCompression from 'vite-plugin-compression';
 import sveltePreprocess from 'svelte-preprocess';
 import autoprefixer from 'autoprefixer';
 import node from '@sveltejs/adapter-node';
 import netlify from '@sveltejs/adapter-netlify';
 import cvWorker from '@sveltejs/adapter-cloudflare-workers';
-
 import adapterStatic from '@sveltejs/adapter-static';
 
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -43,11 +41,12 @@ const config = {
 		sourceMap: process.env.NODE_ENV === 'development' ? true : false,
 	}),
 	kit: {
-		// adapter: netlify(),
+		target: '#svelte',
 		// adapter: node({
 		// 	precompress: true,
 		// }),
 		// adapter: adapterStatic(),
+		// adapter: netlify(),
 		adapter: cvWorker({
 			esbuild(defaultOptions) {
 				return {
@@ -58,9 +57,7 @@ const config = {
 			},
 		}),
 
-		target: '#svelte',
 		// router: false,
-
 		prerender: {
 			enabled: true,
 			crawl: true,

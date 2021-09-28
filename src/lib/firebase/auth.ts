@@ -37,8 +37,8 @@ export function authStore(app: FirebaseApp) {
 								persistence: [inMemoryPersistence],
 						  }
 						: {
-								// popupRedirectResolver:
-								// 	browserPopupRedirectResolver,
+								popupRedirectResolver:
+									browserPopupRedirectResolver,
 								persistence: [indexedDBLocalPersistence],
 						  }),
 			  });
@@ -54,47 +54,63 @@ export function authStore(app: FirebaseApp) {
 
 	const store = readable<User | null>(cached, (set) => {
 		if (typeof window !== 'undefined') {
-			const idb = indexedDB.open(DB_NAME);
-			idb.onsuccess = function (e) {
-				// const db = (e.target as IDBRequest<IDBDatabase>).result;
+			try {
+				const idb = indexedDB.open(DB_NAME);
 
-				// const dbReq = db
-				// 	.transaction(DB_OBJECTSTORE_NAME)
-				// 	.objectStore(DB_OBJECTSTORE_NAME)
-				// 	.getAll();
-
-				// dbReq.onsuccess = (e) => {
-				// 	const target = e.target as IDBRequest<any[]>;
-				// 	const user = target.result[0]?.value as User;
-				// 	set(user);
-				// };
-
-				this.result
-					.transaction(DB_OBJECTSTORE_NAME)
-					.objectStore(DB_OBJECTSTORE_NAME)
-					.getAll().onsuccess = (e) => {
-					const target = e.target as IDBRequest<DBObject[]>;
-					const user = target.result[0]?.value;
-					set(user);
+				idb.onupgradeneeded = function () {
+					console.log('upgrade needed');
+					// this.result.createObjectStore(DB_OBJECTSTORE_NAME);
+					// this.transaction?.abort();
 				};
 
-				this.result.onerror = function (e) {
-					console.error('Database error: ' + e.target);
-				};
-			};
+				idb.onsuccess = function () {
+					const db = this.result;
 
-			idb.onerror = function (e) {
-				console.error('idb:', this.error);
-				// console.error(
-				// 	'idb:',
-				// 	(e.target as IDBRequest<IDBDatabase>).error
-				// );
-			};
+					db.onerror = function (e) {
+						console.error('Database error: ' + e.target);
+					};
+
+					const transaction = db.transaction(
+						DB_OBJECTSTORE_NAME,
+						'readonly'
+					);
+
+					transaction.oncomplete = function () {};
+
+					transaction.onabort = function () {
+						console.log('transaction was aborted');
+					};
+
+					transaction.onerror = function () {
+						console.error('transaction:', this.error);
+					};
+
+					const objectStore =
+						transaction.objectStore(DB_OBJECTSTORE_NAME);
+
+					const req = objectStore.getAll();
+
+					req.onsuccess = (e) => {
+						const target = e.target as IDBRequest<DBObject[]>;
+						const user = target.result[0]?.value;
+						set(user);
+					};
+
+					req.onerror = function () {
+						console.error('objectStore:', this.error);
+					};
+				};
+
+				idb.onerror = function () {
+					console.error('idb:', this.error);
+				};
+			} catch (error) {
+				console.error(error);
+			}
 		}
 
 		const teardown = onAuthStateChanged(auth, (user) => {
 			try {
-				console.log(user);
 				set(user);
 			} catch (error) {
 				console.error('onAuthState:', error);

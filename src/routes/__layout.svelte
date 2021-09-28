@@ -11,6 +11,7 @@
 
 	import Modals from './_Modals.svelte';
 	import Providers from './_layoutProviders.svelte';
+	import { metatags } from '$lib/stores/metatags';
 
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
@@ -31,6 +32,19 @@
 <svelte:window bind:online />
 
 <!-- <LDTag {}/>  -->
+
+<svelte:head>
+	<title>{$metatags.title}</title>
+	{#each Object.entries($metatags) as [property, content]}
+		{#if content}
+			{#if ['title', 'description', 'image'].includes(property)}
+				<meta name={property} {content} />
+			{:else}
+				<meta {property} {content} />
+			{/if}
+		{/if}
+	{/each}
+</svelte:head>
 
 <Providers>
 	<Modals>

@@ -17,3 +17,4 @@ inspiration:
 	https://www.dominos.at/en/
 	https://burger-delivery.net/
 	https://www.wienerboerger.at/
+	https://order.wendys.com/

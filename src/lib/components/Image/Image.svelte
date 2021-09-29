@@ -31,7 +31,7 @@
 </script>
 
 <IntersectionObserver once={true} let:intersecting>
-	{#if intersecting || nativeLoading}
+	{#if nativeLoading || intersecting}
 		<img
 			{loading}
 			{decoding}

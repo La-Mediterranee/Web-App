@@ -39,18 +39,21 @@ type Metatags = Twitter &
 		type: string;
 		image: string;
 		alt: string;
+		'apple-mobile-web-app-title': string;
 	};
 
+const title = 'La-Mediterranee Shop';
+
 const initialTags: Metatags = {
-	title: 'La-Mediterranee Shop',
+	title: title,
 	description: '',
 	type: 'website',
 	image: 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
 	alt: 'SvelteSociety.dev',
-
+	'apple-mobile-web-app-title': title,
 	// Twitter
 	'twitter:card': 'summary_large_image',
-	'twitter:title': 'Svelte Society',
+	'twitter:title': title,
 	'twitter:description':
 		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
 	'twitter:image':
@@ -60,7 +63,7 @@ const initialTags: Metatags = {
 	// Open Graph
 	'og:url': 'https://sveltesociety.dev/',
 	'og:locale': '',
-	'og:title': 'Svelte Society',
+	'og:title': title,
 	'og:description':
 		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
 	'og:type': 'website',
@@ -91,6 +94,7 @@ function createMetatagsStore() {
 			title: title,
 			'og:title': title,
 			'twitter:title': title,
+			'apple-mobile-web-app-title': title,
 		}));
 
 	const desc = (desc: string) =>
@@ -136,3 +140,29 @@ function createMetatagsStore() {
 export const metatags = createMetatagsStore();
 
 export default metatags;
+
+const e = {
+	'@context': 'http://schema.org',
+	'@type': 'Organization',
+	name: 'MediaMarkt',
+	url: 'https://www.mediamarkt.at/',
+	logo: 'https://assets.mmsrg.com/is/166325/12975367df8e182e57044734f5165e190/c3/-/abf3d0567b8824b57828926082859f66d?version=0&x=300&y=40&format=jpg',
+	foundingDate: '1979-11-24',
+	address: {
+		'@type': 'PostalAddress',
+		streetAddress: 'SCS-Bürocenter B2',
+		addressLocality: 'Vösendorf',
+		postalCode: '2334',
+		addressCountry: 'Österreich',
+	},
+	contactPoint: {
+		'@type': 'ContactPoint',
+		contactType: 'Kontakt',
+		email: 'kundenservice@mediamarkt.at',
+	},
+	potentialAction: {
+		'@type': 'SearchAction',
+		target: 'https://www.mediamarkt.at/de/search.html?query={search_term_string}',
+		'query-input': 'required name=search_term_string',
+	},
+};

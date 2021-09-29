@@ -50,8 +50,6 @@
 	}
 }  */
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;800&display=swap');
-
 :root {
 	/* --body-bg1: #4994f5e5;
 	--body-bg2: #1d68ca; */
@@ -59,6 +57,7 @@
 	--top2: #062ba5; */
 	font-size: 16px;
 	font-style: normal;
+	font-family: 'Fira Sans', sans-serif;
 	--body-bg1: #5881a7;
 	/* --body-bg2: #284159; */
 	--body-bg2: #1e3953;

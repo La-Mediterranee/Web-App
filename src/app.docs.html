@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="de">
 	<head>
-		<!-- 
-			if your looking for more info about this page
-			than go to https://github.com/La-Mediterranee/Web-App
-			where you can find the source code and the docs/comments
-			and the reasons for why I/we did what we did
-		-->
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<!--
+			if you have a dark and light version change the theme-scheme
+			and the color-scheme to the following: 
+			<meta
+				name="theme-color"
+				media="(prefers-color-scheme: light)"
+				content={your_color}
+				/>
+			<meta
+				name="theme-color"
+				media="(prefers-color-scheme: dark)"
+				content={your_color}
+			/> 
+			<meta name="color-scheme" content="dark light">
+		-->
 		<meta name="theme-color" content="aliceblue" />
 		<meta name="color-scheme" content="normal" />
-		<meta name="mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
 
+		<!-- 
+			To safely implement the fallback technique, use separate link tags.
+			```
+			<link rel="preconnect dns-prefetch" href="http://example.com">
+			```
+			Implementing dns-prefetch fallback in the same <link> tag
+			causes a bug in Safari where preconnect gets cancelled.
+		-->
 		<link rel="preconnect" href="https://fonts.gstatic.com" />
 		<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 
@@ -24,55 +40,23 @@
 		<link rel="preconnect" href="https://www.googletagmanager.com" />
 		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
+		<!-- 
+			A empty crossorigin is like "anonymous",
+			this saves bytes/bandwidth
+		-->
 		<link rel="icon" href="/favicon.ico" crossorigin="" />
+		<!-- 
+			I choose .webmanifest as an extension because the official specs 
+			has "webmanifest" as an extension even though all known browsers
+			support a "json" extension. To make the Browser/UA send user credentials
+			change crossorigin to "use-credential"
+		-->
 		<link rel="manifest" href="/site.webmanifest" crossorigin="" />
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;800&display=swap"
 		/>
 
-		<script>
-			function hasIntlGetCanonicalLocalesBug() {
-				try {
-					return (
-						new Intl.Locale('und-x-private').toString() ===
-						'x-private'
-					);
-				} catch (e) {
-					return true;
-				}
-			}
-
-			const polyfills = [];
-
-			if (!('AbortController' in window)) {
-				polyfills.push('AbortController');
-			}
-
-			if (
-				!(
-					'IntersectionObserver' in window &&
-					'IntersectionObserverEntry' in window &&
-					'intersectionRatio' in
-						window.IntersectionObserverEntry.prototype
-				)
-			) {
-				polyfills.push('IntersectionObserver');
-			}
-
-			if (!('Locale' in Intl) || hasIntlGetCanonicalLocalesBug()) {
-				polyfills.push('Intl.Locale');
-			}
-
-			if (polyfills.length > 0) {
-				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join(
-					'%2C'
-				)}`;
-				const script = document.createElement('script');
-				script.src = src;
-				document.head.appendChild(script);
-			}
-		</script>
 		<!-- You can remove this is you don't want to make your PWA installable -->
 		<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script> -->
 		%svelte.head%

@@ -25,13 +25,13 @@
 </script>
 
 <svelte:head>
-	<!-- {#if !dev}
-	{/if} -->
-	<script
-		defer
-		async
-		src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-		on:load={loaded}></script>
+	{#if !dev}
+		<script
+			defer
+			async
+			src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+			on:load={loaded}></script>
+	{/if}
 </svelte:head>
 
 {#if !dev}

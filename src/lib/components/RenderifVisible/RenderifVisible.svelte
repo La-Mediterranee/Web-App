@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/env';
+
 	import type { Subscriber } from 'svelte/store';
 
 	export let placeholderHeight = 0;
@@ -22,8 +24,8 @@
 			const observer = new IntersectionObserver(
 				(entries) => {
 					if (
-						typeof window !== undefined &&
-						window.requestIdleCallback
+						// browser &&
+						window?.requestIdleCallback
 					) {
 						window.requestIdleCallback(
 							() => (isVisible = entries[0].isIntersecting),

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	let sessionId: string | null = null;
 	onMount(() => {
-		const url = typeof window !== 'undefined' ? window.location.href : '';
+		const url = window?.location?.href ?? '';
 		sessionId = new URL(url).searchParams.get('session_id');
 	});
 </script>

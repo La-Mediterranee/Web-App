@@ -1,3 +1,4 @@
+import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
@@ -23,7 +24,8 @@ function createCartStore(): CartStore {
 	let totalAmount = 0;
 	let totalQuantity = 0;
 
-	const sound = typeof window !== 'undefined' ? new Audio('') : null;
+	const sound = browser ? new Audio('') : null;
+
 	const key = 'cart';
 	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
 

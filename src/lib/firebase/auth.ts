@@ -1,8 +1,8 @@
+import { browser } from '$app/env';
 import { readable } from 'svelte/store'; //writable,
 import {
 	onAuthStateChanged,
 	signOut,
-	// getAuth,
 	initializeAuth,
 	inMemoryPersistence,
 	indexedDBLocalPersistence,
@@ -32,14 +32,14 @@ export function authStore(app: FirebaseApp) {
 		auth = provider.isInitialized()
 			? provider.getImmediate()
 			: initializeAuth(app, {
-					...(typeof window === 'undefined'
+					...(browser
 						? {
-								persistence: [inMemoryPersistence],
-						  }
-						: {
 								popupRedirectResolver:
 									browserPopupRedirectResolver,
 								persistence: [indexedDBLocalPersistence],
+						  }
+						: {
+								persistence: [inMemoryPersistence],
 						  }),
 			  });
 		// console.log('auth:', auth);
@@ -53,7 +53,7 @@ export function authStore(app: FirebaseApp) {
 	const cached = null;
 
 	const store = readable<User | null>(cached, (set) => {
-		if (typeof window !== 'undefined') {
+		if (browser) {
 			try {
 				const idb = indexedDB.open(DB_NAME);
 

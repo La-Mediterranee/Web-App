@@ -68,10 +68,13 @@
 
 	function update() {
 		let { offsetWidth, offsetHeight } = sliderWrapper;
-		availableSpace = oriantation === 'vertical' ? offsetHeight : offsetWidth;
+		availableSpace =
+			oriantation === 'vertical' ? offsetHeight : offsetWidth;
 
 		[...sliderElements].forEach((element, i) => {
-			element.style.transform = generateTranslateValue(availableSpace * i);
+			element.style.transform = generateTranslateValue(
+				availableSpace * i
+			);
 		});
 
 		availableDistance = 0;
@@ -86,7 +89,7 @@
 	function eventDelegate(type: string) {
 		const delegationTypes = {
 			add: 'addEventListener',
-			remove: 'removeEventListener'
+			remove: 'removeEventListener',
 		};
 
 		if (typeof window !== 'undefined') {
@@ -95,9 +98,13 @@
 			/*@ts-ignore*/
 			window[delegationTypes[type]]('mouseup', onEnd);
 			/*@ts-ignore*/
-			window[delegationTypes[type]]('touchmove', onMove, { passive: false });
+			window[delegationTypes[type]]('touchmove', onMove, {
+				passive: false,
+			});
 			/*@ts-ignore*/
-			window[delegationTypes[type]]('touchend', onEnd, { passive: false });
+			window[delegationTypes[type]]('touchend', onEnd, {
+				passive: false,
+			});
 		}
 	}
 	function normalizeEventBehavior(e: Event) {
@@ -130,7 +137,9 @@
 
 			if (distance <= availableWidth && distance >= 0) {
 				[...sliderElements].forEach((element, i) => {
-					element.style.cssText = generateTouchPosCss(availableSpace * i - distance);
+					element.style.cssText = generateTouchPosCss(
+						availableSpace * i - distance
+					);
 				});
 				availableDistance = distance;
 				last_axis_pos = _axis;
@@ -158,7 +167,8 @@
 		let direction = axis < last_axis_pos;
 		touch_active = false;
 		let _as = availableSpace;
-		let accidental_touch = Math.round(availableSpace / 50) > Math.abs(axis - last_axis_pos);
+		let accidental_touch =
+			Math.round(availableSpace / 50) > Math.abs(axis - last_axis_pos);
 
 		if (longTouch || accidental_touch) {
 			availableDistance = Math.round(availableDistance / _as) * _as;
@@ -174,7 +184,10 @@
 		activeIndicator = availableDistance / _as;
 
 		[...sliderElements].forEach((element, i) => {
-			element.style.cssText = generateTouchPosCss(_as * i - pos_axis, true);
+			element.style.cssText = generateTouchPosCss(
+				_as * i - pos_axis,
+				true
+			);
 		});
 
 		activeItem = activeIndicator;

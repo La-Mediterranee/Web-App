@@ -1,7 +1,42 @@
-<script lang="ts">
+<script context="module" lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
 
+	/**
+	 * To enable optional chaining for window properties
+	 * I defined window in the global scope. This shouldn't
+	 * affect any libraries that checks for window because it
+	 * still returns undefined
+	 */
+
+	const getGlobal = function () {
+		if (typeof self !== 'undefined') {
+			return self;
+		}
+		if (typeof window !== 'undefined') {
+			return window;
+		}
+		if (typeof global !== 'undefined') {
+			return global;
+		}
+	};
+
+	const globals = getGlobal();
+
+	if (typeof window === 'undefined') {
+		//@ts-ignore
+		globals.window = undefined;
+	}
+
+	const headLinks = [
+		{
+			href: 'https://www.googletagmanager.com',
+			rel: 'preconnect dns-prefetch',
+		},
+	] as const;
+</script>
+
+<script lang="ts">
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
@@ -30,10 +65,13 @@
 </script>
 
 <svelte:window bind:online />
-
 <!-- <LDTag {}/>  -->
 
 <svelte:head>
+	{#each headLinks as { href, rel }}
+		<link {rel} {href} />
+	{/each}
+
 	<title>{$metatags.title}</title>
 	{#each Object.entries($metatags) as [property, content]}
 		{#if content}

@@ -1,7 +1,5 @@
 import { writable } from 'svelte/store';
 
-import type { Writable } from 'svelte/store';
-
 type OpenGraph = {
 	'og:title': string;
 	'og:type': string;
@@ -30,16 +28,36 @@ type Twitter = {
 	'twitter:card': string;
 	'twitter:image': string;
 	'twitter:image:alt': string;
+	'twtter:creator'?: string;
+	'twitter:site'?: string;
 };
 
-type Metatags = Twitter &
-	OpenGraph & {
+type Color = string;
+
+type AppleImages = {};
+
+type ApplePWA = {
+	'apple-mobile-web-app-title': string;
+	'apple-mobile-web-app-status-bar-style': Color;
+	'apple-touch-fullscreen'?: 'yes' | 'no';
+	'apple-mobile-web-app-capable?': 'yes' | 'no';
+};
+
+type PWAImages = {
+	'msapplication-TileImage'?: string;
+};
+
+type Metatags = OpenGraph &
+	Partial<Twitter> &
+	Partial<PWAImages> &
+	Partial<ApplePWA> & {
 		title: string;
 		description: string;
 		type: string;
 		image: string;
 		alt: string;
-		'apple-mobile-web-app-title': string;
+		robots?: string;
+		generator?: string;
 	};
 
 const title = 'La-Mediterranee Shop';
@@ -51,17 +69,10 @@ const initialTags: Metatags = {
 	image: 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
 	alt: 'SvelteSociety.dev',
 	'apple-mobile-web-app-title': title,
-	// Twitter
-	'twitter:card': 'summary_large_image',
-	'twitter:title': title,
-	'twitter:description':
-		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
-	'twitter:image':
-		'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
-	'twitter:image:alt': 'SvelteSociety.dev',
 
 	// Open Graph
 	'og:url': 'https://sveltesociety.dev/',
+	'og:site_name': 'La-Mediterranee',
 	'og:locale': '',
 	'og:title': title,
 	'og:description':
@@ -70,71 +81,111 @@ const initialTags: Metatags = {
 	'og:image':
 		'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
 	'og:image:alt': 'SvelteSociety.dev',
-};
 
-// type MetaTagsStore = {
-// 	subscribe: Writable<Metatags>['subscribe'];
-// 	set: Writable<Metatags>['set'];
-// 	title: (title: string) => void;
-// 	desc: (desc: string) => void;
-// 	image: (image: string) => void;
-// 	alt: (alt: string) => void;
-// 	url: (url: string) => void;
-// 	reset: () => void;
-// };
+	// Twitter
+	'twitter:card': 'summary_large_image',
+	'twitter:title': title,
+	'twitter:description':
+		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
+	'twitter:image':
+		'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
+	'twitter:image:alt': 'SvelteSociety.dev',
+};
 
 export type MetaTagsStore = ReturnType<typeof createMetatagsStore>;
 
 function createMetatagsStore() {
 	const { subscribe, set, update } = writable(initialTags);
 
-	const title = (title: string) =>
-		update((curr) => ({
-			...curr,
-			title: title,
-			'og:title': title,
-			'twitter:title': title,
-			'apple-mobile-web-app-title': title,
-		}));
-
-	const desc = (desc: string) =>
-		update((curr) => ({
-			...curr,
-			description: desc,
-			'og:description': desc,
-			'twitter:description': desc,
-		}));
-
-	const image = (image: string) =>
-		update((curr) => ({
-			...curr,
-			image: image,
-			'og:image': image,
-			'twitter:image': image,
-		}));
-
-	const alt = (alt: string) =>
-		update((curr) => ({
-			...curr,
-			alt: alt,
-			'og:image:alt': alt,
-			'twitter:image:alt': alt,
-		}));
-
-	const url = (url: string) => update((curr) => ({ ...curr, 'og:url': url }));
-
 	const reset = () => set(initialTags);
 
 	return {
+		set newTitle(newTitle: string) {
+			update((curr) => ({
+				...curr,
+				title: newTitle,
+				'og:title': newTitle,
+				'twitter:title': newTitle,
+				'apple-mobile-web-app-title': newTitle,
+			}));
+		},
+		set newDesc(newDesc: string) {
+			update((curr) => ({
+				...curr,
+				description: newDesc,
+				'og:description': newDesc,
+				'twitter:description': newDesc,
+			}));
+		},
+		set newImage(newImage: string) {
+			update((curr) => ({
+				...curr,
+				image: newImage,
+				'og:image': newImage,
+				'twitter:image': newImage,
+			}));
+		},
+		set newAlt(newAlt: string) {
+			update((curr) => ({
+				...curr,
+				alt: newAlt,
+				'og:image:alt': newAlt,
+				'twitter:image:alt': newAlt,
+			}));
+		},
+		set newUrl(newUrl: string) {
+			update((curr) => ({ ...curr, 'og:url': newUrl }));
+		},
+		reset,
 		subscribe,
 		set,
-		url,
-		title,
-		desc,
-		image,
-		alt,
-		reset,
 	} as const;
+
+	// const title = (title: string) =>
+	// 	update((curr) => ({
+	// 		...curr,
+	// 		title: title,
+	// 		'og:title': title,
+	// 		'twitter:title': title,
+	// 		'apple-mobile-web-app-title': title,
+	// 	}));
+
+	// const desc = (desc: string) =>
+	// 	update((curr) => ({
+	// 		...curr,
+	// 		description: desc,
+	// 		'og:description': desc,
+	// 		'twitter:description': desc,
+	// 	}));
+
+	// const image = (image: string) =>
+	// 	update((curr) => ({
+	// 		...curr,
+	// 		image: image,
+	// 		'og:image': image,
+	// 		'twitter:image': image,
+	// 	}));
+
+	// const alt = (alt: string) =>
+	// 	update((curr) => ({
+	// 		...curr,
+	// 		alt: alt,
+	// 		'og:image:alt': alt,
+	// 		'twitter:image:alt': alt,
+	// 	}));
+
+	// const url = (url: string) => update((curr) => ({ ...curr, 'og:url': url }));
+
+	// return {
+	// title,
+	// 	desc,
+	// 	image,
+	// 	alt,
+	// 	url,
+	// 	reset,
+	// 	subscribe,
+	// 	set,
+	// } as const;
 }
 
 export const metatags = createMetatagsStore();

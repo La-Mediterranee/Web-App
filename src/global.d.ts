@@ -4,11 +4,22 @@
 /// <reference types="google.analytics" />
 /// <reference types="gtag.js" />
 /// <reference types="@stripe/stripe-js" />
+
 type Invalidator<T> = (value?: T) => void;
 
-declare var dataLayer = [];
+type USVString = string;
+
 var opr: string;
 var chrome: string;
+
+declare var dataLayer = [];
+
+declare module experimental {
+	interface Navigator {
+		static setAppBadge(contents?: number): Promise<void>;
+	}
+}
+
 // var Stripe: Stripe;
 /**
  * The BeforeInstallPromptEvent is fired at the Window.onbeforeinstallprompt handler
@@ -44,8 +55,6 @@ interface PushSubscriptionChangeEvent extends ExtendableEvent {
 	readonly newSubscription: PushSubscription;
 	readonly oldSubscription: PushSubscription;
 }
-
-type USVString = string;
 
 interface PasswordCredentialData extends Credential {
 	id: USVString;

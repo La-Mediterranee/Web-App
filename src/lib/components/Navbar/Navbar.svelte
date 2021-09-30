@@ -28,6 +28,9 @@
 					<a
 						{href}
 						rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
+						{...{
+							'aria-current': href === $page.path && 'page',
+						}}
 					>
 						<div>
 							<Icon path={icon} width={30} height={30} />

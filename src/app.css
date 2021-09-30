@@ -68,6 +68,10 @@
 	--carousel-item: 50%;
 }
 
+html {
+	scroll-behavior: smooth;
+}
+
 body {
 	height: 100%;
 	background: var(--body-bg1);
@@ -193,6 +197,29 @@ a {
 
 .w-100 {
 	width: 100%;
+}
+
+.top-of-site-link {
+	visibility: hidden;
+	opacity: 0;
+	transition: 0.2s;
+	position: fixed;
+	bottom: 1.2rem;
+	right: 1.5rem;
+	z-index: 15;
+}
+
+.screen-reader-text {
+	border: 0;
+	padding: 0;
+	margin: -1px;
+	height: 1px;
+	width: 1px;
+	position: absolute !important;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	word-wrap: normal !important;
 }
 
 .visually-hidden {

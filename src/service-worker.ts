@@ -22,7 +22,7 @@ import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { enable as navigationPreloadEnable } from 'workbox-navigation-preload';
 import { setCacheNameDetails, clientsClaim } from 'workbox-core';
 import { offlineFallback, googleFontsCache } from 'workbox-recipes';
-
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import {
 	NetworkOnly,
 	NetworkFirst,
@@ -162,6 +162,11 @@ function routeAndCacheJsAndCSS(urls: RegExp | string) {
 		},
 		new StaleWhileRevalidate({
 			cacheName: cacheNames.static,
+			plugins: [
+				new CacheableResponsePlugin({
+					statuses: [200],
+				}),
+			],
 		})
 	);
 }
@@ -287,10 +292,19 @@ const routePagesOrServeOffline = ({
 				new ExpirationPlugin({
 					maxAgeSeconds: daysDuration * 24 * 60 * 60,
 				}),
+				new CacheableResponsePlugin({
+					statuses: [200],
+				}),
 			],
 		});
 	} else {
-		strategy = new NetworkOnly();
+		strategy = new NetworkOnly({
+			plugins: [
+				new CacheableResponsePlugin({
+					statuses: [200],
+				}),
+			],
+		});
 	}
 
 	// match url that contains .html or no extension at all
@@ -339,7 +353,7 @@ async function init(
 			postfix: '',
 		});
 
-		self.skipWaiting();
+		// self.skipWaiting();
 		clientsClaim();
 
 		googleFontsCache();
@@ -401,5 +415,13 @@ const config = {
 		},
 	},
 };
+
+self.addEventListener('install', () => {
+	self.skipWaiting();
+});
+
+self.addEventListener('activate', () => {
+	console.log('SW now ready to handle fetches!');
+});
 
 init(config.paths, config.caching);

@@ -1,20 +1,22 @@
 <svelte:options immutable={true} />
 
-<script lang="ts">
+<script context="module" lang="ts">
+	import { browser } from '$app/env';
 	import { afterUpdate } from 'svelte';
-	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
-	import Chip from 'svelte-material-components/src/components/Chip/Chip.svelte';
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
-	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
 
 	import { getProductModalContext } from '$lib/utils/helpers';
-	import LDTag from '../LDTag';
+
 	import star from '$lib/Icons/outline/star';
 	import flash from '$lib/utils/flash';
 
-	import type { WithContext, Product as DTSProduct } from 'schema-dts';
 	import type { Product } from 'types/interfaces';
+</script>
+
+<script lang="ts">
+	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
@@ -22,7 +24,7 @@
 	export let style: string;
 
 	let tabindex = -1;
-	let container: HTMLFormElement;
+	let container: HTMLElement;
 
 	const { open } = getProductModalContext();
 
@@ -39,27 +41,8 @@
 
 	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
-	const jsonLd: WithContext<DTSProduct> = {
-		'@context': 'https://schema.org',
-		'@type': 'Product',
-		image: image.src,
-		name: name,
-		sku: sku,
-		offers: {
-			'@type': 'Offer',
-			price: price,
-			priceCurrency: 'EUR',
-			availability: 'https://schema.org/InStock',
-		},
-		aggregateRating: {
-			'@type': 'AggregateRating',
-			ratingValue: rating?.value,
-			reviewCount: rating?.count,
-		},
-	};
-
 	afterUpdate(() => {
-		flash(container as HTMLFormElement);
+		flash(container as HTMLElement);
 	});
 
 	function openPopUp(e: Event) {
@@ -73,18 +56,28 @@
 	}
 </script>
 
-<LDTag schema={jsonLd} />
+<!-- 
+	An article is better for semantic because a product card 
+	is self contained and can be taken out of the page 
+	and still make sense. "mediamarkt.at" also uses it for their
+	cards. 
 
-<form
+	other resources:
+	-
+	- https://stackoverflow.com/questions/46259821/which-html5-tags-are-semantically-correct-to-represent-e-commerce-products
+
+ -->
+<article
 	bind:this={container}
-	class="card-container"
+	class="product-card-container"
 	tabindex="0"
-	method="GET"
 	on:focus={() => (tabindex = 0)}
 	on:blur={() => (tabindex = -1)}
 	on:submit|preventDefault={openPopUp}
 	{action}
 	{style}
+	itemscope
+	itemtype="http://schema.org/Product"
 >
 	<Card raised>
 		<div class="inner-card">
@@ -98,15 +91,16 @@
 				width="250"
 				height="181"
 			/>
+
 			<CardTitle itemprop="name" class="justify-center h4">
 				{name}
 			</CardTitle>
 
 			<div class="content">
-				<div class="price">
+				<p class="price">
 					<!-- <span content="EUR">€</span> -->
-					<span class="price" content={`${_price}`}>{_price}</span>
-				</div>
+					<data class="price" value={`${price}`}>{_price}</data>
+				</p>
 
 				{#if rating}
 					<div class="ratings">
@@ -116,7 +110,7 @@
 							value={`${rating?.value ?? 0}`}
 							aria-label={ratingAriaLabel}
 						>
-							{#each Array(5).fill('star') as _star}
+							{#each Array(5).fill('star') as _}
 								<Icon path={star} />
 							{/each}
 						</meter>
@@ -140,13 +134,17 @@
 				</svg>
 
 				<div class="card-actions">
+					<!-- 
+						Not sure if this should stay a button or change
+						it to a anchor/link 
+					-->
 					<Button
 						type="submit"
-						{tabindex}
-						aria-haspopup="dialog"
 						class="orange darken-1 ma-auto"
+						aria-haspopup="dialog"
 						text
 						rounded
+						{tabindex}
 					>
 						In den Warenkorb
 					</Button>
@@ -154,7 +152,7 @@
 			</div>
 		</div>
 	</Card>
-</form>
+</article>
 
 <style lang="scss">
 	* {
@@ -166,7 +164,7 @@
 		transition: transform 500ms ease;
 	}
 
-	form,
+	article,
 	div {
 		position: relative;
 	}

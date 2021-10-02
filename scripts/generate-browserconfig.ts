@@ -11,6 +11,9 @@ const logos: {
 	src: string;
 	width: number;
 	height: number;
+	/**
+	 * @defaultValue `"square"`
+	 */
 	form?: 'wide' | 'square';
 }[] = [
 	{
@@ -36,24 +39,21 @@ const logos: {
 	},
 ];
 
-function render(logos,tileColor: string) {
-	return `
-	<?xml version="1.0" encoding="utf-8"?>
-	<browserconfig>
-		<msapplication>
-			<tile>
-				<TileColor>${}</TileColor>
-				${logos.map((logo) => {
-					return `
-						<${logo.form || 'square' + logo.width + 'x' + logo.height + 'logo'} src=${
-						logo.src
-					} />
-					`;
-				})}	
-	        </tile>
-    	</msapplication>
-	</browserconfig>
-	`;
+function render(images: typeof logos, tileColor: string) {
+	return `<?xml version="1.0" encoding="utf-8"?>
+			<browserconfig>
+			<msapplication>
+				<tile>
+				<TileColor>${tileColor}</TileColor>
+					${images.map((logo) => {
+						return `<${
+							logo.form ||
+							'square' + logo.width + 'x' + logo.height + 'logo'
+						} src=${logo.src} />`;
+					})}	
+				</tile>
+			</msapplication>
+			</browserconfig>`;
 }
 
-writeFileSync(browserconfig, render(logos,"#2d89ef"));
+writeFileSync(browserconfig, render(logos, '#2d89ef'));

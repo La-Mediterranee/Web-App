@@ -35,6 +35,7 @@ export type Color = string;
 export type MicrosoftPWA = {
 	'msapplication-TileImage': string;
 	'msapplication-TileColor': string;
+	'msapplication-config': string;
 	'msapplication-tap-highlight'?: 'yes' | 'no';
 };
 

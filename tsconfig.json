@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"module": "es2020",
+		"moduleResolution": "Node",
+		"module": "ESNext",
 		"lib": [
 			"es2020",
 			"dom",
@@ -9,7 +9,7 @@
 			"WebWorker",
 			"WebWorker.ImportScripts"
 		],
-		"target": "ES6",
+		"target": "ES2017",
 		"removeComments": true,
 		// "importHelpers": true,
 		"strict": true,
@@ -58,5 +58,11 @@
 		"node_modules",
 		".svelte-kit",
 		"src/lib/Material/components/Slider/nouislider.min.js"
-	]
+	],
+	"ts-node": {
+		"transpileOnly": true,
+		"compilerOptions": {
+			"module": "CommonJS"
+		}
+	}
 }

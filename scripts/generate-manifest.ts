@@ -25,10 +25,12 @@ const {
 
 console.log('Generating Images');
 
-const iconImage = sharp(icons);
+const icon = '';
 
-const resizeIcon = async ({ size, path }) => {
-	await iconImage.resize(size).toFile(path, (err) => {
+const iconImage = sharp(icon);
+
+const resizeIcon = ({ size, path }) => {
+	iconImage.resize(size).toFile(path, (err) => {
 		if (err) {
 			console.error(err);
 		}

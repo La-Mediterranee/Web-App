@@ -1,64 +1,6 @@
 import { writable } from 'svelte/store';
 
-type OpenGraph = {
-	'og:title': string;
-	'og:type': string;
-	'og:url': string;
-
-	'og:description'?: string;
-	'og:site_name'?: string;
-
-	'og:locale'?: string;
-	'og:locale:alternate'?: string;
-
-	'og:image': string;
-	/** A description of what is in the image (not a caption). If the page specifies an og:image it should specify og:image:alt*/
-	'og:image:alt'?: string;
-	/** A MIME type for this image. */
-	'og:image:type'?: string;
-	/**The number of pixels wide. */
-	'og:image:width'?: string;
-	/**The number of pixels high. */
-	'og:image:height'?: string;
-};
-
-type Twitter = {
-	'twitter:title': string;
-	'twitter:description': string;
-	'twitter:card': string;
-	'twitter:image': string;
-	'twitter:image:alt': string;
-	'twtter:creator'?: string;
-	'twitter:site'?: string;
-};
-
-type Color = string;
-
-type AppleImages = {};
-
-type ApplePWA = {
-	'apple-mobile-web-app-title': string;
-	'apple-mobile-web-app-status-bar-style': Color;
-	'apple-touch-fullscreen'?: 'yes' | 'no';
-	'apple-mobile-web-app-capable?': 'yes' | 'no';
-};
-
-type PWAImages = {
-	'msapplication-TileImage'?: string;
-};
-
-type Metatags = OpenGraph &
-	Partial<Twitter> &
-	Partial<PWAImages> &
-	Partial<ApplePWA> & {
-		title: string;
-		description: string;
-		type: string;
-		image: string;
-		alt: string;
-		robots?: string;
-		generator?: string;
-	};
+import type { Metatags } from './metatag';
 
 const title = 'La-Mediterranee Shop';
 

@@ -68,14 +68,14 @@
 <!-- <LDTag {}/>  -->
 
 <svelte:head>
-	{#each headLinks as { href, rel }}
-		<link {rel} {href} />
+	{#each headLinks as { href, rel, ...rest }}
+		<link {rel} {href} {...rest} />
 	{/each}
 
 	<title>{$metatags.title}</title>
 	{#each Object.entries($metatags) as [property, content]}
 		{#if content}
-			{#if ['title', 'description', 'image'].includes(property)}
+			{#if ['title', 'description', 'image', 'google-site-verification', 'referrer'].includes(property)}
 				<meta name={property} {content} />
 			{:else}
 				<meta {property} {content} />

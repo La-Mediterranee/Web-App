@@ -1,73 +1,116 @@
 import { writable } from 'svelte/store';
 
+type MediaValues = Record<
+	| 'orientation'
+	| 'scan'
+	| 'width'
+	| 'height'
+	| 'device-width'
+	| 'device-height'
+	| 'resolution'
+	| 'aspect-ratio'
+	| 'device-aspect-ratio'
+	| 'grid'
+	| 'color'
+	| 'color-index'
+	| 'monochrome'
+	| 'prefers-color-scheme',
+	unknown
+>;
+
+type Favicon = {
+	href: string;
+	rel: 'shortcut icon' | 'icon';
+};
+
+type AlternativeFavicon = {
+	sizes: string;
+	type?: 'image/jpg' | 'image/png' | 'image/webp';
+} & Favicon;
+
+/**
+ * {@link https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html}
+ */
+type AppleImages = {
+	/**
+	 * Use 100% black for all vectors with a transparent background in SVG format.
+	 *
+	 * @property `color` - That attribute can specify a single color with a
+	 * hexadecimal value (#990000), an RGB value (rgb(153, 0, 0)), or a
+	 * recognized color-keyword, such as: red, lime, or navy
+	 *
+	 * Important: The SVG file must be a single layer and the viewBox
+	 * attribute must be set to "0 0 16 16".
+	 *
+	 * @see {@link https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/pinnedTabs/pinnedTabs.html#//apple_ref/doc/uid/TP40002051-CH18-SW2}
+	 */
+	'mask-icon'?: {
+		href: string;
+		color: string;
+	};
+	/**
+	 * Webpage Icon for Web Clip
+	 */
+	'apple-touch-icon'?: {
+		href: string;
+		sizes?: string;
+	}[];
+	'apple-touch-startup-image'?: {
+		href: string;
+		media: string;
+	}[];
+};
+
 type LinkTags = {
-	title: string;
-	description: string;
-	type: string;
-	image: string;
-	alt: string;
-	// Twitter
-	'twitter:title': string;
-	'twitter:description': string;
-	'twitter:card': string;
-	'twitter:image': string;
-	'twitter:image:alt': string;
-	// Open Graph
-	'og:title': string;
-	'og:type': string;
-	'og:url': string;
-	'og:locale'?: string;
-	'og:description'?: string;
-	'og:locale:alternate'?: string;
-	'og:image': string;
-	/** A description of what is in the image (not a caption). If the page specifies an og:image it should specify og:image:alt*/
-	'og:image:alt'?: string;
-	/** A MIME type for this image. */
-	'og:image:type'?: string;
-	/**The number of pixels wide. */
-	'og:image:width'?: string;
-	/**The number of pixels high. */
-	'og:image:height'?: string;
-	'og:site_name'?: string;
+	favicon?: Favicon;
+	'favicon:alt'?: AlternativeFavicon[];
+} & Partial<AppleImages>;
+
+const altFavicon: AlternativeFavicon[] = [
+	{
+		href: '',
+		sizes: '16x16',
+		type: 'image/png',
+		rel: 'icon',
+	},
+	{
+		href: '',
+		sizes: '32x32',
+		type: 'image/png',
+		rel: 'icon',
+	},
+	{
+		href: '',
+		sizes: '96x96',
+		type: 'image/png',
+		rel: 'icon',
+	},
+	{
+		href: '',
+		sizes: '192x192',
+		type: 'image/png',
+		rel: 'icon',
+	},
+];
+
+type MicrosoftLinks = {
+	'msapplication-starturl': string;
+};
+
+type MicroFormat = {
+	/**
+	 * By adding rel="home" to a hyperlink, a page indicates that the destination of that hyperlink is the homepage of the site in which the current page appears.
+	 */
+	home: string;
 };
 
 const initialTags: LinkTags = {
-	title: 'La-Mediterranee Shop',
-	description: '',
-	type: 'website',
-	image: 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
-	alt: 'SvelteSociety.dev',
-	// Twitter
-	'twitter:card': 'summary_large_image',
-	'twitter:title': 'Svelte Society',
-	'twitter:description':
-		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
-	'twitter:image':
-		'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
-	'twitter:image:alt': 'SvelteSociety.dev',
-
-	// Open Graph
-	'og:url': 'https://sveltesociety.dev/',
-	'og:locale': '',
-	'og:title': 'Svelte Society',
-	'og:description':
-		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
-	'og:type': 'website',
-	'og:image':
-		'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
-	'og:image:alt': 'SvelteSociety.dev',
+	favicon: {
+		href: '',
+		rel: 'shortcut icon',
+	},
+	'favicon:alt': altFavicon,
 };
-
-// type MetaTagsStore = {
-// 	subscribe: Writable<Metatags>['subscribe'];
-// 	set: Writable<Metatags>['set'];
-// 	title: (title: string) => void;
-// 	desc: (desc: string) => void;
-// 	image: (image: string) => void;
-// 	alt: (alt: string) => void;
-// 	url: (url: string) => void;
-// 	reset: () => void;
-// };
 
 export type LinkTagsStore = ReturnType<typeof createLinkTagsStore>;
 

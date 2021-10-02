@@ -1,5 +1,4 @@
 // import { Request } from '@sveltejs/kit';
-
 // import { auth } from '../../../server/firebase';
 
 // interface AccessTokenParams {

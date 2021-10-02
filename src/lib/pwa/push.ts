@@ -1,6 +1,5 @@
 function setBadge() {
-	//@ts-ignore
-	if (typeof navigator?.setAppBadge === 'function') {
+	if ('setAppBadge' in navigator) {
 		//@ts-ignore
 		navigator?.setAppBadge();
 		//@ts-ignore

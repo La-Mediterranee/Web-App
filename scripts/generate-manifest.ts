@@ -3,11 +3,13 @@ import path from 'path';
 import sharp from 'sharp';
 import website from './config/website';
 
+import type { WebApplicationManifest, Mutable } from './manifest';
+
 const DEFAULT_SIZES = [128, 144, 152, 192, 256, 512] as const;
 
 const __dirname = path.resolve();
 const iconsDirectory = path.join(__dirname, 'static/icons');
-const manifestFile = path.join(__dirname, 'static/site.webmanifest');
+const manifestFile = path.join(__dirname, 'static/manifest.webmanifest');
 
 const {
 	backgroundColor,
@@ -39,10 +41,10 @@ const main = async () => {
 		const maxSize = Math.min(width, height);
 		const sizes = DEFAULT_SIZES.filter((element) => element <= maxSize);
 
-		const manifest = {
+		const manifest: WebApplicationManifest<any> = {
+			name: siteName,
 			dir: direction || 'ltr',
 			lang: lang || 'de',
-			name: siteName,
 			short_name: siteShortName,
 			scope: '/',
 			start_url: '/?utm_source=homescreen',
@@ -50,7 +52,11 @@ const main = async () => {
 			orientation: 'portrait',
 			theme_color: themeColor,
 			background_color: backgroundColor,
-			categories: categories || ['food', 'shopping', 'fast food'],
+			categories: (categories as Mutable<typeof categories>) || [
+				'food',
+				'shopping',
+				'fast food',
+			],
 			icons: sizes.map((size) => {
 				const path = `icons/icon-${size}x${size}.png`;
 				resizeIcon({ size, path: `static/${path}` });
@@ -59,17 +65,20 @@ const main = async () => {
 					src: path,
 					sizes: `${size}x${size}`,
 					type: 'image/png',
-					purpose: 'any maskable',
+					purpose: 'maskable',
 				};
 			}),
-			screenshots: screenshots.map((size) => {
+			// display_override: [""],
+			screenshots: screenshots.map(({ sizes, src, type }) => {
 				return {
-					src: path,
-					sizes: `${size}x${size}`,
-					type: 'image/webp',
+					src,
+					// sizes: `${size}x${size}`,
+					sizes,
+					type,
+					label: '',
 				};
 			}),
-		};
+		} as const;
 
 		fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 4));
 	} catch (error) {

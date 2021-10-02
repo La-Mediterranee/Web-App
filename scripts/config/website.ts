@@ -1,4 +1,21 @@
-export default {
+import type { Screenshot } from '../manifest';
+
+const screenshots: Screenshot[] = [
+	{
+		src: 'screenshot1.webp',
+		sizes: '1280x720',
+		type: 'image/webp',
+		label: '',
+	},
+	{
+		src: 'screenshot2.webp',
+		sizes: '1280x720',
+		type: 'image/webp',
+		label: '',
+	},
+];
+
+const manifest = {
 	direction: 'ltr',
 	lang: 'de',
 	siteName: 'La Mediterranee Lieferapp',
@@ -41,16 +58,7 @@ export default {
 			sizes: '72x72',
 		},
 	],
-	screenshots: [
-		{
-			src: 'screenshot1.webp',
-			sizes: '1280x720',
-			type: 'image/webp',
-		},
-		{
-			src: 'screenshot2.webp',
-			sizes: '1280x720',
-			type: 'image/webp',
-		},
-	],
+	screenshots: screenshots,
 } as const;
+
+export default manifest;

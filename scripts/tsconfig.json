@@ -26,10 +26,11 @@
 		// "allowJs": true,
 		// "checkJs": true,
 	},
-	"exclude": [
-		"build",
-		"node_modules",
-		".svelte-kit",
-		"src/lib/Material/components/Slider/nouislider.min.js"
-	]
+	"exclude": ["build", "node_modules", ".svelte-kit", "src/lib/Material/components/Slider/nouislider.min.js"],
+	"ts-node": {
+		"transpileOnly": true,
+		"compilerOptions": {
+			"module": "CommonJS"
+		}
+	}
 }

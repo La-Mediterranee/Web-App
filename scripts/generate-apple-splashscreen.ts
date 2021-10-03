@@ -4,8 +4,6 @@ import sharp from 'sharp';
 import website from './config/website';
 import { fileURLToPath } from 'url';
 
-import type { SharpOptions } from 'sharp';
-
 type PixelDensity = 2 | 3;
 
 //Ipads
@@ -26,40 +24,11 @@ type IphoneScreeenResolutions = {
 	'1284x2778': 3;
 };
 
-type ScreenResolutionsWithDensity = IphoneScreeenResolutions &
-	IpadScreeenResolutions;
-
-type ScreenResolutions = {
-	'375x667': PixelDensity[];
-	'375x812': PixelDensity[];
-	'390x844': PixelDensity[];
-	'414x736': PixelDensity[];
-	'414x896': PixelDensity[];
-	'428x926': PixelDensity[];
-	'768x1024': PixelDensity[];
-	'810x1080': PixelDensity[];
-	'834x1112': PixelDensity[];
-	'834x1194': PixelDensity[];
-	'1024x1366': PixelDensity[];
-};
-
-const sizes: Partial<ScreenResolutions> = {
-	'375x667': [2] as PixelDensity[],
-	'375x812': [3] as PixelDensity[],
-	'390x844': [3] as PixelDensity[],
-	'414x736': [2, 3] as PixelDensity[],
-	'414x896': [2, 3] as PixelDensity[],
-	'428x926': [3] as PixelDensity[],
-	'768x1024': [2] as PixelDensity[],
-	'810x1080': [2] as PixelDensity[],
-	'834x1112': [2] as PixelDensity[],
-	'834x1194': [2] as PixelDensity[],
-	'1024x1366': [2] as PixelDensity[],
-} as const;
+type ScreenResolutionsWithDensity = IphoneScreeenResolutions & IpadScreeenResolutions;
 
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-async function createImages(imageBuffer: Buffer) {
+async function createImages(imageBuffer: Buffer, dir: string) {
 	const ipadResolutions: IpadScreeenResolutions = {
 		'1536x2048': 2,
 		'1620x2160': 2,
@@ -78,6 +47,8 @@ async function createImages(imageBuffer: Buffer) {
 	};
 
 	const combined = Object.assign({}, iphoneResolutions, ipadResolutions);
+
+	let count = 0;
 
 	for (const [size, density] of Object.entries(combined)) {
 		const split = size.split('x');
@@ -108,12 +79,7 @@ async function createImages(imageBuffer: Buffer) {
 					gravity: 'center',
 				},
 			])
-			.toFile(
-				path.resolve(
-					__dirname,
-					`./splash-portrait-${portrait.size}.png`
-				)
-			);
+			.toFile(path.resolve(dir, `./splash-portrait-${portrait.size}.png`));
 
 		const landscapePromise = sharp({
 			create: {
@@ -129,55 +95,38 @@ async function createImages(imageBuffer: Buffer) {
 					gravity: 'center',
 				},
 			])
-			.toFile(
-				path.resolve(
-					__dirname,
-					`./splash-landscape-${landscape.size}.png`
-				)
-			);
+			.toFile(path.resolve(dir, `./splash-landscape-${landscape.size}.png`));
 
 		try {
-			const images = await Promise.allSettled([
-				landscapePromise,
-				portrtaitPromise,
-			]);
+			const images = await Promise.allSettled([landscapePromise, portrtaitPromise]);
 
-			console.group('promises');
+			const landscapeImg = images[0].status === 'fulfilled' ? images[0].value : images[0].reason;
 
-			const landscapeImg =
-				images[0].status === 'fulfilled'
-					? images[0].value
-					: images[0].reason;
+			const portraitImg = images[1].status === 'fulfilled' ? images[1].value : images[1].reason;
 
-			const portraitImg =
-				images[1].status === 'fulfilled'
-					? images[1].value
-					: images[1].reason;
+			if (typeof landscapeImg === 'object') {
+				++count;
+			}
 
-			console.log(landscapeImg);
-
-			console.log(portraitImg);
-
-			console.groupEnd();
+			if (typeof portraitImg === 'object') {
+				++count;
+			}
 
 			createMetaTags(portrait.width, portrait.height, density);
 		} catch (error) {
 			console.error(error);
 		}
-
 		// images.set(href, media);
 	}
+
+	console.log(count, 'images created');
 }
 
 function createMetaTags(width: number, height: number, density: number) {
-	const portrait = `screen and (device-width: ${
-		width / density
-	}px) and (device-height: ${
+	const portrait = `screen and (device-width: ${width / density}px) and (device-height: ${
 		height / density
 	}px) and (-webkit-device-pixel-ratio: ${density}) and (orientation: portrait)`;
-	const landscape = `screen and (device-width: ${
-		width / density
-	}px) and (device-height: ${
+	const landscape = `screen and (device-width: ${width / density}px) and (device-height: ${
 		height / density
 	}px) and (-webkit-device-pixel-ratio: ${density}) and (orientation: landscape)`;
 
@@ -197,15 +146,17 @@ async function main() {
 
 	fs.mkdirSync(iconsDirectory, { recursive: true });
 
+	console.log('Reading Logo');
+
+	const image = fs.readFileSync(logoPath);
+
+	const LOGO_BUFFER = await sharp(image).resize(512).toBuffer();
+
 	console.log('Generating Images');
 
-	const LOGO_BUFFER = await sharp(fs.readFileSync(logoPath))
-		.resize(512)
-		.toBuffer();
+	fs.writeFileSync('./logo512x512.png', LOGO_BUFFER);
 
-	fs.writeFileSync('./scripts/logo512x512.png', LOGO_BUFFER);
-
-	await createImages(LOGO_BUFFER);
+	await createImages(LOGO_BUFFER, iconsDirectory);
 
 	console.log('Finished');
 
@@ -217,3 +168,31 @@ try {
 } catch (error) {
 	console.error(error);
 }
+
+// type ScreenResolutions = {
+// 	'375x667': PixelDensity[];
+// 	'375x812': PixelDensity[];
+// 	'390x844': PixelDensity[];
+// 	'414x736': PixelDensity[];
+// 	'414x896': PixelDensity[];
+// 	'428x926': PixelDensity[];
+// 	'768x1024': PixelDensity[];
+// 	'810x1080': PixelDensity[];
+// 	'834x1112': PixelDensity[];
+// 	'834x1194': PixelDensity[];
+// 	'1024x1366': PixelDensity[];
+// };
+
+// const sizes: Partial<ScreenResolutions> = {
+// 	'375x667': [2] as PixelDensity[],
+// 	'375x812': [3] as PixelDensity[],
+// 	'390x844': [3] as PixelDensity[],
+// 	'414x736': [2, 3] as PixelDensity[],
+// 	'414x896': [2, 3] as PixelDensity[],
+// 	'428x926': [3] as PixelDensity[],
+// 	'768x1024': [2] as PixelDensity[],
+// 	'810x1080': [2] as PixelDensity[],
+// 	'834x1112': [2] as PixelDensity[],
+// 	'834x1194': [2] as PixelDensity[],
+// 	'1024x1366': [2] as PixelDensity[],
+// } as const;

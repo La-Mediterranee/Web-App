@@ -6,12 +6,20 @@
 		status: HttpStatusCode;
 	}
 
-	export function load({ error, status }: Props): { props: Props } {
+	const errorMessages: {
+		[status: number]: string;
+	} = {
+		404: 'Die gesuchte Seite existiert leider nicht',
+		500: 'Es gab einen Fehler auf unserem Server',
+	};
+
+	export function load({ error, status }: Props) {
 		return {
 			props: {
+				status,
+				message: errorMessages[status] || error.message,
 				error,
-				status
-			}
+			},
 		};
 	}
 </script>
@@ -20,6 +28,7 @@
 	import { dev } from '$app/env';
 
 	export let status: HttpStatusCode;
+	export let message: string;
 	export let error: Error;
 </script>
 
@@ -31,13 +40,7 @@
 <div>
 	<h1>{status}</h1>
 	<p>
-		{#if status === 404}
-			Die gesuchte Seite existiert leider nicht
-		{:else if status === 500}
-			Es gab einen Fehler auf unserem Server
-		{:else}
-			{error.message}
-		{/if}
+		{message}
 	</p>
 </div>
 

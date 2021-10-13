@@ -1,7 +1,7 @@
 # Browsers that we support
 [production]
-> .5%
+> .1%
 not IE 11
 
 [modern]
-last 1 version
+last 2 version

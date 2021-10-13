@@ -10,7 +10,7 @@ const getUrl = (url) => {
 
 async function createSitemap() {
 	const sitemap = create({ version: '1.0' }).ele('urlset', {
-		xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9'
+		xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
 	});
 
 	const pages = await fg(['build/**/*.html']);

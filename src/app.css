@@ -82,11 +82,13 @@ body {
 }
 
 .theme--custom {
-	--tint-color: #729abe;
+	/* --tint-color: #729abe; */
+	--tint-color: #81a3c1;
 	--modal-bg: white;
 	--theme-tabs: rgba(255, 255, 255, 0.6);
 	/* --theme-surface: #d81717e5; */
-	--theme-surface: #4994f5e5;
+	/* --theme-surface: #4994f5e5; */
+	--theme-surface: #478ae1;
 	--theme-icons-active: #ffffff;
 	--theme-icons-inactive: rgba(255, 255, 255, 0.5);
 	/* --theme-text-link: #82b1ff; */
@@ -99,7 +101,7 @@ body {
 	--theme-focus-visible: #ddd;
 	/* --theme-text-primary: #38a0c9e5; */
 	--theme-text-primary: rgb(241, 241, 241);
-	/* --theme-text-primary: #050435; */
+	/* --theme-text-primary: #e6e6e6; */
 
 	--theme-card-border-radius: 1em;
 	--theme-text-secondary: rgba(255, 255, 255, 0.7);
@@ -173,6 +175,10 @@ a {
 
 .justify-center {
 	justify-content: center !important;
+}
+
+.ptb-2 {
+	padding: 8px 0 !important;
 }
 
 .pt-2 {

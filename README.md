@@ -6,6 +6,10 @@ A food-delivery App for my uncle.
 
 The App is gonna use firebase and Stripe for the transactions and Netlify for hosting.
 
+# Linkback
+
+To get notifations when your site gets linked/shared go to [Webmention.io](https://webmention.io/) and sign up with your domain
+
 # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);

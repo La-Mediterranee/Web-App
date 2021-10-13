@@ -2,20 +2,16 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
-import type { CartItem, SKU } from 'types/interfaces';
+import type { CartItem, SKU, ID } from 'types/interfaces';
 
-type Cart = Map<SKU, CartItem>;
+export type Cart = Map<ID, CartItem>;
 
 interface CartStore {
-	subscribe: (
-		this: void,
-		run: Subscriber<Cart>,
-		invalidate?: Invalidator<Cart> | undefined
-	) => Unsubscriber;
+	subscribe: (this: void, run: Subscriber<Cart>, invalidate?: Invalidator<Cart> | undefined) => Unsubscriber;
 	removeItem: (oldItem: CartItem) => void;
 	addItem: (oldItem: CartItem) => void;
 	removeAll: (oldItem: CartItem) => void;
-	upadateItem: (sku: SKU, quantity: number) => void;
+	upadateItem: (id: ID, quantity: number) => void;
 	readonly totalQuantity: number;
 	readonly totalAmount: number;
 }
@@ -30,9 +26,7 @@ function createCartStore(): CartStore {
 	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
 
 	const items =
-		storage?.getItem(key) != null
-			? (JSON.parse(storage.getItem(key)!) as Cart)
-			: new Map<SKU, CartItem>();
+		storage?.getItem(key) != null ? (JSON.parse(storage.getItem(key)!) as Cart) : new Map<SKU, CartItem>();
 
 	const store = writable<Cart>(items, (set) => {
 		return () => {
@@ -51,7 +45,7 @@ function createCartStore(): CartStore {
 	function addItem(item: CartItem) {
 		sound?.play();
 		update((items) => {
-			items.set(item.sku || item.name, item);
+			items.set(item.ID, item);
 			calculateTotal(items);
 			return items;
 		});
@@ -60,18 +54,18 @@ function createCartStore(): CartStore {
 	function removeItem(oldItem: CartItem) {
 		sound?.play();
 		update((items) => {
-			items.delete(oldItem.sku || oldItem.name);
+			items.delete(oldItem.ID || oldItem.name);
 			calculateTotal(items);
 			return items;
 		});
 	}
 
-	function upadateItem(sku: SKU, quantity: number) {
+	function upadateItem(id: ID, quantity: number) {
 		sound?.play();
 		update((items) => {
-			const item = items.get(sku);
+			const item = items.get(id);
 			if (item) {
-				items.set(sku, {
+				items.set(id, {
 					...item,
 					quantity,
 				});
@@ -95,7 +89,7 @@ function createCartStore(): CartStore {
 		let amount = 0;
 		let quantity = 0;
 
-		for (const [sku, item] of items) {
+		for (const [id, item] of items) {
 			amount += item.price * item.quantity;
 			quantity += item.quantity;
 		}
@@ -117,82 +111,3 @@ function createCartStore(): CartStore {
 }
 
 export const cart = createCartStore();
-
-// function createCartArrayStore(): CartStore {
-// 	let totalAmount = 0;
-// 	let totalQuantity = 0;
-
-// 	const sound = new Audio('');
-// 	const key = 'cart';
-// 	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
-// 	const items =
-// 		storage?.getItem(key) != null
-// 			? (JSON.parse(storage.getItem(key)!) as CartItem[])
-// 			: [];
-
-// 	const store = writable<CartItem[]>(items, (set) => {
-// 		return () => {
-// 			storage?.setItem(key, JSON.stringify(items));
-// 		};
-// 	});
-
-// 	const { set, subscribe, update } = store;
-
-// 	/*
-// 	 	TODO: Add localstorage for persistent
-// 	 	Optional: sync with firestore
-// 	*/
-
-// 	function addItem(item: CartItem) {
-// 		update((items) => {
-// 			items.push(item); // or [...items, item] but instead of copying I just push and return
-// 			calculateTotal(items);
-// 			return items;
-// 		});
-// 	}
-
-// 	function removeItem(oldItem: CartItem) {
-// 		update((items) => {
-// 			const newItems = items.filter((item) => item.sku !== oldItem.sku);
-// 			calculateTotal(newItems);
-// 			return newItems;
-// 		});
-// 	}
-
-// 	function upadateItem(sku: SKU, quantity: number) {
-// 		update((items) => {
-// 			items[items.findIndex((item) => item.sku === sku)].quantity =
-// 				quantity;
-// 			calculateTotal(items);
-// 			return items;
-// 		});
-// 	}
-
-// 	function removeAll() {
-// 		set([]);
-// 	}
-
-// 	function calculateTotal(items: CartItem[]) {
-// 		let amount = 0;
-// 		let quantity = 0;
-
-// 		for (const item of items) {
-// 			amount += item.price * item.quantity;
-// 			quantity += item.quantity;
-// 		}
-
-// 		totalAmount = amount;
-// 		totalQuantity = quantity;
-// 		storage?.setItem(key, JSON.stringify(items));
-// 	}
-
-// 	return {
-// 		subscribe,
-// 		removeItem,
-// 		addItem,
-// 		removeAll,
-// 		upadateItem,
-// 		totalAmount,
-// 		totalQuantity,
-// 	};
-// }

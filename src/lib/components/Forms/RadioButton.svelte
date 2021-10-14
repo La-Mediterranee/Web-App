@@ -23,7 +23,7 @@
 		-moz-osx-font-smoothing: inherit;
 
 		&:checked {
-			border-color: #fb8c00;
+			border-color: var(--accent-color, orange);
 			border-width: 9px;
 		}
 	}

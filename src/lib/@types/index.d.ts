@@ -1,5 +1,10 @@
-import type { Stripe } from '@stripe/stripe-js';
-import type { Readable, Unsubscriber, Subscriber } from 'svelte/store';
+// import type { Stripe } from '@stripe/stripe-js';
+// import type { Readable, Unsubscriber, Subscriber } from 'svelte/store';
+
+type Stripe = import('@stripe/stripe-js').Stripe;
+type Readable = import('svelte/store').Readable;
+type Unsubscriber = import('svelte/store').Unsubscriber;
+type Subscriber = import('svelte/store').Subscriber;
 
 export declare interface Image {
 	readonly src: string;

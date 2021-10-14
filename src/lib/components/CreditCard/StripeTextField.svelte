@@ -75,15 +75,12 @@
 		el.on('change', onInput);
 
 		return () => {
-			// el.destroy();
-			el.unmount();
+			el.destroy();
 		};
 	});
 
 	export function validate() {
-		errorMessages = rules
-			.map((r) => r(value))
-			.filter((r) => typeof r === 'string');
+		errorMessages = rules.map((r) => r(value)).filter((r) => typeof r === 'string');
 		if (errorMessages.length) error = true;
 		else {
 			error = false;
@@ -106,26 +103,10 @@
 	}
 </script>
 
-<Input
-	class="s-text-field {klass}"
-	{color}
-	{dense}
-	{readonly}
-	{disabled}
-	{error}
-	{success}
-	{style}
->
+<Input class="s-text-field {klass}" {color} {dense} {readonly} {disabled} {error} {success} {style}>
 	<!-- Slot for prepend outside the input. -->
 	<slot slot="prepend-outer" name="prepend-outer" />
-	<div
-		class="s-text-field__wrapper"
-		class:filled
-		class:solo
-		class:outlined
-		class:flat
-		class:rounded
-	>
+	<div class="s-text-field__wrapper" class:filled class:solo class:outlined class:flat class:rounded>
 		<!-- Slot for prepend inside the input. -->
 		<slot name="prepend" />
 

@@ -11,13 +11,14 @@
 		height: 2.5em;
 		width: 100%;
 		z-index: 100;
-		background-color: darkcyan;
+		background-color: #007676;
 		position: fixed;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		transform: translateY(-100%);
 		transition: transform 0.5s ease-in-out;
+		font-size: 1.3em;
 	}
 
 	.offline {

@@ -23,7 +23,7 @@ const manifest = {
 	scope: '/',
 	start_url: '/?utm_source=homescreen',
 	display: 'standalone',
-	orientation: 'portrait',
+	orientation: 'any',
 	themeColor: 'aliceblue',
 	backgroundColor: '#FFFFFF',
 	categories: ['food', 'shopping', 'fast food'],

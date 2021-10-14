@@ -4,10 +4,10 @@ import sharp from 'sharp';
 import website from './config/website';
 import { fileURLToPath } from 'url';
 
-type PixelDensity = 2 | 3;
+export type PixelDensity = 2 | 3;
 
 //Ipads
-type IpadScreeenResolutions = {
+export type IpadScreeenResolutions = {
 	'1536x2048': 2;
 	'1668x2224': 2;
 	'1620x2160': 2;
@@ -15,7 +15,7 @@ type IpadScreeenResolutions = {
 	'2048x2732': 2;
 };
 
-type IphoneScreeenResolutions = {
+export type IphoneScreeenResolutions = {
 	'750x1334': 2;
 	'828x1792': 2;
 	'1080x1920': 3;
@@ -24,11 +24,18 @@ type IphoneScreeenResolutions = {
 	'1284x2778': 3;
 };
 
-type ScreenResolutionsWithDensity = IphoneScreeenResolutions & IpadScreeenResolutions;
+export type ScreenResolutionsWithDensity = IphoneScreeenResolutions & IpadScreeenResolutions;
 
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-async function createImages(imageBuffer: Buffer, dir: string) {
+async function createImages(
+	imageBuffer: Buffer,
+	dir: string,
+	options = {
+		differentColorModes: false,
+		backgroundColors: 'fff',
+	}
+) {
 	const ipadResolutions: IpadScreeenResolutions = {
 		'1536x2048': 2,
 		'1620x2160': 2,
@@ -47,8 +54,6 @@ async function createImages(imageBuffer: Buffer, dir: string) {
 	};
 
 	const combined = Object.assign({}, iphoneResolutions, ipadResolutions);
-
-	let count = 0;
 
 	for (const [size, density] of Object.entries(combined)) {
 		const split = size.split('x');
@@ -104,22 +109,12 @@ async function createImages(imageBuffer: Buffer, dir: string) {
 
 			const portraitImg = images[1].status === 'fulfilled' ? images[1].value : images[1].reason;
 
-			if (typeof landscapeImg === 'object') {
-				++count;
-			}
-
-			if (typeof portraitImg === 'object') {
-				++count;
-			}
-
-			createMetaTags(portrait.width, portrait.height, density);
+			// createMetaTags(portrait.width, portrait.height, density);
 		} catch (error) {
 			console.error(error);
 		}
 		// images.set(href, media);
 	}
-
-	console.log(count, 'images created');
 }
 
 function createMetaTags(width: number, height: number, density: number) {
@@ -160,7 +155,7 @@ async function main() {
 
 	console.log('Finished');
 
-	return 1;
+	return 0;
 }
 
 try {

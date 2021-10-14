@@ -9,6 +9,8 @@
 
 <svelte:head>
 	{#if !browser}
-		{@html serializeSchema(schema)}
+		{@html serializeSchema(schema, 'restaurant-seo-schema')}
+		<!-- {@html serializeSchema(schema, 'breadcrumbs-seo-schema')} -->
+		<!-- {@html serializeSchema(schema, 'product-seo-schema')} -->
 	{/if}
 </svelte:head>

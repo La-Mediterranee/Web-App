@@ -1,10 +1,14 @@
 <script lang="ts">
 	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
 	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
+	import CartItem from '../Cart/CartItem.svelte';
 	import Image from '../Image/Image.svelte';
 
-	export let cart: CartItem[];
-	//  = [
+	import type { SKU, CartItem as ICartItem } from 'types/interfaces';
+	import type { Cart } from '$lib/stores/cart';
+
+	export let cart: Cart;
+	// new Map([SKU,
 	// 	{
 	// 		name: 'Burger',
 	// 		image: {
@@ -14,7 +18,7 @@
 	// 		quantity: 4,
 	// 		categories: [''],
 	// 	},
-	// ];
+	// ]);
 
 	export let total: number;
 	export let quantity: number;
@@ -38,13 +42,7 @@
 </script>
 
 <aside aria-label={ariaLabel}>
-	<button
-		type="button"
-		aria-expanded={showSummary}
-		aria-controls="order-summary"
-	>
-		Bestellung anzeigen
-	</button>
+	<button type="button" aria-expanded={showSummary} aria-controls="order-summary"> Bestellung anzeigen </button>
 	<table>
 		<caption class="visually-hidden">Warenkorb</caption>
 		<thead>

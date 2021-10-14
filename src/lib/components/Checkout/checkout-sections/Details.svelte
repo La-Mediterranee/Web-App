@@ -10,17 +10,13 @@
 
 	function checkOrderDeatils(e: Event) {
 		const form = e.currentTarget as HTMLFormElement;
-		console.log(form.elements);
+		const formData = new FormData(form);
 		value = [1];
 		currentValue = 1;
 	}
 </script>
 
-<form
-	novalidate
-	action="/checkout-info"
-	on:submit|preventDefault={checkOrderDeatils}
->
+<form novalidate action="/checkout?section=payment" on:submit|preventDefault={checkOrderDeatils}>
 	<fieldset>
 		<legend>Kontaktinformation:</legend>
 		<div>
@@ -35,27 +31,12 @@
 			>
 				E-mail
 			</TextField>
-			<TextField
-				type="tel"
-				name="tel"
-				autocomplete="tel"
-				bind:value={customer.number}
-				required
-				rounded
-				outlined
-			>
+			<TextField type="tel" name="tel" autocomplete="tel" bind:value={customer.number} required rounded outlined>
 				Telefonnummer
 			</TextField>
 		</div>
 		<div>
-			<TextField
-				name="name"
-				autocomplete="given-name"
-				bind:value={customer.name}
-				required
-				rounded
-				outlined
-			>
+			<TextField name="name" autocomplete="given-name" bind:value={customer.name} required rounded outlined>
 				Vorname
 			</TextField>
 			<TextField
@@ -95,22 +76,13 @@
 			>
 				PLZ
 			</TextField>
-			<TextField
-				name="city"
-				autocomplete="address-level2"
-				bind:value={customer.city}
-				required
-				outlined
-				rounded
-			>
+			<TextField name="city" autocomplete="address-level2" bind:value={customer.city} required outlined rounded>
 				Stadt
 			</TextField>
 		</div>
 	</fieldset>
 	<div class="actions">
-		<Button type="submit" class="orange darken-1" rounded>
-			Weiter zur Zahlung
-		</Button>
+		<Button type="submit" class="form-elements-color" rounded>Weiter zur Zahlung</Button>
 	</div>
 </form>
 

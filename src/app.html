@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 	<head>
-		<!-- 
-			if your looking for more info about this page
-			than go to https://github.com/La-Mediterranee/Web-App
-			where you can find the source code and the docs/comments
-			and the reasons for why I/we did what we did
-		-->
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,22 +22,26 @@
 		<link rel="manifest" href="/manifest.webmanifest" crossorigin="" />
 		<link
 			rel="stylesheet"
-			href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;800&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;800&display=swap"
 		/>
 
 		<script>
 			function hasIntlGetCanonicalLocalesBug() {
 				try {
-					return (
-						new Intl.Locale('und-x-private').toString() ===
-						'x-private'
-					);
+					return new Intl.Locale('und-x-private').toString() === 'x-private';
 				} catch (e) {
 					return true;
 				}
 			}
 
 			const polyfills = [];
+
+			if (!'FormData' in window) {
+				const src = 'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
+				const script = document.createElement('script');
+				script.src = src;
+				document.head.appendChild(script);
+			}
 
 			if (!('AbortController' in window)) {
 				polyfills.push('AbortController');
@@ -53,8 +51,7 @@
 				!(
 					'IntersectionObserver' in window &&
 					'IntersectionObserverEntry' in window &&
-					'intersectionRatio' in
-						window.IntersectionObserverEntry.prototype
+					'intersectionRatio' in window.IntersectionObserverEntry.prototype
 				)
 			) {
 				polyfills.push('IntersectionObserver');
@@ -65,47 +62,43 @@
 			}
 
 			if (polyfills.length > 0) {
-				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join(
-					'%2C'
-				)}`;
+				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join('%2C')}`;
 				const script = document.createElement('script');
 				script.src = src;
 				document.head.appendChild(script);
 			}
 		</script>
 
-		<script type="module">
-			navigator.serviceWorker
-				.register('/service-worker.js')
-				.then((reg) => {
-					reg.installing; // the installing worker, or undefined
-					reg.waiting; // the waiting worker, or undefined
-					reg.active; // the active worker, or undefined
+		<!-- <script type="module">
+			navigator.serviceWorker.register('/service-worker.js').then((reg) => {
+				reg.installing; // the installing worker, or undefined
+				reg.waiting; // the waiting worker, or undefined
+				reg.active; // the active worker, or undefined
 
-					reg.addEventListener('updatefound', () => {
-						// A wild service worker has appeared in reg.installing!
-						const newWorker = reg.installing;
+				reg.addEventListener('updatefound', () => {
+					// A wild service worker has appeared in reg.installing!
+					const newWorker = reg.installing;
 
-						newWorker.state;
-						// "installing" - the install event has fired, but not yet complete
-						// "installed"  - install complete
-						// "activating" - the activate event has fired, but not yet complete
-						// "activated"  - fully active
-						// "redundant"  - discarded. Either failed install, or it's been
-						//                replaced by a newer version
+					newWorker.state;
+					// "installing" - the install event has fired, but not yet complete
+					// "installed"  - install complete
+					// "activating" - the activate event has fired, but not yet complete
+					// "activated"  - fully active
+					// "redundant"  - discarded. Either failed install, or it's been
+					//                replaced by a newer version
 
-						newWorker.addEventListener('statechange', () => {
-							// newWorker.state has changed
-						});
+					newWorker.addEventListener('statechange', () => {
+						// newWorker.state has changed
 					});
 				});
+			});
 
 			navigator.serviceWorker.addEventListener('controllerchange', () => {
 				// This fires when the service worker controlling this page
 				// changes, eg a new worker has skipped waiting and become
 				// the new active worker.
 			});
-		</script>
+		</script> -->
 		<!-- You can remove this is you don't want to make your PWA installable -->
 		<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script> -->
 		%svelte.head%
@@ -118,5 +111,27 @@
 			async
 			src="https://www.googletagmanager.com/gtag/js?id="
 		></script> -->
+		<script>
+			// Lighthouse lowers the score because firebase auth iframe doesn't have a title/(visibility not hidden)
+			const observer = new MutationObserver((mutations) => {
+				for (let mutation of mutations) {
+					if (mutation.type === 'childList') {
+						const node = mutation.addedNodes[0];
+						if (node?.tagName === 'IFRAME' && node?.id?.startsWith('I0')) {
+							node.style.visibility = 'hidden';
+							observer.disconnect();
+						}
+					}
+				}
+			});
+
+			observer.observe(document.body, { childList: true });
+		</script>
 	</body>
+	<!-- 
+		if your looking for more info about this page
+		than go to https://github.com/La-Mediterranee/Web-App
+		where you can find the source code and the docs/comments
+		and the reasons for why I/we did what we did
+	-->
 </html>

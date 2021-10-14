@@ -23,19 +23,12 @@ import { enable as navigationPreloadEnable } from 'workbox-navigation-preload';
 import { setCacheNameDetails, clientsClaim } from 'workbox-core';
 import { offlineFallback, googleFontsCache } from 'workbox-recipes';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
-import {
-	NetworkOnly,
-	NetworkFirst,
-	StaleWhileRevalidate,
-} from 'workbox-strategies';
+import { NetworkOnly, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 
 import { SHOP_URL } from '$utils/constants';
 
 import type { DBSchema, StoreNames, IDBPDatabase } from 'idb';
-import type {
-	RouteMatchCallbackOptions,
-	RouteHandlerCallbackOptions,
-} from 'workbox-core';
+import type { RouteMatchCallbackOptions, RouteHandlerCallbackOptions } from 'workbox-core';
 
 interface ChacheNames {
 	/** html files in the static folder or prerendered pages from sveltekit */
@@ -71,9 +64,7 @@ const cacheNames: ChacheNames = {
 	static: `static_${OFFLINE_VERSION}`,
 };
 
-const toCache = exclude.map((path) =>
-	build.filter((file) => !file.includes(path))
-)[0];
+const toCache = exclude.map((path) => build.filter((file) => !file.includes(path)))[0];
 
 const imgStoreName = 'keyvaluepairs';
 
@@ -82,9 +73,7 @@ let basePaths: StoragePaths | null = null;
 let imgExpDb: IDBPDatabase;
 let currentImgDb: IDBPDatabase;
 
-async function runAsync<T>(
-	promise: Promise<T>
-): Promise<[T | null, any | null]> {
+async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any | null]> {
 	try {
 		const data = await promise;
 		return [data, null];
@@ -94,14 +83,27 @@ async function runAsync<T>(
 	}
 }
 
+function blobToArrayBuffer(blob: Blob) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.addEventListener('loadend', (e) => {
+			resolve(reader.result);
+		});
+		reader.addEventListener('error', reject);
+		reader.readAsArrayBuffer(blob);
+	});
+}
+
+function arrayBufferToBlob(buffer: BlobPart, type: string) {
+	return new Blob([buffer], { type: type });
+}
+
 /**
  * Returns the registered offline page from the precache cache
  */
 async function getOfflinePage(): Promise<Response> {
 	const [cache] = await runAsync<Cache>(caches.open(cacheNames.offline));
-	const chachedResponse = await cache
-		?.match(basePaths?.offlinePage as RequestInfo)
-		.catch(console.error);
+	const chachedResponse = await cache?.match(basePaths?.offlinePage as RequestInfo).catch(console.error);
 	return chachedResponse as Response;
 }
 
@@ -142,9 +144,7 @@ function routeAndCacheJsAndCSS(urls: RegExp | string) {
 			console.log(url.hostname.match(urls));
 
 			return (
-				request.destination === 'style' ||
-				request.destination === 'script' ||
-				request.destination === 'worker'
+				request.destination === 'style' || request.destination === 'script' || request.destination === 'worker'
 			);
 
 			if (!url.hostname.match(urls)) {
@@ -152,12 +152,8 @@ function routeAndCacheJsAndCSS(urls: RegExp | string) {
 			}
 			return (
 				url.pathname.match(/\.(?:js|css)/i) &&
-				precachedFiles.indexOf(
-					url.pathname.split('?').shift() as string
-				) === -1 &&
-				precachedFiles.indexOf(
-					url.href.split('?').shift() as string
-				) === -1
+				precachedFiles.indexOf(url.pathname.split('?').shift() as string) === -1 &&
+				precachedFiles.indexOf(url.href.split('?').shift() as string) === -1
 			);
 		},
 		new StaleWhileRevalidate({
@@ -178,10 +174,7 @@ function routeAndCacheJsAndCSS(urls: RegExp | string) {
  *  Limit cache usage to [rotationCount] images with LRU updating logic.
  *  Limit images validity to [daysDuration].
  */
-async function routeAndCacheProductImages({
-	rotationCount = 200,
-	daysDuration = 30,
-}) {
+async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 30 }) {
 	// const currentImgDb = await openDB(cacheNames.images, 1);
 	// const imgExpDb = await openDB(`${cacheNames.images}-exp`, 1);
 	const imgDbs = [currentImgDb, imgExpDb];
@@ -213,10 +206,7 @@ async function routeAndCacheProductImages({
 			imgExpDb.get(imgStoreName, key),
 		]);
 
-		if (
-			(timestamp as number) + daysDuration * 24 * 3600 * 1000 <
-			Date.now()
-		) {
+		if ((timestamp as number) + daysDuration * 24 * 3600 * 1000 < Date.now()) {
 			imgDbs.forEach((db) => db.delete(imgStoreName, key));
 		} else {
 			result = blob as Blob;
@@ -231,12 +221,8 @@ async function routeAndCacheProductImages({
 				// url.hostname.match(/.*(?:la-mediterranee)\.at/) &&
 				url.pathname.match(/.*\.(?:png|gif|jpg|jpeg|webp|svg)/) &&
 				// url.search.match(/impolicy=product/) &&
-				precachedFiles.indexOf(
-					url.pathname.split('?').shift() as string
-				) === -1 &&
-				precachedFiles.indexOf(
-					url.href.split('?').shift() as string
-				) === -1
+				precachedFiles.indexOf(url.pathname.split('?').shift() as string) === -1 &&
+				precachedFiles.indexOf(url.href.split('?').shift() as string) === -1
 			);
 		},
 		async ({ url }) => {
@@ -279,10 +265,7 @@ function routeResourcesNetworkFirst() {
  * Route requests of type 'navigate' with a NetworkOnly strategy, fallback to offline page if
  * network fail.
  */
-const routePagesOrServeOffline = ({
-	daysDuration = 7,
-	isNavigationEnabled = false,
-}) => {
+const routePagesOrServeOffline = ({ daysDuration = 7, isNavigationEnabled = false }) => {
 	let strategy: NetworkFirst | NetworkOnly;
 
 	if (isNavigationEnabled) {
@@ -322,10 +305,7 @@ const routePagesOrServeOffline = ({
 	registerRoute(matcher, handler);
 };
 
-async function init(
-	paths: StoragePaths,
-	caching: { images: Object; offline: Object }
-) {
+async function init(paths: StoragePaths, caching: { images: Object; offline: Object }) {
 	try {
 		basePaths = paths;
 
@@ -366,9 +346,7 @@ async function init(
 		setCatchHandler(async (e) => {
 			// Return the precached offline page if a document is being requested
 			if (e.request.destination === 'document') {
-				return (
-					(await matchPrecache('/_offline.html')) || Response.error()
-				);
+				return (await matchPrecache('/_offline.html')) || Response.error();
 			}
 
 			return Response.error();

@@ -32,6 +32,10 @@ export type Twitter = {
 
 export type Color = string;
 
+export type WebAppTags = {
+	'application-name'?: string;
+};
+
 export type MicrosoftPWA = {
 	'msapplication-TileImage': string;
 	'msapplication-TileColor': string;
@@ -40,17 +44,13 @@ export type MicrosoftPWA = {
 };
 
 export type ApplePWA = {
-	'application-name': string;
 	'apple-mobile-web-app-title': string;
 	/**
 	 * default: white background with black text and icons
 	 * black: The default black bar with black text and icons (not recommended)
 	 * black-translucent: white text and icons with a transparent background.
 	 */
-	'apple-mobile-web-app-status-bar-style':
-		| 'default'
-		| 'black'
-		| 'black-translucent';
+	'apple-mobile-web-app-status-bar-style': 'default' | 'black' | 'black-translucent';
 	'mobile-web-app-capable'?: 'yes' | 'no';
 	'apple-touch-fullscreen'?: 'yes' | 'no';
 	'apple-mobile-web-app-capable?': 'yes' | 'no';
@@ -72,7 +72,8 @@ export type Metatags = {
 	twitter: Partial<Twitter>;
 	microsoft: Partial<MicrosoftPWA>;
 } & Partial<PWAImages> &
-	Partial<ApplePWA>;
+	Partial<ApplePWA> &
+	Partial<WebAppTags>;
 // & OpenGraph &
 // 	Partial<MicrosoftPWA> &
 // 	Partial<Twitter>

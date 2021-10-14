@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
+	import type { NavItem } from 'types/index';
+
 	export let routes: NavItem[];
 
 	let activeRoute = $page.path;
@@ -9,11 +11,7 @@
 <nav id="nav" role="navigation">
 	<ul id="navbar">
 		{#each routes as { text, icon, href } (href)}
-			<li
-				class="nav-item"
-				class:active={activeRoute === href}
-				on:click={() => (activeRoute = href)}
-			>
+			<li class="nav-item" class:active={activeRoute === href} on:click={() => (activeRoute = href)}>
 				<a {href}>
 					<div class:active={activeRoute === href}>
 						<svelte:component this={icon} width={30} height={30} />

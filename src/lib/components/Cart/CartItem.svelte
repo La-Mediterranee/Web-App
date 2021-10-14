@@ -1,12 +1,13 @@
+<svelte:options immutable />
+
 <script lang="ts">
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 
 	import { trash } from '$lib/Icons/filled';
 
-	import type { Product } from 'types/interfaces';
+	import type { CartItem } from 'types/interfaces';
 
-	export let item: Product;
-	export let quantity: number;
+	export let item: CartItem;
 
 	const { image, name, price, sku } = item;
 </script>
@@ -21,21 +22,18 @@
 <tr>
 	<th scope="row" title="Produkt">
 		<div>
-			<img src={image.src} alt={image.alt} />
+			<img src={image?.src} alt={image?.alt} />
 			<h3>{name}</h3>
 			<input type="hidden" name="product" id={sku} value={sku || name} />
 		</div>
 	</th>
 	<td title="Anzahl">
-		<input type="number" id="quantity" bind:value={quantity} />
+		<input type="number" inputmode="numeric" id="quantity" bind:value={item.quantity} />
 	</td>
 	<td title="Preis"><span>{price}</span></td>
 	<!-- <td title="Teilsumme"><span>{sum}</span></td> -->
 	<td>
-		<button
-			on:click={() => console.log('delete')}
-			aria-label="Produkt vom Warenkorb entfernen"
-		>
+		<button on:click={() => console.log('delete')} aria-label="Produkt vom Warenkorb entfernen">
 			<Icon path={trash} />
 		</button>
 	</td>

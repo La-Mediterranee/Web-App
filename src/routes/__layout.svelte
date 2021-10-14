@@ -13,9 +13,11 @@
 		if (typeof self !== 'undefined') {
 			return self;
 		}
+
 		if (typeof window !== 'undefined') {
 			return window;
 		}
+
 		if (typeof global !== 'undefined') {
 			return global;
 		}
@@ -76,7 +78,7 @@
 	{#each Object.entries($metatags) as [property, content]}
 		{#if content}
 			{#if ['title', 'description', 'image', 'google-site-verification', 'referrer'].includes(property)}
-				<meta name={property} {content} />
+				<meta name={property} content={content?.toString()} />
 			{:else}
 				<meta {property} {content} />
 			{/if}

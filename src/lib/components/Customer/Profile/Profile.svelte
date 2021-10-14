@@ -12,10 +12,7 @@
 	<h1>Profil</h1>
 
 	<section>
-		<img
-			src={`${$user?.photoURL || ''}`}
-			alt={`${$user?.displayName || 'Users'} Profilbild`}
-		/>
+		<img src={`${$user?.photoURL || ''}`} alt={`${$user?.displayName || 'Users'} Profilbild`} />
 
 		<h3>{$user?.displayName}</h3>
 	</section>
@@ -31,7 +28,7 @@
 	<Button
 		type="button"
 		size="x-large"
-		class="orange darken-1"
+		class="form-elements-color"
 		rounded
 		on:click={async () => {
 			await user.logOut();

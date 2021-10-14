@@ -57,14 +57,17 @@
 	</form> -->
 
 	<div id="profile">
-		<Image
-			src={$user?.photoURL ||
-				`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
-			alt=""
-			loading="eager"
-			width={50}
-			height={50}
-		/>
+		{#if $user}
+			<Image
+				src={$user?.photoURL || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
+				alt=""
+				loading="eager"
+				width={50}
+				height={50}
+			/>
+		{:else}
+			<a href="/customer/login">Login</a>
+		{/if}
 	</div>
 </header>
 
@@ -157,14 +160,13 @@
 		}
 
 		div {
-			display: block;
 			height: fit-content;
 			width: 27px;
 			height: 30px;
 		}
 
 		span {
-			font-size: 14px;
+			font-size: 1.2em;
 			// margin-left: 5px;
 		}
 	}

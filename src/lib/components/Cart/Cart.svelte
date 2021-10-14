@@ -1,32 +1,39 @@
 <script lang="ts">
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
-
-	import CartItemComponent from './CartItem.svelte';
 	import { cart } from '$lib/stores/cart';
 	import { enhance } from './action';
 
-	import type { CartItem } from 'types/interfaces';
+	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 
-	const items: CartItem[] = [
-		{
-			name: 'Burger',
-			categories: ['burger'],
-			image: {
-				src: '/burger.webp',
+	import CartItemComponent from './CartItem.svelte';
+
+	import type { Cart } from '$lib/stores/cart';
+
+	const items: Cart = new Map([
+		[
+			'1312',
+			{
+				name: 'Burger',
+				categories: ['burger'],
+				image: {
+					src: '/burger.webp',
+				},
+				price: 2.3,
+				quantity: 1,
 			},
-			price: 2.3,
-			quantity: 1,
-		},
-		{
-			name: 'Burger',
-			categories: ['burger'],
-			image: {
-				src: '/burger.webp',
+		],
+		[
+			'1322',
+			{
+				name: 'Burger',
+				categories: ['burger'],
+				image: {
+					src: '/burger.webp',
+				},
+				price: 2.3,
+				quantity: 1,
 			},
-			price: 2.3,
-			quantity: 1,
-		},
-	];
+		],
+	]);
 
 	const tableHeaders = ['Produkt', 'Anzahl', 'Preis', '']; //'Teilsumme',
 </script>
@@ -38,7 +45,7 @@
 <h1>Warenkorb</h1>
 
 <div id="cart">
-	{#if $cart.length !== 0}
+	{#if $cart.size !== 0}
 		<p>No items in cart yet.</p>
 	{:else}
 		<form
@@ -59,8 +66,12 @@
 					</tr>
 				</thead>
 				<tbody aria-live="polite">
-					{#each items as item}
-						<CartItemComponent {item} quantity={item.quantity} />
+					{#each [...items] as [SKU, item] (SKU)}
+						<CartItemComponent {item} />
+					{/each}
+
+					{#each [...$cart] as [SKU, item] (SKU)}
+						<CartItemComponent {item} />
 					{/each}
 
 					<!-- {#each $cart as item (item.name)}
@@ -72,26 +83,16 @@
 						<td colspan={tableHeaders.length}>
 							<div>
 								<label for="notes">Anmerkungen: </label>
-								<textarea
-									name="notes"
-									id="notes"
-									placeholder="Anmerkungen: "
-								/>
+								<textarea name="notes" id="notes" placeholder="Anmerkungen: " />
 							</div>
 						</td>
 					</tr>
 					<tr>
 						<td colspan={tableHeaders.length - 2}>
-							Summe ({$cart.length} Produkte): {$cart.length}
+							Summe ({$cart.size} Produkte): {$cart.size}
 						</td>
 						<td colspan="2">
-							<Button
-								type="submit"
-								class="orange darken-1"
-								rounded
-							>
-								Zur Kasse
-							</Button>
+							<Button type="submit" class="form-elements-color" rounded>Zur Kasse</Button>
 						</td>
 					</tr>
 				</tfoot>

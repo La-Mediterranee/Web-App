@@ -64,25 +64,20 @@
 			],
 		});
 
-		paymentRequest = createPaymentRequest(
-			stripe as Stripe,
-			cart.totalAmount,
-			'Bestellung',
-			[
-				{
-					id: 'free-delivery',
-					label: 'Gratis Lieferung',
-					detail: 'Lieferung in 30-60 Minuten',
-					amount: 0,
-				},
-				{
-					id: 'tip',
-					label: 'Trinkgeld',
-					detail: 'Trinkgeld',
-					amount: cart.totalAmount * 1.05,
-				},
-			]
-		);
+		paymentRequest = createPaymentRequest(stripe as Stripe, cart.totalAmount, 'Bestellung', [
+			{
+				id: 'free-delivery',
+				label: 'Gratis Lieferung',
+				detail: 'Lieferung in 30-60 Minuten',
+				amount: 0,
+			},
+			{
+				id: 'tip',
+				label: 'Trinkgeld',
+				detail: 'Trinkgeld',
+				amount: cart.totalAmount * 1.05,
+			},
+		]);
 
 		// Check the availability of the Payment Request API first.
 		canMakePayment = await paymentRequest.canMakePayment();
@@ -118,14 +113,10 @@
 	};
 </script>
 
-<h1>Checkout</h1>
+<h1 style="text-align: center;">Checkout</h1>
 
 <div id="checkout">
-	<CartSummary
-		cart={$cart}
-		total={cart.totalAmount}
-		quantity={cart.totalQuantity}
-	/>
+	<CartSummary cart={$cart} total={cart.totalAmount} quantity={cart.totalQuantity} />
 	<div>
 		{#if canMakePayment}
 			<ExpressPayment stripe={$stripe} {paymentRequest} {elements} />
@@ -147,24 +138,19 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style lang="scss" global>
 	@use "variables" as *;
-
-	h1 {
-		text-align: center;
-	}
 
 	#checkout {
 		padding: 1em;
 		display: block;
 		max-width: 40em;
 		margin: 0 auto;
+		font-size: 1.2em;
+		font-weight: 500;
+		color: #fff;
 
-		* {
-			color: #ddd;
-		}
-
-		div {
+		> div {
 			margin-top: 1em;
 		}
 
@@ -178,7 +164,7 @@
 			flex-direction: row-reverse;
 			max-width: 78em;
 
-			div {
+			> div {
 				margin-top: 0;
 				margin-right: 1em;
 			}

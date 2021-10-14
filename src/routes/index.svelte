@@ -7,10 +7,15 @@
 	import type { Product } from 'types/interfaces';
 
 	const burger: Product = {
+		ID: String(window?.crypto?.getRandomValues(new Uint32Array(1))),
 		name: 'Hamburger',
+		description: '',
 		price: 4.5,
 		categories: ['burger'],
 		image: { src: '/burger.webp', alt: 'Bild von einem Burger' },
+		variations: {
+			toppings: ['Beilagen', 'Saucen'],
+		},
 	};
 </script>
 
@@ -38,11 +43,8 @@
 	<div>
 		<SlideGroup>
 			{#each Array(15) as _, i}
-				<SlideItem let:active>
-					<ProductCard
-						product={burger}
-						style="min-width: 220px; max-width: 250px; margin: 0 10px;"
-					/>
+				<SlideItem let:active class="ptb-2">
+					<ProductCard product={burger} style="min-width: 220px; max-width: 250px; margin: 0 10px;" />
 				</SlideItem>
 			{/each}
 		</SlideGroup>

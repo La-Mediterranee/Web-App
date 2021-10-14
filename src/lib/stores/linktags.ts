@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 
+import type { IpadScreeenResolutions, IphoneScreeenResolutions } from '../../../scripts/generate-apple-splashscreen';
+
 type MediaValues = Record<
 	| 'orientation'
 	| 'scan'
@@ -18,15 +20,23 @@ type MediaValues = Record<
 	unknown
 >;
 
-type Favicon = {
+// declare const Favicon = <T extends 'shortcut' | 'icon'>() => {
+// 	return {
+// 		href: string,
+// 		rel: T === 'shortcut' ? 'shortcut icon' : 'icon',
+// 		sizes: string,
+// 	};
+// };
+
+type Favicon<T extends 'shortcut' | 'icon'> = {
 	href: string;
-	rel: 'shortcut icon' | 'icon';
+	rel: T extends 'shortcut' ? 'shortcut icon' : 'icon';
+	sizes: string;
 };
 
 type AlternativeFavicon = {
-	sizes: string;
 	type?: 'image/jpg' | 'image/png' | 'image/webp';
-} & Favicon;
+} & Favicon<'icon'>;
 
 /**
  * {@link https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html}
@@ -55,16 +65,20 @@ type AppleImages = {
 		href: string;
 		sizes?: string;
 	}[];
-	'apple-touch-startup-image'?: {
-		href: string;
-		media: string;
-	}[];
+	'apple-touch-startup-image'?: AppleStartupImage[];
+};
+
+type AppleStartupImage = {
+	href: string;
+	media: string;
 };
 
 type LinkTags = {
-	favicon?: Favicon;
+	favicon?: Favicon<'shortcut'>;
 	'favicon:alt'?: AlternativeFavicon[];
-} & Partial<AppleImages>;
+} & Partial<AppleImages> &
+	Partial<MicrosoftLinks> &
+	Partial<MicroFormat>;
 
 const altFavicon: AlternativeFavicon[] = [
 	{
@@ -104,13 +118,66 @@ type MicroFormat = {
 	home: string;
 };
 
+const ipadResolutions: IpadScreeenResolutions = {
+	'1536x2048': 2,
+	'1620x2160': 2,
+	'1668x2224': 2,
+	'1668x2388': 2,
+	'2048x2732': 2,
+};
+
+const iphoneResolutions: IphoneScreeenResolutions = {
+	'750x1334': 2,
+	'828x1792': 2,
+	'1080x1920': 3,
+	'1125x2436': 3,
+	'1170x2532': 3,
+	'1284x2778': 3,
+};
+
+const combined = Object.assign({}, iphoneResolutions, ipadResolutions);
+
 const initialTags: LinkTags = {
 	favicon: {
 		href: '',
 		rel: 'shortcut icon',
+		sizes: '192x192',
 	},
 	'favicon:alt': altFavicon,
+	'apple-touch-startup-image': ([] as AppleStartupImage[]).concat(
+		...Object.entries(combined).map(([size, density]) => {
+			const split = size.split('x');
+			const width = Number(split[0]);
+			const height = Number(split[1]);
+
+			const portrait = createPortraitMetaTag(width, height, density);
+			const landscape = createLandscapeMetaTag(width, height, density);
+
+			return [
+				{
+					href: `/static/apple/splash/splash-portrait-${size}.png`,
+					media: portrait,
+				},
+				{
+					href: `/static/apple/splash/splash-landscape-${split[1]}x${split[0]}.png`,
+					media: landscape,
+				},
+			];
+		})
+	),
 };
+
+function createLandscapeMetaTag(width: number, height: number, density: number) {
+	return `screen and (device-width: ${width / density}px) and (device-height: ${
+		height / density
+	}px) and (-webkit-device-pixel-ratio: ${density}) and (orientation: landscape)`;
+}
+
+function createPortraitMetaTag(width: number, height: number, density: number) {
+	return `screen and (device-width: ${width / density}px) and (device-height: ${
+		height / density
+	}px) and (-webkit-device-pixel-ratio: ${density}) and (orientation: portrait)`;
+}
 
 export type LinkTagsStore = ReturnType<typeof createLinkTagsStore>;
 

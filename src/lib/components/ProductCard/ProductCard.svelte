@@ -1,4 +1,4 @@
-<svelte:options immutable={true} />
+<svelte:options immutable />
 
 <script context="module" lang="ts">
 	import { browser } from '$app/env';
@@ -26,13 +26,11 @@
 	let tabindex = -1;
 	let container: HTMLElement;
 
-	const { open } = getProductModalContext();
+	const modal = getProductModalContext();
 
 	const { image, name, price, sku, rating, categories } = product;
 
-	const action = `/products${
-		categories != null ? '/' + categories[0] : ''
-	}/${name}`;
+	const action = `/products${categories != null ? '/' + categories[0] : ''}/${name}`;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -41,18 +39,8 @@
 
 	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
-	afterUpdate(() => {
-		flash(container as HTMLElement);
-	});
-
-	function openPopUp(e: Event) {
-		console.log(e);
-		// open({
-		// 	Component: Chip,
-		// 	props: {
-		// 		slot: 'hi',
-		// 	},
-		// });
+	function openPopUp(_: Event) {
+		modal.open(product);
 	}
 </script>
 
@@ -63,7 +51,6 @@
 	cards. 
 
 	other resources:
-	-
 	- https://stackoverflow.com/questions/46259821/which-html5-tags-are-semantically-correct-to-represent-e-commerce-products
 
  -->
@@ -73,7 +60,6 @@
 	tabindex="0"
 	on:focus={() => (tabindex = 0)}
 	on:blur={() => (tabindex = -1)}
-	on:submit|preventDefault={openPopUp}
 	{action}
 	{style}
 	itemscope
@@ -104,12 +90,7 @@
 
 				{#if rating}
 					<div class="ratings">
-						<meter
-							min="0"
-							max="5"
-							value={`${rating?.value ?? 0}`}
-							aria-label={ratingAriaLabel}
-						>
+						<meter min="0" max="5" value={`${rating?.value ?? 0}`} aria-label={ratingAriaLabel}>
 							{#each Array(5).fill('star') as _}
 								<Icon path={star} />
 							{/each}
@@ -121,12 +102,7 @@
 			</div>
 
 			<div class="actionsContainer">
-				<svg
-					class="wave"
-					viewBox="0 0 400 100"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
+				<svg class="wave" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
 						d="M0.222221 0C50.2222 0 50.0002 25 100 25C150 25 150.222 4.86802e-06 200.223 0C250.224 -4.86802e-06 249.999 25 300 25C350.001 25 350.222 1.52588e-05 400.223 0C450.224 -1.52588e-05 400.223 250 400.223 250H0.222221C0.222221 250 -49.7778 0 0.222221 0Z"
 						fill="#278CC5"
@@ -138,15 +114,18 @@
 						Not sure if this should stay a button or change
 						it to a anchor/link 
 					-->
+					<!-- class="orange darken-4 ma-auto" -->
+
 					<Button
 						type="submit"
-						class="orange darken-1 ma-auto"
+						class="form-elements-color ma-auto"
 						aria-haspopup="dialog"
 						text
 						rounded
 						{tabindex}
+						on:click={openPopUp}
 					>
-						In den Warenkorb
+						<span class="add-to-cart-text">In den Warenkorb</span>
 					</Button>
 				</div>
 			</div>
@@ -154,112 +133,134 @@
 	</Card>
 </article>
 
-<style lang="scss">
-	* {
-		text-align: center;
-	}
-
-	img {
-		width: 100%;
-		transition: transform 500ms ease;
-	}
-
+<style lang="scss" global>
 	article,
 	div {
 		position: relative;
 	}
 
-	meter {
-		background: none;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		color: white;
-		display: inline-block;
-		border: 1px solid #ccc;
-		padding: 5px;
-		border-radius: 5px;
-		margin: 0 10px;
-		width: auto;
-		height: auto;
-		overflow: hidden;
-
-		&::-webkit-meter-bar,
-		&::-webkit-meter-inner-element {
-			background: none;
-		}
+	.red.darken-5 {
+		// background-color: #e32a00 !important;
+		// border-color: #e32a00 !important;
+		background-color: #dd3900 !important;
+		border-color: #dd3900 !important;
 	}
 
-	::-moz-meter-bar {
-		-moz-appearance: none;
-	}
-
-	.card-actions {
-		display: flex;
-		padding: 0.7em;
-	}
-
-	.actionsContainer {
-		width: 100%;
-		// padding-top: 1.25em;
-		padding-top: 2em;
-		position: relative;
-		overflow: hidden;
-	}
-
-	.wave {
-		position: absolute;
-		top: 0px;
-		left: 0;
-		width: 200%;
-		animation: wave linear 3s infinite;
-
-		@media (prefers-reduced-motion) {
-			animation-play-state: paused;
-		}
-	}
-
-	.card-container {
+	.product-card-container {
 		flex: 0 0 auto;
 		outline: none;
+		position: relative;
+
+		* {
+			text-align: center;
+		}
 
 		:global(.s-card-title) {
 			// padding: 0 1em;
 			padding: 0;
-		}
-	}
-
-	.content {
-		width: 100%;
-		color: var(--theme-text-secondary);
-		font-size: 0.875rem;
-		font-weight: 400;
-		line-height: 1.375rem;
-		letter-spacing: 0.0071428571em;
-		padding: 0.4em 1em 1em 1em;
-	}
-
-	.price {
-		font-size: 1.2rem;
-		padding: 0 0 0.3em 0;
-	}
-
-	@media (prefers-reduced-motion) {
-		.wave {
-			animation-play-state: paused;
-		}
-	}
-
-	@media (hover: hover) and (pointer: fine) {
-		img {
-			margin-bottom: 10px;
 		}
 
 		.inner-card {
 			overflow: hidden;
 		}
 
-		.card-container {
+		img {
+			width: 100%;
+			transition: transform 500ms ease;
+		}
+
+		meter {
+			background: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			color: white;
+			display: inline-block;
+			border: 1px solid #ccc;
+			padding: 5px;
+			border-radius: 5px;
+			margin: 0 10px;
+			width: auto;
+			height: auto;
+			overflow: hidden;
+
+			&::-webkit-meter-bar,
+			&::-webkit-meter-inner-element {
+				background: none;
+			}
+		}
+
+		::-moz-meter-bar {
+			-moz-appearance: none;
+		}
+
+		.add-to-cart-text {
+			// color: #191818;
+			color: #fff;
+			// color: #503604;
+			font-size: 1.36em;
+			font-weight: 600;
+		}
+
+		.card-actions {
+			display: flex;
+			padding: 0.7em;
+			opacity: 1;
+			z-index: 5;
+		}
+
+		.actionsContainer {
+			width: 100%;
+			padding-top: 2em;
+			position: relative;
+			// overflow: hidden;
+		}
+
+		.wave {
+			position: absolute;
+			top: 0px;
+			left: 0;
+			width: 200%;
+			animation: wave linear 3s infinite;
+		}
+
+		.content {
+			width: 100%;
+			color: var(--theme-text-secondary);
+			font-size: 0.875rem;
+			font-weight: 400;
+			line-height: 1.375rem;
+			letter-spacing: 0.0071428571em;
+			padding: 0.4em 1em 1em 1em;
+		}
+
+		.price {
+			font-size: 1.2rem;
+			padding: 0 0 0.3em 0;
+		}
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.product-card-container {
+			img {
+				margin-bottom: 10px;
+			}
+
+			.actionsContainer {
+				position: absolute;
+				visibility: hidden;
+				transition: transform 750ms ease, visibility 750ms ease;
+				// padding-top: 4.2em;
+			}
+
+			.wave {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 200%;
+				animation: wave linear 3s infinite;
+				animation-play-state: paused;
+			}
 			// :global(.s-card-title) {
 			// 	padding: 16px;
 			// }
@@ -276,8 +277,8 @@
 				}
 
 				.actionsContainer {
-					opacity: 1;
 					transform: translateY(-100%);
+					visibility: visible;
 				}
 
 				.wave {
@@ -285,20 +286,11 @@
 				}
 			}
 		}
+	}
 
+	@media (prefers-reduced-motion) {
 		.wave {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 200%;
-			animation: wave linear 3s infinite;
 			animation-play-state: paused;
-		}
-
-		.actionsContainer {
-			position: absolute;
-			transition: transform 750ms ease;
-			// padding-top: 4.2em;
 		}
 	}
 

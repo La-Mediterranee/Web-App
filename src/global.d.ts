@@ -6,8 +6,8 @@
 /// <reference types="@stripe/stripe-js" />
 
 type Invalidator<T> = (value?: T) => void;
-
 type USVString = string;
+type DeepReadonly<T> = { readonly [K in keyof T]: DeepReadonly<T[K]> };
 
 var opr: string;
 var chrome: string;

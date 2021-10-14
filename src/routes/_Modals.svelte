@@ -1,27 +1,53 @@
 <script context="module" lang="ts">
+	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
+
 	import { setContext } from 'svelte';
+	import { PRODUCT_MODAL } from '$lib/utils/constants';
 
-	import { MODAL, PRODUCT_MODAL } from '$lib/utils/constants';
+	import type { Product } from 'types/interfaces';
 
-	function open() {}
-	function close() {}
+	type Modals = typeof ProductModal;
+
+	const current: {
+		component: Modals | null;
+		props: Object | null;
+	} = {
+		component: null,
+		props: null,
+	};
 </script>
 
 <script lang="ts">
-	import Modal from 'svelte-material-components/src/components/Dialog/Dialog.svelte';
+	import Dialog from 'svelte-material-components/src/components/Dialog/Dialog.svelte';
 
 	let active = false;
 
-	setContext(MODAL, {
-		open,
-		close,
-	});
+	function openProductModal(product: Product) {
+		open(ProductModal, { product });
+	}
+
+	function closeProductModal() {
+		close();
+	}
+
+	function open(component: Modals | null, props: Object) {
+		current.component = component;
+		current.props = props;
+		active = true;
+	}
+
+	function close() {
+		current.component = null;
+		active = false;
+	}
 
 	setContext(PRODUCT_MODAL, {
-		open,
-		close,
+		open: openProductModal,
+		close: closeProductModal,
 	});
 </script>
 
 <slot />
-<Modal bind:active />
+<Dialog width="auto" role="dialog" bind:active>
+	<svelte:component this={current.component} {...current.props} />
+</Dialog>

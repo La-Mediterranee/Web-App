@@ -84,11 +84,14 @@ body {
 .theme--custom {
 	/* --tint-color: #729abe; */
 	--tint-color: #83a5c3;
+	--accent-color: #dd3900;
 	--modal-bg: white;
 	--theme-tabs: rgba(255, 255, 255, 0.6);
 	/* --theme-surface: #d81717e5; */
 	/* --theme-surface: #4994f5e5; */
-	--theme-surface: #478ae1;
+	/* --theme-surface: #478ae1; */
+	--theme-surface: #2374e0;
+
 	--theme-icons-active: #ffffff;
 	--theme-icons-inactive: rgba(255, 255, 255, 0.5);
 	/* --theme-text-link: #82b1ff; */
@@ -131,6 +134,12 @@ body {
 	/* --tint-color: rgb(76, 83, 221); */
 	background-color: var(--theme-surface);
 	color: var(--theme-text-primary);
+}
+
+.form-elements-color {
+	accent-color: var(--accent-color, orange) !important;
+	background-color: var(--accent-color, orange) !important;
+	border-color: var(--accent-color, orange) !important;
 }
 
 ::before {

@@ -2,26 +2,18 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 
+	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
+	import { browser, dev } from '$app/env';
+	import { getGlobal } from '$lib/utils';
+
+	import { registerServiceWorker } from '$lib/pwa/register-sw';
+
 	/**
 	 * To enable optional chaining for window properties
 	 * I defined window in the global scope. This shouldn't
 	 * affect any libraries that checks for window because it
 	 * still returns undefined
 	 */
-
-	const getGlobal = function () {
-		if (typeof self !== 'undefined') {
-			return self;
-		}
-
-		if (typeof window !== 'undefined') {
-			return window;
-		}
-
-		if (typeof global !== 'undefined') {
-			return global;
-		}
-	};
 
 	const globals = getGlobal();
 
@@ -39,6 +31,9 @@
 </script>
 
 <script lang="ts">
+	import Modals from './_Dialogs.svelte';
+	import Providers from './_layoutProviders.svelte';
+
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
@@ -46,11 +41,7 @@
 	import Tabbar from '$lib/components/Tabbar/Tabbar.svelte';
 	import Installprompt from '$lib/components/Installprompt';
 
-	import Modals from './_Modals.svelte';
-	import Providers from './_layoutProviders.svelte';
 	import { metatags } from '$lib/stores/metatags';
-
-	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	let online: boolean = true;
 
@@ -63,6 +54,10 @@
 
 		gtag('js', new Date());
 		gtag('config', 'GA_MEASUREMENT_ID');
+
+		if (!dev) {
+			registerServiceWorker();
+		}
 	});
 </script>
 
@@ -80,7 +75,7 @@
 			{#if ['title', 'description', 'image', 'google-site-verification', 'referrer'].includes(property)}
 				<meta name={property} content={content?.toString()} />
 			{:else}
-				<meta {property} {content} />
+				<!-- <meta {property} {content} /> -->
 			{/if}
 		{/if}
 	{/each}

@@ -9,7 +9,7 @@
 	import star from '$lib/Icons/outline/star';
 	import flash from '$lib/utils/flash';
 
-	import type { Product } from 'types/interfaces';
+	import type { Product } from 'types/product';
 </script>
 
 <script lang="ts">

@@ -1,7 +1,7 @@
 type SKU = string;
 type ID = string;
 
-type Variations = DeepReadonly<{
+export type Variations = DeepReadonly<{
 	toppings?: string[];
 }>;
 

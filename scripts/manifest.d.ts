@@ -253,7 +253,7 @@ type ExperientalProperties = {
 	display_override: (DisplayMode | 'window-controls-overlay')[];
 };
 
-export type WebApplicationManifest<T> = {
+type WebApplicationManifest<T> = {
 	name: string;
 	short_name: string;
 	/**

@@ -28,6 +28,7 @@
 		<script>
 			function hasIntlGetCanonicalLocalesBug() {
 				try {
+					//@ts-ignore
 					return new Intl.Locale('und-x-private').toString() === 'x-private';
 				} catch (e) {
 					return true;
@@ -36,7 +37,7 @@
 
 			const polyfills = [];
 
-			if (!'FormData' in window) {
+			if (!('FormData' in window)) {
 				const src = 'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
 				const script = document.createElement('script');
 				script.src = src;
@@ -67,6 +68,28 @@
 				script.src = src;
 				document.head.appendChild(script);
 			}
+
+			Promise.allSettled =
+				Promise.allSettled ||
+				function (promises) {
+					let wrappedPromises = [];
+					for (const p of promises) {
+						wrappedPromises.push(
+							Promise.resolve(p).then(
+								(value) => ({
+									status: 'fulfilled',
+									value,
+								}),
+								(reason) => ({
+									status: 'rejected',
+									reason,
+								})
+							)
+						);
+					}
+
+					return Promise.all(wrappedPromises);
+				};
 		</script>
 
 		<!-- <script type="module">

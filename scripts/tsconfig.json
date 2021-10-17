@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"module": "es2020",
-		"lib": ["es2020"],
+		"lib": ["es2020", "DOM"],
 		"target": "ES2018",
 		"removeComments": true,
 		// "importHelpers": true,
@@ -12,7 +12,7 @@
 			to enforce using \`import type\` instead of \`import\` for Types.
 			*/
 		"importsNotUsedAsValues": "error",
-		"isolatedModules": true,
+		// "isolatedModules": true,
 		"resolveJsonModule": true,
 		/**
 			To have warnings/errors of the Svelte compiler at the correct position,

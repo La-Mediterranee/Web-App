@@ -1,16 +1,16 @@
 /// <reference types="@sveltejs/kit" />
-/// <reference types="svelte" />
 /// <reference types="vite/client" />
 /// <reference types="google.analytics" />
 /// <reference types="gtag.js" />
 /// <reference types="@stripe/stripe-js" />
+/// <reference types="./lib/types" />
 
-type Invalidator<T> = (value?: T) => void;
-type USVString = string;
 type DeepReadonly<T> = { readonly [K in keyof T]: DeepReadonly<T[K]> };
 
-var opr: string;
-var chrome: string;
+type USVString = string;
+
+declare var opr: string;
+declare var chrome: string;
 
 declare var dataLayer = [];
 

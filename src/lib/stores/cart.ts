@@ -2,7 +2,8 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
-import type { CartItem, SKU, ID } from 'types/interfaces';
+import type { CartItem, SKU, ID } from 'types/product';
+import type { Invalidator } from 'types/index';
 
 export type Cart = Map<ID, CartItem>;
 

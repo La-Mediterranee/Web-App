@@ -6,18 +6,14 @@ import type { DocumentData } from 'firebase/firestore';
 import type { QueryFn, Options } from 'types/firebase';
 
 // Svelte Store for Firestore Collection
-export function collectionStore(
-	path: string,
-	queryFn: QueryFn,
-	opts: Options<DocumentData | null>
-) {
+export function collectionStore(path: string, queryFn: QueryFn, opts: Options<DocumentData | null>) {
 	const firestore = getFirestore();
 
 	const { startWith, log, traceId, maxWait, once, idField, refField } = {
 		idField: 'id',
 		refField: 'ref',
 		maxWait: 10000,
-		...opts
+		...opts,
 	};
 
 	// const ref = typeof path === 'string' ? collection(firestore, path) : path;
@@ -47,9 +43,7 @@ export function collectionStore(
 		_waitForIt =
 			maxWait &&
 			window.setTimeout(
-				() =>
-					_loading &&
-					next(null, new Error(`Timeout at ${maxWait}. Using fallback slot.`)),
+				() => _loading && next(null, new Error(`Timeout at ${maxWait}. Using fallback slot.`)),
 				maxWait
 			);
 	};
@@ -69,6 +63,6 @@ export function collectionStore(
 		},
 		get meta() {
 			return _meta;
-		}
+		},
 	};
 }

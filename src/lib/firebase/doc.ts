@@ -2,7 +2,7 @@
 import { writable } from 'svelte/store';
 import { getFirestore, doc } from 'firebase/firestore/lite';
 // Types
-import type { FirebaseFirestore, DocumentData } from 'firebase/firestore';
+import type { Firestore, DocumentData } from 'firebase/firestore';
 import type { Options } from 'types/firebase';
 
 // Svelte Store for Firestore Document
@@ -10,11 +10,11 @@ export function docStore(path: string, opts?: Options<number | DocumentData | nu
 	// const firebaseApp = getContext<FirebaseContext>('firebase').getFirebase();
 	// const firestore = getFirestore(firebaseApp);
 
-	const firestore: FirebaseFirestore = getFirestore();
+	const firestore: Firestore = getFirestore();
 
 	const { startWith, log, traceId, maxWait } = {
 		maxWait: 5000,
-		...opts
+		...opts,
 	};
 
 	// Create the Firestore Reference
@@ -44,9 +44,7 @@ export function docStore(path: string, opts?: Options<number | DocumentData | nu
 		_waitForIt =
 			maxWait &&
 			window.setTimeout(
-				() =>
-					_loading &&
-					next(null, new Error(`Timeout at ${maxWait}. Using fallback slot.`)),
+				() => _loading && next(null, new Error(`Timeout at ${maxWait}. Using fallback slot.`)),
 				maxWait
 			);
 	};
@@ -64,6 +62,6 @@ export function docStore(path: string, opts?: Options<number | DocumentData | nu
 		},
 		get error() {
 			return _error;
-		}
+		},
 	};
 }

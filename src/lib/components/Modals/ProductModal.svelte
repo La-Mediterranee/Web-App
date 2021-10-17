@@ -3,6 +3,8 @@
 <script context="module" lang="ts">
 	import { getContext, setContext } from 'svelte';
 	import { MODAL, PRODUCT_MODAL } from '$lib/utils/constants';
+	import { mdiClose } from '@mdi/js';
+	import { getProductModalContext } from '$lib/utils/helpers';
 
 	import type { Product } from 'types/interfaces';
 
@@ -23,6 +25,7 @@
 
 <script lang="ts">
 	import Button from 'svelte-material-components/src/components/Button';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import RadioButton from '$components/Forms/RadioButton.svelte';
 
 	export let product: Product;
@@ -30,6 +33,8 @@
 	export let currency: string = 'EUR';
 
 	let quantitiy = 1;
+
+	const { close } = getProductModalContext();
 
 	const { variations, price, description, name } = product;
 
@@ -42,10 +47,21 @@
 </script>
 
 <form id="product-modal" action="/add-to-cart" on:submit|preventDefault={(e) => addToCart(e, variations)}>
+	<Button
+		fab
+		depressed
+		size="small"
+		style="position:absolute; top:0; right:1em; transform: translateY(-50%); background: var(--theme-surface)"
+		on:click={close}
+	>
+		<Icon path={mdiClose} />
+	</Button>
 	<header class="info">
 		<div class="header">
 			<h1>{name}</h1>
-			<span><data class="price" value={`${price}`}>{_price}</data></span>
+			<span class="price">
+				<data value={`${price}`}>{_price}</data>
+			</span>
 		</div>
 		<p class="description">
 			{description || ''}
@@ -78,13 +94,17 @@
 			<Button size="small" fab on:click={() => quantitiy++}>+</Button>
 		</div>
 
-		<Button type="submit" class="orange darken-3" rounded>
+		<Button type="submit" class="form-elements-color" rounded>
 			<span class="add-to-cart-text">{addToCartBtnText}</span>
 		</Button>
 	</div>
 </form>
 
 <style lang="scss" global>
+	.s-dialog__content {
+		overflow-y: visible !important;
+	}
+
 	#product-modal {
 		accent-color: var(--accent-color, orange);
 		width: 42em;
@@ -95,6 +115,11 @@
 		input::-webkit-inner-spin-button {
 			-webkit-appearance: none;
 			margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+		}
+
+		.price {
+			font-size: 1.2em;
+			font-weight: 500;
 		}
 
 		.info {

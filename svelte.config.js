@@ -42,20 +42,23 @@ const config = {
 	}),
 	kit: {
 		target: '#svelte',
+		files: {
+			serviceWorker: '',
+		},
 		// adapter: node({
 		// 	precompress: true,
 		// }),
-		// adapter: adapterStatic(),
+		adapter: adapterStatic(),
 		// adapter: netlify(),
-		adapter: cvWorker({
-			esbuild(defaultOptions) {
-				return {
-					...defaultOptions,
-					target: 'es2015',
-					plugins: [],
-				};
-			},
-		}),
+		// adapter: cvWorker({
+		// 	esbuild(defaultOptions) {
+		// 		return {
+		// 			...defaultOptions,
+		// 			target: 'es2015',
+		// 			plugins: [],
+		// 		};
+		// 	},
+		// }),
 
 		// router: false,
 		prerender: {
@@ -91,10 +94,6 @@ const config = {
 			server: {
 				proxy: {
 					'/api': {
-						target: 'http://localhost:8080',
-						changeOrigin: true,
-					},
-					'/koa': {
 						target: 'http://localhost:5000',
 						changeOrigin: true,
 					},

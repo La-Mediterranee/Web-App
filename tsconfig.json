@@ -2,13 +2,7 @@
 	"compilerOptions": {
 		"moduleResolution": "Node",
 		"module": "ESNext",
-		"lib": [
-			"es2020",
-			"dom",
-			"DOM.Iterable",
-			"WebWorker",
-			"WebWorker.ImportScripts"
-		],
+		"lib": ["es2020", "dom", "DOM.Iterable", "WebWorker", "WebWorker.ImportScripts"],
 		"target": "ES2017",
 		"removeComments": true,
 		// "importHelpers": true,
@@ -32,7 +26,7 @@
 		// "allowJs": true,
 		// "checkJs": true,
 		"paths": {
-			"types/*": ["src/lib/@types/*"],
+			"types/*": ["src/lib/types/*"],
 			"$lib/*": ["src/lib/*"],
 			"$utils/*": ["src/lib/utils/*"],
 			"$components/*": ["src/lib/components/*"],
@@ -40,29 +34,7 @@
 			"$stores/*": ["src/lib/stores/*"]
 		}
 	},
-	"types": [
-		"svelte",
-		"@sveltejs/kit",
-		"src/**/*.ts",
-		"src/**/*.d.ts",
-		"src/**/*.svelte"
-	],
-	"include": [
-		"src/**/*.d.ts",
-		"src/**/*.js",
-		"src/**/*.ts",
-		"src/**/*.svelte"
-	],
-	"exclude": [
-		"build",
-		"node_modules",
-		".svelte-kit",
-		"src/lib/Material/components/Slider/nouislider.min.js"
-	],
-	"ts-node": {
-		"transpileOnly": true,
-		"compilerOptions": {
-			"module": "CommonJS"
-		}
-	}
+	"types": ["svelte", "@sveltejs/kit", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.svelte"],
+	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"],
+	"exclude": ["build", "node_modules", ".svelte-kit", "src/lib/Material/components/Slider/nouislider.min.js"]
 }

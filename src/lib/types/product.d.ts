@@ -1,5 +1,3 @@
-import { Image } from './index';
-
 type SKU = string;
 type ID = string;
 
@@ -7,7 +5,12 @@ type Variations = DeepReadonly<{
 	toppings?: string[];
 }>;
 
-interface Product {
+export interface Image {
+	readonly src: string;
+	readonly alt?: string;
+}
+
+export interface Product {
 	readonly ID: ID;
 	readonly sku?: SKU;
 	readonly name: string;
@@ -22,6 +25,6 @@ interface Product {
 	};
 }
 
-interface CartItem extends Product {
+export interface CartItem extends Product {
 	quantity: number;
 }

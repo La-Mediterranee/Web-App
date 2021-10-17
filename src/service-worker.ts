@@ -30,30 +30,6 @@ import { SHOP_URL } from '$utils/constants';
 import type { DBSchema, StoreNames, IDBPDatabase } from 'idb';
 import type { RouteMatchCallbackOptions, RouteHandlerCallbackOptions } from 'workbox-core';
 
-interface ChacheNames {
-	/** html files in the static folder or prerendered pages from sveltekit */
-	readonly pages: string;
-	/** generated js and css files from sveltekit */
-	readonly static: string;
-	/** images from cdns, storages, etc. saved in IndexedDB */
-	readonly images: string;
-	/** offline Page */
-	readonly offline: string;
-}
-
-interface StoragePaths {
-	readonly root: string;
-	readonly jsScope: string;
-	readonly cssScope: string;
-	readonly imgScope: string;
-	readonly offlinePage: string;
-}
-
-interface Entry {
-	url: string;
-	revision: string | null;
-}
-
 const OFFLINE_VERSION = '1'; // `${timestamp}`;
 const exclude: string[] = ['offline'];
 
@@ -333,8 +309,9 @@ async function init(paths: StoragePaths, caching: { images: Object; offline: Obj
 			postfix: '',
 		});
 
-		// self.skipWaiting();
 		clientsClaim();
+
+		// handlePushNotifications(self);
 
 		googleFontsCache();
 		// offlineFallback({
@@ -355,7 +332,7 @@ async function init(paths: StoragePaths, caching: { images: Object; offline: Obj
 
 		cacheAndRoute([
 			...build.map((asset) => {
-				console.log(`=== $service-worker build === ${asset}`);
+				// console.log(`=== $service-worker build === ${asset}`);
 				return {
 					url: asset,
 					revision: null,

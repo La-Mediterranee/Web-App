@@ -3,8 +3,6 @@ import path from 'path';
 import sharp from 'sharp';
 import website from './config/website';
 
-import type { WebApplicationManifest, Mutable } from './manifest';
-
 const DEFAULT_SIZES = [128, 144, 152, 192, 256, 512] as const;
 
 // const __dirname = path.resolve();

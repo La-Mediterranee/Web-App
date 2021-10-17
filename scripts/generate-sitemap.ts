@@ -11,62 +11,6 @@ const DEFAULT_PAGE_PRIORITY = 0.7;
 const DEFAULT_CHANGE_FREQUENZY = 'monthly';
 const DEFAULT_BASE_FILENAME = 'sitemap';
 
-type MaybeUndefined<T> = T | undefined;
-type MaybePromise<T> = T | Promise<T>;
-
-export type RobotsPolicy = {
-	userAgent: string;
-	allow?: string[];
-	disallow?: string[];
-};
-
-export type AlternateRef = {
-	href: string;
-	hreflang: string;
-};
-
-export interface RobotsTxt {
-	policies?: RobotsPolicy[];
-	additionalSitemaps?: string[];
-}
-
-export type AdditionalPathsConfig = Readonly<
-	SitemapConfig & {
-		transform: NonNullable<SitemapConfig['transform']>;
-	}
->;
-
-type ChangeFrequenzy = 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-
-export type SitemapField = {
-	loc: string;
-	lastmod?: string;
-	changefreq?: string;
-	priority?: number;
-	alternateRefs?: AlternateRef[];
-};
-
-type OptionalSitemapConfig = {
-	changefreq: ChangeFrequenzy;
-	priority: number;
-	sitemapBaseFileName: string;
-	sourceDir: string;
-	outDir: string;
-	sitemapSize: number;
-	// generateRobotsTxt: boolean;
-	robotsTxt: RobotsTxt;
-	autoLastmod: boolean;
-	exclude: Readonly<string[]>;
-	alternateRefs: Readonly<AlternateRef[]>;
-	transform: (config: SitemapConfig, url: string) => MaybePromise<MaybeUndefined<SitemapField>>;
-	additionalPaths: (config: AdditionalPathsConfig) => MaybePromise<MaybeUndefined<SitemapField>[]>;
-	trailingSlash: boolean;
-};
-
-export interface SitemapConfig extends Partial<OptionalSitemapConfig> {
-	siteUrl: string;
-}
-
 const config: SitemapConfig = {
 	siteUrl: encodeURIComponent(''),
 	changefreq: 'daily',

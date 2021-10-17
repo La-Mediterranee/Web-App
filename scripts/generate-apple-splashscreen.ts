@@ -4,28 +4,6 @@ import sharp from 'sharp';
 import website from './config/website';
 import { fileURLToPath } from 'url';
 
-export type PixelDensity = 2 | 3;
-
-//Ipads
-export type IpadScreeenResolutions = {
-	'1536x2048': 2;
-	'1668x2224': 2;
-	'1620x2160': 2;
-	'1668x2388': 2;
-	'2048x2732': 2;
-};
-
-export type IphoneScreeenResolutions = {
-	'750x1334': 2;
-	'828x1792': 2;
-	'1080x1920': 3;
-	'1125x2436': 3;
-	'1170x2532': 3;
-	'1284x2778': 3;
-};
-
-export type ScreenResolutionsWithDensity = IphoneScreeenResolutions & IpadScreeenResolutions;
-
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function createImages(

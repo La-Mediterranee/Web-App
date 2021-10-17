@@ -1,12 +1,11 @@
 <svelte:options immutable />
 
 <script context="module" lang="ts">
-	import { getContext, setContext } from 'svelte';
+	import { createEventDispatcher, getContext, setContext } from 'svelte';
 	import { MODAL, PRODUCT_MODAL } from '$lib/utils/constants';
 	import { mdiClose } from '@mdi/js';
-	import { getProductModalContext } from '$lib/utils/helpers';
 
-	import type { Product } from 'types/interfaces';
+	import type { Product } from 'types/product';
 
 	const AmountLabel = 'Menge';
 
@@ -31,10 +30,10 @@
 	export let product: Product;
 	export let locale: string = 'de-DE';
 	export let currency: string = 'EUR';
-
+	// export let close: () => void = () => {};
 	let quantitiy = 1;
 
-	const { close } = getProductModalContext();
+	const dispatch = createEventDispatcher();
 
 	const { variations, price, description, name } = product;
 
@@ -44,6 +43,10 @@
 	}).format(price);
 
 	const addToCartBtnText = 'Zum Warenkorb hinzufügen';
+
+	function close() {
+		dispatch('close');
+	}
 </script>
 
 <form id="product-modal" action="/add-to-cart" on:submit|preventDefault={(e) => addToCart(e, variations)}>

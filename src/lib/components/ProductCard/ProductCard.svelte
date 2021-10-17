@@ -15,7 +15,7 @@
 <script lang="ts">
 	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import Link from 'svelte-material-components/src/components/Button/Link.svelte';
 	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
 
 	export let product: Product;
@@ -39,7 +39,8 @@
 
 	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
-	function openPopUp(_: Event) {
+	function openPopUp(e: Event) {
+		e.preventDefault();
 		modal.open(product);
 	}
 </script>
@@ -116,17 +117,17 @@
 					-->
 					<!-- class="orange darken-4 ma-auto" -->
 
-					<Button
-						type="submit"
+					<Link
+						href=""
 						class="form-elements-color ma-auto"
-						aria-haspopup="dialog"
+						ariaHasPopup="dialog"
 						text
 						rounded
 						{tabindex}
 						on:click={openPopUp}
 					>
 						<span class="add-to-cart-text">In den Warenkorb</span>
-					</Button>
+					</Link>
 				</div>
 			</div>
 		</div>

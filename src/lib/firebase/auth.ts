@@ -9,7 +9,7 @@ import {
 	browserPopupRedirectResolver,
 } from 'firebase/auth';
 // @ts-ignore
-import { _getProvider } from '@firebase/app';
+import { _getProvider } from 'firebase/app';
 
 import type { FirebaseApp } from 'firebase/app';
 import type { User, Auth } from 'firebase/auth';
@@ -34,8 +34,7 @@ export function authStore(app: FirebaseApp) {
 			: initializeAuth(app, {
 					...(browser
 						? {
-								popupRedirectResolver:
-									browserPopupRedirectResolver,
+								popupRedirectResolver: browserPopupRedirectResolver,
 								persistence: [indexedDBLocalPersistence],
 						  }
 						: {
@@ -70,10 +69,7 @@ export function authStore(app: FirebaseApp) {
 						console.error('Database error: ' + e.target);
 					};
 
-					const transaction = db.transaction(
-						DB_OBJECTSTORE_NAME,
-						'readonly'
-					);
+					const transaction = db.transaction(DB_OBJECTSTORE_NAME, 'readonly');
 
 					transaction.oncomplete = function () {};
 
@@ -85,8 +81,7 @@ export function authStore(app: FirebaseApp) {
 						console.error('transaction:', this.error);
 					};
 
-					const objectStore =
-						transaction.objectStore(DB_OBJECTSTORE_NAME);
+					const objectStore = transaction.objectStore(DB_OBJECTSTORE_NAME);
 
 					const req = objectStore.getAll();
 

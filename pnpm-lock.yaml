@@ -38,13 +38,16 @@ specifiers:
   tslib: ^2.3.0
   typescript: ^4.4.4
   vite: ^2.6.7
+  workbox-cacheable-response: ^6.3.0
   workbox-core: ^6.3.0
   workbox-expiration: ^6.3.0
   workbox-google-analytics: ^6.3.0
   workbox-navigation-preload: ^6.3.0
   workbox-precaching: ^6.3.0
   workbox-recipes: ^6.3.0
+  workbox-routing: ^6.3.0
   workbox-strategies: ^6.3.0
+  workbox-window: ^6.3.0
 
 devDependencies:
   '@babel/core': 7.15.8
@@ -84,13 +87,16 @@ devDependencies:
   tslib: 2.3.1
   typescript: 4.4.4
   vite: 2.6.7_sass@1.43.2
+  workbox-cacheable-response: 6.3.0
   workbox-core: 6.3.0
   workbox-expiration: 6.3.0
   workbox-google-analytics: 6.3.0
   workbox-navigation-preload: 6.3.0
   workbox-precaching: 6.3.0
   workbox-recipes: 6.3.0
+  workbox-routing: 6.3.0
   workbox-strategies: 6.3.0
+  workbox-window: 6.3.0
 
 packages:
 
@@ -2484,6 +2490,10 @@ packages:
 
   /@types/stack-utils/2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
+    dev: true
+
+  /@types/trusted-types/2.0.2:
+    resolution: {integrity: sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==}
     dev: true
 
   /@types/workbox-background-sync/4.3.2:
@@ -6546,6 +6556,13 @@ packages:
   /workbox-strategies/6.3.0:
     resolution: {integrity: sha512-SYZt40y+Iu5nA+UEPQOrAuAMMNTxtUBPLCIaMMb4lcADpBYrNP1CD+/s2QsrxzS651a8hfi06REKt+uTp1tqfw==}
     dependencies:
+      workbox-core: 6.3.0
+    dev: true
+
+  /workbox-window/6.3.0:
+    resolution: {integrity: sha512-CFP84assX9srH/TOx4OD8z4EBPO/Cq4WKdV2YLcJIFJmVTS/cB63XKeidKl2KJk8qOOLVIKnaO7BLmb0MxGFtA==}
+    dependencies:
+      '@types/trusted-types': 2.0.2
       workbox-core: 6.3.0
     dev: true
 

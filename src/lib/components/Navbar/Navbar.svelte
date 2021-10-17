@@ -75,10 +75,6 @@
 	// box-shadow: 0 2px 20px 0 var(--subtle);
 	@use "./variables.scss" as *;
 
-	// $text-color: var(--tint-color);
-	$text-color: #fff;
-	$bg-color: #000;
-
 	a {
 		color: inherit;
 		text-decoration: none;
@@ -90,6 +86,9 @@
 
 	// nav,
 	header {
+		// --text-color: var(--tint-color);
+		--text-color: #fff;
+		--bg-color: #000;
 		// background: linear-gradient(to right, #4050e0e5, #062ba5);
 		display: flex;
 		top: 0;
@@ -184,7 +183,7 @@
 	// 		padding: 0.5em 0.7em;
 	// 		border-radius: 1.3em;
 	// 		width: 90%;
-	// 		// background: $bg-color;
+	// 		// background: var(--bg-color);
 	// 		background: var(--tint-color);
 	// 		align-items: center;
 	// 	}
@@ -198,7 +197,7 @@
 	// 	display: flex;
 	// 	align-content: center;
 	// 	align-items: center;
-	// 	color: $text-color;
+	// 	color: var(--text-color);
 	// 	height: 100%;
 	// 	width: calc(100% - 30px);
 	// }

@@ -4,7 +4,7 @@
 	import { setContext } from 'svelte';
 	import { PRODUCT_MODAL } from '$lib/utils/constants';
 
-	import type { Product } from 'types/interfaces';
+	import type { Product } from 'types/product';
 
 	type Modals = typeof ProductModal;
 
@@ -26,28 +26,24 @@
 		open(ProductModal, { product });
 	}
 
-	function closeProductModal() {
-		close();
-	}
-
 	function open(component: Modals | null, props: Object) {
 		current.component = component;
 		current.props = props;
 		active = true;
 	}
 
-	function close() {
+	function close(event: { detail?: { close: Function } }) {
+		event.detail?.close();
 		current.component = null;
 		active = false;
 	}
 
 	setContext(PRODUCT_MODAL, {
 		open: openProductModal,
-		close: closeProductModal,
 	});
 </script>
 
 <slot />
 <Dialog width="auto" role="dialog" bind:active>
-	<svelte:component this={current.component} {...current.props} />
+	<svelte:component this={current.component} {...current.props} on:close={close} />
 </Dialog>

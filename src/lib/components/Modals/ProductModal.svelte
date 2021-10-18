@@ -1,8 +1,7 @@
 <svelte:options immutable />
 
 <script context="module" lang="ts">
-	import { createEventDispatcher, getContext, setContext } from 'svelte';
-	import { MODAL, PRODUCT_MODAL } from '$lib/utils/constants';
+	import { createEventDispatcher } from 'svelte';
 	import { mdiClose } from '@mdi/js';
 
 	import type { Product } from 'types/product';

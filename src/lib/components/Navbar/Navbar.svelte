@@ -43,8 +43,6 @@
 				</li>
 			{/each}
 		</ul>
-		<!-- <div class="nav-content">
-		</div> -->
 	</nav>
 
 	<!-- <form role="search">
@@ -121,7 +119,6 @@
 		}
 	}
 
-	// .nav-content,
 	nav {
 		width: 88%;
 		justify-content: flex-end;

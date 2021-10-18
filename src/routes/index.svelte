@@ -4,7 +4,7 @@
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
 
-	import type { Product } from 'types/interfaces';
+	import type { Product } from 'types/product';
 
 	const burger: Product = {
 		ID: String(window?.crypto?.getRandomValues(new Uint32Array(1))),

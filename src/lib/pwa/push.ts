@@ -1,5 +1,6 @@
 function handlePushNotifications(sw: ServiceWorkerGlobalScope) {
 	let messages = 0;
+
 	sw.addEventListener('push', (e) => {
 		const info = e.data?.json();
 		const title = 'Push Notification';

@@ -44,6 +44,8 @@
 </script>
 
 <slot />
+<!-- <div aria-live="assertive"> -->
 <Dialog width="auto" role="dialog" bind:active>
 	<svelte:component this={current.component} {...current.props} on:close={close} />
 </Dialog>
+<!-- </div> -->

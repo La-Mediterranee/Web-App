@@ -14,7 +14,6 @@
 	 * affect any libraries that checks for window because it
 	 * still returns undefined
 	 */
-
 	const globals = getGlobal();
 
 	if (typeof window === 'undefined') {
@@ -38,14 +37,14 @@
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
 	import Statusbar from '$lib/components/Statusbar';
-	import Tabbar from '$lib/components/Tabbar/Tabbar.svelte';
-	import Installprompt from '$lib/components/Installprompt';
+	import Tabbar from '$lib/components/Tabbar';
+	import Installprompt from '$lib/components/Prompts/Installprompt';
 
 	import { metatags } from '$lib/stores/metatags';
 
 	let online: boolean = true;
 
-	onMount(() => {
+	onMount(async () => {
 		window.dataLayer = window.dataLayer || [];
 
 		function gtag(...args: unknown[]) {

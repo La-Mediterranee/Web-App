@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "sharp": "^0.29.1"
+    "sharp": "^0.29.2"
   },
   "devDependencies": {
+    "@types/node": "^16.11.3",
     "@types/sharp": "^0.29.2"
   }
 }

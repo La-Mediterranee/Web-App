@@ -1,25 +1,27 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@types/node': ^16.11.3
   '@types/sharp': ^0.29.2
-  sharp: ^0.29.1
+  sharp: ^0.29.2
 
 dependencies:
-  sharp: 0.29.1
+  sharp: 0.29.2
 
 devDependencies:
+  '@types/node': 16.11.3
   '@types/sharp': 0.29.2
 
 packages:
 
-  /@types/node/16.11.1:
-    resolution: {integrity: sha512-PYGcJHL9mwl1Ek3PLiYgyEKtwTMmkMw4vbiyz/ps3pfdRYLVv+SN7qHVAImrjdAXxgluDEw6Ph4lyv+m9UpRmA==}
+  /@types/node/16.11.3:
+    resolution: {integrity: sha512-aIYL9Eemcecs1y77XzFGiSc+FdfN58k4J23UEe6+hynf4Wd9g4DzQPwIKL080vSMuubFqy2hWwOzCtJdc6vFKw==}
     dev: true
 
   /@types/sharp/0.29.2:
     resolution: {integrity: sha512-tIbMvtPa8kMyFMKNhpsPT1HO3CgXLuiCAA8bxHAGAZLyALpYvYc4hUu3pu0+3oExQA5LwvHrWp+OilgXCYVQgg==}
     dependencies:
-      '@types/node': 16.11.1
+      '@types/node': 16.11.3
     dev: true
 
   /ansi-regex/2.1.1:
@@ -330,8 +332,8 @@ packages:
     resolution: {integrity: sha1-BF+XgtARrppoA93TgrJDkrPYkPc=}
     dev: false
 
-  /sharp/0.29.1:
-    resolution: {integrity: sha512-DpgdAny9TuS+oWCQ7MRS8XyY9x6q1+yW3a5wNx0J3HrGuB/Jot/8WcT+lElHY9iJu2pwtegSGxqMaqFiMhs4rQ==}
+  /sharp/0.29.2:
+    resolution: {integrity: sha512-XWRdiYLIJ3tDUejRyG24KERnJzMfIoyiJBntd2S6/uj3NEeNgRFRLgiBlvPxMa8aml14dKKD98yHinSNKp1xzQ==}
     engines: {node: '>=12.13.0'}
     requiresBuild: true
     dependencies:

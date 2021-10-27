@@ -1,7 +1,9 @@
-function handlePushNotifications(sw: ServiceWorkerGlobalScope) {
+export function handlePushNotifications(sw: ServiceWorkerGlobalScope) {
 	let messages = 0;
 
 	sw.addEventListener('push', (e) => {
+		console.log('[Service Worker] Push Received.');
+
 		const info = e.data?.json();
 		const title = 'Push Notification';
 		const options: NotificationOptions = {
@@ -18,8 +20,9 @@ function handlePushNotifications(sw: ServiceWorkerGlobalScope) {
 	});
 }
 
-function handlePushNotificationClick(sw: ServiceWorkerGlobalScope) {
+export function handlePushNotificationClick(sw: ServiceWorkerGlobalScope) {
 	sw.addEventListener('notificationclick', (e) => {
+		console.log('[Service Worker] Notification click Received.');
 		const notification = e.notification;
 		const action = e.action;
 
@@ -30,10 +33,45 @@ function handlePushNotificationClick(sw: ServiceWorkerGlobalScope) {
 			// because some platforms might not support actions.
 			// clients.openWindow(notification.data.href);
 			notification.close();
+			sw.clients.openWindow(new URL(''));
 		}
 
 		clearAppBadge();
 	});
+}
+
+export function handleSubscriptionChange(sw: ServiceWorkerGlobalScope) {
+	const applicationServerPublicKey = '';
+	sw.addEventListener('pushsubscriptionchange', function (event) {
+		console.log("[Service Worker]: 'pushsubscriptionchange' event fired.");
+		const e = event as PushSubscriptionChangeEvent;
+		console.log("[Service Worker]: 'pushsubscriptionchange' event fired.");
+		const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+		e.waitUntil(
+			sw.registration.pushManager
+				.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: applicationServerKey,
+				})
+				.then(function (newSubscription) {
+					// TODO: Send to application server
+					console.log('[Service Worker] New subscription: ', newSubscription);
+				})
+		);
+	});
+}
+
+function urlB64ToUint8Array(base64String: string) {
+	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+
+	const rawData = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
+
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
 }
 
 function setAppBadge(unread: number) {

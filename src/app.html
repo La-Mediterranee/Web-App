@@ -18,8 +18,8 @@
 		<link rel="preconnect" href="https://www.googletagmanager.com" />
 		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
-		<link rel="icon" href="/favicon.ico" crossorigin="" />
-		<link rel="manifest" href="/manifest.webmanifest" crossorigin="" />
+		<!-- <link rel="icon" href="/favicon.ico" crossorigin="" /> -->
+		<!-- <link rel="manifest" href="/manifest.webmanifest" crossorigin="" /> -->
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;800&display=swap"
@@ -128,12 +128,6 @@
 	</head>
 	<body>
 		<div id="svelte">%svelte.body%</div>
-		<!-- <script defer async src="https://js.stripe.com/v3/"></script>
-		<script
-			defer
-			async
-			src="https://www.googletagmanager.com/gtag/js?id="
-		></script> -->
 		<script>
 			// Lighthouse lowers the score because firebase auth iframe doesn't have a title/(visibility not hidden)
 			const observer = new MutationObserver((mutations) => {
@@ -150,6 +144,11 @@
 
 			observer.observe(document.body, { childList: true });
 		</script>
+		<!-- <script async src="https://js.stripe.com/v3/"></script>
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id="
+		></script> -->
 	</body>
 	<!-- 
 		if your looking for more info about this page

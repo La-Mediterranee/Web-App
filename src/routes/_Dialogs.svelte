@@ -8,6 +8,14 @@
 
 	type Modals = typeof ProductModal;
 
+	interface CloseEventDetail {
+		close: Function;
+	}
+
+	export interface CloseEvent {
+		readonly detail?: CloseEventDetail;
+	}
+
 	const current: {
 		component: Modals | null;
 		props: Object | null;
@@ -32,8 +40,8 @@
 		active = true;
 	}
 
-	function close(event: { detail?: { close: Function } }) {
-		event.detail?.close();
+	function close({ detail }: CloseEvent) {
+		detail?.close();
 		current.component = null;
 		active = false;
 	}
@@ -44,6 +52,7 @@
 </script>
 
 <slot />
+
 <!-- <div aria-live="assertive"> -->
 <Dialog width="auto" role="dialog" bind:active>
 	<svelte:component this={current.component} {...current.props} on:close={close} />

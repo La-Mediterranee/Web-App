@@ -1,4 +1,4 @@
-export type OpenGraph = {
+type OpenGraph = {
 	'og:title': string;
 	'og:type': string;
 	'og:url': string;
@@ -20,7 +20,7 @@ export type OpenGraph = {
 	'og:image:height'?: string;
 };
 
-export type Twitter = {
+type Twitter = {
 	'twitter:title': string;
 	'twitter:description': string;
 	'twitter:card': string;
@@ -30,20 +30,42 @@ export type Twitter = {
 	'twitter:site'?: string;
 };
 
-export type Color = string;
+type Color = string;
 
-export type WebAppTags = {
+// in most usecases WebAppTags,MicrosoftPWA and ApplePWA are static and
+// this is why I will remove/comment them out here and
+// add them to the scripts
+
+type WebAppTags = {
 	'application-name'?: string;
 };
 
-export type MicrosoftPWA = {
+interface MicrosoftPWAImages {
+	'msapplication-square70x70logo': string;
+	'msapplication-square150x150logo': string;
+	'msapplication-square310x310logo': string;
+	'msapplication-wide310x150logo': string;
+}
+
+/**
+ * These files/tags are good to have if you want to support IE11 and non-Chromium Egde
+ * you should either use the `msapplication-TileImage`, `msapplication-TileColor` and `MicrosoftPWAImages` or `msapplication-config`
+ * because both include the same information
+ */
+type MicrosoftPWA = {
 	'msapplication-TileImage': string;
 	'msapplication-TileColor': string;
+	/**
+	 * url to the file
+	 */
 	'msapplication-config': string;
+	/**
+	 * For IE11
+	 */
 	'msapplication-tap-highlight'?: 'yes' | 'no';
-};
+} & MicrosoftPWAImages;
 
-export type ApplePWA = {
+type ApplePWA = {
 	'apple-mobile-web-app-title': string;
 	/**
 	 * default: white background with black text and icons
@@ -51,29 +73,29 @@ export type ApplePWA = {
 	 * black-translucent: white text and icons with a transparent background.
 	 */
 	'apple-mobile-web-app-status-bar-style': 'default' | 'black' | 'black-translucent';
-	'mobile-web-app-capable'?: 'yes' | 'no';
 	'apple-touch-fullscreen'?: 'yes' | 'no';
-	'apple-mobile-web-app-capable?': 'yes' | 'no';
+	'apple-mobile-web-app-capable'?: 'yes' | 'no';
+	'mobile-web-app-capable'?: 'yes' | 'no';
 };
 
-export type PWAImages = {
+type PWAImages = {
 	'msapplication-TileImage'?: string;
 };
 
-export type Metatags = {
+type Metatags = {
 	title: string;
 	description: string;
 	type: string;
 	image: string;
 	alt: string;
 	robots?: string;
-	generator?: string;
+	generator?: string; //static
 	openGraph: OpenGraph;
 	twitter: Partial<Twitter>;
-	microsoft: Partial<MicrosoftPWA>;
-} & Partial<PWAImages> &
-	Partial<ApplePWA> &
-	Partial<WebAppTags>;
+	microsoft: Partial<MicrosoftPWA>; //static
+} & Partial<PWAImages> & //static
+	Partial<ApplePWA> & //static
+	Partial<WebAppTags>; //static
 // & OpenGraph &
 // 	Partial<MicrosoftPWA> &
 // 	Partial<Twitter>

@@ -1,5 +1,6 @@
 function hasIntlGetCanonicalLocalesBug() {
 	try {
+		// @ts-ignore
 		return new Intl.Locale('und-x-private').toString() === 'x-private';
 	} catch (e) {
 		return true;
@@ -40,9 +41,10 @@ if (polyfills.length > 0) {
 	document.head.appendChild(script);
 }
 
+// @ts-ignore
 Promise.allSettled =
 	Promise.allSettled ||
-	function (promises) {
+	function (/** @type {Promise<any>[]} */ promises) {
 		let wrappedPromises = [];
 		for (const p of promises) {
 			wrappedPromises.push(

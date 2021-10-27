@@ -1,10 +1,13 @@
 {
 	"compilerOptions": {
+		"types": ["node", "sharp"],
 		"moduleResolution": "node",
-		"module": "es2020",
-		"lib": ["es2020", "DOM"],
+		// "module": "CommonJS",
+		"module": "ES2020",
+		"lib": ["es2020"],
 		"target": "ES2018",
 		"removeComments": true,
+		"outDir": "dist",
 		// "importHelpers": true,
 		"strict": true,
 		/**
@@ -12,7 +15,7 @@
 			to enforce using \`import type\` instead of \`import\` for Types.
 			*/
 		"importsNotUsedAsValues": "error",
-		// "isolatedModules": true,
+		"isolatedModules": true,
 		"resolveJsonModule": true,
 		/**
 			To have warnings/errors of the Svelte compiler at the correct position,
@@ -26,7 +29,6 @@
 		// "allowJs": true,
 		// "checkJs": true,
 	},
-	"exclude": ["build", "node_modules", ".svelte-kit", "src/lib/Material/components/Slider/nouislider.min.js"],
 	"ts-node": {
 		"transpileOnly": true,
 		"compilerOptions": {

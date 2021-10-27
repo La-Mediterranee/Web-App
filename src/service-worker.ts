@@ -1,3 +1,4 @@
+'use strict';
 declare var self: ServiceWorkerGlobalScope;
 // importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.3.0/workbox-sw.js');
 // const { routing, strategies, precaching, setConfig, expiration, googleAnalytics, core } = workbox;

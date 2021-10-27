@@ -43,7 +43,10 @@ const config = {
 	kit: {
 		target: '#svelte',
 		files: {
-			serviceWorker: '',
+			serviceWorker: '..',
+		},
+		serviceWorker: {
+			files: (filepath) => !/\.DS_STORE/.test(filepath),
 		},
 		// adapter: node({
 		// 	precompress: true,

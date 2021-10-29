@@ -64,6 +64,8 @@ async function main() {
 		},
 	});
 
+	console.time('Apple');
+
 	// Apple Images
 	const appleConfig = appHtmlConfig.apple;
 	const appleIconBuffer = appleConfig?.iconPath ? readFileSync(getPath(appleConfig?.iconPath)) : iconBuffer;
@@ -74,24 +76,28 @@ async function main() {
 		splashScreensOutPath: appHtmlConfig.apple?.splashScreensOutPath,
 	});
 
-	// Favicons
-	const faviconConfig = appHtmlConfig.favicon;
-	if (!Array.isArray(faviconConfig)) {
-		const faviconImageBuffer = faviconConfig?.iconPath
-			? readFileSync(getPath(faviconConfig?.iconPath))
-			: iconBuffer;
-		generateFavicons(sharp(faviconImageBuffer));
-	}
+	console.timeEnd('Apple');
 
-	// Microsoft Browserconfig
-	const browserconfig = appHtmlConfig.browserconfig;
-	if (browserconfig) {
-		console.log('Writing to filesystem path:', getPath(browserconfig.outPath || DEFAULT_BROWSERCONFIG_PATH));
-		generateBrowserconfig(browserconfig);
-		console.log('Finished Browserconfig');
-	}
+	// // Favicons
+	// const faviconConfig = appHtmlConfig.favicon;
+	// if (!Array.isArray(faviconConfig)) {
+	// 	const faviconImageBuffer = faviconConfig?.iconPath
+	// 		? readFileSync(getPath(faviconConfig?.iconPath))
+	// 		: iconBuffer;
+	// 	generateFavicons(sharp(faviconImageBuffer));
+	// }
+
+	// // Microsoft Browserconfig
+	// const browserconfig = appHtmlConfig.browserconfig;
+	// if (browserconfig) {
+	// 	console.log('Writing to filesystem path:', getPath(browserconfig.outPath || DEFAULT_BROWSERCONFIG_PATH));
+	// 	generateBrowserconfig(browserconfig);
+	// 	console.log('Finished Browserconfig');
+	// }
 
 	console.log('Writing app.html');
+
+	console.time('HTML');
 
 	writeAppHTML({
 		headConfig: {
@@ -100,6 +106,8 @@ async function main() {
 			...appHtmlConfig.headConfig,
 		},
 	});
+
+	console.timeEnd('HTML');
 
 	console.log('Finished Writing');
 

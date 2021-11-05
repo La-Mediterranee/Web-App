@@ -5,6 +5,8 @@ import type { MaybePromise } from '@sveltejs/kit/types/helper';
 import type { ServerResponse } from '@sveltejs/kit/types/hooks';
 import type { auth as adminAuth } from 'firebase-admin';
 
+const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
+
 export async function handle({
 	request,
 	resolve,
@@ -18,30 +20,44 @@ export async function handle({
 	// code here happends before the endpoint or page is called
 	// await decodeJWT(request);
 
+	// check for unsupported browsers
+	// request.headers['user-agent'].indexOf('MSIE') >= 0
+
 	const response = await resolve(request);
 
+	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
+		response.headers['Location'] = '/unsupported.html';
+	}
 	// // code here happens after the endpoint or page is called
 	// response.headers['set-cookie'] = `user=${request.locals.user || ''}; Path=/; HttpOnly`;
 
 	return response;
 }
 
-export function getSession(request: Request) {
-	const user = request.locals.user as adminAuth.DecodedIdToken;
+interface User {
+	uid: string;
+	email: string;
+	avatar: string;
+}
+
+interface Session {
+	user?: User;
+}
+
+export function getSession(request: Request): Session {
+	const userDecoded = request.locals.user as adminAuth.DecodedIdToken;
 	// console.log(user);
 
-	return user
-		? {
-				user: {
-					// only include properties needed client-side —
-					// exclude anything else attached to the user
-					// like access tokens etc
-					uid: user.uid,
-					email: user.email,
-					avatar: user.picture,
-				},
-		  }
-		: {};
+	const user = userDecoded
+		? ({
+				uid: userDecoded.uid,
+				email: userDecoded.email,
+				avatar: userDecoded.picture,
+		  } as User)
+		: undefined;
+	return {
+		user: user,
+	};
 }
 
 // import * as cookie from 'cookie';

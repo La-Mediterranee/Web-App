@@ -9,7 +9,7 @@ interface FaviconGeneratorOptions {
 	outDir?: string;
 }
 
-export function generateFavicons(icon: Sharp, options: FaviconGeneratorOptions = {}) {
+export async function generateFavicons(icon: Sharp, options: FaviconGeneratorOptions = {}) {
 	console.group('Favicons');
 	const { outDir = DEFAULT_FAVICONS_PATH } = options;
 	const outDirPath = getPath(outDir);
@@ -22,9 +22,17 @@ export function generateFavicons(icon: Sharp, options: FaviconGeneratorOptions =
 
 	const DEFAULT_SIZES = [16, 32, 96, 192];
 
+	const imagePromises = [];
+
 	for (const size of DEFAULT_SIZES) {
-		icon.resize(size).toFormat('png').toFile(getPath(outDir, ''));
+		const imagePromise = icon
+			.resize(size)
+			.toFormat('png')
+			.toFile(getPath(outDir, `${size}x${size}.png`));
+		imagePromises.push(imagePromise);
 	}
+
+	await Promise.all(imagePromises);
 
 	console.log('Finished Favicons');
 

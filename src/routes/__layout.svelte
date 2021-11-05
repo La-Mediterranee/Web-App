@@ -8,6 +8,12 @@
 
 	import { registerServiceWorker } from '$lib/pwa/register-sw';
 
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+
+	export function load(params: LoadInput): LoadOutput {
+		return {};
+	}
+
 	/**
 	 * To enable optional chaining for window properties
 	 * I defined window in the global scope. This shouldn't
@@ -41,6 +47,7 @@
 	import Installprompt from '$lib/components/Prompts/Installprompt';
 
 	import { metatags } from '$lib/stores/metatags';
+	import UpdatePrompt from '$lib/components/Prompts/SericeWorker/UpdatePrompt.svelte';
 
 	let online: boolean = true;
 
@@ -88,6 +95,7 @@
 			<main>
 				<Installprompt installSource={'LayoutInstallButton'} />
 				<slot />
+				<UpdatePrompt />
 			</main>
 			<Tabbar routes={mobileNavItems} />
 			<Footer />

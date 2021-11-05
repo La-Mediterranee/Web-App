@@ -43,7 +43,7 @@
 	<div>
 		<SlideGroup>
 			{#each Array(15) as _, i}
-				<SlideItem let:active class="ptb-2">
+				<SlideItem class="ptb-2" let:active>
 					<ProductCard product={burger} style="min-width: 220px; max-width: 250px; margin: 0 10px;" />
 				</SlideItem>
 			{/each}

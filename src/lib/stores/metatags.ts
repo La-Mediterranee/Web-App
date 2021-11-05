@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-import type { Metatags, MicrosoftPWA } from './metatag';
+// import type { Metatags, MicrosoftPWA } from './metatag';
 
 const title = 'La-Mediterranee Shop';
 
@@ -26,12 +26,13 @@ const twitter = {
 	'twitter:image': 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
 	'twitter:image:alt': 'SvelteSociety.dev',
 };
-const microsoft: MicrosoftPWA = {
-	'msapplication-config': '',
-	'msapplication-TileColor': '',
-	'msapplication-TileImage': '',
-	'msapplication-tap-highlight': 'yes',
-};
+
+// const microsoft: MicrosoftPWA = {
+// 	'msapplication-config': '',
+// 	'msapplication-TileColor': '',
+// 	'msapplication-TileImage': '',
+// 	'msapplication-tap-highlight': 'yes',
+// };
 
 const initialTags: Metatags = {
 	title: title,
@@ -39,10 +40,8 @@ const initialTags: Metatags = {
 	type: 'website',
 	image: 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
 	alt: 'SvelteSociety.dev',
-	// 'apple-mobile-web-app-title': title,
 	openGraph,
 	twitter,
-	microsoft,
 };
 
 export type MetaTagsStore = ReturnType<typeof createMetatagsStore>;

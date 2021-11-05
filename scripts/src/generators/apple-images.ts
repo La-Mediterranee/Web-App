@@ -2,30 +2,23 @@ import sharp from 'sharp';
 import { existsSync, mkdirSync } from 'fs';
 
 import { getPath } from '../util/helper.js';
-import { DEFAULTS, DEFAULT_APPLE_ICON_PATH, DEFAULT_APPLE_SPLASH_PATH } from '../util/consts.js';
+import { DEFAULTS, DEFAULT_APPLE_SPLASH_PATH } from '../util/consts.js';
 
 import type { OutputInfo, Sharp } from 'sharp';
 
 interface AppleImagesConfig {
 	themeColor: Color;
-	iconsOutPath: DirPath;
+	// iconsOutPath: DirPath;
 	splashScreensOutPath: DirPath;
 	themeColorDark?: Color;
 }
-
-const appleIconsSizes = [57, 60, 72, 76, 114, 120, 144, 152, 180] as const;
-// <link rel="apple-touch-icon" sizes="57x57" href="/assets/favicons/apple-touch-icon-57x57.png">
-// Icon for Pinned Tabs in Safari with the following Svg structure
-// Only one pfad
-// Viewbox must set to 16 x 16 → viewBox=“0 0 16 16”
-// <link rel="mask-icon" href="/assets/favicons/safari-pinned-tab.svg" color="#5bbad5">
 
 export function generateAppleImages(icon: Sharp, padding: number, config: Partial<AppleImagesConfig>) {
 	console.group('Apple Images');
 
 	const tags = createImages(icon, padding, {
 		themeColor: config.themeColor || DEFAULTS.themeColor,
-		iconsOutPath: config.iconsOutPath || DEFAULT_APPLE_ICON_PATH,
+		// iconsOutPath: config.iconsOutPath ||
 		splashScreensOutPath: config.splashScreensOutPath || DEFAULT_APPLE_SPLASH_PATH,
 		themeColorDark: config.themeColorDark,
 	});

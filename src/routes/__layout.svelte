@@ -70,7 +70,7 @@
 <svelte:window bind:online />
 <!-- <LDTag {}/>  -->
 
-<svelte:head>
+<!-- <svelte:head>
 	{#each headLinks as { href, rel, ...rest }}
 		<link {rel} {href} {...rest} />
 	{/each}
@@ -81,11 +81,11 @@
 			{#if ['title', 'description', 'image', 'google-site-verification', 'referrer'].includes(property)}
 				<meta name={property} content={content?.toString()} />
 			{:else}
-				<!-- <meta {property} {content} /> -->
+				<meta {property} {content} />
 			{/if}
 		{/if}
 	{/each}
-</svelte:head>
+</svelte:head> -->
 
 <Providers>
 	<Modals>

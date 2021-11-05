@@ -17,7 +17,6 @@ import {
 	DEFAULT_APPLE_SPLASH_PATH,
 	DEFAULT_FAVICONS_PATH,
 	DEFAULT_SITEMAP_PATH,
-	DEFAULT_APPLE_ICON_PATH,
 	DEFAULTS,
 } from './src/util/consts.js';
 
@@ -71,7 +70,7 @@ async function main() {
 	const appleTags = await generateAppleImages(sharp(appleIconBuffer), padding, {
 		themeColor: appHtmlConfig.themeColor,
 		themeColorDark: appHtmlConfig.themeColorDark,
-		iconsOutPath: appHtmlConfig.apple?.iconsOutPath,
+		// iconsOutPath: appHtmlConfig.apple?.iconsOutPath,
 		splashScreensOutPath: appHtmlConfig.apple?.splashScreensOutPath,
 	});
 	console.timeEnd('Apple');

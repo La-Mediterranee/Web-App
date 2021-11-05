@@ -19,9 +19,7 @@
 
 	import MaterialApp from 'svelte-material-components/src/components/MaterialApp/MaterialAppMin.svelte';
 
-	const firebase: FirebaseApp = !getApps()?.length
-		? initializeApp(firebaseConfig)
-		: getApp();
+	const firebase: FirebaseApp = !getApps()?.length ? initializeApp(firebaseConfig) : getApp();
 </script>
 
 <svelte:head>
@@ -56,3 +54,9 @@
 		</Stripe>
 	</Auth>
 </Firebase>
+
+<!-- <Firebase {firebase}>
+	<Stripe>
+		<slot />
+	</Stripe>
+</Firebase> -->

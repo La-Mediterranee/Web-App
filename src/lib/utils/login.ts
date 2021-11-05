@@ -34,11 +34,7 @@ export interface OAuthUser {
 
 export async function signIn(auth: Auth, email: string, password: string) {
 	return await runAsyncLogin(async () => {
-		const userCredential = await signInWithEmailAndPassword(
-			auth,
-			email,
-			password
-		);
+		const userCredential = await signInWithEmailAndPassword(auth, email, password);
 		const user = userCredential.user;
 		return { user, newUser: false };
 	});
@@ -46,80 +42,59 @@ export async function signIn(auth: Auth, email: string, password: string) {
 
 export async function signInWithGoogle(auth: Auth) {
 	const provider = new GoogleAuthProvider();
-	return await runProviderLogin(
-		auth,
-		provider,
-		async (userCredential, newUser) => {
-			return { user: userCredential.user, newUser };
-		}
-	);
+	return await runProviderLogin(auth, provider, async (userCredential, newUser) => {
+		return { user: userCredential.user, newUser };
+	});
 }
 
 export async function signInWithFacebook(auth: Auth) {
 	const provider = new FacebookAuthProvider();
-	return await runProviderLogin(
-		auth,
-		provider,
-		async (userCredential, newUser) => {
-			return { user: userCredential.user, newUser };
-		}
-	);
+	return await runProviderLogin(auth, provider, async (userCredential, newUser) => {
+		return { user: userCredential.user, newUser };
+	});
 }
 
 export async function signInWithTwitter(auth: Auth) {
 	const provider = new TwitterAuthProvider();
-	return await runProviderLogin(
-		auth,
-		provider,
-		async (userCredential, newUser) => {
-			return { user: userCredential.user, newUser };
-		}
-	);
+	return await runProviderLogin(auth, provider, async (userCredential, newUser) => {
+		return { user: userCredential.user, newUser };
+	});
 }
 
 export async function signInWithGithub(auth: Auth) {
 	const provider = new GithubAuthProvider();
-	return await runProviderLogin(
-		auth,
-		provider,
-		async (userCredential, newUser) => {
-			return { user: userCredential.user, newUser };
-		}
-	);
+	return await runProviderLogin(auth, provider, async (userCredential, newUser) => {
+		return { user: userCredential.user, newUser };
+	});
 }
 
 export async function signInWithMicrosoft(auth: Auth) {
 	const provider = new OAuthProvider('microsoft.com');
-	return await runProviderLogin(
-		auth,
-		provider,
-		async (userCredential, newUser) => {
-			const credential =
-				OAuthProvider.credentialFromResult(userCredential);
-			const accessToken = credential?.accessToken;
+	return await runProviderLogin(auth, provider, async (userCredential, newUser) => {
+		const credential = OAuthProvider.credentialFromResult(userCredential);
+		const accessToken = credential?.accessToken;
 
-			const res = await fetch(
-				// "https://graph.microsoft.com/v1.0/me/photos/96x96/$value",
-				'https://graph.microsoft.com/beta/me/photos/96x96/$value',
-				{
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				}
-			);
-
-			const url = window.URL || window.webkitURL;
-			const data = await res.blob();
-			const imageUrl = url.createObjectURL(data);
-
-			if (auth.currentUser) {
-				//@ts-ignore
-				auth.currentUser.photoURL = imageUrl;
+		const res = await fetch(
+			// "https://graph.microsoft.com/v1.0/me/photos/96x96/$value",
+			'https://graph.microsoft.com/beta/me/photos/96x96/$value',
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
 			}
+		);
 
-			return { user: userCredential.user, newUser };
+		const url = window.URL || window.webkitURL;
+		const data = await res.blob();
+		const imageUrl = url.createObjectURL(data);
+
+		if (auth?.currentUser) {
+			//@ts-ignore
+			auth.currentUser.photoURL = imageUrl;
 		}
-	);
+
+		return { user: userCredential.user, newUser };
+	});
 }
 
 export async function signInWithDiscord(auth: Auth) {
@@ -145,11 +120,7 @@ async function runProviderLogin(
 	cb: (userCredential: UserCredential, newUser: boolean) => Promise<LoginInfo>
 ) {
 	return await runAsyncLogin(async () => {
-		const userCredential = await signInWithPopup(
-			auth,
-			provider,
-			browserPopupRedirectResolver
-		);
+		const userCredential = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 
 		const info = getAdditionalUserInfo(userCredential);
 
@@ -157,9 +128,7 @@ async function runProviderLogin(
 	});
 }
 
-async function runAsyncLogin(
-	promise: () => Promise<LoginInfo>
-): Promise<LoginInfo | null> {
+async function runAsyncLogin(promise: () => Promise<LoginInfo>): Promise<LoginInfo | null> {
 	try {
 		const data = await promise();
 		return data;
@@ -186,12 +155,7 @@ export interface WindowFeatures {
 	status?: 'yes' | 'no';
 }
 
-async function withPopup(
-	auth: Auth,
-	url: string,
-	name: string,
-	options?: WindowFeatures
-): Promise<UserCredential> {
+async function withPopup(auth: Auth, url: string, name: string, options?: WindowFeatures): Promise<UserCredential> {
 	const width = options?.width || 500;
 	const height = options?.height || 640;
 	const top = options?.top || (window.screen.availHeight - height) / 2;
@@ -212,15 +176,9 @@ async function withPopup(
 
 	const authWindow = window.open(url, name, opt);
 
-	if (
-		!authWindow ||
-		authWindow.closed ||
-		typeof authWindow.closed == 'undefined'
-	) {
+	if (!authWindow || authWindow.closed || typeof authWindow.closed == 'undefined') {
 		//POPUP BLOCKED
-		alert(
-			'Bitte den PopUp Blocker entfernen, um sich mit Discord anzumelden'
-		);
+		alert('Bitte den PopUp Blocker entfernen, um sich mit Discord anzumelden');
 	}
 
 	try {

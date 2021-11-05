@@ -27,20 +27,30 @@ interface DBObject {
 export function authStore(app: FirebaseApp) {
 	let auth: Auth;
 	try {
-		const provider = _getProvider(app, 'auth');
+		// const provider = _getProvider(app, 'auth');
 
-		auth = provider.isInitialized()
-			? provider.getImmediate()
-			: initializeAuth(app, {
-					...(browser
-						? {
-								popupRedirectResolver: browserPopupRedirectResolver,
-								persistence: [indexedDBLocalPersistence],
-						  }
-						: {
-								persistence: [inMemoryPersistence],
-						  }),
-			  });
+		// auth = provider.isInitialized()
+		// 	? provider.getImmediate()
+		// 	: initializeAuth(app, {
+		// 			...(browser
+		// 				? {
+		// 						popupRedirectResolver: browserPopupRedirectResolver,
+		// 						persistence: [indexedDBLocalPersistence],
+		// 				  }
+		// 				: {
+		// 						persistence: [inMemoryPersistence],
+		// 				  }),
+		// 	  });
+		auth = initializeAuth(app, {
+			...(browser
+				? {
+						popupRedirectResolver: browserPopupRedirectResolver,
+						persistence: [indexedDBLocalPersistence],
+				  }
+				: {
+						persistence: [inMemoryPersistence],
+				  }),
+		});
 		// console.log('auth:', auth);
 	} catch (error) {
 		console.error('authStore:', error);

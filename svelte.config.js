@@ -48,10 +48,10 @@ const config = {
 		serviceWorker: {
 			files: (filepath) => !/\.DS_STORE/.test(filepath),
 		},
-		// adapter: node({
-		// 	precompress: true,
-		// }),
-		adapter: adapterStatic(),
+		adapter: node({
+			precompress: true,
+		}),
+		// adapter: adapterStatic(),
 		// adapter: netlify(),
 		// adapter: cvWorker({
 		// 	esbuild(defaultOptions) {

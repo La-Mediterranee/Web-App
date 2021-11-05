@@ -5,7 +5,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" {style}>
 	<defs>
 		<linearGradient id="MyGradient">
-			<stop offset="0" stop-color="var(--top1)" />
+			<stop offset="0%" stop-color="var(--top1)" />
 			<stop offset="100%" stop-color="var(--top2)" />
 		</linearGradient>
 	</defs>

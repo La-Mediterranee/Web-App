@@ -1,5 +1,7 @@
 <script context="module" lang="ts">
-	import type { HttpStatusCode } from 'types/index';
+	// import type { HttpStatusCode } from 'types/index';
+
+	type HttpStatusCode = number;
 
 	interface Props {
 		error: Error;
@@ -7,7 +9,7 @@
 	}
 
 	const errorMessages: {
-		[status: number]: string;
+		[status: HttpStatusCode]: string;
 	} = {
 		404: 'Die gesuchte Seite existiert leider nicht',
 		500: 'Es gab einen Fehler auf unserem Server',
@@ -53,6 +55,7 @@
 		display: block;
 		text-align: center;
 		place-items: center;
+		padding-top: 4em;
 	}
 
 	h1,
@@ -68,6 +71,12 @@
 
 	p {
 		margin: 1em auto;
+	}
+
+	pre {
+		padding: 2em;
+		word-wrap: break-word;
+		white-space: pre-wrap; /* css-3 */
 	}
 
 	@media (min-width: 480px) {

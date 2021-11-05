@@ -7,7 +7,7 @@
 	import type { Product } from 'types/product';
 
 	const burger: Product = {
-		ID: String(window?.crypto?.getRandomValues(new Uint32Array(1))),
+		ID: String(browser ? window?.crypto?.getRandomValues(new Uint32Array(1)) : 2),
 		name: 'Hamburger',
 		description: '',
 		price: 4.5,
@@ -24,6 +24,7 @@
 	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
 
 	import ProductCard from '$components/ProductCard';
+	import { browser } from '$app/env';
 </script>
 
 <svelte:head>
@@ -91,8 +92,13 @@
 
 		img {
 			margin: 2em 0 0;
-			width: min(100%, 490px);
-			height: min(83%, 280px);
+			width: 100%;
+			max-width: 490px;
+			height: 83%;
+			max-height: 280px;
+
+			// width: min(100%, 490px);
+			// height: min(83%, 280px);
 		}
 	}
 

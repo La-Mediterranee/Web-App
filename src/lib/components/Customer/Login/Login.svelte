@@ -136,12 +136,7 @@
 </script>
 
 <div class="login-error" on:click={() => (error = !error)}>
-	<Alert
-		class="error-color"
-		transition={slide}
-		transitionOpts={{ duration: 500 }}
-		bind:visible={error}
-	>
+	<Alert class="error-color" transition={slide} transitionOpts={{ duration: 500 }} bind:visible={error}>
 		<div slot="icon">
 			<Icon path={mdiAlert} />
 		</div>
@@ -152,12 +147,7 @@
 <h1>Login</h1>
 
 <section id="emailPassword">
-	<form
-		bind:this={form}
-		on:submit|preventDefault={login}
-		name="login"
-		novalidate
-	>
+	<form bind:this={form} on:submit|preventDefault={login} name="login" novalidate>
 		<div class="wrapper">
 			<TextField
 				bind:value={email}
@@ -196,10 +186,7 @@
 						show = !show;
 					}}
 				>
-					<Icon
-						style="cursor: pointer; color:#fff;"
-						path={show ? eye : eyeOff}
-					/>
+					<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
 				</div>
 			</TextField>
 		</div>
@@ -213,75 +200,39 @@
 <section>
 	<h2>Weiter Optionen:</h2>
 	<noscript> Diese Optionen sind nur mit JS verfügbar </noscript>
-	<button
-		id="google"
-		type="button"
-		class="provider"
-		value="google"
-		on:click={login}
-	>
-		<img src="/google.svg" alt="Google Logo" />
+	<button id="google" type="button" class="provider" value="google" on:click={login}>
+		<img src="/svg/google.svg" alt="Google Logo" />
 		<span class="buttonText"> Anmelden mit Google</span>
 	</button>
 
-	<button
-		id="facebook"
-		type="button"
-		class="provider"
-		on:click={login}
-		value="facebook"
-	>
-		<img src="/facebook.svg" alt="Facebook Logo" />
+	<button id="facebook" type="button" class="provider" value="facebook" on:click={login}>
+		<img src="/svg/facebook.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Facebook</span>
 	</button>
 
-	<button
-		id="microsoft"
-		type="button"
-		class="provider"
-		on:click={login}
-		value="microsoft"
-	>
-		<img src="/microsoft.svg" alt="Microsoft Logo" />
+	<button id="microsoft" type="button" class="provider" value="microsoft" on:click={login}>
+		<img src="/svg/microsoft.svg" alt="Microsoft Logo" />
 		<span class="buttonText"> Anmelden mit Microsoft</span>
 	</button>
 
-	<button
-		id="twitter"
-		type="button"
-		class="provider"
-		on:click={login}
-		value="twitter"
-	>
-		<img src="/twitter.svg" alt="Facebook Logo" />
+	<button id="twitter" type="button" class="provider" value="twitter" on:click={login}>
+		<img src="/svg/twitter.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Twitter</span>
 	</button>
 </section>
 
 <section>
 	<h2>Für Devs:</h2>
-	<button
-		id="github"
-		type="button"
-		class="provider"
-		on:click={login}
-		value="github"
-	>
-		<img src="/github.svg" alt="Github Logo" />
+	<button id="github" type="button" class="provider" value="github" on:click={login}>
+		<img src="/svg/github.svg" alt="Github Logo" />
 		<span class="buttonText"> Anmelden mit Github</span>
 	</button>
 </section>
 
 <section>
 	<h2>Für Gamer:</h2>
-	<button
-		id="discord"
-		type="button"
-		class="provider"
-		on:click={login}
-		value="discord"
-	>
-		<img src="/discord.svg" alt="Discord Logo" />
+	<button id="discord" type="button" class="provider" value="discord" on:click={login}>
+		<img src="/svg/discord.svg" alt="Discord Logo" />
 		<span class="buttonText"> Anmelden mit Discord</span>
 	</button>
 </section>

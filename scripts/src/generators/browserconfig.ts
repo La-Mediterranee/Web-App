@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { DEFAULT_BROWSERCONFIG_PATH } from '../util/consts.js';
 import { getPath } from '../util/helper.js';
 
@@ -25,5 +25,11 @@ function render(images: BrowserconfigImage[], tileColor: string) {
 
 export function generateBrowserconfig(browserConfig: { config: Browserconfig; outPath?: string }) {
 	const { outPath = DEFAULT_BROWSERCONFIG_PATH, config } = browserConfig;
+	const outDirPath = getPath(outPath);
+
+	if (!existsSync(outDirPath)) {
+		mkdirSync(outDirPath, { recursive: true });
+	}
+
 	writeFileSync(getPath(outPath), render(config.logos, config.tileColor));
 }

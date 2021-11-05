@@ -64,9 +64,8 @@ async function main() {
 		},
 	});
 
-	console.time('Apple');
-
 	// Apple Images
+	console.time('Apple');
 	const appleConfig = appHtmlConfig.apple;
 	const appleIconBuffer = appleConfig?.iconPath ? readFileSync(getPath(appleConfig?.iconPath)) : iconBuffer;
 	const appleTags = await generateAppleImages(sharp(appleIconBuffer), padding, {
@@ -75,17 +74,18 @@ async function main() {
 		iconsOutPath: appHtmlConfig.apple?.iconsOutPath,
 		splashScreensOutPath: appHtmlConfig.apple?.splashScreensOutPath,
 	});
-
 	console.timeEnd('Apple');
 
-	// // Favicons
-	// const faviconConfig = appHtmlConfig.favicon;
-	// if (!Array.isArray(faviconConfig)) {
-	// 	const faviconImageBuffer = faviconConfig?.iconPath
-	// 		? readFileSync(getPath(faviconConfig?.iconPath))
-	// 		: iconBuffer;
-	// 	generateFavicons(sharp(faviconImageBuffer));
-	// }
+	// Favicons
+	console.time('Favicons');
+	const faviconConfig = appHtmlConfig.favicon;
+	if (!Array.isArray(faviconConfig)) {
+		const faviconImageBuffer = faviconConfig?.iconPath
+			? readFileSync(getPath(faviconConfig?.iconPath))
+			: iconBuffer;
+		const faviconsTags = await generateFavicons(sharp(faviconImageBuffer));
+	}
+	console.timeEnd('Favicons');
 
 	// // Microsoft Browserconfig
 	// const browserconfig = appHtmlConfig.browserconfig;

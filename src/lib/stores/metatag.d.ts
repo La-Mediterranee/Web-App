@@ -92,7 +92,7 @@ type Metatags = {
 	generator?: string; //static
 	openGraph: OpenGraph;
 	twitter: Partial<Twitter>;
-	microsoft: Partial<MicrosoftPWA>; //static
+	microsoft?: Partial<MicrosoftPWA>; //static
 } & Partial<PWAImages> & //static
 	Partial<ApplePWA> & //static
 	Partial<WebAppTags>; //static

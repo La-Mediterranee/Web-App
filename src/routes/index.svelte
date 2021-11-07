@@ -1,22 +1,20 @@
 <script context="module" lang="ts">
-	import { onMount } from 'svelte';
-
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
 
-	import type { Product } from 'types/product';
+	import type { HomepageProps } from './homepage.json';
 
-	const burger: Product = {
-		ID: String(browser ? window?.crypto?.getRandomValues(new Uint32Array(1)) : 2),
-		name: 'Hamburger',
-		description: '',
-		price: 4.5,
-		categories: ['burger'],
-		image: { src: '/burger.webp', alt: 'Bild von einem Burger' },
-		variations: {
-			toppings: ['Beilagen', 'Saucen'],
-		},
-	};
+	import type { Product } from 'types/product';
+	import type { LoadInput } from '@sveltejs/kit';
+
+	export async function load({ fetch }: LoadInput) {
+		const url = `/homepage.json`;
+		const homePageData = (await fetch(url).then((p) => p.json())) as HomepageProps;
+
+		return {
+			props: { homePageData },
+		};
+	}
 </script>
 
 <script lang="ts">
@@ -24,7 +22,10 @@
 	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
 
 	import ProductCard from '$components/ProductCard';
-	import { browser } from '$app/env';
+
+	export let homePageData: HomepageProps | undefined;
+
+	const sections = homePageData?.sections || [];
 </script>
 
 <svelte:head>
@@ -39,22 +40,25 @@
 	<Wave />
 </div>
 
-<section>
-	<h2 class="row-header">Essen</h2>
-	<div>
-		<SlideGroup>
-			{#each Array(15) as _, i}
-				<SlideItem class="ptb-2" let:active>
-					<ProductCard product={burger} style="min-width: 220px; max-width: 250px; margin: 0 10px;" />
-				</SlideItem>
-			{/each}
-		</SlideGroup>
-	</div>
-</section>
-
-<section>
-	<h2>Getränke</h2>
-</section>
+{#each sections as section}
+	<section>
+		<h2>{section.title}</h2>
+		<div>
+			{#if Array.isArray(section.body)}
+				<SlideGroup>
+					{#each section.body as bestseller}
+						<SlideItem class="ptb-2" let:active>
+							<ProductCard
+								product={bestseller}
+								style="min-width: 220px; max-width: 250px; margin: 0 10px;"
+							/>
+						</SlideItem>
+					{/each}
+				</SlideGroup>
+			{/if}
+		</div>
+	</section>
+{/each}
 
 <style lang="scss">
 	h1 {

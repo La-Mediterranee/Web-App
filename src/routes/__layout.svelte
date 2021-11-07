@@ -26,13 +26,6 @@
 		//@ts-ignore
 		globals.window = undefined;
 	}
-
-	const headLinks = [
-		{
-			href: 'https://www.googletagmanager.com',
-			rel: 'preconnect dns-prefetch',
-		},
-	] as const;
 </script>
 
 <script lang="ts">

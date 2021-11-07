@@ -18,7 +18,9 @@
 
 <header class:fixed>
 	<div id="nav-logo">
-		<img src="/Logos/V1_210.webp" alt="" />
+		<a href="/">
+			<img src="/Logos/V1_210.webp" alt="" />
+		</a>
 	</div>
 
 	<nav aria-label="desktop primary">

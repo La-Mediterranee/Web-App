@@ -27,7 +27,7 @@ const web: Website = {
 export function websiteSchema(website: Website, buisness: Business): Graph {
 	const restaurant: WithContext<Restaurant> = {
 		'@context': 'https://schema.org',
-		'@type': 'Restaurant', // LocalBusiness,FoodEstablishment
+		'@type': 'Restaurant', // LocalBusiness, FoodEstablishment
 		'@id': `${buisness.url}`,
 		name: buisness.name,
 		url: buisness.url,
@@ -55,8 +55,8 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 		},
 		geo: {
 			'@type': 'GeoCoordinates',
-			latitude: 48.1747123,
-			longitude: 16.3670003,
+			latitude: buisness.geoLocation?.latitude,
+			longitude: buisness.geoLocation?.longitude,
 		},
 		slogan: buisness.slogan,
 		smokingAllowed: buisness.smokingAllowed,
@@ -91,7 +91,7 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 			'@type': 'OrderAction',
 			target: {
 				'@type': 'EntryPoint',
-				urlTemplate: `${buisness.url}?utm_source=google&utm_medium=organic&utm_campaign= google_place_order_action`,
+				urlTemplate: `${buisness.url}?utm_source=google&utm_medium=organic&utm_campaign=google_place_order_action`,
 				// this line is in the spec look in https://github.com/schemaorg/schemaorg/issues/561
 				//@ts-ignore
 				inLanguage: 'en',
@@ -113,12 +113,12 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 
 	const _website: WebSite = {
 		'@type': 'WebSite',
-		'@id': 'https://www.willtrinken.at/#website',
+		'@id': `${buisness.url}/#website`,
 		url: website.url,
 		name: website.link,
 		description: website.description,
 		publisher: {
-			'@id': 'https://www.willtrinken.at/#organization',
+			'@id': `${buisness.url}/#organization`,
 		},
 		potentialAction: [EXPLORE_ACTION],
 		inLanguage: 'de-DE',

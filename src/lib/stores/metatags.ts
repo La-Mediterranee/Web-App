@@ -58,7 +58,6 @@ function createMetatagsStore() {
 				title: newTitle,
 				'og:title': newTitle,
 				'twitter:title': newTitle,
-				'apple-mobile-web-app-title': newTitle,
 			}));
 		},
 		set newDesc(newDesc: string) {
@@ -99,7 +98,6 @@ function createMetatagsStore() {
 	// 		title: title,
 	// 		'og:title': title,
 	// 		'twitter:title': title,
-	// 		'apple-mobile-web-app-title': title,
 	// 	}));
 
 	// const desc = (desc: string) =>

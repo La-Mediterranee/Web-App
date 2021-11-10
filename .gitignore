@@ -12,3 +12,4 @@ wrangler.toml
 static/pwa/
 static/apple/
 index.html
+inlang.*

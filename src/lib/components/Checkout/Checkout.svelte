@@ -1,28 +1,9 @@
 <script context="module" lang="ts">
-	import type {
-		CanMakePaymentResult,
-		PaymentRequest,
-		Stripe,
-		StripeElement,
-		StripeElements,
-	} from '@stripe/stripe-js';
-
 	import { createPaymentRequest } from './helper';
 
+	import type { CanMakePaymentResult, PaymentRequest, Stripe, StripeElements } from '@stripe/stripe-js';
 	import type { User } from 'firebase/auth';
-
-	export interface CustomerInfo {
-		name: string;
-		surname: string;
-		address: string;
-		postalCode: string;
-		city: string;
-		country: string;
-		email: string;
-		number: string;
-		tip: 0;
-		paymentMehod: string | StripeElement;
-	}
+	import type { CustomerInfo } from 'types/customer';
 </script>
 
 <script lang="ts">
@@ -38,7 +19,7 @@
 	import Summary from './checkout-sections/Summary.svelte';
 	import ExpressPayment from './checkout-sections/ExpressPayment.svelte';
 
-	export let user: User;
+	export let user: User | null;
 
 	let value = [0];
 	let currentValue = 0;

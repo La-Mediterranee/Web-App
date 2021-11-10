@@ -33,11 +33,6 @@
 	import Providers from './_layoutProviders.svelte';
 
 	import LDTag from '$lib/components/LDTag';
-	import Navbar from '$lib/components/Navbar';
-	import Footer from '$lib/components/Footer';
-	import Statusbar from '$lib/components/Statusbar';
-	import Tabbar from '$lib/components/Tabbar';
-	import Installprompt from '$lib/components/Prompts/Installprompt';
 
 	import { metatags } from '$lib/stores/metatags';
 	import UpdatePrompt from '$lib/components/Prompts/SericeWorker/UpdatePrompt.svelte';
@@ -82,24 +77,6 @@
 
 <Providers>
 	<Modals>
-		<div id="mainContent">
-			<Statusbar {online} />
-			<Navbar routes={desktopNavItems} />
-			<main>
-				<Installprompt installSource={'LayoutInstallButton'} />
-				<slot />
-				<UpdatePrompt />
-			</main>
-			<Tabbar routes={mobileNavItems} />
-			<Footer />
-		</div>
+		<slot />
 	</Modals>
 </Providers>
-
-<style global>
-	main {
-		padding-top: 1.2em;
-		min-height: 90vh;
-		position: relative;
-	}
-</style>

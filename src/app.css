@@ -81,6 +81,12 @@ body {
 	color: black;
 }
 
+main {
+	padding-top: 1.2em;
+	min-height: 90vh;
+	position: relative;
+}
+
 .theme--custom {
 	/* --tint-color: #729abe; */
 	--tint-color: #83a5c3;

@@ -28,6 +28,7 @@
 		"paths": {
 			"types/*": ["src/lib/types/*"],
 			"$lib/*": ["src/lib/*"],
+			"$i18n/*": ["src/i18n/*"],
 			"$utils/*": ["src/lib/utils/*"],
 			"$components/*": ["src/lib/components/*"],
 			"$firebase": ["src/lib/utils/firebase.ts"],

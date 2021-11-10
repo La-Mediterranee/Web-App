@@ -104,6 +104,7 @@ const config = {
 			},
 			resolve: {
 				alias: {
+					$i18n: path.resolve('./src/i18n'),
 					types: path.resolve('./src/lib/types'),
 					$utils: path.resolve('./src/lib/utils'),
 					$firebase: path.resolve('./src/lib/utils/firebase.ts'),

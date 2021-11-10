@@ -1,37 +1,44 @@
 // import { decodeJWT } from './server/helper';
 
+import { detectLocale } from '$i18n/i18n-util';
+import { initAcceptLanguageHeaderDetector } from 'typesafe-i18n/detectors';
+
 import type { Request } from '@sveltejs/kit';
-import type { MaybePromise } from '@sveltejs/kit/types/helper';
 import type { ServerResponse } from '@sveltejs/kit/types/hooks';
 import type { auth as adminAuth } from 'firebase-admin';
+import type { Locales } from '$i18n/i18n-types';
 
 const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
 
-export async function handle({
-	request,
-	resolve,
-}: {
+interface HandleProps {
 	request: Request;
-	resolve: (request: Request) => MaybePromise<ServerResponse>;
-}) {
+	resolve: (request: Request) => Promise<ServerResponse>;
+}
+
+export async function handle({ request, resolve }: HandleProps) {
 	// const cookies = cookie.parse(request.headers.cookie || '')
 	// request.locals.user = cookies.user
 
 	// code here happends before the endpoint or page is called
 	// await decodeJWT(request);
 
-	// check for unsupported browsers
-	// request.headers['user-agent'].indexOf('MSIE') >= 0
-
 	const response = await resolve(request);
 
+	const [, lang] = request.path.split('/');
+
+	// check for unsupported browsers
 	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
 		response.headers['Location'] = '/unsupported.html';
 	}
 	// // code here happens after the endpoint or page is called
 	// response.headers['set-cookie'] = `user=${request.locals.user || ''}; Path=/; HttpOnly`;
 
-	return response;
+	return Object.assign(
+		{},
+		response
+		// replace html lang attribute with correct language
+		// body: (response.body || '').toString().replace('<html lang="en">', `<html lang="${lang}">`),
+	);
 }
 
 interface User {
@@ -42,11 +49,14 @@ interface User {
 
 interface Session {
 	user?: User;
+	locale: Locales;
 }
 
 export function getSession(request: Request): Session {
 	const userDecoded = request.locals.user as adminAuth.DecodedIdToken;
 	// console.log(user);
+	const acceptLanguageDetector = initAcceptLanguageHeaderDetector(request);
+	const locale = detectLocale(acceptLanguageDetector);
 
 	const user = userDecoded
 		? ({
@@ -57,6 +67,7 @@ export function getSession(request: Request): Session {
 		: undefined;
 	return {
 		user: user,
+		locale,
 	};
 }
 

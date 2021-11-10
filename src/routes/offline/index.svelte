@@ -51,9 +51,7 @@
 	<div>
 		Erneut verbinden in <span id="indicator" bind:this={indicator}>3</span>
 	</div>
-	<button type="button" on:click={window.location.reload}
-		>⤾ Aktualisieren</button
-	>
+	<button type="button" on:click={window.location.reload}>⤾ Aktualisieren</button>
 </section>
 
 <style>

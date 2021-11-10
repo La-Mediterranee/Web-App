@@ -34,6 +34,10 @@ if (!('Locale' in Intl) || hasIntlGetCanonicalLocalesBug()) {
 	polyfills.push('Intl.Locale');
 }
 
+if (!('GetCanonicalLocales' in Intl) || hasIntlGetCanonicalLocalesBug()) {
+	polyfills.push('Intl.GetCanonicalLocales');
+}
+
 if (polyfills.length > 0) {
 	const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join('%2C')}`;
 	const script = document.createElement('script');

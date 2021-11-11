@@ -10,8 +10,10 @@
 
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export function load(params: LoadInput): LoadOutput {
-		return {};
+	export function load({ session }: LoadInput) {
+		return {
+			lang: session.locale,
+		};
 	}
 
 	/**
@@ -37,6 +39,7 @@
 	import { metatags } from '$lib/stores/metatags';
 	import UpdatePrompt from '$lib/components/Prompts/SericeWorker/UpdatePrompt.svelte';
 
+	export let lang: string;
 	let online: boolean = true;
 
 	onMount(async () => {
@@ -57,6 +60,10 @@
 
 <svelte:window bind:online />
 <!-- <LDTag {}/>  -->
+
+<svelte:head>
+	<html {lang} />
+</svelte:head>
 
 <!-- <svelte:head>
 	{#each headLinks as { href, rel, ...rest }}

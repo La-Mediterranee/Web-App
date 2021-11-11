@@ -7,10 +7,12 @@
 
 <script lang="ts">
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import t from '$i18n/i18n-svelte';
 	import Image from '../Image/Image.svelte';
-	import type { LoadInput } from '@sveltejs/kit';
 
 	export let routes: NavItem[] = [];
+
+	$: paths = $t.nav.desktop as any;
 
 	const user = getAuthContext();
 </script>
@@ -22,9 +24,9 @@
 		</a>
 	</div>
 
-	<nav aria-label="desktop primary">
+	<nav aria-label={`${$t.nav.desktop.arialabel}`}>
 		<ul>
-			{#each routes as { text, icon, href, rel } (href)}
+			{#each routes as { pathLabel, icon, href, rel } (href)}
 				<li class="nav-item">
 					<a
 						{href}
@@ -38,7 +40,7 @@
 							<!-- color={'var(--tint-color, #fff)'} -->
 						</div>
 						<span>
-							{text}
+							{paths[pathLabel]()}
 						</span>
 					</a>
 				</li>
@@ -56,7 +58,7 @@
 				height={50}
 			/>
 		{:else}
-			<a href="/customer/login">Login</a>
+			<a href="/customer/login">{$t.nav.login()}</a>
 		{/if}
 	</div>
 </header>

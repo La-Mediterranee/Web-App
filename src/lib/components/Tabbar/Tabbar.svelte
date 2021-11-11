@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import t from '$i18n/i18n-svelte';
 
 	import type { NavItem } from 'types/index';
 
@@ -8,33 +9,24 @@
 
 	let activeRoute = $page.path;
 
-	// let activeRoute = typeof window !== 'undefined' ? window.location.pathname : $page.path;
-	// console.log(activeRoute);
+	$: paths = $t.nav.mobile as any;
 </script>
 
 <nav aria-label="mobile primary">
-	{#each routes as { text, icon, href, size, rel } (href)}
+	{#each routes as { pathLabel, icon, href, size, rel } (href)}
 		<a
 			{href}
 			class="item"
 			class:active={activeRoute === href}
-			title={text}
+			title={paths[pathLabel]()}
 			rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
 			on:click={() => (activeRoute = href)}
 		>
 			<div class="item-container">
-				<!-- <picture>
-					<source srcset="/mask@3x.webp" type="image/webp" />
-					<img class="item-mask" src="/mask@3x.png" alt="logo" />
-				</picture> -->
 				<div class="bubble" />
 				<div class="mini-bubble" />
 				<div class="image">
-					<Icon
-						path={icon}
-						width={size ? size.width : 30}
-						height={size ? size.height : 30}
-					/>
+					<Icon path={icon} width={size ? size.width : 30} height={size ? size.height : 30} />
 					<!-- color={activeRoute !== href
 						? 'var(--tint-color)'
 						: 'var(--bar-color)'} -->
@@ -43,7 +35,7 @@
 			<div class="title-container">
 				{#if activeRoute === href}
 					<span style="color: var(--tint-color);">
-						{text}
+						{paths[pathLabel]()}
 					</span>
 				{/if}
 			</div>
@@ -144,8 +136,7 @@
 		&.active {
 			transform: translateY(-50%);
 			transition-property: transform;
-			transition-timing-function: ease-in-out,
-				cubic-bezier(0.64, 0.57, 0.67, 1.53);
+			transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
 			transition-delay: 0.3s;
 			transition-duration: 0.2s;
 

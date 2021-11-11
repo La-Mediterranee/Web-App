@@ -46,8 +46,16 @@
 
 <script>
 	import Providers from './_layoutProviders.svelte';
+	import metatags from '$lib/stores/metatags';
 	export let lang: Locales;
 </script>
+
+<svelte:window
+	on:sveltekit:navigation-start={() => {
+		console.log('Navigation started!');
+		metatags.reset();
+	}}
+/>
 
 <svelte:head>
 	<html {lang} />

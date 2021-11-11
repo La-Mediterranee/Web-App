@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<!-- <script context="module" lang="ts">
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
 
@@ -110,3 +110,7 @@
 		line-height: 1.3;
 	}
 </style>
+
+ -->
+
+<!-- empty file. This file never get's accessed, since '__layout.svelte' will make a redirect to a subpath -->

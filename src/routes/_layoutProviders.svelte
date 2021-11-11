@@ -1,10 +1,27 @@
 <script context="module" lang="ts">
+	import '../app.css';
+
 	import { dev } from '$app/env';
 	import { initializeApp, getApps, getApp } from 'firebase/app';
+
+	import { getGlobal } from '$lib/utils';
 
 	import { firebaseConfig, GA_MEASUREMENT_ID } from '$utils/constants';
 
 	import type { FirebaseApp } from 'firebase/app';
+
+	/**
+	 * To enable optional chaining for window properties
+	 * I defined window in the global scope. This shouldn't
+	 * affect any libraries that checks for window because it
+	 * still returns undefined
+	 */
+	const globals = getGlobal();
+
+	if (typeof window === 'undefined') {
+		//@ts-ignore
+		globals.window = undefined;
+	}
 
 	function loaded() {
 		console.log('gtag');
@@ -12,7 +29,6 @@
 </script>
 
 <script lang="ts">
-	import '../app.css';
 	import Auth from '$lib/firebase/Auth.svelte';
 	import Firebase from '$lib/firebase/Firebase.svelte';
 	import Stripe from '$lib/components/Stripe/Stripe.svelte';
@@ -46,13 +62,13 @@
 {/if}
 
 <Firebase {firebase}>
-	<Auth>
-		<Stripe>
-			<MaterialApp theme="custom">
-				<slot />
-			</MaterialApp>
-		</Stripe>
-	</Auth>
+	<!-- <Auth> -->
+	<Stripe>
+		<MaterialApp theme="custom">
+			<slot />
+		</MaterialApp>
+	</Stripe>
+	<!-- </Auth> -->
 </Firebase>
 
 <!-- <Firebase {firebase}>

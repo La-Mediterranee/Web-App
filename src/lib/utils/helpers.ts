@@ -2,6 +2,7 @@ import { getContext } from 'svelte';
 import { MODAL, PRODUCT_MODAL } from './constants';
 
 import type { StripeContext } from 'types/index';
+import type { Product } from 'types/product';
 
 const API = 'http://localhost:3333';
 

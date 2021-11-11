@@ -1,9 +1,10 @@
 <script lang="ts">
 	export let online = true;
+	export let message: string;
 </script>
 
 <div role="status" aria-live="polite" class:offline={online === false}>
-	<em>Sie sind derzeit offline</em>
+	<em>{message}</em>
 </div>
 
 <style>

@@ -8,15 +8,14 @@
 <script lang="ts">
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import Image from '../Image/Image.svelte';
+	import type { LoadInput } from '@sveltejs/kit';
 
 	export let routes: NavItem[] = [];
 
 	const user = getAuthContext();
-
-	$: fixed = $page.path === '/';
 </script>
 
-<header class:fixed>
+<header>
 	<div id="nav-logo">
 		<a href="/">
 			<img src="/Logos/V1_210.webp" alt="" />
@@ -69,10 +68,6 @@
 	a {
 		color: inherit;
 		text-decoration: none;
-	}
-
-	.fixed {
-		position: fixed;
 	}
 
 	// nav,

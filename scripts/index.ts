@@ -135,7 +135,7 @@ function writeAppHTML(config: { lang?: string; body?: string; headConfig: HeadOp
 
 	const html = `
 <!DOCTYPE html>
-<html lang="${lang}">
+<html dir="auto">
 ${writeHead(headConfig)}
 ${writeBody(body)}
 </html>`;

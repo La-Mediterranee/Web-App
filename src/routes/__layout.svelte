@@ -1,89 +1,58 @@
 <script context="module" lang="ts">
-	import '../app.css';
-	import { onMount } from 'svelte';
-
-	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
-	import { browser, dev } from '$app/env';
-	import { getGlobal } from '$lib/utils';
-
-	import { registerServiceWorker } from '$lib/pwa/register-sw';
+	import { baseLocale, locales } from '$i18n/i18n-util';
+	import { replaceLocaleInUrl } from '$lib/utils';
+	import { initI18n } from '$i18n/i18n-svelte';
 
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { Locales } from '$i18n/i18n-types';
 
-	export function load({ session }: LoadInput) {
+	export async function load({ page, session }: LoadInput): Promise<LoadOutput> {
+		const lang = page.params.lang as Locales;
+
+		// redirect to preferred language if user comes from page root
+		if (!lang) {
+			return {
+				status: 302,
+				redirect: `/${session.locale}`,
+			};
+		}
+
+		// if (lang !== session.locale) {
+		// 	return {
+		// 		status: 302,
+		// 		// redirect: replaceLocaleInUrl(page.path, baseLocale),
+		// 		redirect: '/',
+		// 	};
+		// }
+
+		// redirect to base locale if language is not present
+		if (!locales.includes(lang)) {
+			return {
+				status: 302,
+				redirect: replaceLocaleInUrl(page.path, baseLocale),
+			};
+		}
+
+		// load dictionary data
+		await initI18n(lang);
+
 		return {
-			lang: session.locale,
+			props: {
+				lang: session.locale,
+			},
 		};
 	}
-
-	/**
-	 * To enable optional chaining for window properties
-	 * I defined window in the global scope. This shouldn't
-	 * affect any libraries that checks for window because it
-	 * still returns undefined
-	 */
-	const globals = getGlobal();
-
-	if (typeof window === 'undefined') {
-		//@ts-ignore
-		globals.window = undefined;
-	}
 </script>
 
-<script lang="ts">
-	import Modals from './_Dialogs.svelte';
+<script>
 	import Providers from './_layoutProviders.svelte';
-
-	import LDTag from '$lib/components/LDTag';
-
-	import { metatags } from '$lib/stores/metatags';
-	import UpdatePrompt from '$lib/components/Prompts/SericeWorker/UpdatePrompt.svelte';
-
-	export let lang: string;
-	let online: boolean = true;
-
-	onMount(async () => {
-		window.dataLayer = window.dataLayer || [];
-
-		function gtag(...args: unknown[]) {
-			window.dataLayer.push(args as never);
-		}
-
-		gtag('js', new Date());
-		gtag('config', 'GA_MEASUREMENT_ID');
-
-		if (!dev) {
-			registerServiceWorker();
-		}
-	});
+	export let lang: Locales;
 </script>
-
-<svelte:window bind:online />
-<!-- <LDTag {}/>  -->
 
 <svelte:head>
 	<html {lang} />
 </svelte:head>
 
-<!-- <svelte:head>
-	{#each headLinks as { href, rel, ...rest }}
-		<link {rel} {href} {...rest} />
-	{/each}
-
-	<title>{$metatags.title}</title>
-	{#each Object.entries($metatags) as [property, content]}
-		{#if content}
-			{#if ['title', 'description', 'image', 'google-site-verification', 'referrer'].includes(property)}
-				<meta name={property} content={content?.toString()} />
-			{:else}
-				<meta {property} {content} />
-			{/if}
-		{/if}
-	{/each}
-</svelte:head> -->
-
 <Providers>
-	<Modals>
-		<slot />
-	</Modals>
+	<slot />
 </Providers>

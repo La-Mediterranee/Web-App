@@ -16,33 +16,51 @@ export type Translation = {
 	 * Sie sind derzeit Offline
 	 */
 	'connectionStatus': string
-	'desktopNavbarLinks': {	
+	'nav': {	
 		/**
-		 * Startseite
+		 * Einloggen
 		 */
-		'homepage': string
-		/**
-		 * Essen
-		 */
-		'food': string
-		/**
-		 * Getränke
-		 */
-		'drinks': string
-	}
-	'mobileNavbarLinks': {	
-		/**
-		 * Startseite
-		 */
-		'homepage': string
-		/**
-		 * Essen
-		 */
-		'food': string
-		/**
-		 * Getränke
-		 */
-		'drinks': string
+		'login': string
+		'desktop': {	
+			/**
+			 * desktop primär
+			 */
+			'arialabel': string
+			/**
+			 * Startseite
+			 */
+			'homepage': string
+			/**
+			 * Essen
+			 */
+			'food': string
+			/**
+			 * Getränke
+			 */
+			'drinks': string
+		}
+		'mobile': {	
+			/**
+			 * Startseite
+			 */
+			'homepage': string
+			/**
+			 * Essen
+			 */
+			'food': string
+			/**
+			 * Getränke
+			 */
+			'drinks': string
+			/**
+			 * Profil
+			 */
+			'profile': string
+			/**
+			 * Warenkorb
+			 */
+			'cart': string
+		}
 	}
 	'footer': {	
 		/**
@@ -62,33 +80,51 @@ export type TranslationFunctions = {
 	 * Sie sind derzeit Offline
 	 */
 	'connectionStatus': () => LocalizedString
-	'desktopNavbarLinks': {	
+	'nav': {	
 		/**
-		 * Startseite
+		 * Einloggen
 		 */
-		'homepage': () => LocalizedString
-		/**
-		 * Essen
-		 */
-		'food': () => LocalizedString
-		/**
-		 * Getränke
-		 */
-		'drinks': () => LocalizedString
-	}
-	'mobileNavbarLinks': {	
-		/**
-		 * Startseite
-		 */
-		'homepage': () => LocalizedString
-		/**
-		 * Essen
-		 */
-		'food': () => LocalizedString
-		/**
-		 * Getränke
-		 */
-		'drinks': () => LocalizedString
+		'login': () => LocalizedString
+		'desktop': {	
+			/**
+			 * desktop primär
+			 */
+			'arialabel': () => LocalizedString
+			/**
+			 * Startseite
+			 */
+			'homepage': () => LocalizedString
+			/**
+			 * Essen
+			 */
+			'food': () => LocalizedString
+			/**
+			 * Getränke
+			 */
+			'drinks': () => LocalizedString
+		}
+		'mobile': {	
+			/**
+			 * Startseite
+			 */
+			'homepage': () => LocalizedString
+			/**
+			 * Essen
+			 */
+			'food': () => LocalizedString
+			/**
+			 * Getränke
+			 */
+			'drinks': () => LocalizedString
+			/**
+			 * Profil
+			 */
+			'profile': () => LocalizedString
+			/**
+			 * Warenkorb
+			 */
+			'cart': () => LocalizedString
+		}
 	}
 	'footer': {	
 		/**

@@ -6,12 +6,14 @@ import type { NavItem } from 'types/index';
 export const desktopNavItems: NavItem[] = [
 	{
 		icon: home,
-		text: 'Startseite',
+		pathLabel: 'homepage',
+		// text: 'Startseite',
 		href: '/',
 	},
 	{
 		icon: fastfood,
-		text: 'Essen',
+		pathLabel: 'food',
+		// text: 'Essen',
 		href: '/food',
 		size: {
 			width: 27,
@@ -20,7 +22,8 @@ export const desktopNavItems: NavItem[] = [
 	},
 	{
 		icon: mdiFoodForkDrink,
-		text: 'Getränke',
+		pathLabel: 'drinks',
+		// text: 'Getränke',
 		href: '/drinks',
 	},
 ];
@@ -28,7 +31,8 @@ export const desktopNavItems: NavItem[] = [
 export const mobileNavItems: NavItem[] = [
 	{
 		icon: fastfood,
-		text: 'Essen',
+		pathLabel: 'food',
+		// text: 'Essen',
 		href: '/food',
 		size: {
 			width: 27,
@@ -37,23 +41,27 @@ export const mobileNavItems: NavItem[] = [
 	},
 	{
 		icon: person,
-		text: 'Profil',
+		pathLabel: 'drinks',
+		// text: 'Profil',
 		href: '/drinks',
 	},
 	{
 		icon: home,
-		text: 'Startseite',
+		pathLabel: 'homepage',
+		// text: 'Startseite',
 		href: '/',
 	},
 	{
 		icon: person,
-		text: 'Profil',
+		pathLabel: 'profile',
+		// text: 'Profil',
 		href: '/customer',
 		rel: ['nofollow', 'ugc'],
 	},
 	{
 		icon: cart,
-		text: 'Warenkorb',
+		pathLabel: 'cart',
+		// text: 'Warenkorb',
 		href: '/cart',
 		rel: ['nofollow', 'ugc'],
 	},

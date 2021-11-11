@@ -17,7 +17,7 @@ export type AnchorLinkTypes =
 
 export interface NavItem {
 	readonly icon: string;
-	readonly text: string;
+	readonly pathLabel: string;
 	readonly href: string;
 	readonly rel?: AnchorLinkTypes | AnchorLinkTypes[];
 	readonly size?: {

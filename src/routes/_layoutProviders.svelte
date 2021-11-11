@@ -2,6 +2,7 @@
 	import '../app.css';
 
 	import { dev } from '$app/env';
+	import { onMount } from 'svelte';
 	import { initializeApp, getApps, getApp } from 'firebase/app';
 
 	import { getGlobal } from '$lib/utils';
@@ -36,6 +37,17 @@
 	import MaterialApp from 'svelte-material-components/src/components/MaterialApp/MaterialAppMin.svelte';
 
 	const firebase: FirebaseApp = !getApps()?.length ? initializeApp(firebaseConfig) : getApp();
+
+	onMount(async () => {
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag(...args: unknown[]) {
+			window.dataLayer.push(args as never);
+		}
+
+		gtag('js', new Date());
+		gtag('config', GA_MEASUREMENT_ID);
+	});
 </script>
 
 <svelte:head>

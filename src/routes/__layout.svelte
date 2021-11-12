@@ -6,7 +6,7 @@
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	import type { Locales } from '$i18n/i18n-types';
 
-	export async function load({ page, session }: LoadInput): Promise<LoadOutput> {
+	export async function load({ page, session, stuff }: LoadInput): Promise<LoadOutput> {
 		const lang = page.params.lang as Locales;
 
 		// redirect to preferred language if user comes from page root
@@ -27,6 +27,7 @@
 
 		// redirect to base locale if language is not present
 		if (!locales.includes(lang)) {
+			stuff.lang = session.locale;
 			return {
 				status: 302,
 				redirect: replaceLocaleInUrl(page.path, baseLocale),

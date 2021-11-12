@@ -33,12 +33,7 @@ export async function handle({ request, resolve }: HandleProps) {
 	// // code here happens after the endpoint or page is called
 	// response.headers['set-cookie'] = `user=${request.locals.user || ''}; Path=/; HttpOnly`;
 
-	return Object.assign(
-		{},
-		response
-		// replace html lang attribute with correct language
-		// body: (response.body || '').toString().replace('<html lang="en">', `<html lang="${lang}">`),
-	);
+	return Object.assign({}, response);
 }
 
 interface User {

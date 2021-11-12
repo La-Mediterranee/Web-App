@@ -74,13 +74,13 @@
 {/if}
 
 <Firebase {firebase}>
-	<!-- <Auth> -->
-	<Stripe>
-		<MaterialApp theme="custom">
-			<slot />
-		</MaterialApp>
-	</Stripe>
-	<!-- </Auth> -->
+	<Auth>
+		<Stripe>
+			<MaterialApp theme="custom">
+				<slot />
+			</MaterialApp>
+		</Stripe>
+	</Auth>
 </Firebase>
 
 <!-- <Firebase {firebase}>

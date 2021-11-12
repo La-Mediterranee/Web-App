@@ -20,16 +20,6 @@ type OpenGraph = {
 	'og:image:height'?: string;
 };
 
-type Twitter = {
-	'twitter:title': string;
-	'twitter:description': string;
-	'twitter:card': string;
-	'twitter:image': string;
-	'twitter:image:alt': string;
-	'twtter:creator'?: string;
-	'twitter:site'?: string;
-};
-
 type Color = string;
 
 // in most usecases WebAppTags,MicrosoftPWA and ApplePWA are static and
@@ -97,5 +87,5 @@ type Metatags = {
 	Partial<ApplePWA> & //static
 	Partial<WebAppTags>; //static
 // & OpenGraph &
-// 	Partial<MicrosoftPWA> &
-// 	Partial<Twitter>
+// 	Partial<Twitter> &
+// 	Partial<MicrosoftPWA>

@@ -3,42 +3,35 @@ import { writable } from 'svelte/store';
 // import type { Metatags, MicrosoftPWA } from './metatag';
 
 const title = 'La-Mediterranee Shop';
+const description =
+	'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!';
+const img = 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png';
+const type = 'website';
 
-const openGraph = {
-	// Open Graph
+const openGraph: OpenGraph = {
 	'og:url': 'https://sveltesociety.dev/',
 	'og:site_name': 'La-Mediterranee',
 	'og:locale': '',
 	'og:title': title,
-	'og:description':
-		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
-	'og:type': 'website',
-	'og:image': 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
+	'og:description': description,
+	'og:type': type,
+	'og:image': img,
 	'og:image:alt': 'SvelteSociety.dev',
 };
 
-const twitter = {
-	// Twitter
-	'twitter:card': 'summary_large_image',
+const twitter: Twitter = {
+	'twitter:card': 'summary',
 	'twitter:title': title,
-	'twitter:description':
-		'We are a volunteer global network of Svelte fans that strive to promote Svelte and its ecosystem. As a service to the community, this site is a central index of events, a components directory, as well as recipes and other useful resources. Join us or help us out!',
-	'twitter:image': 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
-	'twitter:image:alt': 'SvelteSociety.dev',
+	// 'twitter:description': description,
+	// 'twitter:image': img,
+	// 'twitter:image:alt': 'SvelteSociety.dev',
 };
-
-// const microsoft: MicrosoftPWA = {
-// 	'msapplication-config': '',
-// 	'msapplication-TileColor': '',
-// 	'msapplication-TileImage': '',
-// 	'msapplication-tap-highlight': 'yes',
-// };
 
 const initialTags: Metatags = {
 	title: title,
 	description: '',
-	type: 'website',
-	image: 'https://raw.githubusercontent.com/svelte-society/sveltesociety.dev/main/src/routes/metatag.png',
+	type: type,
+	image: img,
 	alt: 'SvelteSociety.dev',
 	openGraph,
 	twitter,
@@ -52,6 +45,9 @@ function createMetatagsStore() {
 	const reset = () => set(initialTags);
 
 	return {
+		set newUrl(newUrl: string) {
+			update((curr) => ({ ...curr, 'og:url': newUrl }));
+		},
 		set newTitle(newTitle: string) {
 			update((curr) => ({
 				...curr,
@@ -83,9 +79,6 @@ function createMetatagsStore() {
 				'og:image:alt': newAlt,
 				'twitter:image:alt': newAlt,
 			}));
-		},
-		set newUrl(newUrl: string) {
-			update((curr) => ({ ...curr, 'og:url': newUrl }));
 		},
 		reset,
 		subscribe,
@@ -167,3 +160,10 @@ const e = {
 		'query-input': 'required name=search_term_string',
 	},
 };
+
+// const microsoft: MicrosoftPWA = {
+// 	'msapplication-config': '',
+// 	'msapplication-TileColor': '',
+// 	'msapplication-TileImage': '',
+// 	'msapplication-tap-highlight': 'yes',
+// };

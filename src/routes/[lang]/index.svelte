@@ -3,12 +3,10 @@
 	import { SHOP_LOGO } from '$utils/constants';
 
 	import type { HomepageProps } from './homepage.json';
-
-	import type { Product } from 'types/product';
 	import type { LoadInput } from '@sveltejs/kit';
 
-	export async function load({ session, fetch }: LoadInput) {
-		const url = `/${session.locale}/homepage.json`;
+	export async function load({ session, fetch, stuff }: LoadInput) {
+		const url = `/api/homepage`;
 		const homePageData = (await fetch(url).then((p) => p.json())) as HomepageProps;
 
 		return {
@@ -18,7 +16,7 @@
 </script>
 
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
+	import t from '$i18n/i18n-svelte';
 	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
 	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
 

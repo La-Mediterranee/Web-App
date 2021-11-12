@@ -1,6 +1,6 @@
-import type { Translation } from '../i18n-types';
+import type { BaseTranslation } from '../i18n-types';
 
-const de: Translation = {
+const de: BaseTranslation = {
 	connectionStatus: 'Sie sind derzeit Offline',
 	nav: {
 		login: 'Einloggen',

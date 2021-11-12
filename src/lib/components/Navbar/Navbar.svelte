@@ -24,7 +24,7 @@
 		</a>
 	</div>
 
-	<nav aria-label={`${$t.nav.desktop.arialabel}`}>
+	<nav aria-label={`${$t.nav.desktop.arialabel()}`}>
 		<ul>
 			{#each routes as { pathLabel, icon, href, rel } (href)}
 				<li class="nav-item">

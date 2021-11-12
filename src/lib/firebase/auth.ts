@@ -9,7 +9,7 @@ import {
 	browserPopupRedirectResolver,
 } from 'firebase/auth';
 // @ts-ignore
-import { _getProvider } from 'firebase/app';
+// import { _getProvider } from 'firebase/app';
 
 import type { FirebaseApp } from 'firebase/app';
 import type { User, Auth } from 'firebase/auth';

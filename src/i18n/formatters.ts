@@ -1,11 +1,13 @@
-import type { AsyncFormattersInitializer } from 'typesafe-i18n'
-import type { Locales, Formatters } from './i18n-types'
+import type { AsyncFormattersInitializer } from 'typesafe-i18n';
+import type { Locales, Formatters } from './i18n-types';
 
 export const initFormatters: AsyncFormattersInitializer<Locales, Formatters> = async (locale: Locales) => {
-	
-	const formatters: Formatters = {
-		// add your formatter functions here
-	}
+	const dateFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long' });
 
-	return formatters
-}
+	const formatters: Formatters = {
+		uppercase: (value: string) => value.toUpperCase(),
+		weekday: (value: number | Date) => dateFormatter.format(value),
+	};
+
+	return formatters;
+};

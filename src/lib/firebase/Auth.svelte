@@ -11,24 +11,18 @@
 	const dispatch = createEventDispatcher();
 
 	const firebaseApp = getFirebaseContext();
-	let store: ReturnType<typeof authStore>;
+	const store = authStore(firebaseApp);
+	const user = $store;
+
+	setContext('user', {
+		getAuth: () => store,
+	});
 
 	try {
-		store = authStore(firebaseApp);
-		setContext('user', {
-			getAuth: () => store,
-		});
-
 		onMount(() => {
-			unsub = store.subscribe((user) => {
-				dispatch('customer', {
-					user,
-				});
+			dispatch('customer', {
+				user,
 			});
-
-			return () => {
-				unsub();
-			};
 		});
 	} catch (error) {
 		console.error('authStore:', error);

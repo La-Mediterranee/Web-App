@@ -40,7 +40,7 @@
 		"dotenv": "^10.0.0",
 		"eslint": "^8.2.0",
 		"eslint-plugin-svelte3": "^3.2.1",
-		"firebase": "^9.4.0",
+		"firebase": "^9.4.1",
 		"firebase-admin": "^10.0.0",
 		"idb": "^6.1.5",
 		"jest": "^27.3.1",

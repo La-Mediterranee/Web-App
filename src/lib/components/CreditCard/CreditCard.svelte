@@ -69,7 +69,7 @@
 	{brand} **** **** **** {last4} expires {exp_month}/{exp_year}
 </option> -->
 <style lang="scss">
-	@use "variables.scss" as *;
+	@use "variables" as *;
 
 	div {
 		display: block;
@@ -79,7 +79,7 @@
 		margin-bottom: 0.3em;
 	}
 
-	@media (min-width: $sm) {
+	@media (min-width: map-get($map: $breakpoints, $key: sm)) {
 		div {
 			display: flex;
 			flex: 1 0 50%;

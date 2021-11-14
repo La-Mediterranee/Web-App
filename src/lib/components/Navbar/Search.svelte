@@ -14,7 +14,7 @@
 </form>
 
 <style lang="scss">
-	@use "./variables.scss" as *;
+	@use "variables" as *;
 
 	form {
 		display: flex;
@@ -34,7 +34,7 @@
 			align-items: center;
 		}
 
-		@media screen and (min-width: $md) {
+		@media screen and (min-width: map-get($map: $breakpoints, $key: md)) {
 			width: 20%;
 		}
 	}

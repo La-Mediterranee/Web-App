@@ -1,9 +1,5 @@
 <footer>
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 1440 500"
-		fill="url(#MyGradient)"
-	>
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 500" fill="url(#MyGradient)">
 		<defs>
 			<linearGradient id="MyGradient">
 				<stop offset="0" stop-color="var(--top1)" />
@@ -48,7 +44,7 @@
 </footer>
 
 <style lang="scss">
-	@use "./variables.scss" as *;
+	@use "variables" as *;
 
 	footer {
 		position: relative;
@@ -91,7 +87,7 @@
 		// 	margin-bottom: clamp(0px, 1%, 20px);
 		// }
 
-		@media screen and (min-width: $sm) {
+		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {
 			display: flex;
 			justify-content: space-around;
 		}

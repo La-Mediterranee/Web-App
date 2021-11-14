@@ -237,4 +237,5 @@
 	</button>
 </section>
 
-<style lang="scss" src="./Login.scss"></style>
+<style lang="scss" src="./Login.scss">
+</style>

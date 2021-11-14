@@ -2,22 +2,30 @@ import type { BaseTranslation } from '../i18n-types';
 
 const de: BaseTranslation = {
 	connectionStatus: 'Sie sind derzeit Offline',
+	login: 'Einloggen',
+	signUp: 'Registrieren',
 	nav: {
-		login: 'Einloggen',
 		desktop: {
 			arialabel: 'desktop primär',
-			homepage: 'Startseite',
-			food: 'Essen',
-			drinks: 'Getränke',
+			routes: {
+				homepage: 'Startseite',
+				food: 'Essen',
+				drinks: 'Getränke',
+			},
 		},
 		mobile: {
-			homepage: 'Startseite',
-			food: 'Essen',
-			drinks: 'Getränke',
-			profile: 'Profil',
-			cart: 'Warenkorb',
+			arialabel: 'mobil primär',
+			routes: {
+				homepage: 'Startseite',
+				food: 'Essen',
+				drinks: 'Getränke',
+				profile: 'Profil',
+				cart: 'Warenkorb',
+			},
 		},
 	},
+	productQuantity: 'Menge',
+	addToCart: '',
 	footer: {
 		about: 'Über {shopname}',
 		deliverytimes: 'Lieferzeiten',

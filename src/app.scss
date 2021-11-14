@@ -50,11 +50,25 @@
 	}
 }  */
 
+$mediaqueries: (
+	mobile-only: 'only screen and (max-width: 767px)',
+	mobile-and-tablet: 'only screen and (max-width: 1190px)',
+	tablet-only: 'only screen and (min-width: 768px) and (max-width: 1190px)',
+	tablet-and-desktop: 'only screen and (min-width: 768px)',
+	desktop-only: 'only screen and (min-width: 1191px)',
+	desktop-wide-only: 'only screen and (min-width: 1501px)',
+) !default;
+
 :root {
 	/* --body-bg1: #4994f5e5;
 	--body-bg2: #1d68ca; */
 	/* --top1: #4050e0e5;
 	--top2: #062ba5; */
+	--mq-keys: #{join(map-keys($mediaqueries), '|')};
+	@each $key, $mediaquery in $mediaqueries {
+		--mq-#{$key}: #{$mediaquery};
+	}
+
 	font-size: 16px;
 	font-style: normal;
 	font-family: 'Fira Sans', sans-serif;

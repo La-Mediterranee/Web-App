@@ -11,7 +11,7 @@
 	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
 
 	import { cart } from '$lib/stores/cart';
-	import { getStripeContext } from '$lib/utils/helpers';
+	import { getStripeContext } from '$lib/utils/helper';
 
 	import CartSummary from './CartSummary.svelte';
 	import Details from './checkout-sections/Details.svelte';
@@ -120,7 +120,7 @@
 </div>
 
 <style lang="scss" global>
-	@use "variables" as *;
+	@use 'variables' as *;
 	// @use "mixins" as *;
 
 	#checkout {
@@ -143,7 +143,7 @@
 		// @include respond-to(md) {
 		// }
 
-		@media screen and (min-width: map-get($map: $breakpoints, $key: md) + 100px) {
+		@media screen and (min-width: (map-get($map: $breakpoints, $key: md) + 100px)) {
 			padding: 3em;
 			display: flex;
 			flex-direction: row-reverse;

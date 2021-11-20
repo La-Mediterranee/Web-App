@@ -8,7 +8,7 @@
 	export let right = 0;
 
 	let intersecting = false;
-	let container: HTMLDivElement;
+	let container: HTMLSpanElement;
 
 	onMount(async () => {
 		const rootMargin = `${bottom}px ${left}px ${top}px ${right}px`;

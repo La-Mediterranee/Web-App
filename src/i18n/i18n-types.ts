@@ -16,56 +16,73 @@ export type Translation = {
 	 * Sie sind derzeit Offline
 	 */
 	'connectionStatus': string
+	/**
+	 * Einloggen
+	 */
+	'login': string
+	/**
+	 * Registrieren
+	 */
+	'signUp': string
 	'nav': {	
-		/**
-		 * Einloggen
-		 */
-		'login': string
 		'desktop': {	
 			/**
 			 * desktop primär
 			 */
 			'arialabel': string
-			/**
-			 * Startseite
-			 */
-			'homepage': string
-			/**
-			 * Essen
-			 */
-			'food': string
-			/**
-			 * Getränke
-			 */
-			'drinks': string
+			'routes': {	
+				/**
+				 * Startseite
+				 */
+				'homepage': string
+				/**
+				 * Essen
+				 */
+				'food': string
+				/**
+				 * Getränke
+				 */
+				'drinks': string
+			}
 		}
 		'mobile': {	
 			/**
-			 * Startseite
+			 * mobil primär
 			 */
-			'homepage': string
-			/**
-			 * Essen
-			 */
-			'food': string
-			/**
-			 * Getränke
-			 */
-			'drinks': string
-			/**
-			 * Profil
-			 */
-			'profile': string
-			/**
-			 * Warenkorb
-			 */
-			'cart': string
+			'arialabel': string
+			'routes': {	
+				/**
+				 * Startseite
+				 */
+				'homepage': string
+				/**
+				 * Essen
+				 */
+				'food': string
+				/**
+				 * Getränke
+				 */
+				'drinks': string
+				/**
+				 * Profil
+				 */
+				'profile': string
+				/**
+				 * Warenkorb
+				 */
+				'cart': string
+			}
 		}
 	}
+	/**
+	 * Menge
+	 */
+	'productQuantity': string
+	'addToCart': string
 	'footer': {	
 		/**
 		 * Über {shopname}
-		 * @param {unknown} shopname
+		 * @param {string} shopname
 		 */
 		'about': RequiredParams1<'shopname'>
 		/**
@@ -80,57 +97,74 @@ export type TranslationFunctions = {
 	 * Sie sind derzeit Offline
 	 */
 	'connectionStatus': () => LocalizedString
+	/**
+	 * Einloggen
+	 */
+	'login': () => LocalizedString
+	/**
+	 * Registrieren
+	 */
+	'signUp': () => LocalizedString
 	'nav': {	
-		/**
-		 * Einloggen
-		 */
-		'login': () => LocalizedString
 		'desktop': {	
 			/**
 			 * desktop primär
 			 */
 			'arialabel': () => LocalizedString
-			/**
-			 * Startseite
-			 */
-			'homepage': () => LocalizedString
-			/**
-			 * Essen
-			 */
-			'food': () => LocalizedString
-			/**
-			 * Getränke
-			 */
-			'drinks': () => LocalizedString
+			'routes': {	
+				/**
+				 * Startseite
+				 */
+				'homepage': () => LocalizedString
+				/**
+				 * Essen
+				 */
+				'food': () => LocalizedString
+				/**
+				 * Getränke
+				 */
+				'drinks': () => LocalizedString
+			}
 		}
 		'mobile': {	
 			/**
-			 * Startseite
+			 * mobil primär
 			 */
-			'homepage': () => LocalizedString
-			/**
-			 * Essen
-			 */
-			'food': () => LocalizedString
-			/**
-			 * Getränke
-			 */
-			'drinks': () => LocalizedString
-			/**
-			 * Profil
-			 */
-			'profile': () => LocalizedString
-			/**
-			 * Warenkorb
-			 */
-			'cart': () => LocalizedString
+			'arialabel': () => LocalizedString
+			'routes': {	
+				/**
+				 * Startseite
+				 */
+				'homepage': () => LocalizedString
+				/**
+				 * Essen
+				 */
+				'food': () => LocalizedString
+				/**
+				 * Getränke
+				 */
+				'drinks': () => LocalizedString
+				/**
+				 * Profil
+				 */
+				'profile': () => LocalizedString
+				/**
+				 * Warenkorb
+				 */
+				'cart': () => LocalizedString
+			}
 		}
 	}
+	/**
+	 * Menge
+	 */
+	'productQuantity': () => LocalizedString
+	'addToCart': () => LocalizedString
 	'footer': {	
 		/**
 		 * Über {shopname}
 		 */
-		'about': (arg: { shopname: unknown }) => LocalizedString
+		'about': (arg: { shopname: string }) => LocalizedString
 		/**
 		 * Lieferzeiten
 		 */

@@ -2,7 +2,7 @@
 	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 
 	import TextField from 'svelte-material-components/src/components/TextField';
-	import type { CustomerInfo } from '../Checkout.svelte';
+	import type { CustomerInfo } from 'types/customer';
 
 	export let value: number[];
 	export let currentValue = 0;

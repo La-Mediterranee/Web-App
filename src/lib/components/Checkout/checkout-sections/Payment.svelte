@@ -219,7 +219,7 @@
 </form>
 
 <style lang="scss">
-	@use "variables" as *;
+	@use 'variables' as *;
 
 	form,
 	div {
@@ -420,7 +420,7 @@
 		}
 	}
 
-	@media (min-width: map-get($map: $breakpoints, $key: md) + 100px) {
+	@media (min-width: (map-get($map: $breakpoints, $key: md) + 100px)) {
 		#card-element {
 			div {
 				display: flex;

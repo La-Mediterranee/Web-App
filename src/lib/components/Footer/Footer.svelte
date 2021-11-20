@@ -1,3 +1,5 @@
+<script></script>
+
 <footer>
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 500" fill="url(#MyGradient)">
 		<defs>
@@ -44,7 +46,7 @@
 </footer>
 
 <style lang="scss">
-	@use "variables" as *;
+	@use 'variables' as *;
 
 	footer {
 		position: relative;

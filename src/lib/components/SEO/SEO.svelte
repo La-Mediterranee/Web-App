@@ -3,11 +3,29 @@
 	import defaultOgImage from '$lib/assets/home/home-open-graph.jpg';
 	import defaultOgSquareImage from '$lib/assets/home/home-open-graph-square.jpg';
 	import defaultTwitterImage from '$lib/assets/home/home-twitter.jpg';
-	import website from '$lib/config/website';
-	import { VERTICAL_LINE_ENTITY } from '$lib/constants/entities';
+	// import website from '$lib/config/website';
 	import OpenGraph from './OpenGraph.svelte';
 	import SchemaOrg from './SchemaOrg.svelte';
 	import Twitter from './Twitter.svelte';
+
+	const website = {
+		author: '',
+		entity: '',
+		facebookAuthorPage: '',
+		facebookPage: '',
+		ogLanguage: '',
+		siteLanguage: '',
+		siteShortTitle: '',
+		siteTitle: '',
+		siteUrl: '',
+		githubPage: '',
+		linkedinProfile: '',
+		telegramUsername: '',
+		tiktokUsername: '',
+		twitterUsername: '',
+	};
+
+	const VERTICAL_LINE_ENTITY = '\u007c';
 	const {
 		author,
 		entity,
@@ -25,11 +43,11 @@
 		twitterUsername,
 	} = website;
 	export let article = false;
-	export let breadcrumbs = [];
+	export let breadcrumbs: string[] = [];
 	export let entityMeta = null;
-	export let lastUpdated;
-	export let datePublished;
-	export let metadescription;
+	export let lastUpdated: string;
+	export let datePublished: string;
+	export let metadescription: string;
 	export let slug;
 	export let timeToRead = 0;
 	export let title;
@@ -68,9 +86,7 @@
 		pageTitle,
 		siteTitle,
 		url,
-		...(article
-			? { datePublished, lastUpdated, facebookPage, facebookAuthorPage }
-			: {}),
+		...(article ? { datePublished, lastUpdated, facebookPage, facebookAuthorPage } : {}),
 	};
 	const schemaOrgProps = {
 		article,

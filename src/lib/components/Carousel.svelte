@@ -68,13 +68,10 @@
 
 	function update() {
 		let { offsetWidth, offsetHeight } = sliderWrapper;
-		availableSpace =
-			oriantation === 'vertical' ? offsetHeight : offsetWidth;
+		availableSpace = oriantation === 'vertical' ? offsetHeight : offsetWidth;
 
 		[...sliderElements].forEach((element, i) => {
-			element.style.transform = generateTranslateValue(
-				availableSpace * i
-			);
+			element.style.transform = generateTranslateValue(availableSpace * i);
 		});
 
 		availableDistance = 0;
@@ -107,16 +104,14 @@
 			});
 		}
 	}
-	function normalizeEventBehavior(e: Event) {
-		e && e.preventDefault();
-		e && e.stopImmediatePropagation();
-		e && e.stopPropagation();
+	function normalizeEventBehavior(e?: Event) {
+		e?.preventDefault();
+		e?.stopImmediatePropagation();
+		e?.stopPropagation();
 	}
 
 	function generateTranslateValue(value: number) {
-		return oriantation === 'vertical'
-			? `translate3d(0, ${value}px, 0)`
-			: `translate3d(${value}px, 0, 0)`;
+		return oriantation === 'vertical' ? `translate3d(0, ${value}px, 0)` : `translate3d(${value}px, 0, 0)`;
 	}
 
 	function generateTouchPosCss(value: number, touch_end = false) {
@@ -129,17 +124,19 @@
 		return _css;
 	}
 
-	function onMove(e) {
+	function onMove(e: MouseEvent | TouchEvent) {
 		if (touch_active) {
 			normalizeEventBehavior(e);
-			let _axis = e.touches ? e.touches[0][page_axis] : e[page_axis],
+			let _axis: number = (e as TouchEvent).touches
+					? //@ts-ignore
+					  (e as TouchEvent).touches[0][page_axis]
+					: //@ts-ignore
+					  (e as MouseEvent)[page_axis],
 				distance = axis - _axis + pos_axis;
 
 			if (distance <= availableWidth && distance >= 0) {
 				[...sliderElements].forEach((element, i) => {
-					element.style.cssText = generateTouchPosCss(
-						availableSpace * i - distance
-					);
+					element.style.cssText = generateTouchPosCss(availableSpace * i - distance);
 				});
 				availableDistance = distance;
 				last_axis_pos = _axis;
@@ -148,7 +145,11 @@
 	}
 
 	function onTouchStart(e: TouchEvent) {
-		axis = e.touches ? e.touches[0][page_axis] : e[page_axis];
+		axis = e.touches
+			? //@ts-ignore
+			  e.touches[0][page_axis]
+			: //@ts-ignore
+			  (e as MouseEvent)[page_axis];
 		onMoveStart(e);
 	}
 
@@ -167,8 +168,7 @@
 		let direction = axis < last_axis_pos;
 		touch_active = false;
 		let _as = availableSpace;
-		let accidental_touch =
-			Math.round(availableSpace / 50) > Math.abs(axis - last_axis_pos);
+		let accidental_touch = Math.round(availableSpace / 50) > Math.abs(axis - last_axis_pos);
 
 		if (longTouch || accidental_touch) {
 			availableDistance = Math.round(availableDistance / _as) * _as;
@@ -178,16 +178,13 @@
 				: Math.ceil(availableDistance / _as) * _as;
 		}
 
-		axis = null;
-		last_axis_pos = null;
+		axis = 0;
+		last_axis_pos = 0;
 		pos_axis = availableDistance;
 		activeIndicator = availableDistance / _as;
 
 		[...sliderElements].forEach((element, i) => {
-			element.style.cssText = generateTouchPosCss(
-				_as * i - pos_axis,
-				true
-			);
+			element.style.cssText = generateTouchPosCss(_as * i - pos_axis, true);
 		});
 
 		activeItem = activeIndicator;
@@ -229,12 +226,7 @@
 			<slot />
 		</div>
 	</div>
-	<div
-		class="swipe-handler"
-		bind:this={sliderHandler}
-		on:touchstart={onTouchStart}
-		on:mousedown={onMoveStart}
-	/>
+	<div class="swipe-handler" bind:this={sliderHandler} on:touchstart={onTouchStart} on:mousedown={onMoveStart} />
 	{#if showIndicators}
 		<div class="swipe-indicator swipe-indicator-inside">
 			{#each indicators as x, i}

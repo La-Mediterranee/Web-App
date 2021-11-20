@@ -3,6 +3,7 @@
 	import { getAuthContext } from '$lib/firebase/helpers';
 
 	import type { NavItem } from 'types/index';
+	import type { LocalizedString } from 'typesafe-i18n';
 </script>
 
 <script lang="ts">
@@ -12,7 +13,7 @@
 
 	export let routes: NavItem[] = [];
 
-	$: paths = $t.nav.desktop as any;
+	$: paths = $t.nav.desktop.routes as Record<string, () => LocalizedString>;
 
 	const user = getAuthContext();
 </script>
@@ -58,14 +59,14 @@
 				height={50}
 			/>
 		{:else}
-			<a href="/customer/login">{$t.nav.login()}</a>
+			<a href="/customer/login">{$t.login()}</a>
 		{/if}
 	</div>
 </header>
 
 <style lang="scss">
 	// box-shadow: 0 2px 20px 0 var(--subtle);
-	@use "./variables.scss" as *;
+	@use "variables" as *;
 
 	a {
 		color: inherit;
@@ -88,7 +89,7 @@
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
 
-		@media screen and (min-width: $sm) {
+		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {
 			padding: 0.3em 0.5em;
 		}
 	}
@@ -113,7 +114,7 @@
 		width: 88%;
 		justify-content: flex-end;
 
-		@media (min-width: $md) {
+		@media (min-width: map-get($map: $breakpoints, $key: md)) {
 			justify-content: center;
 		}
 	}
@@ -126,7 +127,7 @@
 		justify-content: flex-start;
 		align-items: center;
 
-		@media screen and (min-width: $md) {
+		@media screen and (min-width: map-get($map: $breakpoints, $key: md)) {
 			display: flex;
 		}
 	}

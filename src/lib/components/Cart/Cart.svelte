@@ -12,8 +12,10 @@
 		[
 			'1312',
 			{
+				ID: '1312',
 				name: 'Burger',
 				categories: ['burger'],
+				description: '',
 				image: {
 					src: '/burger.webp',
 				},
@@ -24,8 +26,10 @@
 		[
 			'1322',
 			{
+				ID: '1322',
 				name: 'Burger',
 				categories: ['burger'],
+				description: '',
 				image: {
 					src: '/burger.webp',
 				},

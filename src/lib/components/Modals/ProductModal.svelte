@@ -4,16 +4,16 @@
 	import { createEventDispatcher } from 'svelte';
 	import { mdiClose } from '@mdi/js';
 
-	import type { Product } from 'types/product';
+	import type { Product, Variations } from 'types/product';
 
 	const AmountLabel = 'Menge';
 
-	function addToCart(e: Event, variations: DeepReadonly<{ toppings?: string[] | undefined }>) {
+	function addToCart(e: Event, variations?: Variations) {
 		const ev = e as SubmitEvent;
 		const form = ev.target as HTMLFormElement;
 		const formData = new FormData(form);
 
-		const selects = variations.toppings?.map((topping) => {
+		const selects = variations?.toppings?.map(topping => {
 			return { [topping]: formData.get(topping) };
 		});
 
@@ -48,7 +48,7 @@
 	}
 </script>
 
-<form id="product-modal" action="/add-to-cart" on:submit|preventDefault={(e) => addToCart(e, variations)}>
+<form id="product-modal" action="/add-to-cart" on:submit|preventDefault={e => addToCart(e, variations)}>
 	<Button
 		fab
 		depressed
@@ -71,7 +71,7 @@
 	</header>
 
 	<div class="toppings">
-		{#each variations.toppings || [] as topping}
+		{#each variations?.toppings || [] as topping}
 			<fieldset class="topping">
 				<legend>{topping}</legend>
 

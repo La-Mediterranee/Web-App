@@ -5,7 +5,7 @@
 
 	import { trash } from '$lib/Icons/filled';
 
-	import type { CartItem } from 'types/interfaces';
+	import type { CartItem } from 'types/product';
 
 	export let item: CartItem;
 

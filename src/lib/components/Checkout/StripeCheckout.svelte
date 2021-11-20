@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 
-	import { fetchFromAPI } from '$utils/helpers';
+	import { fetchFromAPI } from '$lib/utils/helper';
 
 	import { loadStripe, Stripe } from '@stripe/stripe-js';
 	import { onMount } from 'svelte';
@@ -21,7 +21,7 @@
 		images: [''],
 		amount: 0,
 		currency: 'eur',
-		quantity: 0
+		quantity: 0,
 	};
 
 	let stripe: Stripe | null = null;
@@ -37,7 +37,7 @@
 	async function handleClick(event: Event) {
 		const body = { line_items: [product] };
 		const { id: sessionId } = await fetchFromAPI('checkout', {
-			body
+			body,
 		});
 
 		if (!stripe) {
@@ -45,7 +45,7 @@
 		}
 
 		const { error } = await stripe.redirectToCheckout({
-			sessionId
+			sessionId,
 		});
 
 		if (error) {

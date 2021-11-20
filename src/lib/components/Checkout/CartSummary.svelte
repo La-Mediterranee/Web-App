@@ -4,7 +4,7 @@
 	import CartItem from '../Cart/CartItem.svelte';
 	import Image from '../Image/Image.svelte';
 
-	import type { SKU, CartItem as ICartItem } from 'types/interfaces';
+	import type { SKU, CartItem as ICartItem } from 'types/product';
 	import type { Cart } from '$lib/stores/cart';
 
 	export let cart: Cart;

@@ -1,1 +1,1 @@
-export { default as LocaleSwitcher } from './LocaleSwitcher.sveltete';
+export { default as LocaleSwitcher } from './LocaleSwitcher.svelte';

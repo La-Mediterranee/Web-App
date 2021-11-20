@@ -27,7 +27,7 @@ const de: BaseTranslation = {
 	productQuantity: 'Menge',
 	addToCart: '',
 	footer: {
-		about: 'Über {shopname}',
+		about: 'Über {shopname: string}',
 		deliverytimes: 'Lieferzeiten',
 	},
 };

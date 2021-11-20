@@ -1,10 +1,10 @@
-<svelte:options immutable />
+<svelte:options immutable tag="product-component" />
 
 <script context="module" lang="ts">
 	import { browser } from '$app/env';
 	import { afterUpdate } from 'svelte';
 
-	import { getProductModalContext } from '$lib/utils/helpers';
+	import { getProductModalContext } from '$lib/utils/helper';
 
 	import star from '$lib/Icons/outline/star';
 	import flash from '$lib/utils/flash';

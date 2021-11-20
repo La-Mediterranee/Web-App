@@ -15,8 +15,6 @@ function browserDetector() {
 				return 'firefox';
 			case agent.indexOf('safari') > -1:
 				return 'safari';
-			case agent.indexOf('safari') > -1:
-				return 'safari';
 			default:
 				return 'other';
 		}
@@ -46,10 +44,7 @@ function browserDetector() {
  * @return user agent string
  */
 export function getUA(): string {
-	if (
-		typeof navigator !== 'undefined' &&
-		typeof navigator['userAgent'] === 'string'
-	) {
+	if (typeof navigator !== 'undefined' && typeof navigator['userAgent'] === 'string') {
 		return navigator['userAgent'];
 	} else {
 		return '';
@@ -131,17 +126,14 @@ export function _getBrowserName(userAgent: string): BrowserName | string {
 		return BrowserName.WEBOS;
 	} else if (_isSafari(ua)) {
 		return BrowserName.SAFARI;
-	} else if (
-		(ua.includes('chrome/') || _isChromeIOS(ua)) &&
-		!ua.includes('edge/')
-	) {
+	} else if ((ua.includes('chrome/') || _isChromeIOS(ua)) && !ua.includes('edge/')) {
 		return BrowserName.CHROME;
 	} else if (_isAndroid(ua)) {
 		// Android stock browser.
 		return BrowserName.ANDROID;
 	} else {
 		// Most modern browsers have name/version at end of user agent string.
-		const re = /([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/;
+		const re = /([a-zA-Z\d.]+)\/[a-zA-Z\d.]*$/;
 		const matches = userAgent.match(re);
 		if (matches?.length === 2) {
 			return matches[1];
@@ -156,12 +148,7 @@ export function _isFirefox(ua = getUA()): boolean {
 
 export function _isSafari(userAgent = getUA()): boolean {
 	const ua = userAgent.toLowerCase();
-	return (
-		ua.includes('safari/') &&
-		!ua.includes('chrome/') &&
-		!ua.includes('crios/') &&
-		!ua.includes('android')
-	);
+	return ua.includes('safari/') && !ua.includes('chrome/') && !ua.includes('crios/') && !ua.includes('android');
 }
 
 export function _isChromeIOS(ua = getUA()): boolean {
@@ -189,16 +176,11 @@ export function _isIOS(ua = getUA()): boolean {
 }
 
 export function _isIOS7Or8(ua = getUA()): boolean {
-	return (
-		/(iPad|iPhone|iPod).*OS 7_\d/i.test(ua) ||
-		/(iPad|iPhone|iPod).*OS 8_\d/i.test(ua)
-	);
+	return /(iPad|iPhone|iPod).*OS 7_\d/i.test(ua) || /(iPad|iPhone|iPod).*OS 8_\d/i.test(ua);
 }
 
 export function _isIOSStandalone(ua = getUA()): boolean {
-	return (
-		_isIOS(ua) && !!(window.navigator as NavigatorStandalone)?.standalone
-	);
+	return _isIOS(ua) && !!(window.navigator as NavigatorStandalone)?.standalone;
 }
 
 export function _isIE10(): boolean {

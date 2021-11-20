@@ -74,7 +74,7 @@ type AppleStartupImage = {
 };
 
 type LinkTags = {
-	favicon?: Favicon<'shortcut'>;
+	'favicon'?: Favicon<'shortcut'>;
 	'favicon:alt'?: AlternativeFavicon[];
 } & Partial<AppleImages> &
 	Partial<MicrosoftLinks> &
@@ -118,6 +118,23 @@ type MicroFormat = {
 	home: string;
 };
 
+type IpadScreeenResolutions = {
+	'1536x2048': 2;
+	'1668x2224': 2;
+	'1620x2160': 2;
+	'1668x2388': 2;
+	'2048x2732': 2;
+};
+
+type IphoneScreeenResolutions = {
+	'750x1334': 2;
+	'828x1792': 2;
+	'1080x1920': 3;
+	'1125x2436': 3;
+	'1170x2532': 3;
+	'1284x2778': 3;
+};
+
 const ipadResolutions: IpadScreeenResolutions = {
 	'1536x2048': 2,
 	'1620x2160': 2,
@@ -138,7 +155,7 @@ const iphoneResolutions: IphoneScreeenResolutions = {
 const combined = Object.assign({}, iphoneResolutions, ipadResolutions);
 
 const initialTags: LinkTags = {
-	favicon: {
+	'favicon': {
 		href: '',
 		rel: 'shortcut icon',
 		sizes: '192x192',
@@ -185,38 +202,38 @@ function createLinkTagsStore() {
 	const { subscribe, set, update } = writable(initialTags);
 
 	const canonical = (title: string) =>
-		update((curr) => ({
+		update(curr => ({
 			...curr,
-			title: title,
+			'title': title,
 			'og:title': title,
 			'twitter:title': title,
 		}));
 
 	const desc = (desc: string) =>
-		update((curr) => ({
+		update(curr => ({
 			...curr,
-			description: desc,
+			'description': desc,
 			'og:description': desc,
 			'twitter:description': desc,
 		}));
 
 	const image = (image: string) =>
-		update((curr) => ({
+		update(curr => ({
 			...curr,
-			image: image,
+			'image': image,
 			'og:image': image,
 			'twitter:image': image,
 		}));
 
 	const alt = (alt: string) =>
-		update((curr) => ({
+		update(curr => ({
 			...curr,
-			alt: alt,
+			'alt': alt,
 			'og:image:alt': alt,
 			'twitter:image:alt': alt,
 		}));
 
-	const url = (url: string) => update((curr) => ({ ...curr, 'og:url': url }));
+	const url = (url: string) => update(curr => ({ ...curr, 'og:url': url }));
 
 	const reset = () => set(initialTags);
 

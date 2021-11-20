@@ -11,5 +11,5 @@ service-account.json
 wrangler.toml
 static/pwa/
 static/apple/
-index.html
+m.html
 inlang.*

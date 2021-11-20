@@ -1,3 +1,4 @@
+/** @type {import("eslint").ESLint} */
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
@@ -16,5 +17,8 @@ module.exports = {
 		browser: true,
 		es2017: true,
 		node: true,
+	},
+	rules: {
+		'no-unused-vars': 'warn',
 	},
 };

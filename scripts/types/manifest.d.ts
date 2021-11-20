@@ -263,16 +263,31 @@ type VendorExtensions = {
 };
 
 type WebApplicationManifest = {
+	/**
+	 * The manifest's id member is a string that represents the identity for the application.
+	 * The identity takes the form of a URL, which is same origin as the start URL.
+	 *
+	 * The identity is used by user agents to uniquely identify the application universally.
+	 * When the user agent sees a manifest with an identity that does not correspond to an already-installed application,
+	 * it SHOULD treat that manifest as a description of a distinct application,
+	 * even if it is served from the same URL as that of another application.
+	 * When the user agent sees a manifest where manifest["id"] equals the identity of an already-installed application,
+	 * it SHOULD be used as a signal that this manifest is a replacement for the already-installed application's manifest,
+	 * and not a distinct application, even if it is served from a different URL than the one seen previously.
+	 *
+	 * {@link More Info | https://www.w3.org/TR/appmanifest/#id-member}
+	 */
+	id?: string;
 	name: string;
 	short_name: string;
 	/**
 	 * @defaultValue `"browser"`
 	 */
-	display: DisplayMode;
+	display?: DisplayMode;
 	/**
 	 * @defaultValue `"auto"`
 	 */
-	dir: 'rtl' | 'ltr' | 'auto';
+	dir?: 'rtl' | 'ltr' | 'auto';
 	/**
 	 * @description
 	 * It repeats what is already available in the application stylesheet but can be used
@@ -286,7 +301,7 @@ type WebApplicationManifest = {
 	 *
 	 * Implementors MAY override the value defined by the `background_color` member to support `prefers-color-scheme`.
 	 */
-	background_color: string;
+	background_color?: string;
 	/**
 	 * @description
 	 * Serves as the default theme color for an application context.
@@ -297,7 +312,7 @@ type WebApplicationManifest = {
 	 * However, a document may override the default theme color through the inclusion of a valid [HTML]
 	 * meta element whose name attribute value is `theme-color`.
 	 */
-	theme_color: string;
+	theme_color?: string;
 	/**
 	 * @example
 	 * ```txt
@@ -315,7 +330,7 @@ type WebApplicationManifest = {
 	 * The "default scope" (when scope member is missing, empty, or failure)
 	 * is the start URL, but with its filename, query, and fragment removed.
 	 */
-	scope: string;
+	scope?: string;
 	icons: ImageResource[];
 
 	/**
@@ -328,7 +343,7 @@ type WebApplicationManifest = {
 	 * @example
 	 * en-GB
 	 */
-	lang: string;
+	lang?: string;
 	orientation?: OrientationLockType;
 	/**
 	 *

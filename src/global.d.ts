@@ -14,12 +14,6 @@ declare var chrome: string;
 
 declare var dataLayer = [];
 
-declare module experimental {
-	interface Navigator {
-		static setAppBadge(contents?: number): Promise<void>;
-	}
-}
-
 // var Stripe: Stripe;
 /**
  * The BeforeInstallPromptEvent is fired at the Window.onbeforeinstallprompt handler

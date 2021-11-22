@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import '../app.css';
+	// import '../app.scss';
 
 	import { dev } from '$app/env';
 	import { onMount } from 'svelte';
@@ -88,3 +88,6 @@
 		<slot />
 	</Stripe>
 </Firebase> -->
+<style global>
+	@import '../app.scss';
+</style>

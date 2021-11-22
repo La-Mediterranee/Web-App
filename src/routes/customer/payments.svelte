@@ -2,7 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { loadStripe } from '@stripe/stripe-js';
 
-	import { fetchFromAPI } from '$utils/helpers';
+	import { fetchFromAPI } from '$lib/utils/helper';
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 	import CreditCard from '$components/CreditCard';
 
@@ -42,12 +42,9 @@
 	async function handleSubmit(_e: Event) {
 		// Confirm Card Setup
 
-		const { setupIntent: updatedSetupIntent, error } = await stripe.confirmCardSetup(
-			setupIntent.client_secret,
-			{
-				payment_method: { card: cardElement }
-			}
-		);
+		const { setupIntent: updatedSetupIntent, error } = await stripe.confirmCardSetup(setupIntent.client_secret, {
+			payment_method: { card: cardElement },
+		});
 
 		if (error) {
 			alert(error.message);
@@ -80,9 +77,7 @@
 	{/each}
 
 	<div>
-		<button on:click={createSetupIntent} hidden={hasSetupIntent}>
-			Zahlungsmethode hinzufügen
-		</button>
+		<button on:click={createSetupIntent} hidden={hasSetupIntent}> Zahlungsmethode hinzufügen </button>
 	</div>
 
 	<hr />

@@ -17,8 +17,10 @@ module.exports = {
 		browser: true,
 		es2017: true,
 		node: true,
+		serviceworker: true,
 	},
 	rules: {
 		'no-unused-vars': 'warn',
+		'no-mixed-spaces-and-tabs': 0, // disable rule
 	},
 };

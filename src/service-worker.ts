@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 'use strict';
 declare var self: ServiceWorkerGlobalScope;
 
@@ -69,7 +70,7 @@ async function init(paths: StoragePaths, caching: { images: Object; offline: Obj
 	try {
 		actionvationHandler();
 
-		self.addEventListener('message', (event) => {
+		self.addEventListener('message', event => {
 			if (event.data && event.data.type === 'SKIP_WAITING') {
 				self.skipWaiting();
 			}
@@ -117,7 +118,7 @@ function actionvationHandler() {
 }
 
 function catchHandler() {
-	setCatchHandler(async (e) => {
+	setCatchHandler(async e => {
 		// Return the precached offline page if a document is being requested
 		if (e.request.destination === 'document') {
 			return (await matchPrecache('/offline.html')) || Response.error();
@@ -130,14 +131,14 @@ function catchHandler() {
 
 function routesHandler(caching: { images: Object; offline: Object }) {
 	cacheAndRoute([
-		...build.map((asset) => {
+		...build.map(asset => {
 			// console.log(`=== $service-worker build === ${asset}`);
 			return {
 				url: asset,
 				revision: null,
 			} as Entry;
 		}),
-		...files.map((file) => {
+		...files.map(file => {
 			// console.log(`=== $service-worker files === ${file}`);
 			return {
 				url: file,
@@ -189,7 +190,7 @@ async function startDBs() {
 }
 
 function cacheAndRoute(entries: Entry[]) {
-	entries.forEach((entry) => {
+	entries.forEach(entry => {
 		entry.url = `${basePaths?.root || SHOP_URL}${entry.url}`;
 		precachedFiles.push(entry.url);
 	});
@@ -211,14 +212,14 @@ function routeAndCacheJsAndCSS(urls: RegExp | string) {
 				request.destination === 'style' || request.destination === 'script' || request.destination === 'worker'
 			);
 
-			if (!url.hostname.match(urls)) {
-				return false;
-			}
-			return (
-				url.pathname.match(/\.(?:js|css)/i) &&
-				precachedFiles.indexOf(url.pathname.split('?').shift() as string) === -1 &&
-				precachedFiles.indexOf(url.href.split('?').shift() as string) === -1
-			);
+			// if (!url.hostname.match(urls)) {
+			// 	return false;
+			// }
+			// return (
+			// 	url.pathname.match(/\.(?:js|css)/i) &&
+			// 	precachedFiles.indexOf(url.pathname.split('?').shift() as string) === -1 &&
+			// 	precachedFiles.indexOf(url.href.split('?').shift() as string) === -1
+			// );
 		},
 		new StaleWhileRevalidate({
 			cacheName: cacheNames.static,
@@ -252,7 +253,7 @@ async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 
 		if (size >= rotationCount && rotationCount > 0) {
 			const keys = await currentImgDb.getAllKeys(imgStoreName);
 			const outdatedItemKey = keys[0];
-			imgDbs.forEach((db) => db.delete(imgStoreName, outdatedItemKey));
+			imgDbs.forEach(db => db.delete(imgStoreName, outdatedItemKey));
 			return outdatedItemKey;
 		}
 
@@ -271,7 +272,7 @@ async function routeAndCacheProductImages({ rotationCount = 200, daysDuration = 
 		]);
 
 		if ((timestamp as number) + daysDuration * 24 * 3600 * 1000 < Date.now()) {
-			imgDbs.forEach((db) => db.delete(imgStoreName, key));
+			imgDbs.forEach(db => db.delete(imgStoreName, key));
 		} else {
 			result = blob as Blob;
 		}
@@ -386,7 +387,7 @@ async function resetCaches() {
 	const keys = await caches.keys();
 
 	return Promise.all(
-		keys.map((cacheName) => {
+		keys.map(cacheName => {
 			if (Object.values(cacheNames).indexOf(cacheName) === -1) {
 				console.log('[ServiceWorker] Removing old cache', cacheName);
 				return caches.delete(cacheName);

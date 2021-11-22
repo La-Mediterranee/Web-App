@@ -48,7 +48,23 @@
 <script>
 	import Providers from './_layoutProviders.svelte';
 	import metatags from '$lib/stores/metatags';
+	import LL from '$i18n/i18n-svelte';
+	import { browser, dev } from '$app/env';
+	import { onMount } from 'svelte';
+	import { registerServiceWorker } from '$lib/pwa/register-sw';
+
 	export let lang: Locales;
+
+	onMount(async () => {
+		if (!dev) {
+			const sw = await registerServiceWorker();
+			Notification.requestPermission((permission) => {
+				if (permission === 'granted') {
+					sw?.showNotification($LL.addToCart());
+				}
+			});
+		}
+	});
 </script>
 
 <svelte:window

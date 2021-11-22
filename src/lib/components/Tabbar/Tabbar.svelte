@@ -4,20 +4,21 @@
 	import t from '$i18n/i18n-svelte';
 
 	import type { NavItem } from 'types/index';
+	import type { LocalizedString } from 'typesafe-i18n';
 
 	export let routes: NavItem[];
 
 	let activeRoute = $page.path;
 
-	$: paths = $t.nav.mobile as any;
+	$: paths = $t.nav.mobile.routes as Record<string, () => LocalizedString>;
 </script>
 
-<nav aria-label="mobile primary">
+<nav aria-label={`${$t.nav.mobile.arialabel()}`}>
 	{#each routes as { pathLabel, icon, href, size, rel } (href)}
 		<a
 			{href}
 			class="item"
-			class:active={activeRoute === href}
+			class:active={activeRoute.includes(href)}
 			title={paths[pathLabel]()}
 			rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
 			on:click={() => (activeRoute = href)}
@@ -33,7 +34,7 @@
 				</div>
 			</div>
 			<div class="title-container">
-				{#if activeRoute === href}
+				{#if activeRoute.includes(href)}
 					<span style="color: var(--tint-color);">
 						{paths[pathLabel]()}
 					</span>
@@ -44,7 +45,7 @@
 </nav>
 
 <style lang="scss">
-	@use "./variables.scss" as *;
+	@use "variables" as *;
 
 	* {
 		--bar-color: var(--body-bg2);
@@ -62,7 +63,7 @@
 		align-items: center;
 		justify-content: space-around;
 
-		@media (min-width: $md) {
+		@media (min-width: map-get($map: $breakpoints, $key: md)) {
 			display: none;
 		}
 	}

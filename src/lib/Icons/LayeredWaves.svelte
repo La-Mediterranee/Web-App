@@ -1,3 +1,7 @@
+<svelte:options immutable={true} />
+
+<script></script>
+
 <svg
 	id="visual"
 	viewBox="0 0 960 540"

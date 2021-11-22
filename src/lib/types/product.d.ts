@@ -18,7 +18,7 @@ export interface Product {
 	readonly price: number;
 	readonly image: readonly Image;
 	readonly categories: readonly string[];
-	readonly variations: readonly Variations;
+	readonly variations?: readonly Variations;
 	readonly rating?: {
 		readonly value: number;
 		readonly count: number;

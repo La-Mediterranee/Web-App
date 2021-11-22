@@ -4,7 +4,6 @@
 
 	import { RTL_LANGS } from '$i18n/utils';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
-	import { registerServiceWorker } from '$lib/pwa/register-sw';
 
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	import type { Locales } from '$i18n/i18n-types';
@@ -21,7 +20,7 @@
 </script>
 
 <script lang="ts">
-	import { metatags } from '$lib/stores/metatags';
+	// import { metatags } from '$lib/stores/metatags';
 	import Modals from './_Dialogs.svelte';
 
 	import t from '$i18n/i18n-svelte';
@@ -31,19 +30,13 @@
 	import Footer from '$lib/components/Footer';
 	import Statusbar from '$lib/components/Statusbar';
 	import Tabbar from '$lib/components/Tabbar';
-	import Installprompt from '$lib/pwa/Prompts/Installprompt';
-	import UpdatePrompt from '$lib/pwa/Prompts/SericeWorker/UpdatePrompt.svelte';
+	import Installprompt from '$lib/pwa/components/Prompts/Installprompt/Installprompt.svelte';
+	import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
 	import LocaleSwitcher from '$lib/components/LocaleSwitcher/LocaleSwitcher.svelte';
 
 	export let rtl: boolean;
 
 	let online: boolean = true;
-
-	onMount(async () => {
-		if (!dev) {
-			registerServiceWorker();
-		}
-	});
 </script>
 
 <svelte:window bind:online />
@@ -74,7 +67,6 @@
 		<main>
 			<Installprompt installSource={'LayoutInstallButton'} />
 			<slot />
-			<LocaleSwitcher />
 			<UpdatePrompt />
 		</main>
 		<Tabbar routes={mobileNavItems} />

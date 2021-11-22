@@ -18,7 +18,8 @@ export const firebaseConfig = {
 	messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
 	appId: import.meta.env.VITE_FIREBASE_APP_ID,
 	measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
-};
+	vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+} as const;
 
 export const MODAL = 'MODAL';
 export const PRODUCT_MODAL = 'PRODUCT_MODAL';

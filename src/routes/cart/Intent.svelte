@@ -2,14 +2,10 @@
 	import { onMount } from 'svelte';
 	import { loadStripe } from '@stripe/stripe-js';
 
-	import { fetchFromAPI } from '$utils/helpers';
+	import { fetchFromAPI } from '$lib/utils/helper';
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 
-	import type {
-		PaymentIntent,
-		Stripe,
-		StripeCardElement,
-	} from '@stripe/stripe-js';
+	import type { PaymentIntent, Stripe, StripeCardElement } from '@stripe/stripe-js';
 
 	let amount = 0;
 	let complete = false;
@@ -40,12 +36,14 @@
 
 	async function handleSubmit(_e: Event) {
 		if (stripe) {
-			const { paymentIntent: updatedPaymentIntent, error } =
-				await stripe.confirmCardPayment(paymentIntent.client_secret, {
+			const { paymentIntent: updatedPaymentIntent, error } = await stripe.confirmCardPayment(
+				paymentIntent.client_secret,
+				{
 					payment_method: {
 						card: cardElement,
 					},
-				});
+				}
+			);
 
 			if (error) {
 				console.error(error);
@@ -59,11 +57,7 @@
 
 <div>
 	<input type="number" disabled={hasPaymentIntent} bind:value={amount} />
-	<button
-		disabled={amount <= 0}
-		hidden={hasPaymentIntent}
-		on:click={createPaymentIntent}
-	>
+	<button disabled={amount <= 0} hidden={hasPaymentIntent} on:click={createPaymentIntent}>
 		Bereit zu Zahlen {(amount / 100).toFixed(2)}€
 	</button>
 

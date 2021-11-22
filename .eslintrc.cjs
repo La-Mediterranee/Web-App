@@ -18,6 +18,7 @@ module.exports = {
 		es2017: true,
 		node: true,
 		serviceworker: true,
+		worker: true,
 	},
 	rules: {
 		'no-unused-vars': 'warn',

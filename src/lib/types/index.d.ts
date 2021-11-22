@@ -1,5 +1,9 @@
-import type { Stripe } from '@stripe/stripe-js';
-import type { Readable, Unsubscriber, Subscriber } from 'svelte/store';
+import { Stripe } from '@stripe/stripe-js';
+import { Readable, Unsubscriber, Subscriber } from 'svelte/store';
+
+import { Adapter, PrerenderOnErrorValue } from '@sveltejs/kit';
+import { TrailingSlash } from '@sveltejs/kit/types/internal';
+import { UserConfig, SSROptions } from 'vite';
 
 export type Invalidator<T> = (value?: T) => void;
 
@@ -12,6 +16,52 @@ export interface StripeContext {
 }
 
 export { AnchorLinkTypes, NavItem } from './navbar';
+
+export type ViteConfig = UserConfig & {
+	ssr?: SSROptions;
+};
+
+export interface KitConfig {
+	adapter?: Adapter;
+	amp?: boolean;
+	appDir?: string;
+	files?: {
+		assets?: string;
+		hooks?: string;
+		lib?: string;
+		routes?: string;
+		serviceWorker?: string;
+		template?: string;
+	};
+	floc?: boolean;
+	host?: string;
+	hostHeader?: string;
+	hydrate?: boolean;
+	package?: {
+		dir?: string;
+		emitTypes?: boolean;
+		exports?(filepath: string): boolean;
+		files?(filepath: string): boolean;
+	};
+	paths?: {
+		assets?: string;
+		base?: string;
+	};
+	prerender?: {
+		crawl?: boolean;
+		enabled?: boolean;
+		entries?: string[];
+		onError?: PrerenderOnErrorValue;
+	};
+	router?: boolean;
+	serviceWorker?: {
+		files?(filepath: string): boolean;
+	};
+	ssr?: boolean;
+	target?: string;
+	trailingSlash?: TrailingSlash;
+	vite?: ViteConfig | (() => ViteConfig);
+}
 
 // enum HttpStatusCode {
 // 	/**

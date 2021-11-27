@@ -1,5 +1,5 @@
 {
-	"$schema": "https://unpkg.com/typesafe-i18n@2.49.4/schema/typesafe-i18n.json",
-	"adapter": "svelte",
-	"baseLocale": "de"
+   "$schema": "https://unpkg.com/typesafe-i18n@2.53.2/schema/typesafe-i18n.json",
+   "adapter": "svelte",
+   "baseLocale": "de"
 }

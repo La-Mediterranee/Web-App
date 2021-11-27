@@ -1,5 +1,4 @@
 /* eslint-disable no-redeclare, no-unused-vars */
-/// <reference types="@sveltejs/kit" />
 /// <reference types="vite/client" />
 /// <reference types="google.analytics" />
 /// <reference types="gtag.js" />

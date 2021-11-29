@@ -1,15 +1,24 @@
+# dependencies
 node_modules
+
+# OS
 .DS_Store
-.vscode
-build
-.svelte-kit/
-.env.local
+
+# build
+build/
 dist/
+.svelte-kit/
 workers-site
-notes.txt
-service-account.json
-wrangler.toml
 static/pwa/
 static/apple/
-m.html
-inlang.*
+
+# env
+.env.local
+wrangler.toml
+service-account.json
+inlang.config.json
+
+# IDE/Editor config
+.vscode
+
+.notes/

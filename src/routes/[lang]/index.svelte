@@ -1,13 +1,14 @@
 <script context="module" lang="ts">
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
+	import { lazyloadImage } from '$lib/actions/lazyload';
 
 	import type { HomepageProps } from './homepage.json';
 	import type { LoadInput } from '@sveltejs/kit';
 
 	export async function load({ session, fetch, stuff }: LoadInput) {
 		const url = `/api/homepage`;
-		const homePageData = (await fetch(url).then((p) => p.json())) as HomepageProps;
+		const homePageData = (await fetch(url).then(p => p.json())) as HomepageProps;
 
 		return {
 			props: { homePageData },
@@ -21,6 +22,7 @@
 	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
 
 	import ProductCard from '$components/ProductCard';
+	import Image from '$lib/components/Image/Image.svelte';
 
 	export let homePageData: HomepageProps | undefined;
 
@@ -59,6 +61,9 @@
 	</section>
 {/each}
 
+<Image src="/burger.webp" width={150} height={150} />
+
+<!-- use:lazyloadImage -->
 <style lang="scss">
 	:global(header) {
 		position: fixed !important;

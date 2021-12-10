@@ -14,7 +14,7 @@ interface GetBody {
 
 export async function get({ locals }: ServerRequest<Record<string, any>, unknown>): Promise<EndpointOutput> {
 	return {
-		body: JSON.stringify(homepage()),
+		body: JSON.stringify(await homepage()),
 	};
 }
 
@@ -28,7 +28,7 @@ export interface HomepageProps {
 	bestseller: Product[];
 }
 
-function homepage(): HomepageProps {
+async function homepage(): Promise<HomepageProps> {
 	const p: Product = {
 		ID: randomUUID(),
 		name: 'Hamburger',
@@ -56,8 +56,45 @@ function homepage(): HomepageProps {
 		body: Array(7).fill(p),
 	};
 
+	// const res = await fetch('https://jsonplaceholder.typicode.com/albums/1/photos');
+	// const arr: Array<{ thumbnailUrl: string }> = await res.json();
+	// const sections = chunk(arr, 3).map(chunk => {
+	// 	return {
+	// 		title: 'Bestseller',
+	// 		body: chunk.map(val => {
+	// 			return {
+	// 				ID: randomUUID(),
+	// 				name: 'Hamburger',
+	// 				description: '',
+	// 				price: 4.5,
+	// 				categories: ['burger'],
+	// 				image: { src: val.thumbnailUrl, alt: 'Bild von einem Burger' },
+	// 				variations: {
+	// 					toppings: ['Beilagen', 'Saucen'],
+	// 				},
+	// 			};
+	// 		}),
+	// 	};
+	// });
+
 	return {
 		sections: [bestsellerSection, foodSection, drinksSection],
+		// sections,
 		bestseller: Array(10).fill(p),
 	};
+}
+
+function chunk<T>(array: Array<T>, chunk: number = 4) {
+	let tmp: Array<Array<T>> = [];
+	const arrSize = array.length;
+	const chunkLength = Math.floor(arrSize / chunk);
+
+	let len = chunkLength;
+
+	for (let i = 0; i < arrSize; i += chunkLength) {
+		tmp.push(array.slice(i, len));
+		len = Math.min(len + chunkLength, arrSize);
+	}
+
+	return tmp;
 }

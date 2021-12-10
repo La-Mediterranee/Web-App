@@ -58,7 +58,7 @@
 	onMount(async () => {
 		if (!dev) {
 			const sw = await registerServiceWorker();
-			Notification.requestPermission((permission) => {
+			Notification.requestPermission(permission => {
 				if (permission === 'granted') {
 					sw?.showNotification($LL.addToCart());
 				}

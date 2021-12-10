@@ -55,8 +55,28 @@ function homepage(): HomepageProps {
 		body: Array(7).fill(p),
 	};
 
+	const p1: Product = {
+		ID: randomUUID(),
+		name: 'Hamburger',
+		description: '',
+		price: 4.5,
+		categories: ['burger'],
+		image: { src: '/mask@3x.png', alt: 'Bild von einem Burger' },
+		variations: {
+			toppings: ['Beilagen', 'Saucen'],
+		},
+	};
+
 	return {
-		sections: [bestsellerSection, foodSection, drinksSection],
+		sections: [
+			bestsellerSection,
+			foodSection,
+			drinksSection,
+			{
+				title: 'Getränke',
+				body: Array(2).fill(p1),
+			},
+		],
 		bestseller: Array(10).fill(p),
 	};
 }

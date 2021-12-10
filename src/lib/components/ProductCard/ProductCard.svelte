@@ -17,6 +17,7 @@
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import Link from 'svelte-material-components/src/components/Button/Link.svelte';
 	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
+	import { lazyloadImage } from '$lib/actions/lazyload';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
@@ -73,10 +74,11 @@
 				class="ml-auto"
 				decoding="async"
 				loading="lazy"
-				src={image?.src}
+				data-src={image?.src}
 				alt={image?.alt || name}
 				width="250"
 				height="181"
+				use:lazyloadImage
 			/>
 
 			<CardTitle itemprop="name" class="justify-center h4">

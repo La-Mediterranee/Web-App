@@ -2,38 +2,108 @@
 	import { browser, dev } from '$app/env';
 	import { onMount, createEventDispatcher } from 'svelte';
 
+	import { lazyloadImage } from '$lib/actions/lazyload';
+	import { toBase64 } from '$lib/utils/to-base-64';
+
 	import { generateImgAttrs, getInt } from './helper';
-	import { allImgs, TAG, VALID_LAYOUT_VALUES } from './constants';
+	import { EMPTY_DATA_URL, TAG, VALID_LAYOUT_VALUES } from './constants';
 	import { defaultImageLoader } from './loaders';
 
-	function handleLoad(img: HTMLImageElement) {
-		function loadHandler(e?: Event) {}
+	import type {
+		DecodingAttribute,
+		GenImgAttrsResult,
+		Img,
+		LayoutValue,
+		LoadingAttribute,
+		ObjectFitStyle,
+		ObjectPositionStyle,
+		OnLoadingComplete,
+		PlaceholderValue,
+	} from './types';
+
+	function handleLoad(
+		img: HTMLImageElement,
+		options: {
+			src: string;
+			layout: LayoutValue;
+			placeholder: PlaceholderValue;
+			onLoadingComplete?: OnLoadingComplete;
+			errorHandler?: (e: ErrorEvent) => void;
+		}
+	) {
+		const {
+			src,
+			layout,
+			placeholder,
+			onLoadingComplete = () => {},
+			errorHandler = () => {},
+		} = options;
+
+		async function loadHandler(e?: Event) {
+			try {
+				if (img.src !== EMPTY_DATA_URL) {
+					await ('decode' in img ? img.decode() : Promise.resolve());
+
+					if (placeholder === 'blur') {
+						img.style.filter = 'none';
+						img.style.backgroundSize = 'none';
+						img.style.backgroundImage = 'none';
+					}
+
+					loadedImageURLs.add(src);
+
+					const { naturalWidth, naturalHeight } = img;
+					// Pass back read-only primitive values but not the
+					// underlying DOM element because it could be misused.
+					onLoadingComplete({ naturalWidth, naturalHeight });
+
+					if (dev) {
+						if (img.parentElement?.parentElement) {
+							const parent = getComputedStyle(
+								img.parentElement.parentElement
+							);
+
+							if (!parent.position) {
+								// The parent has not been rendered to the dom yet and therefore it has no position. Skip the warnings for such cases.
+							} else if (
+								layout === 'responsive' &&
+								parent.display === 'flex'
+							) {
+								console.warn(
+									`${TAG} Image with src "${src}" may not render properly as a child of a flex container. Consider wrapping the image with a div to configure the width.`
+								);
+							} else if (
+								layout === 'fill' &&
+								parent.position !== 'relative' &&
+								parent.position !== 'fixed'
+							) {
+								console.warn(
+									`${TAG} Image with src "${src}" may not render properly with a parent using position:"${parent.position}". Consider changing the parent style to position:"relative" with a width and height.`
+								);
+							}
+						}
+					}
+				}
+			} catch (error) {}
+		}
 
 		if (img.complete) {
 			loadHandler();
 		} else {
 			img.addEventListener('load', loadHandler);
+			img.addEventListener('error', errorHandler);
 		}
 
 		return {
 			destroy() {
 				img.removeEventListener('load', loadHandler);
+				img.addEventListener('error', errorHandler);
 			},
 		};
 	}
 
-	import type {
-		DecodingAttribute,
-		LayoutValue,
-		LoadingAttribute,
-		ObjectFitStyle,
-		ObjectPositionStyle,
-	} from './types';
-
-	import { lazyloadImage } from '$lib/actions/lazyload';
-	import { toBase64 } from '$lib/utils/to-base-64';
-
 	const loadedImageURLs = new Set<string>();
+	const allImgs = new Map<string, Img>();
 </script>
 
 <script lang="ts">
@@ -48,9 +118,12 @@
 	export let objectFit: ObjectFitStyle = 'cover';
 	export let objectPosition: ObjectPositionStyle = '0% 0%';
 	export let layout: LayoutValue = 'intrinsic';
-	export let placeholder: 'blur' | 'empty' = 'empty';
+	export let lazyBoundary = '200px';
+
+	export let placeholder: PlaceholderValue = 'empty';
 	export let errorPlaceholder = ' ';
 	export let blurDataURL: string | undefined = undefined;
+
 	export let quality = 75;
 	export let priority = false;
 	export let unoptimized = false;
@@ -233,20 +306,59 @@
 		}
 	}
 
-	if (dev) {
-		if (browser) {
-			let fullUrl: URL;
-			try {
-				fullUrl = new URL(imgAttributes.src);
-			} catch (e) {
-				fullUrl = new URL(imgAttributes.src, window.location.href);
-			}
-			allImgs.set(fullUrl.href, { src, priority, placeholder });
-		}
+	const isVisible = !isLazy || isIntersected;
+
+	let imgAttributes: GenImgAttrsResult = {
+		src: EMPTY_DATA_URL,
+		srcSet: undefined,
+		sizes: undefined,
+	};
+
+	if (isVisible) {
+		imgAttributes = generateImgAttrs({
+			src,
+			unoptimized,
+			layout,
+			width: widthInt,
+			quality: qualityInt,
+			sizes,
+			loader,
+		});
 	}
 
+	if (dev && browser) {
+		let fullUrl: URL;
+		try {
+			fullUrl = new URL(imgAttributes.src);
+		} catch (e) {
+			fullUrl = new URL(imgAttributes.src, window.location.href);
+		}
+		allImgs.set(fullUrl.href, { src, priority, placeholder });
+	}
+
+	const quotient = (widthInt || 1) / (widthInt || 1);
+	const paddingTop = isNaN(quotient) ? '100%' : `${quotient * 100}%`;
+
+	const cssVars = `
+	--image-width: ${widthInt};
+	--image-height: ${heightInt};
+	--image-padding-top: ${paddingTop};
+	--image-blur-bg-size: ${objectFit};
+	--image-blur-bg-image: url("${blurDataURL}");
+	--image-blur-bg-position: ${objectPosition};
+	`;
+
+	const noScriptImgAttributes = generateImgAttrs({
+		src,
+		unoptimized,
+		layout,
+		width: widthInt,
+		quality: qualityInt,
+		sizes,
+		loader,
+	});
+
 	const linkProps = {
-		// Note: imagesrcset and imagesizes are not in the link element type with react 17.
 		imagesrcset: imgAttributes.srcSet,
 		imagesizes: imgAttributes.sizes,
 	};
@@ -255,8 +367,22 @@
 </script>
 
 <svelte:head>
+	<!-- 
+	Note how we omit the `href` attribute, as it would only be relevant
+    for browsers that do not support `imagesrcset`, and in those cases
+    it would likely cause the incorrect image to be preloaded.
+    https://html.spec.whatwg.org/multipage/semantics.html#attr-link-imagesrcset -->
 	{#if priority}
-		<link rel="preload" as="image" href="" />
+		<link
+			rel="preload"
+			as="image"
+			href={imgAttributes.srcSet ? undefined : imgAttributes.src}
+			data-key={'__nimg-' +
+				imgAttributes.src +
+				imgAttributes.srcSet +
+				imgAttributes.sizes}
+			{...linkProps}
+		/>
 	{/if}
 </svelte:head>
 
@@ -267,47 +393,46 @@ class:responsive={layout === 'responsive'}
 class:intrinsic={layout === 'intrinsic'}
 -->
 
-<span class={`img-wrapper ${layout ? layout : ''}`}>
+<span style={cssVars} class={`img-wrapper ${layout ? layout : ''}`}>
 	<span
 		style={hasSizer ? '' : 'display: none;'}
-		alt=""
 		class={`img-sizer ${layout ? layout : ''}`}
 		aria-hidden={true}
-		src={`data:image/svg+xml;base64,${toBase64(sizerSvg)}`}
 	>
-		<img {decoding} src="" alt="" srcset="" class="img" />
+		<img
+			{decoding}
+			class="img-sizer-svg"
+			src={`data:image/svg+xml;base64,${toBase64(sizerSvg)}`}
+			alt="Hidden SVG"
+			aria-hidden={true}
+		/>
 	</span>
 	<img
 		{loading}
 		{decoding}
-		{src}
 		{alt}
 		{height}
 		{width}
-		class="img"
-		class:loaded
+		{...imgAttributes}
+		class={`img ${klass}`}
+		class:img-blur={placeholder === 'blur'}
+		data-nimg={layout}
 		bind:this={image}
-		use:handleLoad
-		use:lazyloadImage
-		on:load={e => {
-			dispatch('load', e);
-		}}
-		on:error={e => {
-			dispatch('error', e);
+		use:handleLoad={{
+			src: src,
+			layout: layout,
+			placeholder: placeholder,
+			onLoadingComplete: e => {
+				dispatch('load', e);
+			},
+			errorHandler: e => {
+				dispatch('error', e);
+			},
 		}}
 	/>
-
 	<noscript>
 		<img
-			{...generateImgAttrs({
-				src,
-				unoptimized,
-				layout,
-				width: widthInt,
-				quality: qualityInt,
-				sizes,
-				loader,
-			})}
+			{...noScriptImgAttributes}
 			{alt}
 			{loading}
 			{decoding}
@@ -318,15 +443,6 @@ class:intrinsic={layout === 'intrinsic'}
 </span>
 
 <style lang="scss">
-	img {
-		opacity: 0;
-		transition: opacity 400ms ease-out;
-	}
-
-	img.loaded {
-		opacity: 1;
-	}
-
 	.img {
 		position: 'absolute';
 		top: 0;
@@ -347,17 +463,26 @@ class:intrinsic={layout === 'intrinsic'}
 		min-height: '100%';
 		max-height: '100%';
 
-		&.objectFit {
-			object-fit: cover;
-		}
+		object-fit: var(--image-blur-bg-size);
+		object-position: var(--image-blur-bg-position);
 
 		&-blur {
 			filter: blur(20px);
 			background-size: var(--image-blur-bg-size, 'cover');
-			background-image: var(
-				--image-blur-bg-image
-			); //url("${blurDataURL}")
-			background-position: var(--image-blur-bg-size, '0% 0%');
+			background-image: var(--image-blur-bg-image);
+			background-position: var(--image-blur-bg-position, '0% 0%');
+		}
+
+		&-sizer-svg {
+			display: 'block';
+			max-width: '100%';
+			width: 'initial';
+			height: 'initial';
+			background: 'none';
+			opacity: 1;
+			border: 0;
+			margin: 0;
+			padding: 0;
 		}
 
 		&-wrapper,

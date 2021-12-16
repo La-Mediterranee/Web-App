@@ -1,5 +1,12 @@
 import { dev } from '$app/env';
-import { loaders, TAG } from './constants';
+import {
+	configDomains,
+	configLoader,
+	configPath,
+	loaders,
+	TAG,
+	VALID_LOADERS,
+} from './constants';
 
 import type { DefaultImageLoaderProps, ImageLoaderProps } from './types';
 
@@ -55,9 +62,11 @@ export function cloudinaryLoader({
 
 export function defaultImageLoader(loaderProps: ImageLoaderProps) {
 	const load = loaders.get(configLoader);
+
 	if (load) {
 		return load({ root: configPath, ...loaderProps });
 	}
+
 	throw new Error(
 		`Unknown "loader" found in "next.config.js". Expected: ${VALID_LOADERS.join(
 			', '
@@ -104,7 +113,7 @@ export function defaultLoader({
 			}
 
 			if (
-				process.env.NODE_ENV !== 'test' &&
+				import.meta.env.NODE_ENV !== 'test' &&
 				!configDomains.includes(parsedSrc.hostname)
 			) {
 				throw new Error(

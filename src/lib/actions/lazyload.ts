@@ -3,14 +3,11 @@ type ImageLoading = 'auto' | 'eager' | 'lazy';
 interface LazyLoadOptions {
 	once?: boolean;
 	observerOptions?: IntersectionObserverInit;
+	onIntersection?: (target: Element) => {};
 }
 
-export function lazyload(
-	node: HTMLElement,
-	options: LazyLoadOptions = {},
-	cb = (target: Element) => {}
-) {
-	const { once, observerOptions } = options || {};
+export function lazyload(node: HTMLElement, options: LazyLoadOptions = {}) {
+	const { once, observerOptions, onIntersection = () => {} } = options || {};
 
 	const observer = new IntersectionObserver(intersactionHandler, {
 		root: observerOptions?.root,
@@ -26,7 +23,7 @@ export function lazyload(
 	) {
 		entries.forEach(entry => {
 			if (!entry.isIntersecting) return;
-			cb(entry.target);
+			onIntersection(entry.target);
 			once && observer.unobserve(node);
 		});
 	}
@@ -65,9 +62,10 @@ export function lazyloadImage(
 	const opt = {
 		once: true,
 		observerOptions: options,
+		onIntersection: loadImage,
 	};
 
-	const observer = lazyload(img, opt, loadImage);
+	const observer = lazyload(img, opt);
 
 	async function loadImage() {
 		try {

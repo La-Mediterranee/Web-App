@@ -2,12 +2,13 @@
 	import { browser, dev } from '$app/env';
 	import { onMount, createEventDispatcher } from 'svelte';
 
-	import { lazyloadImage } from '$lib/actions/lazyload';
+	import intersection from '$lib/actions/intersection';
+
 	import { toBase64 } from '$lib/utils/to-base-64';
 
+	import { defaultImageLoader } from './loaders';
 	import { generateImgAttrs, getInt } from './helper';
 	import { EMPTY_DATA_URL, TAG, VALID_LAYOUT_VALUES } from './constants';
-	import { defaultImageLoader } from './loaders';
 
 	import type {
 		DecodingAttribute,
@@ -306,6 +307,8 @@
 		}
 	}
 
+	let isIntersected = false;
+
 	const isVisible = !isLazy || isIntersected;
 
 	let imgAttributes: GenImgAttrsResult = {
@@ -377,7 +380,7 @@
 			rel="preload"
 			as="image"
 			href={imgAttributes.srcSet ? undefined : imgAttributes.src}
-			data-key={'__nimg-' +
+			data-key={'__kimg-' +
 				imgAttributes.src +
 				imgAttributes.srcSet +
 				imgAttributes.sizes}
@@ -416,7 +419,7 @@ class:intrinsic={layout === 'intrinsic'}
 		{...imgAttributes}
 		class={`img ${klass}`}
 		class:img-blur={placeholder === 'blur'}
-		data-nimg={layout}
+		data-kimg={layout}
 		bind:this={image}
 		use:handleLoad={{
 			src: src,
@@ -429,6 +432,12 @@ class:intrinsic={layout === 'intrinsic'}
 				dispatch('error', e);
 			},
 		}}
+		use:intersection={{
+			observerOptions: {
+				rootMargin: lazyBoundary,
+			},
+			onIntersection: () => (isIntersected = true),
+		}}
 	/>
 	<noscript>
 		<img
@@ -437,7 +446,7 @@ class:intrinsic={layout === 'intrinsic'}
 			{loading}
 			{decoding}
 			class={`img ${klass}`}
-			data-nimg={layout}
+			data-kimg={layout}
 		/>
 	</noscript>
 </span>

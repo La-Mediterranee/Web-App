@@ -6,11 +6,18 @@
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	import type { Locales } from '$i18n/i18n-types';
 
-	export async function load({ page, session, stuff }: LoadInput): Promise<LoadOutput> {
+	export async function load({
+		page,
+		session,
+		stuff,
+	}: LoadInput): Promise<LoadOutput> {
 		const lang = page.params.lang as Locales;
 
+		if (page.params) {
+		}
+
 		// redirect to preferred language if user comes from page root
-		if (!lang) {
+		if (!lang && !page.path.includes('api')) {
 			return {
 				status: 302,
 				redirect: `/${session.locale}`,
@@ -20,19 +27,18 @@
 		// if (lang !== session.locale) {
 		// 	return {
 		// 		status: 302,
-		// 		// redirect: replaceLocaleInUrl(page.path, baseLocale),
-		// 		redirect: '/',
+		// 		redirect: replaceLocaleInUrl(page.path, baseLocale),
 		// 	};
 		// }
 
 		// redirect to base locale if language is not present
-		if (!locales.includes(lang)) {
-			stuff.lang = session.locale;
-			return {
-				status: 302,
-				redirect: replaceLocaleInUrl(page.path, baseLocale),
-			};
-		}
+		// if (!locales.includes(lang)) {
+		// 	stuff.lang = session.locale;
+		// 	return {
+		// 		status: 302,
+		// 		redirect: replaceLocaleInUrl(page.path, baseLocale),
+		// 	};
+		// }
 
 		// load dictionary data
 		await initI18n(lang);
@@ -56,14 +62,14 @@
 	export let lang: Locales;
 
 	onMount(async () => {
-		if (!dev) {
-			const sw = await registerServiceWorker();
-			Notification.requestPermission(permission => {
-				if (permission === 'granted') {
-					sw?.showNotification($LL.addToCart());
-				}
-			});
-		}
+		if (dev) return;
+
+		const sw = await registerServiceWorker();
+		Notification.requestPermission(permission => {
+			if (permission === 'granted') {
+				sw?.showNotification($LL.addToCart());
+			}
+		});
 	});
 </script>
 

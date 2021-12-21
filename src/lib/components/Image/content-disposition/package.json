@@ -1,6 +1,0 @@
-{
-	"name": "content-disposition",
-	"main": "./dist/index.js",
-	"author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
-	"license": "MIT"
-}

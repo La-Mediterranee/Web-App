@@ -50,6 +50,8 @@ interface Session {
 export function getSession(request: Request): Session {
 	const userDecoded = request.locals.user as adminAuth.DecodedIdToken;
 	// console.log(user);
+
+	// set the preffered language
 	const acceptLanguageDetector = initAcceptLanguageHeaderDetector(request);
 	const locale = detectLocale(acceptLanguageDetector);
 

@@ -19,7 +19,10 @@ const pkg = JSON.parse(
  * @returns {import("./src/lib/types/index").ViteConfig}}
  */
 function vite() {
-	const external = process.env.NODE_ENV === 'development' ? ['whatwg-url', 'node-fetch'] : ['firebase/messaging'];
+	const external =
+		process.env.NODE_ENV === 'development'
+			? ['whatwg-url', 'node-fetch']
+			: ['firebase/messaging'];
 
 	return {
 		build: {
@@ -56,7 +59,7 @@ function vite() {
 			legalComments: 'none',
 		},
 		server: {
-			https: true,
+			// https: true,
 			// proxy: {
 			// 	'/api': {
 			// 		target: 'http://localhost:5000',
@@ -88,8 +91,8 @@ const kitConfig = {
 	serviceWorker: {
 		files: filepath => !/\.DS_STORE/.test(filepath),
 	},
-	// adapter: node(),
-	adapter: adapterStatic(),
+	adapter: node(),
+	// adapter: adapterStatic(),
 	// adapter: netlify(),
 	// adapter: cvWorker({
 	// 	esbuild(defaultOptions) {

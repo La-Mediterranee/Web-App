@@ -1,7 +1,7 @@
 interface LazyLoadOptions {
 	once?: boolean;
 	observerOptions?: IntersectionObserverInit;
-	onIntersection?: (target: HTMLElement) => {};
+	onIntersection?(target: HTMLElement): void;
 }
 
 export default function intersection(

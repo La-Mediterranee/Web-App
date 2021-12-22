@@ -23,5 +23,6 @@ module.exports = {
 	rules: {
 		'no-unused-vars': 'warn',
 		'no-mixed-spaces-and-tabs': 0, // disable rule
+		'no-undef': 'off',
 	},
 };

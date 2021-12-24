@@ -2,7 +2,6 @@
 	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
 	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
 	import CartItem from '../Cart/CartItem.svelte';
-	import Image from '../Image/Image.svelte';
 
 	import type { SKU, CartItem as ICartItem } from 'types/product';
 	import type { Cart } from '$lib/stores/cart';
@@ -42,7 +41,13 @@
 </script>
 
 <aside aria-label={ariaLabel}>
-	<button type="button" aria-expanded={showSummary} aria-controls="order-summary"> Bestellung anzeigen </button>
+	<button
+		type="button"
+		aria-expanded={showSummary}
+		aria-controls="order-summary"
+	>
+		Bestellung anzeigen
+	</button>
 	<table>
 		<caption class="visually-hidden">Warenkorb</caption>
 		<thead>

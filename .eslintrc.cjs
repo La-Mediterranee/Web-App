@@ -21,7 +21,8 @@ module.exports = {
 		worker: true,
 	},
 	rules: {
-		'no-unused-vars': 'warn',
+		'no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': 'warn',
 		'no-mixed-spaces-and-tabs': 0, // disable rule
 		'no-undef': 'off',
 	},

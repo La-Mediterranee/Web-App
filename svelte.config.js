@@ -69,12 +69,14 @@ function vite() {
 		},
 		resolve: {
 			alias: {
-				$i18n: path.resolve('./src/i18n'),
 				types: path.resolve('./src/lib/types'),
+				$pages: path.resolve('./src/pages/'),
+				$loaders: path.resolve('./src/routes/_loaders'),
+				$i18n: path.resolve('./src/i18n'),
 				$utils: path.resolve('./src/lib/utils'),
+				$components: path.resolve('./src/lib/components'),
 				$firebase: path.resolve('./src/lib/utils/firebase.ts'),
 				$stores: path.resolve('./src/lib/stores'),
-				$components: path.resolve('./src/lib/components'),
 			},
 		},
 	};

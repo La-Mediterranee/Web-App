@@ -1,5 +1,10 @@
 <script context="module">
-	import type { PaymentRequestShippingOption, Stripe, StripeCardElement, StripeElements } from '@stripe/stripe-js';
+	import type {
+		PaymentRequestShippingOption,
+		Stripe,
+		StripeCardElement,
+		StripeElements,
+	} from '@stripe/stripe-js';
 
 	export type PaymentMethods = 'credit' | 'sofort' | 'bar';
 
@@ -7,15 +12,18 @@
 		amex: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/american-express.svg',
 		gPay: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/google-pay.svg',
 		eps: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/eps.svg',
-		applePay: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/apple-pay.svg',
+		applePay:
+			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/apple-pay.svg',
 		klarna: 'https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg?locale=de_at',
 		maestro:
 			'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/maestro.svg',
-		maestroAlt: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/maestro-alt.svg',
+		maestroAlt:
+			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/maestro-alt.svg',
 		visa: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/visa.svg',
 		visaFlatRounded:
 			'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/visa.svg',
-		mastercard: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard.svg',
+		mastercard:
+			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard.svg',
 		mastercardAlt:
 			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard-alt.svg',
 		mastercardFlatRounded:
@@ -30,7 +38,7 @@
 	import TextField from 'svelte-material-components/src/components/TextField';
 	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 
-	import Image from '$lib/components/Image/Image.svelte';
+	// import Image from '$lib/components/Image/Image.svelte';
 	import CreditCard from '$lib/components/CreditCard/CreditCard.svelte';
 
 	export let elements: StripeElements;
@@ -93,27 +101,52 @@
 	}
 </script>
 
-<form bind:this={form} action="/checkout?section=details" method="POST" on:submit|preventDefault={checkNextStep}>
+<form
+	bind:this={form}
+	action="/checkout?section=details"
+	method="POST"
+	on:submit|preventDefault={checkNextStep}
+>
 	<section>
 		<h3>Trinkgeld hinzufügen</h3>
 		<fieldset id="tips">
-			<legend class="visually-hidden"> Trinkgeld Prozent Optionen </legend>
+			<legend class="visually-hidden">
+				Trinkgeld Prozent Optionen
+			</legend>
 			<div class="tip-container">
 				<div class="tip">
 					<label for="tip-5">5%</label>
-					<input bind:group={tip} id="tip-5" type="radio" class="visually-hidden-radio" value="5" />
+					<input
+						bind:group={tip}
+						id="tip-5"
+						type="radio"
+						class="visually-hidden-radio"
+						value="5"
+					/>
 					<div>{sum * 0.05}</div>
 					<div class="checked" />
 				</div>
 				<div class="tip">
 					<label for="tip-10">10%</label>
-					<input bind:group={tip} id="tip-10" type="radio" class="visually-hidden-radio" value="10" />
+					<input
+						bind:group={tip}
+						id="tip-10"
+						type="radio"
+						class="visually-hidden-radio"
+						value="10"
+					/>
 					<div>{sum * 0.1}</div>
 					<div class="checked" />
 				</div>
 				<div class="tip">
 					<label for="tip-15">15%</label>
-					<input bind:group={tip} id="tip-15" type="radio" class="visually-hidden-radio" value="15" />
+					<input
+						bind:group={tip}
+						id="tip-15"
+						type="radio"
+						class="visually-hidden-radio"
+						value="15"
+					/>
 					<div>{sum * 0.15}</div>
 					<div class="checked" />
 				</div>
@@ -131,7 +164,9 @@
 				</div>
 			</div>
 			<div class="custom-tip-container">
-				<TextField outlined rounded>Benutzerdefiniertes Trinkgeld</TextField>
+				<TextField outlined rounded
+					>Benutzerdefiniertes Trinkgeld</TextField
+				>
 			</div>
 		</fieldset>
 	</section>
@@ -144,14 +179,20 @@
 
 				<div class="payment-processor">
 					<span>
-						<input bind:group={paymentMethod} type="radio" id="credit" value="credit" {name} />
+						<input
+							bind:group={paymentMethod}
+							type="radio"
+							id="credit"
+							value="credit"
+							{name}
+						/>
 					</span>
 					<div>
 						<label for="credit">Kreditkarte</label>
 						<ul>
-							{#each Array.from([logos.visa, logos.mastercard, logos.maestroAlt, logos.amex]) as logo}
+							{#each Array.from( [logos.visa, logos.mastercard, logos.maestroAlt, logos.amex] ) as logo}
 								<li>
-									<Image src={logo} width={38} height={24} />
+									<img src={logo} width={38} height={24} />
 								</li>
 							{/each}
 						</ul>
@@ -168,11 +209,17 @@
 
 				<div class="payment-processor">
 					<span>
-						<input bind:group={paymentMethod} type="radio" id="sofort" value="sofort" {name} />
+						<input
+							bind:group={paymentMethod}
+							type="radio"
+							id="sofort"
+							value="sofort"
+							{name}
+						/>
 					</span>
 					<div>
 						<label for="sofort">Sofort Überweisung</label>
-						<Image
+						<img
 							src="https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/sofort.svg"
 							alt="Klarna Logo"
 							width={38}
@@ -183,7 +230,13 @@
 
 				<div class="payment-processor">
 					<span>
-						<input bind:group={paymentMethod} type="radio" id="bar" value="bar" {name} />
+						<input
+							bind:group={paymentMethod}
+							type="radio"
+							id="bar"
+							value="bar"
+							{name}
+						/>
 					</span>
 					<div>
 						<label for="bar">Zahlung bei Abholung/Lieferung</label>

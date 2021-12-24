@@ -9,7 +9,6 @@
 <script lang="ts">
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import t from '$i18n/i18n-svelte';
-	import Image from '../Image/Image.svelte';
 
 	export let routes: NavItem[] = [];
 
@@ -51,8 +50,9 @@
 
 	<div id="profile">
 		{#if $user}
-			<Image
-				src={$user?.photoURL || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
+			<img
+				src={$user?.photoURL ||
+					`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
 				alt=""
 				loading="eager"
 				width={50}
@@ -66,7 +66,7 @@
 
 <style lang="scss">
 	// box-shadow: 0 2px 20px 0 var(--subtle);
-	@use "variables" as *;
+	@use 'variables' as *;
 
 	a {
 		color: inherit;

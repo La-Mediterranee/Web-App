@@ -1,5 +1,9 @@
-<script context="module">
+<script context="module" lang="ts">
 	import { browser, dev } from '$app/env';
+
+	import About from '$pages/About.svelte';
+
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	// we don't need any JS on this page, though we'll load
 	// it in dev so that we get hot module replacement...
 	export const hydrate = dev;
@@ -8,17 +12,16 @@
 	export const router = browser;
 	export const prerender = true;
 
-	const metaData = {
-		title: 'About | Sveltekit',
-		description: 'About page of Sveltekit starter project',
-		url: '/about',
-		keywords: ['sveltekit', 'sveltekit starter', 'sveltekit starter about'],
-		searchUrl: '/about'
-	};
+	async function load({ fetch }: LoadInput): Promise<LoadOutput> {
+		const data = await fetch('/api/about').then(res => res.json());
+
+		return {
+			props: data,
+		};
+	}
 </script>
 
-<h2>LA-Mediterranee</h2>
+<script lang="ts">
+</script>
 
-<style>
-	/* your styles go here */
-</style>
+<About />

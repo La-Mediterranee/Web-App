@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="auto">
+<html>
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -29,7 +29,10 @@
 			function hasIntlGetCanonicalLocalesBug() {
 				try {
 					//@ts-ignore
-					return new Intl.Locale('und-x-private').toString() === 'x-private';
+					return (
+						new Intl.Locale('und-x-private').toString() ===
+						'x-private'
+					);
 				} catch (e) {
 					return true;
 				}
@@ -38,7 +41,8 @@
 			const polyfills = [];
 
 			if (!('FormData' in window)) {
-				const src = 'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
+				const src =
+					'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
 				const script = document.createElement('script');
 				script.src = src;
 				document.head.appendChild(script);
@@ -52,7 +56,8 @@
 				!(
 					'IntersectionObserver' in window &&
 					'IntersectionObserverEntry' in window &&
-					'intersectionRatio' in window.IntersectionObserverEntry.prototype
+					'intersectionRatio' in
+						window.IntersectionObserverEntry.prototype
 				)
 			) {
 				polyfills.push('IntersectionObserver');
@@ -63,7 +68,9 @@
 			}
 
 			if (polyfills.length > 0) {
-				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join('%2C')}`;
+				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join(
+					'%2C'
+				)}`;
 				const script = document.createElement('script');
 				script.src = src;
 				document.head.appendChild(script);
@@ -76,11 +83,11 @@
 					for (const p of promises) {
 						wrappedPromises.push(
 							Promise.resolve(p).then(
-								(value) => ({
+								value => ({
 									status: 'fulfilled',
 									value,
 								}),
-								(reason) => ({
+								reason => ({
 									status: 'rejected',
 									reason,
 								})
@@ -130,11 +137,14 @@
 		<div id="svelte">%svelte.body%</div>
 		<script>
 			// Lighthouse lowers the score because firebase auth iframe doesn't have a title/(visibility not hidden)
-			const observer = new MutationObserver((mutations) => {
+			const observer = new MutationObserver(mutations => {
 				for (let mutation of mutations) {
 					if (mutation.type === 'childList') {
 						const node = mutation.addedNodes[0];
-						if (node?.tagName === 'IFRAME' && node?.id?.startsWith('I0')) {
+						if (
+							node?.tagName === 'IFRAME' &&
+							node?.id?.startsWith('I0')
+						) {
 							node.style.visibility = 'hidden';
 							observer.disconnect();
 						}

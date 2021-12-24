@@ -12,7 +12,7 @@ const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
 
 interface HandleProps {
 	request: Request;
-	resolve: (request: Request) => Promise<ServerResponse>;
+	resolve(request: Request): Promise<ServerResponse>;
 }
 
 export async function handle({ request, resolve }: HandleProps) {
@@ -24,12 +24,11 @@ export async function handle({ request, resolve }: HandleProps) {
 
 	const response = await resolve(request);
 
-	const [, lang] = request.path.split('/');
-
 	// check for unsupported browsers
 	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
 		response.headers['Location'] = '/unsupported.html';
 	}
+
 	// // code here happens after the endpoint or page is called
 	// response.headers['set-cookie'] = `user=${request.locals.user || ''}; Path=/; HttpOnly`;
 

@@ -65,7 +65,7 @@ export type Translation = {
 				/**
 				 * Profil
 				 */
-				'profile': string
+				'account': string
 				/**
 				 * Warenkorb
 				 */
@@ -146,7 +146,7 @@ export type TranslationFunctions = {
 				/**
 				 * Profil
 				 */
-				'profile': () => LocalizedString
+				'account': () => LocalizedString
 				/**
 				 * Warenkorb
 				 */

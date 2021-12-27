@@ -9,7 +9,7 @@ const de: BaseTranslation = {
 			arialabel: 'desktop primär',
 			routes: {
 				homepage: 'Startseite',
-				food: 'Essen',
+
 				drinks: 'Getränke',
 			},
 		},
@@ -19,7 +19,7 @@ const de: BaseTranslation = {
 				homepage: 'Startseite',
 				food: 'Essen',
 				drinks: 'Getränke',
-				profile: 'Profil',
+				account: 'Profil',
 				cart: 'Warenkorb',
 			},
 		},

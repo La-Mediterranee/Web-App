@@ -19,7 +19,7 @@ const en: Translation = {
 				homepage: 'Homepage',
 				food: 'Food',
 				drinks: 'Drinks',
-				profile: 'Profile',
+				account: 'Profile',
 				cart: 'Cart',
 			},
 		},

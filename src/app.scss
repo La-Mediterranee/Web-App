@@ -72,6 +72,19 @@ $mediaqueries: (
 	font-size: 16px;
 	font-style: normal;
 	font-family: 'Fira Sans', sans-serif;
+
+	--viewport-xs-min-width: 320px;
+	--viewport-xs-max-width: 419px;
+	--viewport-s-min-width: 420px;
+	--viewport-s-max-width: 833px;
+	--viewport-s-query: (max-width: 833px);
+	--viewport-m-min-width: 834px;
+	--viewport-m-max-width: 1023px;
+	--viewport-m-query: (max-width: 1023px);
+	--viewport-l-min-width: 1024px;
+	--viewport-l-max-width: 1441px;
+	--viewport-l-query: (min-width: 1024px);
+
 	--body-bg1: #5881a7;
 	/* --body-bg2: #284159; */
 	--body-bg2: #1e3953;
@@ -79,7 +92,9 @@ $mediaqueries: (
 	--top2: #1e3953;
 	--subtle: rgba(0, 0, 0, 0.1);
 	--cart-table-color: #ddd;
-	--carousel-item: 50%;
+
+	--top-bar-height: 72.5px;
+	--header-position: sticky;
 }
 
 html {

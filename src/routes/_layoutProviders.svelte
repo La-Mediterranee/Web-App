@@ -1,6 +1,4 @@
 <script context="module" lang="ts">
-	// import '../app.scss';
-
 	import { dev } from '$app/env';
 	import { onMount } from 'svelte';
 	import { initializeApp, getApps, getApp } from 'firebase/app';
@@ -36,7 +34,9 @@
 
 	import MaterialApp from 'svelte-material-components/src/components/MaterialApp/MaterialAppMin.svelte';
 
-	const firebase: FirebaseApp = !getApps()?.length ? initializeApp(firebaseConfig) : getApp();
+	const firebase: FirebaseApp = !getApps()?.length
+		? initializeApp(firebaseConfig)
+		: getApp();
 
 	onMount(async () => {
 		window.dataLayer = window.dataLayer || [];

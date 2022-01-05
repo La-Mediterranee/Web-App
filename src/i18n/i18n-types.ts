@@ -35,7 +35,7 @@ export type Translation = {
 				 */
 				'homepage': string
 				/**
-				 * Essen
+				 * Speisen
 				 */
 				'food': string
 				/**
@@ -116,7 +116,7 @@ export type TranslationFunctions = {
 				 */
 				'homepage': () => LocalizedString
 				/**
-				 * Essen
+				 * Speisen
 				 */
 				'food': () => LocalizedString
 				/**

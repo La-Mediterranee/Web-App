@@ -1,40 +1,57 @@
+<svelte:options immutable={true} />
+
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import t from '$i18n/i18n-svelte';
+
+	import { page } from '$app/stores';
 
 	import type { NavItem } from 'types/index';
 	import type { LocalizedString } from 'typesafe-i18n';
 
 	export let routes: NavItem[];
+	export let locale: string = 'en';
 
-	let activeRoute = $page.path;
+	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
+		return {
+			href: `/${locale}${href}`.replace(/\/$/, ''),
+			rel: rel instanceof Array ? rel.join(' ') : rel,
+			icon,
+			pathLabel,
+			size,
+		};
+	});
 
+	$: activeRoute = $page.url.pathname;
 	$: paths = $t.nav.mobile.routes as Record<string, () => LocalizedString>;
 </script>
 
 <nav aria-label={`${$t.nav.mobile.arialabel()}`}>
-	{#each routes as { pathLabel, icon, href, size, rel } (href)}
+	{#each _routes as { pathLabel, icon, href, size, rel } (href)}
 		<a
 			{href}
+			{rel}
 			class="item"
-			class:active={activeRoute.includes(href)}
+			class:active={activeRoute === href}
 			title={paths[pathLabel]()}
-			rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
 			on:click={() => (activeRoute = href)}
 		>
 			<div class="item-container">
 				<div class="bubble" />
 				<div class="mini-bubble" />
 				<div class="image">
-					<Icon path={icon} width={size ? size.width : 30} height={size ? size.height : 30} />
+					<Icon
+						path={icon}
+						width={size ? size.width : 30}
+						height={size ? size.height : 30}
+					/>
 					<!-- color={activeRoute !== href
-						? 'var(--tint-color)'
-						: 'var(--bar-color)'} -->
+					? 'var(--tint-color)'
+					: 'var(--bar-color)'} -->
 				</div>
 			</div>
 			<div class="title-container">
-				{#if activeRoute.includes(href)}
+				{#if activeRoute === href}
 					<span style="color: var(--tint-color);">
 						{paths[pathLabel]()}
 					</span>
@@ -45,7 +62,7 @@
 </nav>
 
 <style lang="scss">
-	@use "variables" as *;
+	@use 'variables' as *;
 
 	* {
 		--bar-color: var(--body-bg2);
@@ -66,10 +83,6 @@
 		@media (min-width: map-get($map: $breakpoints, $key: md)) {
 			display: none;
 		}
-	}
-
-	span {
-		font-size: 0.95rem;
 	}
 
 	.item-container {
@@ -115,6 +128,13 @@
 		position: relative;
 		justify-content: center;
 		align-items: center;
+		text-align: center;
+		white-space: nowrap;
+		font-size: 0.75rem;
+
+		@media screen and (min-width: 350px) {
+			font-size: 0.95rem;
+		}
 	}
 
 	.image {
@@ -137,7 +157,8 @@
 		&.active {
 			transform: translateY(-50%);
 			transition-property: transform;
-			transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
+			transition-timing-function: ease-in-out,
+				cubic-bezier(0.64, 0.57, 0.67, 1.53);
 			transition-delay: 0.3s;
 			transition-duration: 0.2s;
 

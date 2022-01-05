@@ -2,12 +2,14 @@ import * as path from 'path';
 
 import sveltePreprocess from 'svelte-preprocess';
 import autoprefixer from 'autoprefixer';
+
+import { readFileSync } from 'fs';
+import { typesafeI18nPlugin } from 'typesafe-i18n/rollup/rollup-plugin-typesafe-i18n';
+
 import node from '@sveltejs/adapter-node';
 import netlify from '@sveltejs/adapter-netlify';
 import cvWorker from '@sveltejs/adapter-cloudflare-workers';
 import adapterStatic from '@sveltejs/adapter-static';
-import { visualizer } from 'rollup-plugin-visualizer';
-import { readFileSync } from 'fs';
 
 const pkg = JSON.parse(
 	readFileSync('./package.json', {
@@ -39,15 +41,16 @@ function vite() {
 				},
 			},
 			// sourcemap: true,
-			// rollupOptions: {
-			// 	plugins: [
-			// 		visualizer({
-			// 			template: 'treemap',
-			// 			sourcemap: true,
-			// 			gzipSize: true
-			// 		})
-			// 	]
-			// }
+			rollupOptions: {
+				plugins: [
+					// visualizer({
+					// 	template: 'treemap',
+					// 	sourcemap: true,
+					// 	gzipSize: true,
+					// }),
+					typesafeI18nPlugin(),
+				],
+			},
 		},
 		optimizeDeps: {
 			// exclude: Object.keys(pkg.dependencies),
@@ -91,6 +94,7 @@ const kitConfig = {
 		// serviceWorker: '..',
 	},
 	serviceWorker: {
+		register: false,
 		files: filepath => !/\.DS_STORE/.test(filepath),
 	},
 	adapter: node(),

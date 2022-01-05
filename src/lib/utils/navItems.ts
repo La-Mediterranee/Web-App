@@ -7,13 +7,11 @@ export const desktopNavItems: NavItem[] = [
 	{
 		icon: home,
 		pathLabel: 'homepage',
-		// text: 'Startseite',
 		href: '/',
 	},
 	{
 		icon: fastfood,
 		pathLabel: 'food',
-		// text: 'Essen',
 		href: '/food',
 		size: {
 			width: 27,
@@ -23,7 +21,6 @@ export const desktopNavItems: NavItem[] = [
 	{
 		icon: mdiFoodForkDrink,
 		pathLabel: 'drinks',
-		// text: 'Getränke',
 		href: '/drinks',
 	},
 ];
@@ -32,7 +29,6 @@ export const mobileNavItems: NavItem[] = [
 	{
 		icon: fastfood,
 		pathLabel: 'food',
-		// text: 'Essen',
 		href: '/food',
 		size: {
 			width: 27,
@@ -42,26 +38,22 @@ export const mobileNavItems: NavItem[] = [
 	{
 		icon: person,
 		pathLabel: 'drinks',
-		// text: 'Profil',
 		href: '/drinks',
 	},
 	{
 		icon: home,
 		pathLabel: 'homepage',
-		// text: 'Startseite',
 		href: '/',
 	},
 	{
 		icon: person,
-		pathLabel: 'profile',
-		// text: 'Profil',
+		pathLabel: 'account',
 		href: '/customer',
 		rel: ['nofollow', 'ugc'],
 	},
 	{
 		icon: cart,
 		pathLabel: 'cart',
-		// text: 'Warenkorb',
 		href: '/cart',
 		rel: ['nofollow', 'ugc'],
 	},

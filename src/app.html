@@ -142,8 +142,10 @@
 					if (mutation.type === 'childList') {
 						const node = mutation.addedNodes[0];
 						if (
-							node?.tagName === 'IFRAME' &&
-							node?.id?.startsWith('I0')
+							node &&
+							node.tagName === 'IFRAME' &&
+							node.id &&
+							node.id.startsWith('I0')
 						) {
 							node.style.visibility = 'hidden';
 							observer.disconnect();

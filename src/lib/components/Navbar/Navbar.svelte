@@ -7,32 +7,44 @@
 </script>
 
 <script lang="ts">
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import t from '$i18n/i18n-svelte';
+	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 
 	export let routes: NavItem[] = [];
+	export let locale: string = 'en';
+
+	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
+		return {
+			href: `/${locale}${href}`.replace(/\/$/, ''),
+			rel: rel instanceof Array ? rel.join(' ') : rel,
+			icon,
+			pathLabel,
+			size,
+		};
+	});
 
 	$: paths = $t.nav.desktop.routes as Record<string, () => LocalizedString>;
 
 	const user = getAuthContext();
 </script>
 
-<header>
+<header id="top-bar">
 	<div id="nav-logo">
-		<a href="/">
+		<a href={`/${locale}`}>
 			<img src="/Logos/V1_210.webp" alt="" />
 		</a>
 	</div>
 
 	<nav aria-label={`${$t.nav.desktop.arialabel()}`}>
 		<ul>
-			{#each routes as { pathLabel, icon, href, rel } (href)}
+			{#each _routes as { pathLabel, icon, href, rel } (href)}
 				<li class="nav-item">
 					<a
 						{href}
-						rel={`${rel instanceof Array ? rel.join(' ') : rel}`}
+						{rel}
 						{...{
-							'aria-current': href === $page.path && 'page',
+							'aria-current':
+								href === $page.url.pathname && 'page',
 						}}
 					>
 						<div>
@@ -59,7 +71,7 @@
 				height={50}
 			/>
 		{:else}
-			<a href="/customer/login">{$t.login()}</a>
+			<a href={`/${locale}/customer/login`}>{$t.login()}</a>
 		{/if}
 	</div>
 </header>
@@ -74,18 +86,18 @@
 	}
 
 	// nav,
-	header {
+	#top-bar {
 		// --text-color: var(--tint-color);
 		--text-color: #fff;
 		--bg-color: #000;
 		// background: linear-gradient(to right, #4050e0e5, #062ba5);
 		display: flex;
 		top: 0;
-		height: 72.5px;
+		height: var(--top-bar-height, 72.5px);
 		width: 100%;
 		z-index: 10;
-		padding: 0.3em 0;
-		position: sticky;
+		padding: 0.3em 0.5em;
+		position: var(--header-position, sticky);
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
 
@@ -134,9 +146,9 @@
 
 	.nav-item {
 		list-style: none;
-		// margin-right: 0.75rem;
-		+ .nav-item {
-			margin-left: 1.15rem;
+
+		&:not(:last-child) {
+			margin-right: 1.15rem;
 		}
 
 		a {
@@ -154,7 +166,14 @@
 
 		span {
 			font-size: 1.2em;
-			// margin-left: 5px;
+		}
+	}
+
+	:global([dir='rtl']) {
+		.nav-item {
+			&:not(:last-child) {
+				margin-left: 1.15rem;
+			}
 		}
 	}
 

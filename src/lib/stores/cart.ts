@@ -2,13 +2,17 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
-import type { CartItem, SKU, ID } from 'types/product';
+import type { CartItem, ID } from 'types/product';
 import type { Invalidator } from 'types/index';
 
 export type Cart = Map<ID, CartItem>;
 
 interface CartStore {
-	subscribe: (this: void, run: Subscriber<Cart>, invalidate?: Invalidator<Cart> | undefined) => Unsubscriber;
+	subscribe: (
+		this: void,
+		run: Subscriber<Cart>,
+		invalidate?: Invalidator<Cart> | undefined
+	) => Unsubscriber;
 	removeItem: (oldItem: CartItem) => void;
 	addItem: (oldItem: CartItem) => void;
 	removeAll: (oldItem: CartItem) => void;
@@ -17,22 +21,21 @@ interface CartStore {
 	readonly totalAmount: number;
 }
 
-function createCartStore(): CartStore {
+const CART_STORE_KEY = 'cart';
+const storage = typeof localStorage !== 'undefined' ? localStorage : null;
+
+function createCartStore(startItems: Cart = new Map()): CartStore {
 	let totalAmount = 0;
 	let totalQuantity = 0;
 
+	const items = startItems;
+
 	const sound = browser ? new Audio('') : null;
 
-	const key = 'cart';
-	const storage = typeof localStorage !== 'undefined' ? localStorage : null;
-
-	const items =
-		storage?.getItem(key) != null ? (JSON.parse(storage.getItem(key)!) as Cart) : new Map<SKU, CartItem>();
-
-	const store = writable<Cart>(items, (set) => {
+	const store = writable<Cart>(items, () => {
 		return () => {
 			sound?.pause();
-			storage?.setItem(key, JSON.stringify(items));
+			storage?.setItem(CART_STORE_KEY, JSON.stringify(items));
 		};
 	});
 
@@ -45,7 +48,7 @@ function createCartStore(): CartStore {
 
 	function addItem(item: CartItem) {
 		sound?.play();
-		update((items) => {
+		update(items => {
 			items.set(item.ID, item);
 			calculateTotal(items);
 			return items;
@@ -54,7 +57,7 @@ function createCartStore(): CartStore {
 
 	function removeItem(oldItem: CartItem) {
 		sound?.play();
-		update((items) => {
+		update(items => {
 			items.delete(oldItem.ID || oldItem.name);
 			calculateTotal(items);
 			return items;
@@ -63,7 +66,7 @@ function createCartStore(): CartStore {
 
 	function upadateItem(id: ID, quantity: number) {
 		sound?.play();
-		update((items) => {
+		update(items => {
 			const item = items.get(id);
 			if (item) {
 				items.set(id, {
@@ -97,7 +100,7 @@ function createCartStore(): CartStore {
 
 		totalAmount = amount;
 		totalQuantity = quantity;
-		storage?.setItem(key, JSON.stringify(items));
+		storage?.setItem(CART_STORE_KEY, JSON.stringify(items));
 	}
 
 	return {
@@ -111,4 +114,43 @@ function createCartStore(): CartStore {
 	};
 }
 
-export const cart = createCartStore();
+// export const cart = (() => {
+// 	const items =
+// 		storage?.getItem(CART_STORE_KEY) != null
+// 			? (JSON.parse(storage.getItem(CART_STORE_KEY)!) as Cart)
+// 			: undefined;
+// 	return createCartStore(items);
+// })();
+
+const dummyCart: Cart = new Map([
+	[
+		'1312',
+		{
+			ID: '1312',
+			name: 'Burger',
+			categories: ['burger'],
+			description: '',
+			image: {
+				src: '/burger.webp',
+			},
+			price: 2.3,
+			quantity: 1,
+		},
+	],
+	[
+		'1322',
+		{
+			ID: '1322',
+			name: 'Burger',
+			categories: ['burger'],
+			description: '',
+			image: {
+				src: '/burger.webp',
+			},
+			price: 2.3,
+			quantity: 1,
+		},
+	],
+]);
+
+export const cart = createCartStore(dummyCart);

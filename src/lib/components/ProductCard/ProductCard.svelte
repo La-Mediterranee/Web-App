@@ -7,7 +7,6 @@
 	import { getProductModalContext } from '$lib/utils/helper';
 
 	import star from '$lib/Icons/outline/star';
-	import flash from '$lib/utils/flash';
 
 	import type { Product } from 'types/product';
 </script>
@@ -17,21 +16,23 @@
 	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import Link from 'svelte-material-components/src/components/Button/Link.svelte';
 	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
-	import { lazyloadImage } from '$lib/actions/lazyload';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
 	export let currency: string = 'EUR';
-	export let style: string;
+	export let style: string = '';
+	export let isVisible = true;
 
-	let tabindex = -1;
+	let tabindex = 0;
 	let container: HTMLElement;
 
 	const modal = getProductModalContext();
 
 	const { image, name, price, sku, rating, categories } = product;
 
-	const action = `/products${categories != null ? '/' + categories[0] : ''}/${name}`;
+	const action = `/products${
+		categories != null ? '/' + categories[0] : ''
+	}/${name}`;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -59,7 +60,7 @@
 <article
 	bind:this={container}
 	class="product-card-container"
-	tabindex="0"
+	tabindex={isVisible ? 0 : -1}
 	on:focus={() => (tabindex = 0)}
 	on:blur={() => (tabindex = -1)}
 	{action}
@@ -70,15 +71,14 @@
 	<Card raised>
 		<div class="inner-card">
 			<!-- style="background-image: url('https://images.placeholders.dev/?width=1055&height=100&text=%22%20%22&bgColor=%23f7f6f6&textColor=%236d6e71');" -->
+			<!-- loading="lazy" -->
 			<img
 				class="ml-auto"
 				decoding="async"
-				loading="lazy"
-				data-src={image?.src}
+				src={image.src}
 				alt={image?.alt || name}
 				width="250"
 				height="181"
-				use:lazyloadImage
 			/>
 
 			<CardTitle itemprop="name" class="justify-center h4">
@@ -93,7 +93,12 @@
 
 				{#if rating}
 					<div class="ratings">
-						<meter min="0" max="5" value={`${rating?.value ?? 0}`} aria-label={ratingAriaLabel}>
+						<meter
+							min="0"
+							max="5"
+							value={`${rating?.value ?? 0}`}
+							aria-label={ratingAriaLabel}
+						>
 							{#each Array(5).fill('star') as _}
 								<Icon path={star} />
 							{/each}
@@ -105,7 +110,12 @@
 			</div>
 
 			<div class="actionsContainer">
-				<svg class="wave" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<svg
+					class="wave"
+					viewBox="0 0 400 100"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
 					<path
 						d="M0.222221 0C50.2222 0 50.0002 25 100 25C150 25 150.222 4.86802e-06 200.223 0C250.224 -4.86802e-06 249.999 25 300 25C350.001 25 350.222 1.52588e-05 400.223 0C450.224 -1.52588e-05 400.223 250 400.223 250H0.222221C0.222221 250 -49.7778 0 0.222221 0Z"
 						fill="#278CC5"
@@ -118,7 +128,6 @@
 						it to a anchor/link 
 					-->
 					<!-- class="orange darken-4 ma-auto" -->
-
 					<Link
 						href=""
 						class="form-elements-color ma-auto"
@@ -165,6 +174,7 @@
 
 		.inner-card {
 			overflow: hidden;
+			z-index: 1;
 		}
 
 		img {

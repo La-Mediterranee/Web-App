@@ -3,33 +3,30 @@
 	import { initI18n } from '$i18n/i18n-svelte';
 	import { browser, dev } from '$app/env';
 
-	import { baseLocale, locales } from '$i18n/i18n-util';
-	import { replaceLocaleInUrl } from '$lib/utils';
-	import { registerServiceWorker } from '$lib/pwa/register-sw';
+	import { RTL_LANGS } from '$i18n/utils';
+	// import { registerServiceWorker } from '$lib/pwa/register-sw';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	import type { Locales } from '$i18n/i18n-types';
 
-	import { RTL_LANGS } from '$i18n/utils';
-
 	export async function load({
-		page,
+		params,
 		session,
 		stuff,
 	}: LoadInput): Promise<LoadOutput> {
-		// const lang = page.params.lang as Locales;
-		const lang = page.path.split('/')[1] as Locales | undefined;
+		const lang = params.lang as Locales;
+		// const lang = page.path.split('/')[1] as Locales | undefined;
 
-		if (page.path.includes('api')) {
-			return {
-				props: {
-					lang: session.locale,
-				},
-			};
-		}
+		// if (page.path.includes('api')) {
+		// 	return {
+		// 		props: {
+		// 			lang: session.locale,
+		// 		},
+		// 	};
+		// }
 
-		// redirect to preferred language if user comes from page root#
+		// redirect to preferred language if user comes from page root
 		if (!lang) {
 			return {
 				status: 302,
@@ -79,6 +76,7 @@
 	import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
 	import LocaleSwitcher from '$lib/components/LocaleSwitcher/LocaleSwitcher.svelte';
 
+	import rtl, { rtl2 } from '$stores/rtl';
 	import metatags from '$lib/stores/metatags';
 
 	import t from '$i18n/i18n-svelte';
@@ -86,17 +84,19 @@
 	export let dir: 'rtl' | 'ltr' | 'auto';
 	export let lang: Locales;
 
+	$rtl = dir === 'rtl';
+
 	let online: boolean = true;
 
 	onMount(async () => {
 		if (dev) return;
 
-		const sw = await registerServiceWorker();
-		Notification.requestPermission(permission => {
-			if (permission === 'granted') {
-				sw?.showNotification($LL.addToCart());
-			}
-		});
+		// const sw = await registerServiceWorker();
+		// Notification.requestPermission(permission => {
+		// 	if (permission === 'granted') {
+		// 		sw?.showNotification($LL.addToCart());
+		// 	}
+		// });
 	});
 </script>
 
@@ -107,10 +107,6 @@
 		metatags.reset();
 	}}
 />
-<!-- 
-<svelte:window
-	
-/> -->
 
 <svelte:head>
 	<html {lang} {dir} />
@@ -120,13 +116,13 @@
 	<Modals>
 		<div id="mainContent">
 			<Statusbar message={$t.connectionStatus()} {online} />
-			<Navbar routes={desktopNavItems} />
+			<Navbar locale={lang} routes={desktopNavItems} />
 			<main>
 				<Installprompt installSource={'LayoutInstallButton'} />
 				<slot />
 				<UpdatePrompt />
 			</main>
-			<Tabbar routes={mobileNavItems} />
+			<Tabbar locale={lang} routes={mobileNavItems} />
 			<Footer />
 		</div>
 	</Modals>

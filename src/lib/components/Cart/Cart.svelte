@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { cart } from '$lib/stores/cart';
 	import { enhance } from './action';
 
 	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
@@ -8,36 +7,7 @@
 
 	import type { Cart } from '$lib/stores/cart';
 
-	const items: Cart = new Map([
-		[
-			'1312',
-			{
-				ID: '1312',
-				name: 'Burger',
-				categories: ['burger'],
-				description: '',
-				image: {
-					src: '/burger.webp',
-				},
-				price: 2.3,
-				quantity: 1,
-			},
-		],
-		[
-			'1322',
-			{
-				ID: '1322',
-				name: 'Burger',
-				categories: ['burger'],
-				description: '',
-				image: {
-					src: '/burger.webp',
-				},
-				price: 2.3,
-				quantity: 1,
-			},
-		],
-	]);
+	export let cart: Cart;
 
 	const tableHeaders = ['Produkt', 'Anzahl', 'Preis', '']; //'Teilsumme',
 </script>
@@ -49,7 +19,7 @@
 <h1>Warenkorb</h1>
 
 <div id="cart">
-	{#if $cart.size !== 0}
+	{#if cart.size === 0}
 		<p>No items in cart yet.</p>
 	{:else}
 		<form
@@ -70,13 +40,13 @@
 					</tr>
 				</thead>
 				<tbody aria-live="polite">
-					{#each [...items] as [SKU, item] (SKU)}
+					{#each [...cart] as [SKU, item] (SKU)}
 						<CartItemComponent {item} />
 					{/each}
 
-					{#each [...$cart] as [SKU, item] (SKU)}
+					<!-- {#each [...$cart] as [SKU, item] (SKU)}
 						<CartItemComponent {item} />
-					{/each}
+					{/each} -->
 
 					<!-- {#each $cart as item (item.name)}
 					<CartItemComponent {item} quantity={item.quantity} />
@@ -87,16 +57,24 @@
 						<td colspan={tableHeaders.length}>
 							<div>
 								<label for="notes">Anmerkungen: </label>
-								<textarea name="notes" id="notes" placeholder="Anmerkungen: " />
+								<textarea
+									name="notes"
+									id="notes"
+									placeholder="Anmerkungen: "
+								/>
 							</div>
 						</td>
 					</tr>
 					<tr>
 						<td colspan={tableHeaders.length - 2}>
-							Summe ({$cart.size} Produkte): {$cart.size}
+							Summe ({cart.size} Produkte): {cart.size}
 						</td>
 						<td colspan="2">
-							<Button type="submit" class="form-elements-color" rounded>Zur Kasse</Button>
+							<Button
+								type="submit"
+								class="form-elements-color"
+								rounded>Zur Kasse</Button
+							>
 						</td>
 					</tr>
 				</tfoot>
@@ -140,13 +118,18 @@
 
 		th {
 			&:first-child {
-				border-top-left-radius: 1em;
-				border-bottom-left-radius: 1em;
+				border-start-start-radius: 1em;
+				border-end-start-radius: 1em;
+
+				// border-top-left-radius: 1em;
+				// border-bottom-left-radius: 1em;
 			}
 
 			&:last-child {
-				border-top-right-radius: 1em;
-				border-bottom-right-radius: 1em;
+				border-start-end-radius: 1em;
+				border-end-end-radius: 1em;
+				// border-top-right-radius: 1em;
+				// border-bottom-right-radius: 1em;
 			}
 		}
 	}
@@ -183,13 +166,17 @@
 				text-align: right;
 
 				&:first-child {
-					border-top-left-radius: 1em;
-					border-bottom-left-radius: 1em;
+					border-start-start-radius: 1em;
+					border-end-start-radius: 1em;
+					// border-top-left-radius: 1em;
+					// border-bottom-left-radius: 1em;
 				}
 
 				&:last-child {
-					border-top-right-radius: 1em;
-					border-bottom-right-radius: 1em;
+					border-start-end-radius: 1em;
+					border-end-end-radius: 1em;
+					// border-top-right-radius: 1em;
+					// border-bottom-right-radius: 1em;
 				}
 			}
 		}

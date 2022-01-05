@@ -28,12 +28,20 @@
 		</div>
 	</th>
 	<td title="Anzahl">
-		<input type="number" inputmode="numeric" id="quantity" bind:value={item.quantity} />
+		<input
+			type="number"
+			inputmode="numeric"
+			id="quantity"
+			bind:value={item.quantity}
+		/>
 	</td>
 	<td title="Preis"><span>{price}</span></td>
 	<!-- <td title="Teilsumme"><span>{sum}</span></td> -->
 	<td>
-		<button on:click={() => console.log('delete')} aria-label="Produkt vom Warenkorb entfernen">
+		<button
+			on:click={() => console.log('delete')}
+			aria-label="Produkt vom Warenkorb entfernen"
+		>
 			<Icon path={trash} />
 		</button>
 	</td>
@@ -145,8 +153,10 @@
 				padding-left: 0.5em;
 
 				@media screen and (min-width: 460px) {
-					border-top-left-radius: 1em;
-					border-bottom-left-radius: 1em;
+					// border-top-left-radius: 1em;
+					// border-bottom-left-radius: 1em;
+					border-start-start-radius: 1em;
+					border-end-start-radius: 1em;
 				}
 			}
 
@@ -154,8 +164,10 @@
 				padding-right: 0.5em;
 
 				@media screen and (min-width: 460px) {
-					border-top-right-radius: 1em;
-					border-bottom-right-radius: 1em;
+					border-start-end-radius: 1em;
+					border-end-end-radius: 1em;
+					// border-top-right-radius: 1em;
+					// border-bottom-right-radius: 1em;
 				}
 			}
 		}

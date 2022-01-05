@@ -1,39 +1,85 @@
-// import { decodeJWT } from './server/helper';
-
-import { detectLocale } from '$i18n/i18n-util';
+import { sequence } from '@sveltejs/kit/hooks';
 import { initAcceptLanguageHeaderDetector } from 'typesafe-i18n/detectors';
 
-import type { Request } from '@sveltejs/kit';
-import type { ServerResponse } from '@sveltejs/kit/types/hooks';
-import type { auth as adminAuth } from 'firebase-admin';
+import { RTL_LANGS } from '$i18n/utils';
+import { detectLocale } from '$i18n/i18n-util';
+
+import { parse } from './server/cookie';
+import { auth } from './server/firebase';
+import { attachCsrfToken } from './server/csrf';
+
 import type { Locales } from '$i18n/i18n-types';
+import type { Request, Handle } from '@sveltejs/kit';
+import type { DecodedIdToken } from 'firebase-admin/auth';
 
-const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
-
-interface HandleProps {
-	request: Request;
-	resolve(request: Request): Promise<ServerResponse>;
+interface Cookies {
+	'session': string;
+	'preferred-lang': string;
+	'csrfToken': string;
 }
 
-export async function handle({ request, resolve }: HandleProps) {
-	// const cookies = cookie.parse(request.headers.cookie || '')
-	// request.locals.user = cookies.user
+interface AppLocals<T> {
+	user?: DecodedIdToken;
+	cookies: T;
+}
 
-	// code here happends before the endpoint or page is called
-	// await decodeJWT(request);
+export type ShopLocals = AppLocals<Cookies>;
+export type ShopHookRequest = Request<ShopLocals, Body>;
 
+const cookieParser: Handle = async ({ request, resolve }) => {
+	const cookies = parse<Cookies>(request.headers.cookie || '');
+
+	request.locals.cookies = cookies;
+
+	return resolve(request);
+};
+
+const methodResolver: Handle = async ({ request, resolve }) => {
+	// TODO https://github.com/sveltejs/kit/issues/1046
+	const method = request.url.searchParams.get('_method');
+
+	if (method) {
+		request.method = method.toUpperCase();
+	}
+
+	return resolve(request);
+};
+
+const last: Handle = async ({ request, resolve }) => {
+	const cookies = request.locals.cookies;
+
+	try {
+		request.locals.user = await auth.verifySessionCookie(cookies.session);
+	} catch (_) {
+		request.locals.user = undefined;
+	}
+
+	const response = await resolve(request);
+
+	return Object.assign({}, response);
+};
+
+const browserChecker: Handle = async ({ resolve, request }) => {
+	const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
+
+	const lang = request.locals.lang;
 	const response = await resolve(request);
 
 	// check for unsupported browsers
 	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
-		response.headers['Location'] = '/unsupported.html';
+		response.headers['Location'] = `/${lang}/unsupported.html`;
 	}
 
-	// // code here happens after the endpoint or page is called
-	// response.headers['set-cookie'] = `user=${request.locals.user || ''}; Path=/; HttpOnly`;
+	return response;
+};
 
-	return Object.assign({}, response);
-}
+export const handle = sequence(
+	cookieParser,
+	methodResolver,
+	attachCsrfToken('/', 'csrfToken'),
+	browserChecker,
+	last
+);
 
 interface User {
 	uid: string;
@@ -44,11 +90,11 @@ interface User {
 interface Session {
 	user?: User;
 	locale: Locales;
+	rtl: boolean;
 }
 
-export function getSession(request: Request): Session {
-	const userDecoded = request.locals.user as adminAuth.DecodedIdToken;
-	// console.log(user);
+export function getSession(request: ShopHookRequest): Session {
+	const userDecoded = request.locals.user;
 
 	// set the preffered language
 	const acceptLanguageDetector = initAcceptLanguageHeaderDetector(request);
@@ -62,18 +108,44 @@ export function getSession(request: Request): Session {
 		  } as User)
 		: undefined;
 	return {
-		user: user,
+		user,
 		locale,
+		rtl: RTL_LANGS.has(locale),
 	};
 }
 
-// import * as cookie from 'cookie';
+// interface HandleProps {
+// 	request: ShopHookRequest;
+// 	resolve(request: ShopHookRequest): Promise<Response>;
+// }
+
+// export async function handler(input: HandleProps) {
+// 	const { request, resolve } = input;
+
+// 	const cookies = request.locals.cookies;
+
+// 	try {
+// 		request.locals.user = await auth.verifySessionCookie(cookies.session);
+// 	} catch (_) {
+// 		request.locals.user = undefined;
+// 	}
+
+// 	const response = await resolve(request);
+
+// 	// check for unsupported browsers
+// 	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
+// 		response.headers['Location'] = `/${resolve}/unsupported.html`;
+// 	}
+
+// 	return Object.assign({}, response);
+// }
+
 // import { firestore } from './server/firebase';
 
 // export async function getContext({ headers }) {
 // 	let user = null;
 // 	try {
-// 		const cookies = cookie.parse(headers.cookie || '');
+// 		const cookies = parse(headers.cookie || '');
 // 		const sessionId = cookies['__session'];
 // 		if (!sessionId) {
 // 			return {
@@ -101,8 +173,4 @@ export function getSession(request: Request): Session {
 // 			context: { user },
 // 		};
 // 	}
-// }
-
-// export async function getSession({ context }) {
-// 	return context;
 // }

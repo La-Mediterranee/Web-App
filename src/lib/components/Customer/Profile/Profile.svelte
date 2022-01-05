@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { session } from '$app/stores';
 
 	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
 
@@ -12,7 +13,10 @@
 	<h1>Profil</h1>
 
 	<section>
-		<img src={`${$user?.photoURL || ''}`} alt={`${$user?.displayName || 'Users'} Profilbild`} />
+		<img
+			src={`${$user?.photoURL || ''}`}
+			alt={`${$user?.displayName || 'Users'} Profilbild`}
+		/>
 
 		<h3>{$user?.displayName}</h3>
 	</section>
@@ -32,7 +36,7 @@
 		rounded
 		on:click={async () => {
 			await user.logOut();
-			goto('/customer/login');
+			goto('/' + $session.lang + '/customer/login');
 		}}
 	>
 		Abmelden

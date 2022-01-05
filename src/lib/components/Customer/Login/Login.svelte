@@ -66,19 +66,22 @@
 	import Alert from 'svelte-material-components/src/components/Alert';
 	import TextField from 'svelte-material-components/src/components/TextField';
 
+	import { session } from '$app/stores';
+
 	import type { Auth, User } from 'firebase/auth';
+	import { getCookie } from '$lib/utils';
 
 	const user = getAuthContext();
 	const auth = user?.auth;
 
 	let form: HTMLFormElement | null = null;
-	let email: string = '';
-	let password: string = '';
+	let email: string | undefined = undefined;
+	let password: string | undefined = undefined;
 	let show: boolean = false;
 	let error: boolean = false;
 
 	$: if ($user) {
-		goto('/customer');
+		goto(`/${$session.locale}/customer`);
 	}
 
 	async function login(e: MouseEvent | Event) {
@@ -92,15 +95,15 @@
 			// new window.AbortSignal();
 
 			if (value === 'login') {
-				if (!validateInput(email, password)) {
-					return;
-				}
-				userObject = await signIn(auth, email, password);
+				if (!validateInput(email!, password!)) return;
+
+				userObject = await signIn(auth, email!, password!);
+
 				if (typeof PasswordCredential !== 'undefined') {
 					const passwordcred = new PasswordCredential({
-						id: email,
+						id: email!,
 						type: 'password',
-						password: password,
+						password: password!,
 						iconURL: userObject?.user.photoURL ?? '',
 					});
 					await navigator.credentials.store(passwordcred);
@@ -117,12 +120,25 @@
 				// await fetch(`${VITE_SERVER_URL}/auth/login?provider=firebase`, {
 				// 	headers: { Authorization: `Bearer ${token}` },
 				// });
+				const csrfToken = getCookie('csrfToken');
+				console.log(csrfToken);
+
+				await fetch('/api/session/login', {
+					method: 'post',
+					headers: {
+						'content-type': 'application/json; charset=utf-8',
+					},
+					body: JSON.stringify({
+						idToken: await user.getIdToken(),
+						csrfToken: csrfToken,
+					}),
+				});
 
 				// if (userObject?.newUser) {
 				// 	db.collection('users').doc(user.uid).set({ email });
 				// }
 
-				goto('/customer');
+				goto(`/${$session.locale}/customer`);
 
 				error = false;
 			} else {
@@ -136,7 +152,12 @@
 </script>
 
 <div class="login-error" on:click={() => (error = !error)}>
-	<Alert class="error-color" transition={slide} transitionOpts={{ duration: 500 }} bind:visible={error}>
+	<Alert
+		class="error-color"
+		transition={slide}
+		transitionOpts={{ duration: 500 }}
+		bind:visible={error}
+	>
 		<div slot="icon">
 			<Icon path={mdiAlert} />
 		</div>
@@ -147,15 +168,22 @@
 <h1>Login</h1>
 
 <section id="emailPassword">
-	<form bind:this={form} on:submit|preventDefault={login} name="login" novalidate>
+	<form
+		bind:this={form}
+		on:submit|preventDefault={login}
+		name="login"
+		method="post"
+		action="/api/auth/login"
+	>
 		<div class="wrapper">
 			<TextField
 				bind:value={email}
 				type="email"
 				name="email"
 				rules={emailRules}
-				filled
 				autocomplete="email"
+				required
+				filled
 				rounded
 			>
 				<div slot="prepend">
@@ -173,6 +201,7 @@
 				rules={passwordRules}
 				counter={`${minLength}+`}
 				autocomplete="current-password"
+				required
 				rounded
 				filled
 			>
@@ -186,7 +215,10 @@
 						show = !show;
 					}}
 				>
-					<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
+					<Icon
+						style="cursor: pointer; color:#fff;"
+						path={show ? eye : eyeOff}
+					/>
 				</div>
 			</TextField>
 		</div>
@@ -194,28 +226,52 @@
 		<button value="login">Einloggen</button>
 	</form>
 
-	<a id="register" href="/customer/register" role="button">Registrieren</a>
+	<a id="register" href="./register" role="button">Registrieren</a>
 </section>
 
 <section>
 	<h2>Weiter Optionen:</h2>
 	<noscript> Diese Optionen sind nur mit JS verfügbar </noscript>
-	<button id="google" type="button" class="provider" value="google" on:click={login}>
+	<button
+		id="google"
+		type="button"
+		class="provider"
+		value="google"
+		on:click={login}
+	>
 		<img src="/svg/google.svg" alt="Google Logo" />
 		<span class="buttonText"> Anmelden mit Google</span>
 	</button>
 
-	<button id="facebook" type="button" class="provider" value="facebook" on:click={login}>
+	<button
+		id="facebook"
+		type="button"
+		class="provider"
+		value="facebook"
+		on:click={login}
+	>
 		<img src="/svg/facebook.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Facebook</span>
 	</button>
 
-	<button id="microsoft" type="button" class="provider" value="microsoft" on:click={login}>
+	<button
+		id="microsoft"
+		type="button"
+		class="provider"
+		value="microsoft"
+		on:click={login}
+	>
 		<img src="/svg/microsoft.svg" alt="Microsoft Logo" />
 		<span class="buttonText"> Anmelden mit Microsoft</span>
 	</button>
 
-	<button id="twitter" type="button" class="provider" value="twitter" on:click={login}>
+	<button
+		id="twitter"
+		type="button"
+		class="provider"
+		value="twitter"
+		on:click={login}
+	>
 		<img src="/svg/twitter.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Twitter</span>
 	</button>
@@ -223,7 +279,13 @@
 
 <section>
 	<h2>Für Devs:</h2>
-	<button id="github" type="button" class="provider" value="github" on:click={login}>
+	<button
+		id="github"
+		type="button"
+		class="provider"
+		value="github"
+		on:click={login}
+	>
 		<img src="/svg/github.svg" alt="Github Logo" />
 		<span class="buttonText"> Anmelden mit Github</span>
 	</button>
@@ -231,7 +293,13 @@
 
 <section>
 	<h2>Für Gamer:</h2>
-	<button id="discord" type="button" class="provider" value="discord" on:click={login}>
+	<button
+		id="discord"
+		type="button"
+		class="provider"
+		value="discord"
+		on:click={login}
+	>
 		<img src="/svg/discord.svg" alt="Discord Logo" />
 		<span class="buttonText"> Anmelden mit Discord</span>
 	</button>

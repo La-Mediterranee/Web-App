@@ -1,4 +1,5 @@
 <script context="module" lang="ts">
+	import { onMount } from 'svelte';
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
 
@@ -7,12 +8,27 @@
 
 <script lang="ts">
 	import t from '$i18n/i18n-svelte';
-	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
-	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
-
+	import Siema from '$components/Siema';
 	import ProductCard from '$components/ProductCard';
 
+	import { rtl } from '$stores/rtl';
+	import { session } from '$app/stores';
+
 	export let homePageData: HomepageProps | undefined;
+
+	onMount(() => {
+		document.documentElement.style.setProperty(
+			'--header-position',
+			'fixed'
+		);
+
+		return () => {
+			document.documentElement.style.setProperty(
+				'--header-position',
+				'sticky'
+			);
+		};
+	});
 
 	const sections = homePageData?.sections || [];
 </script>
@@ -21,7 +37,7 @@
 	<title>Essen Liferapp!</title>
 </svelte:head>
 
-<div style="padding-top: 2.2em;">
+<div class="banner">
 	<div class="head">
 		<img decoding="async" src={SHOP_LOGO} alt="" height="512" width="918" />
 		<h1>Herzlich Willkomen!</h1>
@@ -31,27 +47,25 @@
 
 {#each sections as section}
 	<section>
-		<h2>{section.title}</h2>
-		<div>
+		<h2 class="row-header">{section.title}</h2>
+		<div class="section-carousel">
 			{#if Array.isArray(section.body)}
-				<SlideGroup>
-					{#each section.body as bestseller}
-						<SlideItem class="ptb-2" let:active>
-							<ProductCard
-								product={bestseller}
-								style="min-width: 220px; max-width: 250px; margin: 0 10px;"
-							/>
-						</SlideItem>
-					{/each}
-				</SlideGroup>
+				<Siema
+					rtl={$session.rtl}
+					items={section.body}
+					let:item={product}
+					let:visible
+				>
+					<ProductCard {product} isVisible={visible} />
+				</Siema>
 			{/if}
 		</div>
 	</section>
 {/each}
 
 <style lang="scss">
-	:global(header) {
-		position: fixed !important;
+	:global(:root) {
+		--header-position: fixed;
 	}
 
 	h1 {
@@ -64,20 +78,38 @@
 		margin-bottom: 1em;
 
 		div {
-			display: inline-flex;
-			max-width: 100%;
-
 			> :global(*) {
 				margin: 0.5em;
 
 				&:first-child {
-					margin-left: 0;
+					margin-inline-start: 0;
 				}
 
 				&:last-child {
-					margin-right: 0;
+					margin-inline-end: 0;
 				}
 			}
+		}
+	}
+
+	.banner {
+		padding-top: 2.2em;
+	}
+
+	.section-carousel {
+		--siema-item-min-width: 240px;
+		--siema-item-max-width: 240px;
+
+		@media screen and (min-width: 500px) {
+			--siema-item-width: 50%;
+		}
+
+		@media screen and (min-width: 900px) {
+			--siema-item-width: 35%;
+		}
+
+		@media screen and (min-width: 1200px) {
+			--siema-item-width: min(35%, 210px);
 		}
 	}
 

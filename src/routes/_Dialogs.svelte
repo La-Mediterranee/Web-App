@@ -1,9 +1,4 @@
 <script context="module" lang="ts">
-	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
-
-	import { setContext } from 'svelte';
-	import { PRODUCT_MODAL } from '$lib/utils/constants';
-
 	import type { Product } from 'types/product';
 
 	type Modals = typeof ProductModal;
@@ -15,34 +10,37 @@
 	export interface CloseEvent {
 		readonly detail?: CloseEventDetail;
 	}
-
-	const current: {
-		component: Modals | null;
-		props: Object | null;
-	} = {
-		component: null,
-		props: null,
-	};
 </script>
 
 <script lang="ts">
+	import { setContext } from 'svelte';
+	import { PRODUCT_MODAL } from '$lib/utils/constants';
+
 	import Dialog from 'svelte-material-components/src/components/Dialog/Dialog.svelte';
 
+	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
+
 	let active = false;
+
+	let modalBody: Modals | null = null;
+	let componentProps: Object | null = {};
 
 	function openProductModal(product: Product) {
 		open(ProductModal, { product });
 	}
 
 	function open(component: Modals | null, props: Object) {
-		current.component = component;
-		current.props = props;
+		modalBody = component;
+		componentProps = props;
+
 		active = true;
 	}
 
 	function close({ detail }: CloseEvent) {
 		detail?.close();
-		current.component = null;
+		modalBody = null;
+		componentProps = {};
+
 		active = false;
 	}
 
@@ -54,5 +52,5 @@
 <slot />
 
 <Dialog width="auto" role="dialog" bind:active>
-	<svelte:component this={current.component} {...current.props} on:close={close} />
+	<svelte:component this={modalBody} {...componentProps} on:close={close} />
 </Dialog>

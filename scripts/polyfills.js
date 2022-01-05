@@ -10,7 +10,8 @@ function hasIntlGetCanonicalLocalesBug() {
 const polyfills = [];
 
 if (!('FormData' in window)) {
-	const src = 'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
+	const src =
+		'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
 	const script = document.createElement('script');
 	script.src = src;
 	document.head.appendChild(script);
@@ -38,8 +39,14 @@ if (!('GetCanonicalLocales' in Intl) || hasIntlGetCanonicalLocalesBug()) {
 	polyfills.push('Intl.GetCanonicalLocales');
 }
 
+if (!('scroll' in Element.prototype)) {
+	polyfills.push('Element.prototype.scroll');
+}
+
 if (polyfills.length > 0) {
-	const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join('%2C')}`;
+	const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join(
+		'%2C'
+	)}`;
 	const script = document.createElement('script');
 	script.src = src;
 	document.head.appendChild(script);
@@ -53,11 +60,11 @@ Promise.allSettled =
 		for (const p of promises) {
 			wrappedPromises.push(
 				Promise.resolve(p).then(
-					(value) => ({
+					value => ({
 						status: 'fulfilled',
 						value,
 					}),
-					(reason) => ({
+					reason => ({
 						status: 'rejected',
 						reason,
 					})

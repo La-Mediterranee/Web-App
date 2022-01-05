@@ -28,7 +28,11 @@ export async function fetchFromAPI(endpointURL: string, opt?: Object) {
 	return res.json();
 }
 
-export function promiseEvent<T>(emitter: Element | Window, eventName: string, timeout: number): Promise<T> {
+export function promiseEvent<T>(
+	emitter: Element | Window,
+	eventName: string,
+	timeout: number
+): Promise<T> {
 	return new Promise((resolve, reject) => {
 		let timer: number;
 
@@ -46,7 +50,9 @@ export function promiseEvent<T>(emitter: Element | Window, eventName: string, ti
 	});
 }
 
-export async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any | null]> {
+export async function runAsync<T>(
+	promise: Promise<T>
+): Promise<[T | null, any | null]> {
 	try {
 		const data = await promise;
 		return [data, null];

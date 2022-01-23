@@ -2,10 +2,10 @@
 	"useTabs": true,
 	"singleQuote": true,
 	"bracketSpacing": true,
-	"printWidth": 80,
+	"printWidth": 100,
 	"tabWidth": 4,
 	"quoteProps": "consistent",
-	"trailingComma": "es5",
+	"trailingComma": "all",
 	"arrowParens": "avoid",
 	"overrides": [
 		{

@@ -3,12 +3,15 @@
 </script>
 
 <script lang="ts">
+	import Auth from '$lib/firebase/Auth.svelte';
 	import Login from '$lib/components/Customer/Login';
 </script>
 
-<div>
-	<Login />
-</div>
+<Auth>
+	<div>
+		<Login />
+	</div>
+</Auth>
 
 <style>
 	div {

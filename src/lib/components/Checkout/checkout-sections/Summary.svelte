@@ -1,6 +1,6 @@
 <script lang="ts">
-	import TextField from 'svelte-material-components/src/components/TextField';
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
+
 	import { createEventDispatcher } from 'svelte';
 
 	export let value: number[];
@@ -20,7 +20,5 @@
 	>
 		Zurück zu den Zahlungdetails
 	</Button>
-	<Button type="submit" on:click={() => (value = [2])}>
-		Bestellung bestätigen
-	</Button>
+	<Button type="submit" on:click={() => (value = [2])}>Bestellung bestätigen</Button>
 </form>

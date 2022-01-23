@@ -2,7 +2,7 @@ libs:
 	https://materialdesignicons.com/
 	https://firebase.google.com/
 	https://kit.svelte.dev/
-	https://svelte-materialify.vercel.app/  sort of foked into github:abdo643-HULK/svelte-material
+	https://svelte-materialify.vercel.app/  sort of foked into github:abdo643-HULK/svelty-material
 
 resources:
 	https://web.dev/

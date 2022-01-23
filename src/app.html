@@ -25,14 +25,11 @@
 			href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;800&display=swap"
 		/>
 
-		<script>
+		<script type="module">
 			function hasIntlGetCanonicalLocalesBug() {
 				try {
 					//@ts-ignore
-					return (
-						new Intl.Locale('und-x-private').toString() ===
-						'x-private'
-					);
+					return new Intl.Locale('und-x-private').toString() === 'x-private';
 				} catch (e) {
 					return true;
 				}
@@ -41,8 +38,7 @@
 			const polyfills = [];
 
 			if (!('FormData' in window)) {
-				const src =
-					'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
+				const src = 'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
 				const script = document.createElement('script');
 				script.src = src;
 				document.head.appendChild(script);
@@ -56,8 +52,7 @@
 				!(
 					'IntersectionObserver' in window &&
 					'IntersectionObserverEntry' in window &&
-					'intersectionRatio' in
-						window.IntersectionObserverEntry.prototype
+					'intersectionRatio' in window.IntersectionObserverEntry.prototype
 				)
 			) {
 				polyfills.push('IntersectionObserver');
@@ -69,7 +64,7 @@
 
 			if (polyfills.length > 0) {
 				const src = `https://polyfill.io/v3/polyfill.min.js?features=${polyfills.join(
-					'%2C'
+					'%2C',
 				)}`;
 				const script = document.createElement('script');
 				script.src = src;
@@ -90,13 +85,17 @@
 								reason => ({
 									status: 'rejected',
 									reason,
-								})
-							)
+								}),
+							),
 						);
 					}
 
 					return Promise.all(wrappedPromises);
 				};
+		</script>
+
+		<script>
+			document.documentElement.classList.add('js');
 		</script>
 
 		<!-- <script type="module">
@@ -134,8 +133,15 @@
 		%svelte.head%
 	</head>
 	<body>
+		<noscript>
+			<style>
+				.no-js-hidden {
+					display: none;
+				}
+			</style>
+		</noscript>
 		<div id="svelte">%svelte.body%</div>
-		<script>
+		<script type="module">
 			// Lighthouse lowers the score because firebase auth iframe doesn't have a title/(visibility not hidden)
 			const observer = new MutationObserver(mutations => {
 				for (let mutation of mutations) {

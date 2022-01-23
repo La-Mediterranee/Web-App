@@ -1,9 +1,6 @@
-import { auth } from 'firebase-admin';
+import type { RequestEvent } from '@sveltejs/kit';
 
-import type { Request } from '@sveltejs/kit';
-import type { ReadOnlyFormData } from '@sveltejs/kit/types/helper';
-
-export async function get(req: Request) {
+export async function get(req: RequestEvent) {
 	const sessionId = '1234';
 	const ghAuthURL = 'https://github.com/login/oauth/authorize';
 	const clientId = import.meta.env.VITE_CLIENT_ID;
@@ -16,8 +13,8 @@ export async function get(req: Request) {
 	};
 }
 
-export async function post(req: Request) {
-	const form = req.body as ReadOnlyFormData;
+export async function post(req: RequestEvent) {
+	const form = await req.request.formData();
 
 	console.debug(form.get('email'));
 	console.debug(form.get('password'));

@@ -16,17 +16,14 @@ export type Translation = {
 	 */
 	'connectionStatus': string
 	/**
-	 * Einloggen
+	 * Speichern
 	 */
-	'login': string
-	/**
-	 * Registrieren
-	 */
-	'signUp': string
+	'save': string
+	'addToCart': string
 	'nav': {	
 		'desktop': {	
 			/**
-			 * desktop primär
+			 * Desktop primär
 			 */
 			'arialabel': string
 			'routes': {	
@@ -46,7 +43,7 @@ export type Translation = {
 		}
 		'mobile': {	
 			/**
-			 * mobil primär
+			 * Mobil primär
 			 */
 			'arialabel': string
 			'routes': {	
@@ -73,11 +70,56 @@ export type Translation = {
 			}
 		}
 	}
-	/**
-	 * Menge
-	 */
-	'productQuantity': string
-	'addToCart': string
+	'cart': {	
+		/**
+		 * Warenkorb
+		 */
+		'cart': string
+		/**
+		 * Anmerkungen
+		 */
+		'remarks': string
+		/**
+		 * Anzahl
+		 */
+		'qty': string
+	}
+	'customer': {	
+		/**
+		 * Konto
+		 */
+		'account': string
+		/**
+		 * Sprache
+		 */
+		'language': string
+		/**
+		 * Einstellungen
+		 */
+		'settings': string
+		/**
+		 * Einloggen
+		 */
+		'login': string
+		/**
+		 * Registrieren
+		 */
+		'signUp': string
+		/**
+		 * Abmelden
+		 */
+		'logout': string
+		/**
+		 * Zahlungsmethoden
+		 */
+		'paymentMethods': string
+		'profile': {	
+			/**
+			 * Sprache auswählen
+			 */
+			'select-language': string
+		}
+	}
 	'footer': {	
 		/**
 		 * Über {shopname}
@@ -97,17 +139,14 @@ export type TranslationFunctions = {
 	 */
 	'connectionStatus': () => LocalizedString
 	/**
-	 * Einloggen
+	 * Speichern
 	 */
-	'login': () => LocalizedString
-	/**
-	 * Registrieren
-	 */
-	'signUp': () => LocalizedString
+	'save': () => LocalizedString
+	'addToCart': () => LocalizedString
 	'nav': {	
 		'desktop': {	
 			/**
-			 * desktop primär
+			 * Desktop primär
 			 */
 			'arialabel': () => LocalizedString
 			'routes': {	
@@ -127,7 +166,7 @@ export type TranslationFunctions = {
 		}
 		'mobile': {	
 			/**
-			 * mobil primär
+			 * Mobil primär
 			 */
 			'arialabel': () => LocalizedString
 			'routes': {	
@@ -154,11 +193,56 @@ export type TranslationFunctions = {
 			}
 		}
 	}
-	/**
-	 * Menge
-	 */
-	'productQuantity': () => LocalizedString
-	'addToCart': () => LocalizedString
+	'cart': {	
+		/**
+		 * Warenkorb
+		 */
+		'cart': () => LocalizedString
+		/**
+		 * Anmerkungen
+		 */
+		'remarks': () => LocalizedString
+		/**
+		 * Anzahl
+		 */
+		'qty': () => LocalizedString
+	}
+	'customer': {	
+		/**
+		 * Konto
+		 */
+		'account': () => LocalizedString
+		/**
+		 * Sprache
+		 */
+		'language': () => LocalizedString
+		/**
+		 * Einstellungen
+		 */
+		'settings': () => LocalizedString
+		/**
+		 * Einloggen
+		 */
+		'login': () => LocalizedString
+		/**
+		 * Registrieren
+		 */
+		'signUp': () => LocalizedString
+		/**
+		 * Abmelden
+		 */
+		'logout': () => LocalizedString
+		/**
+		 * Zahlungsmethoden
+		 */
+		'paymentMethods': () => LocalizedString
+		'profile': {	
+			/**
+			 * Sprache auswählen
+			 */
+			'select-language': () => LocalizedString
+		}
+	}
 	'footer': {	
 		/**
 		 * Über {shopname}

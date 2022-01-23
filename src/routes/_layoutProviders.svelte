@@ -4,7 +4,6 @@
 	import { initializeApp, getApps, getApp } from 'firebase/app';
 
 	import { getGlobal } from '$lib/utils';
-
 	import { firebaseConfig, GA_MEASUREMENT_ID } from '$utils/constants';
 
 	import type { FirebaseApp } from 'firebase/app';
@@ -28,15 +27,10 @@
 </script>
 
 <script lang="ts">
-	import Auth from '$lib/firebase/Auth.svelte';
 	import Firebase from '$lib/firebase/Firebase.svelte';
 	import Stripe from '$lib/components/Stripe/Stripe.svelte';
 
-	import MaterialApp from 'svelte-material-components/src/components/MaterialApp/MaterialAppMin.svelte';
-
-	const firebase: FirebaseApp = !getApps()?.length
-		? initializeApp(firebaseConfig)
-		: getApp();
+	const firebase: FirebaseApp = !getApps()?.length ? initializeApp(firebaseConfig) : getApp();
 
 	onMount(async () => {
 		window.dataLayer = window.dataLayer || [];
@@ -74,13 +68,11 @@
 {/if}
 
 <Firebase {firebase}>
-	<Auth>
-		<Stripe>
-			<MaterialApp theme="custom">
-				<slot />
-			</MaterialApp>
-		</Stripe>
-	</Auth>
+	<Stripe>
+		<slot />
+		<!-- <MaterialApp theme="custom">
+		</MaterialApp> -->
+	</Stripe>
 </Firebase>
 
 <!-- <Firebase {firebase}>
@@ -88,6 +80,3 @@
 		<slot />
 	</Stripe>
 </Firebase> -->
-<style global>
-	@import '../app.scss';
-</style>

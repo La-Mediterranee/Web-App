@@ -1,3 +1,5 @@
+import type { EndpointOutput } from '@sveltejs/kit';
+
 const credits = {
 	posts: {
 		firebase: [
@@ -29,3 +31,9 @@ const credits = {
 	// 	],
 	// },
 };
+
+export function get(): EndpointOutput {
+	return {
+		body: JSON.stringify(credits),
+	};
+}

@@ -1,3 +1,4 @@
+export const _ = '';
 // import { Request } from '@sveltejs/kit';
 // import { auth } from '../../../server/firebase';
 

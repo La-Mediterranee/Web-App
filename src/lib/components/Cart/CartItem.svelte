@@ -1,7 +1,8 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import Input from 'svelty-material/components/Input/Input.svelte';
 
 	import { trash } from '$lib/Icons/filled';
 
@@ -28,20 +29,20 @@
 		</div>
 	</th>
 	<td title="Anzahl">
-		<input
-			type="number"
-			inputmode="numeric"
-			id="quantity"
-			bind:value={item.quantity}
-		/>
+		<Input>
+			<input
+				type="number"
+				min="1"
+				inputmode="numeric"
+				id="quantity"
+				bind:value={item.quantity}
+			/>
+		</Input>
 	</td>
 	<td title="Preis"><span>{price}</span></td>
 	<!-- <td title="Teilsumme"><span>{sum}</span></td> -->
 	<td>
-		<button
-			on:click={() => console.log('delete')}
-			aria-label="Produkt vom Warenkorb entfernen"
-		>
+		<button on:click={() => console.log('delete')} aria-label="Produkt vom Warenkorb entfernen">
 			<Icon path={trash} />
 		</button>
 	</td>

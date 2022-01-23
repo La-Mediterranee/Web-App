@@ -1,11 +1,10 @@
-import type { EndpointOutput, Request } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
-type GetRequest<Locals = Record<string, any>, Input = unknown> = Request<Locals, Input>;
+type GetRequest<Locals = Record<string, any>> = RequestEvent<Locals>;
 export async function get() {}
 
-type PostRequest<Locals = Record<string, any>> = Request<Locals, FormData>;
-export async function post(request: PostRequest) {
-	console.log(request.body);
-
-	request.body.get('');
+type PostRequest<Locals = Record<string, any>> = RequestEvent<Locals>;
+export async function post(event: PostRequest) {
+	const form = await event.request.formData();
+	console.log(form);
 }

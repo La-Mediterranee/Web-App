@@ -1,11 +1,15 @@
 import { getContext } from 'svelte';
 
-import type { FirebaseContext, FirebaseAuthContext } from 'types/firebase';
+import type { FirebaseContext, FirebaseAuthContext, FirebaseUserContext } from 'types/firebase';
 
 export function getFirebaseContext() {
 	return getContext<FirebaseContext>('firebase').getFirebase();
 }
 
 export function getAuthContext() {
-	return getContext<FirebaseAuthContext>('user')?.getAuth();
+	return getContext<FirebaseAuthContext>('auth')?.getAuth();
+}
+
+export function getUserContext() {
+	return getContext<FirebaseUserContext>('user')?.getUser();
 }

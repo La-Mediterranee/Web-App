@@ -22,8 +22,9 @@
 </script>
 
 <script lang="ts">
-	import Button from 'svelte-material-components/src/components/Button';
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
+
 	import RadioButton from '$components/Forms/RadioButton.svelte';
 
 	export let product: Product;
@@ -48,7 +49,11 @@
 	}
 </script>
 
-<form id="product-modal" action="/add-to-cart" on:submit|preventDefault={e => addToCart(e, variations)}>
+<form
+	id="product-modal"
+	action="/add-to-cart"
+	on:submit|preventDefault={e => addToCart(e, variations)}
+>
 	<Button
 		fab
 		depressed
@@ -78,8 +83,12 @@
 				{#each ['kraken', 'sasquatch', 'mothman'] as item}
 					<div class="topping-item">
 						<RadioButton id={`${topping}-${item}`} name={topping} value={item} />
-						<label for={`${topping}-${item}`}>{item.slice(0, 1)?.toUpperCase() + item.substring(1)}</label>
-						<button class="info-button" type="button" on:click={() => console.log('Hi')}>&#9432;</button>
+						<label for={`${topping}-${item}`}
+							>{item.slice(0, 1)?.toUpperCase() + item.substring(1)}</label
+						>
+						<button class="info-button" type="button" on:click={() => console.log('Hi')}
+							>&#9432;</button
+						>
 					</div>
 				{/each}
 			</fieldset>
@@ -88,7 +97,12 @@
 
 	<div class="actions pt-2">
 		<div>
-			<Button size="small" disabled={quantitiy <= 1 || quantitiy == null} fab on:click={() => quantitiy--}>
+			<Button
+				size="small"
+				disabled={quantitiy <= 1 || quantitiy == null}
+				fab
+				on:click={() => quantitiy--}
+			>
 				-
 			</Button>
 			<label for="amount" class="visually-hidden">{AmountLabel}</label>

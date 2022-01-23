@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 
 	import { magnify } from '$lib/Icons';
 </script>
@@ -14,7 +14,7 @@
 </form>
 
 <style lang="scss">
-	@use "variables" as *;
+	@use 'variables' as *;
 
 	form {
 		display: flex;

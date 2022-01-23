@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
 	import { onMount } from 'svelte';
+	import { debouncePromise, getFocusableChildren } from '$lib/utils';
 
 	const FOCUS_ATTRIBUTE = 'data-focus-visible';
 
@@ -17,10 +18,10 @@
 </script>
 
 <script lang="ts">
-	import RightButton from './RightButton.svelte';
+	import SiemaItem from './SiemaItem.svelte';
 	import LeftButton from './LeftButton.svelte';
-
-	import { debouncePromise, getFocusableChildren } from '$lib/utils';
+	import RightButton from './RightButton.svelte';
+	import { children } from 'svelte/internal';
 
 	type T = $$Generic;
 
@@ -48,6 +49,7 @@
 	let containerInner: HTMLDivElement;
 	let prevElement: HTMLElement | null = null;
 	let nextElement: HTMLElement | null = null;
+	let scrollDir: 'prev' | 'next';
 
 	const itemsVisibility: boolean[] = Array(items.length).fill(true);
 
@@ -59,14 +61,13 @@
 		function updateCalc() {
 			const rect = node.getBoundingClientRect();
 
-			const visibleElements = (
-				Array.from(node.children) as HTMLElement[]
-			).filter((child, i) => {
+			const children = Array.from(node.children[0]?.children);
+			const visibleElements = (children as HTMLElement[]).filter((child, i) => {
 				const childRect = child.getBoundingClientRect();
 
 				itemsVisibility[i] =
-					childRect.left >= rect.left &&
-					childRect.right <= rect.right;
+					Math.ceil(childRect.left) >= rect.left &&
+					Math.floor(childRect.right) <= rect.right;
 
 				return itemsVisibility[i];
 			});
@@ -87,15 +88,18 @@
 			await debounced();
 
 			const focusVisibleBtn = container.querySelector(
-				`[${FOCUS_ATTRIBUTE}]`
+				`[${FOCUS_ATTRIBUTE}]`,
 			) as HTMLButtonElement;
 
 			if (!focusVisibleBtn) return;
 
 			requestAnimationFrame(() => {
-				const focusableElements = getFocusableChildren(
-					visibleElements[0]
-				);
+				const elementToFocus =
+					scrollDir === 'next'
+						? visibleElements[0]
+						: visibleElements[visibleElements.length - 1];
+
+				const focusableElements = getFocusableChildren(elementToFocus);
 
 				focusableElements[0]?.focus();
 
@@ -106,6 +110,9 @@
 
 		updateCalc();
 
+		const resizeObserver = new ResizeObserver(() => updateCalc());
+		resizeObserver.observe(node);
+
 		const options = { passive: true };
 		node.addEventListener('scroll', handler, options);
 
@@ -115,6 +122,7 @@
 				// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener#matching_event_listeners_for_removal
 				// https://github.com/microsoft/TypeScript/issues/32912
 				node.removeEventListener('scroll', handler, options);
+				resizeObserver.disconnect();
 			},
 		};
 	}
@@ -128,16 +136,15 @@
 		btn.matches(':focus-visible') && btn.setAttribute(FOCUS_ATTRIBUTE, '');
 	}
 
-	function scrollToElement(el: HTMLElement | null) {
+	function scrollToElement(el: HTMLElement | null, offset = 0) {
 		if (!containerInner || !el) return;
 
-		const newScrollPosition =
-			el.offsetLeft +
-			el.getBoundingClientRect().width / 2 -
-			containerInner.getBoundingClientRect().width / 2;
+		// const clc =
+		// 	el.getBoundingClientRect().width / 2 - containerInner.getBoundingClientRect().width / 2;
+		// const newScrollPosition = el.offsetLeft + clc;
 
 		containerInner.scroll({
-			left: newScrollPosition,
+			left: el.offsetLeft + offset,
 			behavior: 'smooth',
 		});
 	}
@@ -145,94 +152,92 @@
 	function scroll(e: Event) {
 		const btn = e.currentTarget as HTMLButtonElement;
 		const direction = (btn.value || btn.dataset.value) as 'prev' | 'next';
+		scrollDir = direction;
 
+		const containerWidth = containerInner.getBoundingClientRect().width;
 		switch (direction) {
-			case 'prev':
-				scrollToElement(prevElement);
+			case 'prev': {
+				const offset = rtl
+					? 0
+					: -(containerWidth - (prevElement?.getBoundingClientRect().width || 0));
+				scrollToElement(prevElement, offset);
 				break;
-			case 'next':
-				scrollToElement(nextElement);
+			}
+			case 'next': {
+				const offset = rtl
+					? -(containerWidth - (nextElement?.getBoundingClientRect().width || 0))
+					: 0;
+				scrollToElement(nextElement, offset);
 				break;
+			}
 		}
 	}
 
 	$: hasItemsOnLeft = rtl ? nextElement !== null : prevElement !== null;
 	$: hasItemsOnRight = rtl ? prevElement !== null : nextElement !== null;
 
-	$: cssVars = `
+	$: style = `
 	--has-items-left: ${hasItemsOnLeft ? 'all' : 'hidden'};
 	--has-items-right: ${hasItemsOnRight ? 'all' : 'hidden'};
-	`;
+	`.trim();
 </script>
 
-<div class="container" bind:this={container} style={cssVars}>
-	<slot
-		name="left"
-		scroll
-		setKeyboardFocus
-		removeKeyboradFocus
-		value={rtl ? 'prev' : 'next'}
-	>
+<div class="container" bind:this={container} {style}>
+	<slot name="left" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'next' : 'prev'}>
 		<LeftButton {scroll} {setKeyboardFocus} value={rtl ? 'next' : 'prev'} />
 	</slot>
 
 	<div class="inner" bind:this={containerInner} use:position>
-		{#each items as item, i}
-			<div class="item">
-				<slot {item} visible={itemsVisibility[i]} />
-			</div>
-		{/each}
+		<div class="content">
+			{#each items as item, i}
+				<SiemaItem>
+					<slot {item} visible={itemsVisibility[i]} />
+				</SiemaItem>
+			{/each}
+		</div>
 	</div>
 
-	<slot
-		name="right"
-		scroll
-		setKeyboardFocus
-		removeKeyboradFocus
-		value={rtl ? 'prev' : 'next'}
-	>
-		<RightButton
-			{scroll}
-			{setKeyboardFocus}
-			value={rtl ? 'prev' : 'next'}
-		/>
+	<slot name="right" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'prev' : 'next'}>
+		<RightButton {scroll} {setKeyboardFocus} value={rtl ? 'prev' : 'next'} />
 	</slot>
 </div>
 
 <style lang="scss">
 	.container {
+		display: flex;
+		align-items: center;
 		position: relative;
 		overflow: hidden;
 		// inline margins and paddings wouldn't work correctly
 		// if writing mode is set to something else
 		writing-mode: horizontal-tb;
+		touch-action: pan-y;
+		padding: var(--siema-container-padding, 0 1em);
 	}
 
 	.inner {
-		display: flex;
 		overflow-x: scroll;
-
+		white-space: nowrap;
 		scroll-behavior: smooth;
 		scroll-snap-type: x var(--siema-scroll-snap, mandatory);
+		padding: var(--siema-inner-padding);
+
 		scrollbar-width: none;
-
-		margin-inline-start: -1rem;
-
-		padding: var(--siema-inner-padding, 0.5em 0.3em);
-
 		&::-webkit-scrollbar {
 			display: none;
 		}
 	}
 
-	.item {
-		flex: 0 0 auto;
-		margin-inline-start: 1rem;
-		scroll-snap-align: center;
+	.content {
+		display: flex;
+		flex-wrap: nowrap;
+		white-space: nowrap;
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
+		max-width: var(--siema-content-max-width);
 
-		// padding: var(--item-padding, 0 0.2vw);
-		width: var(--siema-item-width, 100%);
-		min-width: var(--siema-item-min-width);
-		max-width: var(--siema-item-max-width, 100%);
+		padding: var(--siema-content-padding, 0em 3.6%);
+		// margin-inline-start: -1rem;
 	}
 </style>

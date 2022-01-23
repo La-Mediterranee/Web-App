@@ -1,20 +1,16 @@
 <script context="module" lang="ts">
+	import { dev } from '$app/env';
 	import { onMount } from 'svelte';
-	import { initI18n } from '$i18n/i18n-svelte';
-	import { browser, dev } from '$app/env';
 
 	import { RTL_LANGS } from '$i18n/utils';
+	import { initI18n } from '$i18n/i18n-svelte';
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	import type { Locales } from '$i18n/i18n-types';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export async function load({
-		params,
-		session,
-		stuff,
-	}: LoadInput): Promise<LoadOutput> {
+	export async function load({ params, session, stuff, url }: LoadInput): Promise<LoadOutput> {
 		const lang = params.lang as Locales;
 		// const lang = page.path.split('/')[1] as Locales | undefined;
 
@@ -42,13 +38,15 @@
 		// }
 
 		// redirect to base locale if language is not present
-		// if (!locales.includes(lang)) {
-		// 	stuff.lang = session.locale;
-		// 	return {
-		// 		status: 302,
-		// 		redirect: replaceLocaleInUrl(page.path, baseLocale),
-		// 	};
-		// }
+		if (!locales.includes(lang)) {
+			return {
+				status: 302,
+				redirect: replaceLocaleInUrl(url.pathname, baseLocale),
+			};
+		}
+
+		// stuff.lang = session.locale;
+		stuff.lang = lang;
 
 		// load dictionary data
 		await initI18n(lang);
@@ -63,23 +61,25 @@
 </script>
 
 <script>
-	import LL from '$i18n/i18n-svelte';
+	import MaterialApp from 'svelty-material/components/MaterialApp/MaterialAppMin.svelte';
+
 	import Modals from './_Dialogs.svelte';
 	import Providers from './_layoutProviders.svelte';
+
+	import t from '$i18n/i18n-svelte';
+	import rtl from '$stores/rtl';
+	import metatags from '$lib/stores/metatags';
 
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
-	import Statusbar from '$lib/components/Statusbar';
 	import Tabbar from '$lib/components/Tabbar';
-	import Installprompt from '$lib/pwa/components/Prompts/Installprompt/Installprompt.svelte';
-	import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
-	import LocaleSwitcher from '$lib/components/LocaleSwitcher/LocaleSwitcher.svelte';
+	import Statusbar from '$lib/components/Statusbar';
+	// import Installprompt from '$lib/pwa/components/Prompts/Installprompt/Installprompt.svelte';
+	// import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
 
-	import rtl, { rtl2 } from '$stores/rtl';
-	import metatags from '$lib/stores/metatags';
-
-	import t from '$i18n/i18n-svelte';
+	import { replaceLocaleInUrl } from '$lib/utils';
+	import { baseLocale, locales } from '$i18n/i18n-util';
 
 	export let dir: 'rtl' | 'ltr' | 'auto';
 	export let lang: Locales;
@@ -113,17 +113,23 @@
 </svelte:head>
 
 <Providers>
-	<Modals>
-		<div id="mainContent">
-			<Statusbar message={$t.connectionStatus()} {online} />
-			<Navbar locale={lang} routes={desktopNavItems} />
-			<main>
-				<Installprompt installSource={'LayoutInstallButton'} />
-				<slot />
-				<UpdatePrompt />
-			</main>
-			<Tabbar locale={lang} routes={mobileNavItems} />
-			<Footer />
-		</div>
-	</Modals>
+	<MaterialApp theme="custom">
+		<Modals>
+			<div id="mainContent">
+				<Statusbar message={$t.connectionStatus()} {online} />
+				<Navbar locale={lang} routes={desktopNavItems} />
+				<main>
+					<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
+					<slot />
+					<!-- <UpdatePrompt /> -->
+				</main>
+				<Tabbar locale={lang} routes={mobileNavItems} />
+				<Footer />
+			</div>
+		</Modals>
+	</MaterialApp>
 </Providers>
+
+<style lang="scss" global>
+	@import '../app.scss';
+</style>

@@ -1,21 +1,17 @@
-<svelte:options immutable tag="product-component" />
-
+<!-- <svelte:options immutable tag="product-component" /> -->
 <script context="module" lang="ts">
-	import { browser } from '$app/env';
-	import { afterUpdate } from 'svelte';
+	import star from '$lib/Icons/outline/star';
 
 	import { getProductModalContext } from '$lib/utils/helper';
-
-	import star from '$lib/Icons/outline/star';
 
 	import type { Product } from 'types/product';
 </script>
 
 <script lang="ts">
-	import Card from 'svelte-material-components/src/components/Card/Card.svelte';
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
-	import Link from 'svelte-material-components/src/components/Button/Link.svelte';
-	import CardTitle from 'svelte-material-components/src/components/Card/CardTitle.svelte';
+	import Card from 'svelty-material/components/Card/Card.svelte';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import Link from 'svelty-material/components/Button/Link.svelte';
+	import CardTitle from 'svelty-material/components/Card/CardTitle.svelte';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
@@ -30,9 +26,7 @@
 
 	const { image, name, price, sku, rating, categories } = product;
 
-	const action = `/products${
-		categories != null ? '/' + categories[0] : ''
-	}/${name}`;
+	const action = `/products${categories != null ? '/' + categories[0] : ''}/${name}`;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -70,11 +64,10 @@
 >
 	<Card raised>
 		<div class="inner-card">
-			<!-- style="background-image: url('https://images.placeholders.dev/?width=1055&height=100&text=%22%20%22&bgColor=%23f7f6f6&textColor=%236d6e71');" -->
-			<!-- loading="lazy" -->
 			<img
 				class="ml-auto"
 				decoding="async"
+				loading="lazy"
 				src={image.src}
 				alt={image?.alt || name}
 				width="250"
@@ -123,10 +116,6 @@
 				</svg>
 
 				<div class="card-actions">
-					<!-- 
-						Not sure if this should stay a button or change
-						it to a anchor/link 
-					-->
 					<!-- class="orange darken-4 ma-auto" -->
 					<Link
 						href=""
@@ -162,6 +151,7 @@
 		flex: 0 0 auto;
 		outline: none;
 		position: relative;
+		height: var(--product-card-height, 100%);
 
 		* {
 			text-align: center;
@@ -276,9 +266,6 @@
 				animation: wave linear 3s infinite;
 				animation-play-state: paused;
 			}
-			// :global(.s-card-title) {
-			// 	padding: 16px;
-			// }
 
 			&:focus-visible {
 				box-shadow: 0 0 0 0.25rem var(--theme-focus-visible);
@@ -297,15 +284,11 @@
 				}
 
 				.wave {
-					animation-play-state: running;
+					@media (prefers-reduced-motion: no-preference) {
+						animation-play-state: running;
+					}
 				}
 			}
-		}
-	}
-
-	@media (prefers-reduced-motion) {
-		.wave {
-			animation-play-state: paused;
 		}
 	}
 

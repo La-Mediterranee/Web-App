@@ -1,17 +1,23 @@
 <script context="module" lang="ts">
-	import { browser } from '$app/env';
-	import { goto } from '$app/navigation';
-	import { getAuthContext } from '$lib/firebase/helpers';
-
+	import type { User } from 'firebase/auth';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export function load({ params, session }: LoadInput): LoadOutput {
-		// console.debug('Page', page);
-		// console.debug('Session', session);
+	import type { Session } from '../../../../src/hooks';
+
+	type Rec<T = any> = Record<string, T>;
+
+	export function load({ session, url }: LoadInput<Rec<string>, Rec<any>, Session>): LoadOutput {
+		if (!session.user) {
+			return {
+				redirect: `${url.pathname}/login`,
+				status: 302,
+			};
+		}
 
 		return {
-			// redirect: '/customer/login',
-			// status: 302,
+			props: {
+				user: session.user,
+			},
 		};
 	}
 </script>
@@ -19,17 +25,17 @@
 <script lang="ts">
 	import Profile from '$lib/components/Customer/Profile';
 
-	import { session } from '$app/stores';
+	export let user: User;
 
-	const user = getAuthContext();
+	// const user = getAuthContext();
 
-	// Thinking about making this serverside redirect
-	// check in a load function if there is a firebase token, if not redirect to login page
-	if (browser) {
-		if (!$user) {
-			goto('/' + $session.locale + '/customer/login');
-		}
-	}
+	// // Thinking about making this serverside redirect
+	// // check in a load function if there is a firebase token, if not redirect to login page
+	// if (browser) {
+	// 	if (!$user) {
+	// 		goto('/' + $session.locale + '/customer/login');
+	// 	}
+	// }
 </script>
 
 <Profile {user} />

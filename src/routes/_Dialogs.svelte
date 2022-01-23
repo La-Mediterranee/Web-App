@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
 	import type { Product } from 'types/product';
-
-	type Modals = typeof ProductModal;
+	import type { SvelteComponentTyped, SvelteComponent } from 'svelte';
 
 	interface CloseEventDetail {
 		close: Function;
@@ -16,22 +15,21 @@
 	import { setContext } from 'svelte';
 	import { PRODUCT_MODAL } from '$lib/utils/constants';
 
-	import Dialog from 'svelte-material-components/src/components/Dialog/Dialog.svelte';
-
+	import Dialog from 'svelty-material/components/Dialog/Dialog.svelte';
 	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
 
 	let active = false;
 
-	let modalBody: Modals | null = null;
-	let componentProps: Object | null = {};
+	let modalBody: (new (...args: any) => SvelteComponent) | null = null;
+	let componentProps: Object = {};
 
 	function openProductModal(product: Product) {
 		open(ProductModal, { product });
 	}
 
-	function open(component: Modals | null, props: Object) {
+	function open<T>(component: new (...args: any) => SvelteComponentTyped<T>, props?: T) {
 		modalBody = component;
-		componentProps = props;
+		componentProps = props || {};
 
 		active = true;
 	}

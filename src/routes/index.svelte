@@ -22,8 +22,7 @@
 </script>
 
 <script lang="ts">
-	import SlideGroup from 'svelte-material-components/src/components/SlideGroup/SlideGroup.svelte';
-	import SlideItem from 'svelte-material-components/src/components/SlideGroup/SlideItem.svelte';
+	import {SlideGroup, SlideItem} from 'svelty-material';
 
 	import ProductCard from '$components/ProductCard';
 

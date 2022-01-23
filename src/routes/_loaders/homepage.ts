@@ -6,10 +6,12 @@ interface HomepageLoaderInput {
 }
 
 export default async function (
-	fetch: (info: RequestInfo, init?: RequestInit) => Promise<Response>
+	fetch: (info: RequestInfo, init?: RequestInit) => Promise<Response>,
 ): Promise<LoadOutput> {
 	const url = `/api/homepage`;
-	const homePageData: HomepageProps = await fetch(url).then(p => p.json());
+	const homePageData: HomepageProps = await fetch(url)
+		.then(p => p.json())
+		.catch(error => console.error(error));
 
 	return {
 		props: { homePageData },

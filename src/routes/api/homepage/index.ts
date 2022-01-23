@@ -1,23 +1,17 @@
-import type { EndpointOutput, Request } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
-type GetRequest<Locals = Record<string, any>, Input = unknown> = Request<
-	Locals,
-	Input
->;
+type GetRequest<Locals = Record<string, any>, Input = unknown> = RequestEvent<Locals>;
 
 import { promisify } from 'util';
 import { randomUUID } from 'crypto';
 
 import type { Product } from 'types/product';
-import type { ServerRequest } from '@sveltejs/kit/types/hooks';
 
 interface GetBody {
 	product?: Product;
 }
 
-export async function get({
-	locals,
-}: ServerRequest<Record<string, any>, unknown>): Promise<EndpointOutput> {
+export async function get({ locals }: RequestEvent): Promise<EndpointOutput> {
 	return {
 		body: JSON.stringify(await homepage()),
 	};
@@ -34,6 +28,24 @@ export interface HomepageProps {
 }
 
 async function homepage(): Promise<HomepageProps> {
+	const responses = await Promise.all([
+		fetch('http://localhost:8080/products'),
+		fetch('http://localhost:8080/products'),
+		fetch('http://localhost:8080/products'),
+	]);
+
+	const sections = await Promise.all(responses.map(res => res.json()));
+
+	return {
+		sections: sections.map(v => ({
+			title: 'Bestseller',
+			body: v,
+		})),
+		bestseller: sections[0],
+	};
+}
+
+function getSections() {
 	const p: Product = {
 		ID: randomUUID(),
 		name: 'Hamburger',
@@ -61,9 +73,11 @@ async function homepage(): Promise<HomepageProps> {
 		body: Array(7).fill(p),
 	};
 
-	const res = await fetch(
-		'https://jsonplaceholder.typicode.com/albums/1/photos'
-	);
+	return [bestsellerSection, foodSection, drinksSection];
+}
+
+async function getDummyProduct() {
+	const res = await fetch('https://jsonplaceholder.typicode.com/albums/1/photos');
 	const arr: Array<{ thumbnailUrl: string }> = await res.json();
 	const sections = chunk(arr, 3).map(chunk => {
 		return {
@@ -87,11 +101,7 @@ async function homepage(): Promise<HomepageProps> {
 		};
 	});
 
-	return {
-		// sections: [bestsellerSection, foodSection, drinksSection],
-		sections,
-		bestseller: Array(10).fill(p),
-	};
+	return sections;
 }
 
 function chunk<T>(array: Array<T>, chunk: number = 4) {

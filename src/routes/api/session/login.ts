@@ -1,24 +1,22 @@
-import { auth } from '../../../server/firebase';
-import { serialize } from '../../../server/cookie';
+import { auth } from '$lib/server/firebase';
+import { setCookie } from '$lib/server/helper';
 
 import type { ShopLocals } from 'src/hooks';
-import type { EndpointOutput, Request } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
-interface SessionLogin {
+export interface SessionLogin {
 	idToken: string;
 	csrfToken: string;
 }
 
-export async function post(
-	req: Request<ShopLocals, SessionLogin>
-): Promise<EndpointOutput> {
-	const body = req.body as SessionLogin;
+export async function post(event: RequestEvent<ShopLocals>): Promise<EndpointOutput> {
+	const body = (await event.request.json()) as SessionLogin;
 
 	try {
 		const idToken = body.idToken;
 		const csrfToken = body.csrfToken;
 
-		if (csrfToken !== req.locals.cookies.csrfToken) {
+		if (csrfToken !== event.locals.cookies.csrfToken) {
 			return {
 				status: 401,
 				body: 'UNAUTHORIZED REQUEST!',
@@ -34,26 +32,27 @@ export async function post(
 			};
 		}
 
-		// Set session expiration to 5 days.
-		const expiresIn = 60 * 60 * 24 * 5 * 1000;
+		const days = 14;
+		const expiresIn = days * 60 * 60 * 24 * 1000;
 
 		const sessionCookie = await auth.createSessionCookie(idToken, {
 			expiresIn,
 		});
 
-		return {
+		const response: EndpointOutput = {
 			status: 303,
-			headers: {
-				'location': '/',
-				'set-cookie': serialize('session', sessionCookie, {
-					expires: new Date(0),
-					maxAge: expiresIn,
-					httpOnly: true,
-					// secure: true,
-					path: '/',
-				}),
-			},
 		};
+
+		setCookie(response, 'sessionId', sessionCookie, {
+			expires: new Date(0),
+			maxAge: expiresIn,
+			httpOnly: true,
+			// domain: ".",
+			// secure: true,
+			path: '/',
+		});
+
+		return response;
 	} catch (error) {
 		console.error(error);
 		return {

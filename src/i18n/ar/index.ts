@@ -2,8 +2,8 @@ import type { Translation } from '../i18n-types';
 
 const ar: Translation = {
 	connectionStatus: 'أنت حاليا غير متصل بالإنترنت',
-	login: 'تسجيل الدخول',
-	signUp: 'حساب جديد',
+	save: '',
+	addToCart: 'أضف إلى العربة',
 	nav: {
 		desktop: {
 			arialabel: 'desktop primary',
@@ -24,8 +24,23 @@ const ar: Translation = {
 			},
 		},
 	},
-	productQuantity: 'الكمية',
-	addToCart: 'أضف إلى العربة',
+	cart: {
+		cart: 'عربة التسوق',
+		remarks: 'ملاحظات',
+		qty: 'كمية',
+	},
+	customer: {
+		account: 'الحساب',
+		language: 'اللغة',
+		settings: 'الإعدادات',
+		login: 'تسجيل الدخول',
+		signUp: 'حساب جديد',
+		logout: 'تسجيل خروج',
+		paymentMethods: 'طرق الدفع',
+		profile: {
+			'select-language': 'اختر اللغة',
+		},
+	},
 	footer: {
 		about: '{shopname} عن',
 		deliverytimes: 'Deliverytimes',
@@ -103,8 +118,7 @@ const t = {
 			'login': 'تسجيل الدخول',
 			'become-user': 'كن مستخدم',
 			'user-registration': 'تسجيل المستخدم',
-			'form-sginup-text':
-				'.إذا كنت جديدا على متجرنا ، فنحن نحرص على أن تكون أنت عضوًا',
+			'form-sginup-text': '.إذا كنت جديدا على متجرنا ، فنحن نحرص على أن تكون أنت عضوًا',
 		},
 		'forget-password': {
 			'login': 'تسجيل الدخول',
@@ -114,8 +128,7 @@ const t = {
 				'.إذا نسيت كلمة المرور ، فاستردها بإدخال عنوان بريدك الإلكتروني',
 		},
 		'wishlist': {
-			'remove-all-success':
-				'تمت إزالة جميع العناصر من قائمة الرغبات الخاصة بك',
+			'remove-all-success': 'تمت إزالة جميع العناصر من قائمة الرغبات الخاصة بك',
 		},
 	},
 	'error': {

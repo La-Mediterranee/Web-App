@@ -19,14 +19,14 @@
 	<slot />
 </button>
 
-<style lang="scss">
+<style lang="scss" global>
 	.carousel-nav-btn {
 		cursor: pointer;
 		position: absolute;
 		display: flex;
 
 		top: 50%;
-		z-index: 1;
+		z-index: 5;
 		padding: 0.5rem;
 		font-size: 2.5vw;
 		border-radius: 0.4em;

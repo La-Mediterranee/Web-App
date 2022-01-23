@@ -1,143 +1,141 @@
+import jwt_decode from 'jwt-decode';
+
 import { sequence } from '@sveltejs/kit/hooks';
-import { initAcceptLanguageHeaderDetector } from 'typesafe-i18n/detectors';
+// import { initAcceptLanguageHeaderDetector } from 'typesafe-i18n/detectors';
 
 import { RTL_LANGS } from '$i18n/utils';
 import { detectLocale } from '$i18n/i18n-util';
 
-import { parse } from './server/cookie';
-import { auth } from './server/firebase';
-import { attachCsrfToken } from './server/csrf';
+import { parse } from '$lib/server/cookie';
+import { auth } from '$lib/server/firebase';
+import { attachCsrfToken } from '$lib/server/csrf';
 
 import type { Locales } from '$i18n/i18n-types';
-import type { Request, Handle } from '@sveltejs/kit';
+import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { DecodedIdToken } from 'firebase-admin/auth';
+import type { Locale } from 'typesafe-i18n/types/core';
+import type { LocaleDetector } from 'typesafe-i18n/detectors';
 
 interface Cookies {
-	'session': string;
-	'preferred-lang': string;
+	'sessionId': string;
 	'csrfToken': string;
+	'pref-locale': string;
 }
 
 interface AppLocals<T> {
-	user?: DecodedIdToken;
+	user?: DecodedIdToken | null;
 	cookies: T;
+	locale: Locales;
 }
 
 export type ShopLocals = AppLocals<Cookies>;
-export type ShopHookRequest = Request<ShopLocals, Body>;
+export type ShopHookRequest = RequestEvent<ShopLocals>;
 
-const cookieParser: Handle = async ({ request, resolve }) => {
-	const cookies = parse<Cookies>(request.headers.cookie || '');
+const cookieParser: Handle = async ({ event, resolve }) => {
+	const cookies = parse<Cookies>(event.request.headers.get('cookie') || '');
 
-	request.locals.cookies = cookies;
+	event.locals.cookies = cookies;
 
-	return resolve(request);
+	return resolve(event);
 };
 
-const methodResolver: Handle = async ({ request, resolve }) => {
-	// TODO https://github.com/sveltejs/kit/issues/1046
-	const method = request.url.searchParams.get('_method');
-
-	if (method) {
-		request.method = method.toUpperCase();
-	}
-
-	return resolve(request);
-};
-
-const last: Handle = async ({ request, resolve }) => {
-	const cookies = request.locals.cookies;
-
-	try {
-		request.locals.user = await auth.verifySessionCookie(cookies.session);
-	} catch (_) {
-		request.locals.user = undefined;
-	}
-
-	const response = await resolve(request);
-
-	return Object.assign({}, response);
-};
-
-const browserChecker: Handle = async ({ resolve, request }) => {
+const browserChecker: Handle = async ({ resolve, event }) => {
 	const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
 
-	const lang = request.locals.lang;
-	const response = await resolve(request);
+	const lang = event.locals.lang;
+	const response = await resolve(event);
 
 	// check for unsupported browsers
-	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
-		response.headers['Location'] = `/${lang}/unsupported.html`;
+	if (/MSIE \d|Trident.*rv:/.test(event.request.headers.get('user-agent') || '')) {
+		response.headers.set('Location', `/${lang}/unsupported.html`);
 	}
+
+	return response;
+};
+
+const last: Handle = async ({ event, resolve }) => {
+	const cookies = event.locals.cookies as Cookies;
+	event.locals.locale = cookies['pref-locale'];
+
+	try {
+		event.locals.user = await auth.verifySessionCookie(cookies.sessionId);
+	} catch (err) {
+		console.error(err);
+		event.locals.user = null;
+	}
+
+	try {
+		// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
+	} catch (error) {
+		console.error(error);
+	}
+
+	const response = await resolve(event);
 
 	return response;
 };
 
 export const handle = sequence(
 	cookieParser,
-	methodResolver,
 	attachCsrfToken('/', 'csrfToken'),
 	browserChecker,
-	last
+	last,
 );
 
-interface User {
+export interface User {
 	uid: string;
 	email: string;
-	avatar: string;
+	photoURL: string;
+	displayName: string;
 }
 
-interface Session {
+export interface Session {
 	user?: User;
 	locale: Locales;
 	rtl: boolean;
 }
 
-export function getSession(request: ShopHookRequest): Session {
-	const userDecoded = request.locals.user;
+const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 
-	// set the preffered language
-	const acceptLanguageDetector = initAcceptLanguageHeaderDetector(request);
-	const locale = detectLocale(acceptLanguageDetector);
+export const initAcceptLanguageHeaderDetector =
+	(headers: Headers, headerKey = 'accept-language'): LocaleDetector =>
+	(): Locale[] =>
+		(headers.get(headerKey) as string)
+			?.split(REGEX_ACCEPT_LANGUAGE_SPLIT)
+			.filter(part => !part.startsWith('q'))
+			.map(part => part.trim())
+			.filter(part => part !== '*')
+			.filter(value => value === '') || [];
 
-	const user = userDecoded
-		? ({
-				uid: userDecoded.uid,
-				email: userDecoded.email,
-				avatar: userDecoded.picture,
-		  } as User)
-		: undefined;
+export function getSession(event: ShopHookRequest): Session {
+	if (!event.locals.locale) {
+		// set the preffered language
+		const acceptLanguageDetector = initAcceptLanguageHeaderDetector(event.request.headers);
+		event.locals.locale = detectLocale(acceptLanguageDetector);
+	}
+
 	return {
-		user,
-		locale,
-		rtl: RTL_LANGS.has(locale),
+		user: getUser(event.locals),
+		locale: event.locals.locale,
+		rtl: RTL_LANGS.has(event.locals.locale),
 	};
+}
+
+function getUser(locals: ShopLocals) {
+	const user = locals.user;
+	if (!user) return;
+
+	return {
+		uid: user.uid,
+		email: user.email,
+		photoURL: user.picture,
+		displayName: user.name,
+	} as User;
 }
 
 // interface HandleProps {
 // 	request: ShopHookRequest;
 // 	resolve(request: ShopHookRequest): Promise<Response>;
-// }
-
-// export async function handler(input: HandleProps) {
-// 	const { request, resolve } = input;
-
-// 	const cookies = request.locals.cookies;
-
-// 	try {
-// 		request.locals.user = await auth.verifySessionCookie(cookies.session);
-// 	} catch (_) {
-// 		request.locals.user = undefined;
-// 	}
-
-// 	const response = await resolve(request);
-
-// 	// check for unsupported browsers
-// 	if (/MSIE \d|Trident.*rv:/.test(request.headers['user-agent'])) {
-// 		response.headers['Location'] = `/${resolve}/unsupported.html`;
-// 	}
-
-// 	return Object.assign({}, response);
 // }
 
 // import { firestore } from './server/firebase';

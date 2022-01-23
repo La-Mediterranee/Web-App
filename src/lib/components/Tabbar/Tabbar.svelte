@@ -1,8 +1,8 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
 	import t from '$i18n/i18n-svelte';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 
 	import { page } from '$app/stores';
 
@@ -22,6 +22,7 @@
 		};
 	});
 
+	let activeRoute: string;
 	$: activeRoute = $page.url.pathname;
 	$: paths = $t.nav.mobile.routes as Record<string, () => LocalizedString>;
 </script>
@@ -32,7 +33,7 @@
 			{href}
 			{rel}
 			class="item"
-			class:active={activeRoute === href}
+			class:active={activeRoute === href ? false : activeRoute.startsWith(href)}
 			title={paths[pathLabel]()}
 			on:click={() => (activeRoute = href)}
 		>
@@ -157,8 +158,7 @@
 		&.active {
 			transform: translateY(-50%);
 			transition-property: transform;
-			transition-timing-function: ease-in-out,
-				cubic-bezier(0.64, 0.57, 0.67, 1.53);
+			transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
 			transition-delay: 0.3s;
 			transition-duration: 0.2s;
 

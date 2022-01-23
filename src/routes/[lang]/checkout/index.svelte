@@ -1,8 +1,9 @@
 <script>
-	import Checkout from '$components/Checkout';
-	import { getAuthContext } from '$lib/firebase/helpers';
+	import { session } from '$app/stores';
 
-	const user = getAuthContext();
+	import Checkout from '$components/Checkout';
+	// import { getAuthContext, getUserContext } from '$lib/firebase/helpers';
+	// const user = getUserContext();
 </script>
 
-<Checkout user={$user} />
+<Checkout user={$session.user} />

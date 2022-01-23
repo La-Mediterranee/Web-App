@@ -41,7 +41,7 @@ export const FOCUSABLE_ELEMENTS = [
 
 function $$<T extends Element = Element>(
 	selector: string,
-	context: Document | HTMLElement = document
+	context: Document | HTMLElement = document,
 ): T[] {
 	return Array.from(context.querySelectorAll<T>(selector));
 }
@@ -53,38 +53,41 @@ function $$<T extends Element = Element>(
  * @returns
  */
 export function getFocusableChildren(
-	element: HTMLElement | Document = document
+	element: HTMLElement | Document = document,
 ): Array<HTMLElement> {
 	return $$<HTMLElement>(FOCUSABLE_ELEMENTS.join(','), element).filter(
-		el =>
-			!!(el.offsetWidth || el.offsetHeight || el.getClientRects().length)
+		el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length),
 	);
 }
 
-export const debouncePromise = (fn: Function, ms = 0) => {
+interface Pending<T> {
+	resolve: (value: T) => void;
+	reject: (reason?: any) => void;
+}
+
+export function debouncePromise<T>(fn: Function, ms = 0) {
 	let timeoutId: number;
-	const pending: {
-		resolve: (value: unknown) => void;
-		reject: (reason?: any) => void;
-	}[] = [];
-	return (...args: unknown[]) =>
+	const pending: Pending<T>[] = [];
+	return <T1>(...args: T1[]) =>
 		new Promise((res, rej) => {
 			clearTimeout(timeoutId);
+
 			timeoutId = window.setTimeout(() => {
 				const currentPending = [...pending];
 				pending.length = 0;
-				Promise.resolve(fn.apply(this, args)).then(
+				Promise.resolve(fn.apply(null, args)).then(
 					data => {
 						currentPending.forEach(({ resolve }) => resolve(data));
 					},
 					error => {
 						currentPending.forEach(({ reject }) => reject(error));
-					}
+					},
 				);
 			}, ms);
+
 			pending.push({ resolve: res, reject: rej });
 		});
-};
+}
 
 /**
  * @param name The cookie name.
@@ -93,6 +96,27 @@ export const debouncePromise = (fn: Function, ms = 0) => {
 export function getCookie(name: string): string | null {
 	const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
 	return v ? v[2] : null;
+}
+
+/**
+ * The flag emoji is a combination of the two unicode
+ * The UTF-16 A is positioned at 65, and we have subtracted this
+ * from the region A character index 127462, explaining the hardcoded 127397 value (127462 - 65)
+ * To get the correct flag emoji index, we simply add the received index to the offset number.
+ *
+ * @param countryCode
+ * @returns - the unicode string of the flag
+ */
+export function getFlagEmoji(countryCode: string): string {
+	const startIndex = 0x1f1a5; // 127397
+	const codePoints = Array.from(countryCode.toUpperCase()).map(
+		char => startIndex + char.charCodeAt(0),
+	);
+
+	// for V8 spread operator is often the fastest solution
+	// but for consistent performance across browsers
+	// apply is better: https://jsben.ch/Y5Yt2
+	return String.fromCodePoint.apply(null, codePoints);
 }
 
 export * from './helper';

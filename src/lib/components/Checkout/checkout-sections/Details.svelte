@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
+	import TextField from 'svelty-material/components/TextField/TextField.svelte';
 
-	import TextField from 'svelte-material-components/src/components/TextField';
 	import type { CustomerInfo } from 'types/customer';
 
 	export let value: number[];
@@ -31,12 +31,27 @@
 			>
 				E-mail
 			</TextField>
-			<TextField type="tel" name="tel" autocomplete="tel" bind:value={customer.number} required rounded outlined>
+			<TextField
+				type="tel"
+				name="tel"
+				autocomplete="tel"
+				bind:value={customer.number}
+				required
+				rounded
+				outlined
+			>
 				Telefonnummer
 			</TextField>
 		</div>
 		<div>
-			<TextField name="name" autocomplete="given-name" bind:value={customer.name} required rounded outlined>
+			<TextField
+				name="name"
+				autocomplete="given-name"
+				bind:value={customer.name}
+				required
+				rounded
+				outlined
+			>
 				Vorname
 			</TextField>
 			<TextField
@@ -76,7 +91,14 @@
 			>
 				PLZ
 			</TextField>
-			<TextField name="city" autocomplete="address-level2" bind:value={customer.city} required outlined rounded>
+			<TextField
+				name="city"
+				autocomplete="address-level2"
+				bind:value={customer.city}
+				required
+				outlined
+				rounded
+			>
 				Stadt
 			</TextField>
 		</div>

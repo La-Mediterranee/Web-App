@@ -14,7 +14,7 @@ export async function post(req: RequestEvent<ShopLocals>): Promise<EndpointOutpu
 		},
 	};
 
-	clearCookie(response, 'session');
+	clearCookie(response, 'session_id');
 
 	return response;
 }

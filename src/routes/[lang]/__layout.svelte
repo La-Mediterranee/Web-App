@@ -13,7 +13,6 @@
 
 <script lang="ts">
 	// import { metatags } from '$lib/stores/metatags';
-	import t from '$i18n/i18n-svelte';
 </script>
 
 <!-- <LDTag {}/>  -->

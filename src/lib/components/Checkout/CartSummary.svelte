@@ -1,6 +1,7 @@
 <script lang="ts">
-	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
-	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
+	import ExpansionPanel from 'svelty-material/components/ExpansionPanels/ExpansionPanel.svelte';
+	import ExpansionPanels from 'svelty-material/components/ExpansionPanels/ExpansionPanels.svelte';
+
 	import CartItem from '../Cart/CartItem.svelte';
 
 	import type { SKU, CartItem as ICartItem } from 'types/product';
@@ -41,11 +42,7 @@
 </script>
 
 <aside aria-label={ariaLabel}>
-	<button
-		type="button"
-		aria-expanded={showSummary}
-		aria-controls="order-summary"
-	>
+	<button type="button" aria-expanded={showSummary} aria-controls="order-summary">
 		Bestellung anzeigen
 	</button>
 	<table>

@@ -14,7 +14,7 @@ import adapterStatic from '@sveltejs/adapter-static';
 const pkg = JSON.parse(
 	readFileSync('./package.json', {
 		encoding: 'utf-8',
-	})
+	}),
 );
 
 /**
@@ -135,6 +135,9 @@ const preprocess = sveltePreprocess({
 	// 		]
 	// 	]
 	// },
+	typescript: {
+		tsconfigFile: './tsconfig.json',
+	},
 	defaults: {
 		markup: 'html',
 		script: 'typescript',
@@ -148,10 +151,6 @@ const preprocess = sveltePreprocess({
 	},
 	sourceMap: process.env.NODE_ENV === 'development' ? true : false,
 });
-
-/** @type {import('svelte/types/compiler/interfaces').CompileOptions} */
-// const compilerOptions = { customElement: true, include: /\.wc\.svelte$/ }
-// const compilerOptions2 = { customElement: false, exclude: /\.wc\.svelte$/ }
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

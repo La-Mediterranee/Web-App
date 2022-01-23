@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { enhance } from './action';
-
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
 
 	import CartItemComponent from './CartItem.svelte';
+
+	import { enhance } from './action';
 
 	import type { Cart } from '$lib/stores/cart';
 
@@ -23,7 +23,7 @@
 		<p>No items in cart yet.</p>
 	{:else}
 		<form
-			action="/checkout"
+			action="/api/checkout"
 			use:enhance={{
 				result: () => {
 					//
@@ -57,11 +57,7 @@
 						<td colspan={tableHeaders.length}>
 							<div>
 								<label for="notes">Anmerkungen: </label>
-								<textarea
-									name="notes"
-									id="notes"
-									placeholder="Anmerkungen: "
-								/>
+								<textarea name="notes" id="notes" placeholder="Anmerkungen: " />
 							</div>
 						</td>
 					</tr>
@@ -70,10 +66,8 @@
 							Summe ({cart.size} Produkte): {cart.size}
 						</td>
 						<td colspan="2">
-							<Button
-								type="submit"
-								class="form-elements-color"
-								rounded>Zur Kasse</Button
+							<Button type="submit" class="form-elements-color" rounded
+								>Zur Kasse</Button
 							>
 						</td>
 					</tr>

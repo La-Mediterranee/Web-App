@@ -34,12 +34,13 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import TextField from 'svelte-material-components/src/components/TextField';
-	import Button from 'svelte-material-components/src/components/Button/Button.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
+	import TextField from 'svelty-material/components/TextField/TextField.svelte';
 
 	// import Image from '$lib/components/Image/Image.svelte';
 	import CreditCard from '$lib/components/CreditCard/CreditCard.svelte';
+
+	import { onMount } from 'svelte';
 
 	export let elements: StripeElements;
 	export let value: number[] = [1];
@@ -110,9 +111,7 @@
 	<section>
 		<h3>Trinkgeld hinzufügen</h3>
 		<fieldset id="tips">
-			<legend class="visually-hidden">
-				Trinkgeld Prozent Optionen
-			</legend>
+			<legend class="visually-hidden"> Trinkgeld Prozent Optionen </legend>
 			<div class="tip-container">
 				<div class="tip">
 					<label for="tip-5">5%</label>
@@ -164,9 +163,7 @@
 				</div>
 			</div>
 			<div class="custom-tip-container">
-				<TextField outlined rounded
-					>Benutzerdefiniertes Trinkgeld</TextField
-				>
+				<TextField outlined rounded>Benutzerdefiniertes Trinkgeld</TextField>
 			</div>
 		</fieldset>
 	</section>
@@ -190,7 +187,7 @@
 					<div>
 						<label for="credit">Kreditkarte</label>
 						<ul>
-							{#each Array.from( [logos.visa, logos.mastercard, logos.maestroAlt, logos.amex] ) as logo}
+							{#each Array.from( [logos.visa, logos.mastercard, logos.maestroAlt, logos.amex], ) as logo}
 								<li>
 									<img src={logo} width={38} height={24} />
 								</li>

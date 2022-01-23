@@ -2,11 +2,11 @@ import type { BaseTranslation } from '../i18n-types';
 
 const de: BaseTranslation = {
 	connectionStatus: 'Sie sind derzeit Offline',
-	login: 'Einloggen',
-	signUp: 'Registrieren',
+	save: 'Speichern',
+	addToCart: '',
 	nav: {
 		desktop: {
-			arialabel: 'desktop primär',
+			arialabel: 'Desktop primär',
 			routes: {
 				homepage: 'Startseite',
 				food: 'Speisen',
@@ -14,7 +14,7 @@ const de: BaseTranslation = {
 			},
 		},
 		mobile: {
-			arialabel: 'mobil primär',
+			arialabel: 'Mobil primär',
 			routes: {
 				homepage: 'Startseite',
 				food: 'Essen',
@@ -24,8 +24,23 @@ const de: BaseTranslation = {
 			},
 		},
 	},
-	productQuantity: 'Menge',
-	addToCart: '',
+	cart: {
+		cart: 'Warenkorb',
+		remarks: 'Anmerkungen',
+		qty: 'Anzahl',
+	},
+	customer: {
+		account: 'Konto',
+		language: 'Sprache',
+		settings: 'Einstellungen',
+		login: 'Einloggen',
+		signUp: 'Registrieren',
+		logout: 'Abmelden',
+		paymentMethods: 'Zahlungsmethoden',
+		profile: {
+			'select-language': 'Sprache auswählen',
+		},
+	},
 	footer: {
 		about: 'Über {shopname: string}',
 		deliverytimes: 'Lieferzeiten',

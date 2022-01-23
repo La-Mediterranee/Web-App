@@ -5,13 +5,13 @@
 		StripeElements,
 		StripeElementType,
 	} from '@stripe/stripe-js';
-	import uid from 'svelte-material-components/src/internal/uid';
+	import uid from 'svelty-material/internal/uid';
 </script>
 
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
-	import Input from 'svelte-material-components/src/components/Input';
+	import Input from 'svelty-material/components/Input/Input.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -54,11 +54,11 @@
 			iconStyle,
 			style: {
 				base: {
-					fontFamily: 'Fira Sans, sans-serif',
-					fontWeight: '530',
-					fontSize: '16px',
-					fontSmoothing: 'antialiased',
-					color: '#ddd',
+					'fontFamily': 'Fira Sans, sans-serif',
+					'fontWeight': '530',
+					'fontSize': '16px',
+					'fontSmoothing': 'antialiased',
+					'color': '#ddd',
 					'::placeholder': {
 						color: '#ddd',
 					},
@@ -80,7 +80,7 @@
 	});
 
 	export function validate() {
-		errorMessages = rules.map((r) => r(value)).filter((r) => typeof r === 'string');
+		errorMessages = rules.map(r => r(value)).filter(r => typeof r === 'string');
 		if (errorMessages.length) error = true;
 		else {
 			error = false;
@@ -106,7 +106,14 @@
 <Input class="s-text-field {klass}" {color} {dense} {readonly} {disabled} {error} {success} {style}>
 	<!-- Slot for prepend outside the input. -->
 	<slot slot="prepend-outer" name="prepend-outer" />
-	<div class="s-text-field__wrapper" class:filled class:solo class:outlined class:flat class:rounded>
+	<div
+		class="s-text-field__wrapper"
+		class:filled
+		class:solo
+		class:outlined
+		class:flat
+		class:rounded
+	>
 		<!-- Slot for prepend inside the input. -->
 		<slot name="prepend" />
 

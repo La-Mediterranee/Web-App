@@ -2,8 +2,8 @@ import type { Translation } from '../i18n-types';
 
 const en: Translation = {
 	connectionStatus: 'You are currently offline',
-	login: 'Login',
-	signUp: 'Sign Up',
+	save: 'Save',
+	addToCart: '',
 	nav: {
 		desktop: {
 			arialabel: 'desktop primary',
@@ -24,8 +24,23 @@ const en: Translation = {
 			},
 		},
 	},
-	productQuantity: 'Quantity',
-	addToCart: '',
+	cart: {
+		cart: 'Cart',
+		remarks: 'Remarks',
+		qty: 'Qty',
+	},
+	customer: {
+		account: 'Account',
+		language: 'Language',
+		settings: 'Settings',
+		login: 'Login',
+		signUp: 'Sign Up',
+		logout: 'Logout',
+		paymentMethods: 'Payment methods',
+		profile: {
+			'select-language': 'Select Language',
+		},
+	},
 	footer: {
 		about: 'About {shopname}',
 		deliverytimes: 'Deliverytimes',

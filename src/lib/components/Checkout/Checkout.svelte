@@ -1,23 +1,28 @@
 <script context="module" lang="ts">
 	import { createPaymentRequest } from './helper';
 
-	import type { CanMakePaymentResult, PaymentRequest, Stripe, StripeElements } from '@stripe/stripe-js';
+	import type {
+		CanMakePaymentResult,
+		PaymentRequest,
+		Stripe,
+		StripeElements,
+	} from '@stripe/stripe-js';
 	import type { User } from 'firebase/auth';
 	import type { CustomerInfo } from 'types/customer';
 </script>
 
 <script lang="ts">
-	import ExpansionPanel from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanel.svelte';
-	import ExpansionPanels from 'svelte-material-components/src/components/ExpansionPanels/ExpansionPanels.svelte';
-
-	import { cart } from '$lib/stores/cart';
-	import { getStripeContext } from '$lib/utils/helper';
+	import ExpansionPanel from 'svelty-material/components/ExpansionPanels/ExpansionPanel.svelte';
+	import ExpansionPanels from 'svelty-material/components/ExpansionPanels/ExpansionPanels.svelte';
 
 	import CartSummary from './CartSummary.svelte';
 	import Details from './checkout-sections/Details.svelte';
 	import Payment from './checkout-sections/Payment.svelte';
 	import Summary from './checkout-sections/Summary.svelte';
 	import ExpressPayment from './checkout-sections/ExpressPayment.svelte';
+
+	import { cart } from '$lib/stores/cart';
+	import { getStripeContext } from '$lib/utils/helper';
 
 	export let user: User | null;
 

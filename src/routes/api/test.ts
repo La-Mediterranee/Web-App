@@ -1,11 +1,6 @@
-import type { EndpointOutput } from '@sveltejs/kit';
-import type { ServerRequest } from '@sveltejs/kit/types/hooks';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
-export async function get({
-	locals,
-}: ServerRequest<Record<string, any>, unknown>): Promise<EndpointOutput> {
-	console.log(locals);
-
+export async function get({ locals }: RequestEvent): Promise<EndpointOutput> {
 	return {
 		status: 302,
 		headers: {

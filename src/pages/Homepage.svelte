@@ -17,16 +17,10 @@
 	export let homePageData: HomepageProps | undefined;
 
 	onMount(() => {
-		document.documentElement.style.setProperty(
-			'--header-position',
-			'fixed'
-		);
+		document.documentElement.style.setProperty('--header-position', 'fixed');
 
 		return () => {
-			document.documentElement.style.setProperty(
-				'--header-position',
-				'sticky'
-			);
+			document.documentElement.style.setProperty('--header-position', 'sticky');
 		};
 	});
 
@@ -45,23 +39,18 @@
 	<Wave />
 </div>
 
-{#each sections as section}
-	<section>
-		<h2 class="row-header">{section.title}</h2>
-		<div class="section-carousel">
+<div class="sections">
+	{#each sections as section}
+		<section class="section-carousel">
+			<h2 class="row-header">{section.title}</h2>
 			{#if Array.isArray(section.body)}
-				<Siema
-					rtl={$session.rtl}
-					items={section.body}
-					let:item={product}
-					let:visible
-				>
+				<Siema rtl={$session.rtl} items={section.body} let:item={product} let:visible>
 					<ProductCard {product} isVisible={visible} />
 				</Siema>
 			{/if}
-		</div>
-	</section>
-{/each}
+		</section>
+	{/each}
+</div>
 
 <style lang="scss">
 	:global(:root) {
@@ -74,7 +63,6 @@
 	}
 
 	section {
-		padding: 0 1.2em;
 		margin-bottom: 1em;
 
 		div {
@@ -96,20 +84,22 @@
 		padding-top: 2.2em;
 	}
 
+	.sections {
+		display: flex;
+		flex-direction: column;
+	}
+
 	.section-carousel {
-		--siema-item-min-width: 240px;
-		--siema-item-max-width: 240px;
+		max-width: 1200px;
 
-		@media screen and (min-width: 500px) {
-			--siema-item-width: 50%;
-		}
-
-		@media screen and (min-width: 900px) {
-			--siema-item-width: 35%;
-		}
+		--siema-item-width: 270px;
+		--siema-item-min-width: 235px;
+		--siema-content-max-width: 1200px;
+		// --siema-inner-padding: 0 1em;
+		// --siema-content-padding: 0 4%;
 
 		@media screen and (min-width: 1200px) {
-			--siema-item-width: min(35%, 210px);
+			margin: 0 auto;
 		}
 	}
 
@@ -125,13 +115,11 @@
 			max-width: 490px;
 			height: 83%;
 			max-height: 280px;
-
-			// width: min(100%, 490px);
-			// height: min(83%, 280px);
 		}
 	}
 
 	.row-header {
 		line-height: 1.3;
+		margin-inline-start: 1.5em;
 	}
 </style>

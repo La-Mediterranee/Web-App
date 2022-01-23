@@ -2,9 +2,8 @@
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 	import type { WithContext, Product as DTSProduct } from 'schema-dts';
 	import type { Product } from 'types/product';
-	import type { Rec } from '@sveltejs/kit/types/helper';
 
-	interface ProductParams extends Rec<string> {
+	interface ProductParams extends Record<string, string> {
 		product: string;
 	}
 
@@ -12,10 +11,7 @@
 		params: ProductParams;
 	}
 
-	export async function load({
-		params,
-		fetch,
-	}: ProductLoadInput): Promise<LoadOutput> {
+	export async function load({ params, fetch }: ProductLoadInput): Promise<LoadOutput> {
 		try {
 			const url = `/product/${params.product}.json`;
 			const res = await fetch(url);
@@ -39,8 +35,7 @@
 
 	export let product: Product;
 
-	const { categories, image, name, price, rating, sku, description } =
-		product;
+	const { categories, image, name, price, rating, sku, description } = product;
 
 	metatags.newTitle = name;
 	metatags.newDesc = description;

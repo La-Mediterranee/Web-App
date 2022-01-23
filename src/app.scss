@@ -69,7 +69,6 @@ $mediaqueries: (
 		--mq-#{$key}: #{$mediaquery};
 	}
 
-	font-size: 16px;
 	font-style: normal;
 	font-family: 'Fira Sans', sans-serif;
 
@@ -99,6 +98,7 @@ $mediaqueries: (
 
 html {
 	scroll-behavior: smooth;
+	box-sizing: border-box;
 }
 
 body {
@@ -107,6 +107,7 @@ body {
 	font-family: 'Fira Sans', sans-serif;
 	background-attachment: fixed;
 	background-repeat: no-repeat;
+	font-size: 1rem;
 	color: black;
 }
 
@@ -181,8 +182,11 @@ main {
 ::before {
 	--theme-text-fields-border: rgba(255, 255, 255, 0.7);
 	--theme-text-fields-border-hover: #38a0c9e5;
-	--theme-text-fields-border-width: 0.165em;
-	--theme-text-fields-border-width-hover: 0.165em;
+	// --theme-text-fields-border-width: 0.165em;
+	// --theme-text-fields-border-width-hover: 0.165em;
+
+	// --theme-text-fields-border-width: thin;
+	--theme-text-fields-border-width-hover: thin 0 0 0;
 }
 
 .text-center {
@@ -283,28 +287,4 @@ a {
 	padding: 0;
 	position: absolute;
 	white-space: nowrap;
-}
-
-@media screen and (min-width: 500px) and (max-width: 799px) {
-	:root {
-		--carousel-item: 33.333333%;
-	}
-}
-
-@media screen and (min-width: 800px) and (max-width: 1099px) {
-	:root {
-		--carousel-item: 25%;
-	}
-}
-
-/* @media screen and (min-width: 1100px) and (max-width: 1399px) {
-	:root {
-		--carousel-item: 20%;
-	}
-} */
-
-@media screen and (min-width: 1100px) {
-	:root {
-		--carousel-item: 20%;
-	}
 }

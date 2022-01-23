@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import { serialize } from './cookie';
 
 import type { Handle } from '@sveltejs/kit';
+import { setCookie } from './helper';
 
 const randomBytesAsync = promisify(crypto.randomBytes);
 
@@ -15,14 +16,12 @@ export async function createToken() {
 }
 
 export function attachCsrfToken(url: string, cookieName: string): Handle {
-	return async ({ request, resolve }) => {
-		const res = await resolve(request);
+	return async ({ event, resolve }) => {
+		const res = await resolve(event);
 
-		if (request.url.pathname === url) {
-			res.headers['set-cookie'] = serialize(
-				cookieName,
-				await createToken()
-			);
+		if (event.url.pathname === url) {
+			setCookie(res, cookieName, await createToken());
+			// res.headers.set('set-cookie', serialize(cookieName, await createToken()));
 		}
 
 		return res;

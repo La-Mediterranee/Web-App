@@ -11,9 +11,9 @@
  */
 export { parse, serialize };
 
-type SameSite = 'lax' | 'none' | 'strict';
+export type SameSite = 'lax' | 'none' | 'strict';
 
-interface Options {
+export interface Options {
 	maxAge?: number;
 	domain?: string;
 	path?: string;
@@ -51,10 +51,7 @@ const fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
  * The object has the various cookies as keys(names) => values
  */
 
-function parse<T extends Record<string, any>>(
-	str: string,
-	options?: Options
-): T {
+function parse<T extends Record<string, any>>(str: string, options?: Options): T {
 	if (typeof str !== 'string') {
 		throw new TypeError('argument str must be a string');
 	}

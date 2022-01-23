@@ -1,4 +1,12 @@
 <script context="module" lang="ts">
+	import { onMount } from 'svelte';
+	import { mdiAlert } from '@mdi/js';
+	import { goto } from '$app/navigation';
+	import { slide } from 'svelte/transition';
+
+	import { getCookie } from '$lib/utils';
+	import { getAuthContext } from '$lib/firebase/helpers';
+	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
 	import {
 		signIn,
 		signInWithGoogle,
@@ -9,14 +17,8 @@
 		signInWithDiscord,
 	} from '$utils/login';
 
-	import { slide } from 'svelte/transition';
-	import { mdiAlert } from '@mdi/js';
-
-	import { goto } from '$app/navigation';
-	import { getAuthContext } from '$lib/firebase/helpers';
-	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
-
 	import type { LoginInfo } from '$utils/login';
+	import type { Auth, User } from 'firebase/auth';
 
 	type LoginCallback = (auth: Auth) => Promise<LoginInfo | null>;
 
@@ -33,6 +35,20 @@
 	});
 
 	const minLength = 8;
+
+	const emailPattern =
+		'^(([^<>()[]\\.,;:s@"]+(.[^<>()[]\\.,;:s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$'; // String.raw`^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
+
+	const rules = {
+		email: {
+			pattern: emailPattern,
+			required: true,
+		},
+		password: {
+			minLength: 8,
+			required: true,
+		},
+	};
 
 	const passwordRules = [
 		(v: string) => !!v || 'Required',
@@ -62,17 +78,15 @@
 </script>
 
 <script lang="ts">
-	import Icon from 'svelte-material-components/src/components/Icon';
-	import Alert from 'svelte-material-components/src/components/Alert';
-	import TextField from 'svelte-material-components/src/components/TextField';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import Alert from 'svelty-material/components/Alert/Alert.svelte';
+	import TextField from 'svelty-material/components/TextField/TextField.svelte';
+
+	import t from '$i18n/i18n-svelte';
 
 	import { session } from '$app/stores';
 
-	import type { Auth, User } from 'firebase/auth';
-	import { getCookie } from '$lib/utils';
-
-	const user = getAuthContext();
-	const auth = user?.auth;
+	const auth = getAuthContext();
 
 	let form: HTMLFormElement | null = null;
 	let email: string | undefined = undefined;
@@ -80,19 +94,20 @@
 	let show: boolean = false;
 	let error: boolean = false;
 
-	$: if ($user) {
-		goto(`/${$session.locale}/customer`);
-	}
+	let abortController: AbortController;
+
+	onMount(() => {
+		return () => {
+			abortController.abort();
+		};
+	});
 
 	async function login(e: MouseEvent | Event) {
-		let user: User | undefined;
-
 		try {
 			let userObject: LoginInfo | null = null;
 
 			const target = e.currentTarget as HTMLButtonElement;
 			const value = target.value;
-			// new window.AbortSignal();
 
 			if (value === 'login') {
 				if (!validateInput(email!, password!)) return;
@@ -116,12 +131,9 @@
 			const user = userObject?.user;
 
 			if (user) {
-				// const token = await user.getIdToken();
-				// await fetch(`${VITE_SERVER_URL}/auth/login?provider=firebase`, {
-				// 	headers: { Authorization: `Bearer ${token}` },
-				// });
+				abortController = new window.AbortController();
+				const token = await user.getIdToken();
 				const csrfToken = getCookie('csrfToken');
-				console.log(csrfToken);
 
 				await fetch('/api/session/login', {
 					method: 'post',
@@ -129,14 +141,11 @@
 						'content-type': 'application/json; charset=utf-8',
 					},
 					body: JSON.stringify({
-						idToken: await user.getIdToken(),
+						idToken: token,
 						csrfToken: csrfToken,
 					}),
+					signal: abortController.signal,
 				});
-
-				// if (userObject?.newUser) {
-				// 	db.collection('users').doc(user.uid).set({ email });
-				// }
 
 				goto(`/${$session.locale}/customer`);
 
@@ -165,7 +174,7 @@
 	</Alert>
 </div>
 
-<h1>Login</h1>
+<h1>{$t.customer.login()}</h1>
 
 <section id="emailPassword">
 	<form
@@ -180,8 +189,9 @@
 				bind:value={email}
 				type="email"
 				name="email"
-				rules={emailRules}
 				autocomplete="email"
+				rules={emailRules}
+				pattern={emailPattern}
 				required
 				filled
 				rounded
@@ -215,63 +225,36 @@
 						show = !show;
 					}}
 				>
-					<Icon
-						style="cursor: pointer; color:#fff;"
-						path={show ? eye : eyeOff}
-					/>
+					<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
 				</div>
 			</TextField>
 		</div>
 
-		<button value="login">Einloggen</button>
+		<button value="login">{$t.customer.login()}</button>
 	</form>
 
-	<a id="register" href="./register" role="button">Registrieren</a>
+	<a id="register" href="./register" role="button">{$t.customer.signUp()}</a>
 </section>
 
 <section>
 	<h2>Weiter Optionen:</h2>
 	<noscript> Diese Optionen sind nur mit JS verfügbar </noscript>
-	<button
-		id="google"
-		type="button"
-		class="provider"
-		value="google"
-		on:click={login}
-	>
+	<button id="google" type="button" class="provider" value="google" on:click={login}>
 		<img src="/svg/google.svg" alt="Google Logo" />
 		<span class="buttonText"> Anmelden mit Google</span>
 	</button>
 
-	<button
-		id="facebook"
-		type="button"
-		class="provider"
-		value="facebook"
-		on:click={login}
-	>
+	<button id="facebook" type="button" class="provider" value="facebook" on:click={login}>
 		<img src="/svg/facebook.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Facebook</span>
 	</button>
 
-	<button
-		id="microsoft"
-		type="button"
-		class="provider"
-		value="microsoft"
-		on:click={login}
-	>
+	<button id="microsoft" type="button" class="provider" value="microsoft" on:click={login}>
 		<img src="/svg/microsoft.svg" alt="Microsoft Logo" />
 		<span class="buttonText"> Anmelden mit Microsoft</span>
 	</button>
 
-	<button
-		id="twitter"
-		type="button"
-		class="provider"
-		value="twitter"
-		on:click={login}
-	>
+	<button id="twitter" type="button" class="provider" value="twitter" on:click={login}>
 		<img src="/svg/twitter.svg" alt="Facebook Logo" />
 		<span class="buttonText"> Anmelden mit Twitter</span>
 	</button>
@@ -279,13 +262,7 @@
 
 <section>
 	<h2>Für Devs:</h2>
-	<button
-		id="github"
-		type="button"
-		class="provider"
-		value="github"
-		on:click={login}
-	>
+	<button id="github" type="button" class="provider" value="github" on:click={login}>
 		<img src="/svg/github.svg" alt="Github Logo" />
 		<span class="buttonText"> Anmelden mit Github</span>
 	</button>
@@ -293,13 +270,7 @@
 
 <section>
 	<h2>Für Gamer:</h2>
-	<button
-		id="discord"
-		type="button"
-		class="provider"
-		value="discord"
-		on:click={login}
-	>
+	<button id="discord" type="button" class="provider" value="discord" on:click={login}>
 		<img src="/svg/discord.svg" alt="Discord Logo" />
 		<span class="buttonText"> Anmelden mit Discord</span>
 	</button>

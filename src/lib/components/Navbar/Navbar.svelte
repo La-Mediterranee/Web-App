@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
-	import { page } from '$app/stores';
-	import { getAuthContext } from '$lib/firebase/helpers';
+	import { mdiCart } from '@mdi/js';
+	import { page, session } from '$app/stores';
 
 	import type { NavItem } from 'types/index';
 	import type { LocalizedString } from 'typesafe-i18n';
@@ -8,7 +8,8 @@
 
 <script lang="ts">
 	import t from '$i18n/i18n-svelte';
-	import Icon from 'svelte-material-components/src/components/Icon/Icon.svelte';
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import type { User } from 'firebase/auth';
 
 	export let routes: NavItem[] = [];
 	export let locale: string = 'en';
@@ -25,12 +26,13 @@
 
 	$: paths = $t.nav.desktop.routes as Record<string, () => LocalizedString>;
 
-	const user = getAuthContext();
+	const user: User = $session.user;
+	console.log(user);
 </script>
 
 <header id="top-bar">
 	<div id="nav-logo">
-		<a href={`/${locale}`}>
+		<a href={`/${$session.locale}`}>
 			<img src="/Logos/V1_210.webp" alt="" />
 		</a>
 	</div>
@@ -43,8 +45,7 @@
 						{href}
 						{rel}
 						{...{
-							'aria-current':
-								href === $page.url.pathname && 'page',
+							'aria-current': href === $page.url.pathname && 'page',
 						}}
 					>
 						<div>
@@ -61,18 +62,26 @@
 	</nav>
 
 	<div id="profile">
-		{#if $user}
-			<img
-				src={$user?.photoURL ||
-					`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
-				alt=""
-				loading="eager"
-				width={50}
-				height={50}
-			/>
+		{#if user}
+			<a href={`/${$session.locale}/customer`}>
+				<img
+					src={user.photoURL ||
+						`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
+					alt="Your Avatar"
+					loading="eager"
+					width={50}
+					height={50}
+					referrerpolicy="no-referrer"
+				/>
+			</a>
 		{:else}
-			<a href={`/${locale}/customer/login`}>{$t.login()}</a>
+			<a href={`/${$session.locale}/customer/login`}>{$t.customer.login()}</a>
 		{/if}
+	</div>
+	<div class="cart">
+		<a href={`/${$session.locale}/cart`} sveltekit:prefetch>
+			<Icon path={mdiCart} />
+		</a>
 	</div>
 </header>
 
@@ -169,30 +178,45 @@
 		}
 	}
 
-	:global([dir='rtl']) {
-		.nav-item {
-			&:not(:last-child) {
-				margin-left: 1.15rem;
-			}
-		}
-	}
-
 	#profile {
 		width: 65px;
 		height: 100%;
 		display: flex;
 		align-items: center;
 		margin-right: 0.5em;
-
-		// :global(img) {
-		// 	// width: 100%;
-		// 	width: 50px;
-		// 	height: 50px;
-		// }
 	}
 
 	@media (hover: hover) and (pointer: fine) {
 		#profile:hover {
+		}
+	}
+
+	.cart {
+		display: none;
+	}
+
+	@media screen and (min-width: 960px) {
+		.cart {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0 1em;
+		}
+
+		:global([dir='rtl']) {
+			.nav-item {
+				margin-right: 0;
+
+				&:not(:last-child) {
+					margin-left: 1.15rem;
+				}
+			}
+
+			.cart :global(svg path) {
+				transform-origin: 50% 50%;
+				// transform: scale(1, -1) translate(0, -100%);
+				transform: scaleX(-1);
+			}
 		}
 	}
 </style>

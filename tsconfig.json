@@ -2,14 +2,8 @@
 	"compilerOptions": {
 		"moduleResolution": "Node",
 		"module": "ES2020",
-		"lib": [
-			"es2020",
-			"dom",
-			"DOM.Iterable",
-			"WebWorker",
-			"WebWorker.ImportScripts"
-		],
-		"target": "ESNext",
+		"lib": ["es2020", "dom", "DOM.Iterable", "WebWorker", "WebWorker.ImportScripts"],
+		"target": "ES2020",
 		"removeComments": true,
 		// "importHelpers": true,
 		"strict": true,
@@ -19,7 +13,6 @@
 		"sourceMap": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"importHelpers": true,
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
 		// "allowJs": true,
@@ -37,19 +30,8 @@
 			"$stores/*": ["src/lib/stores/*"]
 		}
 	},
-	"types": [
-		"svelte",
-		"@sveltejs/kit",
-		"src/**/*.ts",
-		"src/**/*.d.ts",
-		"src/**/*.svelte"
-	],
-	"include": [
-		"src/**/*.d.ts",
-		"src/**/*.js",
-		"src/**/*.ts",
-		"src/**/*.svelte"
-	],
+	"types": ["svelte", "@sveltejs/kit", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.svelte"],
+	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"],
 	"exclude": [
 		"build",
 		"node_modules",

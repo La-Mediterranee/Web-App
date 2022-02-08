@@ -10,26 +10,9 @@ import { parse } from '$lib/server/cookie';
 import { auth } from '$lib/server/firebase';
 import { attachCsrfToken } from '$lib/server/csrf';
 
-import type { Locales } from '$i18n/i18n-types';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
-import type { DecodedIdToken } from 'firebase-admin/auth';
 import type { Locale } from 'typesafe-i18n/types/core';
 import type { LocaleDetector } from 'typesafe-i18n/detectors';
-
-interface Cookies {
-	'sessionId': string;
-	'csrfToken': string;
-	'pref-locale': string;
-}
-
-interface AppLocals<T> {
-	user?: DecodedIdToken | null;
-	cookies: T;
-	locale: Locales;
-}
-
-export type ShopLocals = AppLocals<Cookies>;
-export type ShopHookRequest = RequestEvent<ShopLocals>;
 
 const cookieParser: Handle = async ({ event, resolve }) => {
 	const cookies = parse<Cookies>(event.request.headers.get('cookie') || '');
@@ -82,18 +65,12 @@ export const handle = sequence(
 	last,
 );
 
-export interface User {
-	uid: string;
-	email: string;
-	photoURL: string;
-	displayName: string;
-}
-
-export interface Session {
-	user?: User;
-	locale: Locales;
-	rtl: boolean;
-}
+// export interface User {
+// 	uid: string;
+// 	email: string;
+// 	photoURL: string;
+// 	displayName: string;
+// }
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 
@@ -107,7 +84,7 @@ export const initAcceptLanguageHeaderDetector =
 			.filter(part => part !== '*')
 			.filter(value => value === '') || [];
 
-export function getSession(event: ShopHookRequest): Session {
+export function getSession(event: RequestEvent<App.Locals>): App.Session {
 	if (!event.locals.locale) {
 		// set the preffered language
 		const acceptLanguageDetector = initAcceptLanguageHeaderDetector(event.request.headers);
@@ -121,7 +98,7 @@ export function getSession(event: ShopHookRequest): Session {
 	};
 }
 
-function getUser(locals: ShopLocals) {
+function getUser(locals: App.Locals) {
 	const user = locals.user;
 	if (!user) return;
 

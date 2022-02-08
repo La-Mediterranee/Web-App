@@ -1,4 +1,4 @@
-/// <reference types="../../../scripts/types/types" />
+/// <reference types="../../../../scripts/types" />
 
 import { writable } from 'svelte/store';
 
@@ -180,7 +180,7 @@ const initialTags: LinkTags = {
 					media: landscape,
 				},
 			];
-		})
+		}),
 	),
 };
 

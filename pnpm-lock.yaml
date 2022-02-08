@@ -30,6 +30,7 @@ specifiers:
   postcss: ^8.4.6
   sass: 1.45.0
   schema-dts: ^1.0.0
+  stripe: ^8.202.0
   svelte: ^3.46.4
   svelte-check: ^2.4.3
   svelte-preprocess: ^4.10.2
@@ -69,6 +70,7 @@ devDependencies:
   postcss: 8.4.6
   sass: 1.45.0
   schema-dts: 1.0.0_typescript@4.5.5
+  stripe: 8.202.0
   svelte: 3.46.4
   svelte-check: 2.4.3_ff8fc6153ce76e4aa94bea8004bb6adf
   svelte-preprocess: 4.10.2_f7faf564326cbd1ec19a6a5dbaaffefb
@@ -5675,6 +5677,13 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /qs/6.10.3:
+    resolution: {integrity: sha512-wr7M2E0OFRfIfJZjKGieI8lBKb7fRCH4Fv5KNPEs7gJ8jadvotdsS08PzOKR7opXhZ/Xkjtt3WF9g38drmyRqQ==}
+    engines: {node: '>=0.6'}
+    dependencies:
+      side-channel: 1.0.4
+    dev: true
+
   /queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
@@ -6192,6 +6201,14 @@ packages:
   /strip-json-comments/3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
+    dev: true
+
+  /stripe/8.202.0:
+    resolution: {integrity: sha512-3YGHVnUatEn/At5+aRy+REdB2IyVa96/zls2xvQrKFTgaJzRu1MsJcK0GKg0p2B0y0VqlZo9gmdDEqphSHHvtA==}
+    engines: {node: ^8.1 || >=10.*}
+    dependencies:
+      '@types/node': 17.0.16
+      qs: 6.10.3
     dev: true
 
   /stubs/3.0.0:

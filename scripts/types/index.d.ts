@@ -19,7 +19,12 @@ type ManifestOptions = Readonly<
 		themeColor?: string;
 		backgroundColor?: string;
 		startUrl?: string;
-	} & Partial<Omit<WebApplicationManifest, 'short_name' | 'theme_color' | 'background_color' | 'start_url'>>
+	} & Partial<
+		Omit<
+			WebApplicationManifest,
+			'short_name' | 'theme_color' | 'background_color' | 'start_url'
+		>
+	>
 >;
 
 type ManifestConfig = {

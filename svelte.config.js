@@ -70,6 +70,14 @@ function vite() {
 			// 	},
 			// },
 		},
+		css: {
+			preprocessorOptions: {
+				scss: {
+					// additionalData: `$injectedColor: orange;`
+					// prependData:
+				},
+			},
+		},
 		resolve: {
 			alias: {
 				types: path.resolve('./src/lib/types'),
@@ -89,7 +97,7 @@ function vite() {
  * @type {import("./src/lib/types/index").KitConfig}
  */
 const kitConfig = {
-	target: '#svelte',
+	// target: '#svelte',
 	files: {
 		// serviceWorker: '..',
 	},

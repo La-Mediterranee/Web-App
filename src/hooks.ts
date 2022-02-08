@@ -25,30 +25,36 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 const browserChecker: Handle = async ({ resolve, event }) => {
 	const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
 
-	const lang = event.locals.lang;
 	const response = await resolve(event);
 
+	const lang = event.locals.locale;
 	// check for unsupported browsers
 	if (/MSIE \d|Trident.*rv:/.test(event.request.headers.get('user-agent') || '')) {
-		response.headers.set('Location', `/${lang}/unsupported.html`);
+		response.headers.set('Location', `/${lang}/unsupported`);
 	}
 
 	return response;
 };
 
-const last: Handle = async ({ event, resolve }) => {
-	const cookies = event.locals.cookies as Cookies;
-	event.locals.locale = cookies['pref-locale'];
-
+const parseUser: Handle = async ({ event, resolve }) => {
 	try {
-		event.locals.user = await auth.verifySessionCookie(cookies.sessionId);
+		const sessionId = event.locals.cookies.sessionId;
+		if (sessionId) {
+			// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
+			event.locals.user = await auth.verifySessionCookie(sessionId);
+		}
 	} catch (err) {
 		console.error(err);
 		event.locals.user = null;
 	}
 
+	return resolve(event);
+};
+
+const last: Handle = async ({ event, resolve }) => {
 	try {
-		// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
+		const cookies = event.locals.cookies;
+		event.locals.locale = cookies['pref-locale'];
 	} catch (error) {
 		console.error(error);
 	}
@@ -62,6 +68,7 @@ export const handle = sequence(
 	cookieParser,
 	attachCsrfToken('/', 'csrfToken'),
 	browserChecker,
+	parseUser,
 	last,
 );
 
@@ -84,7 +91,7 @@ export const initAcceptLanguageHeaderDetector =
 			.filter(part => part !== '*')
 			.filter(value => value === '') || [];
 
-export function getSession(event: RequestEvent<App.Locals>): App.Session {
+export function getSession(event: RequestEvent): App.Session {
 	if (!event.locals.locale) {
 		// set the preffered language
 		const acceptLanguageDetector = initAcceptLanguageHeaderDetector(event.request.headers);

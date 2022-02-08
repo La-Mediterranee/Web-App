@@ -1,9 +1,12 @@
 /// <reference types="@sveltejs/kit" />
 
+type Locales = import('$i18n/i18n-types').Locales;
+type DecodedIdToken = import('firebase-admin/auth').DecodedIdToken;
+
 interface Cookies {
 	'sessionId': string;
 	'csrfToken': string;
-	'pref-locale': string;
+	'pref-locale': Locales;
 }
 
 interface User {
@@ -15,16 +18,16 @@ interface User {
 
 declare namespace App {
 	interface Locals {
-		user?: import('firebase-admin/auth').DecodedIdToken | null;
+		user?: DecodedIdToken | null;
 		cookies: Cookies;
-		locale: import('$i18n/i18n-types').Locales;
+		locale: Locales;
 	}
 
 	interface Platform {}
 
 	interface Session {
 		user?: User;
-		locale: import('$i18n/i18n-types').Locales;
+		locale: Locales;
 		rtl: boolean;
 	}
 

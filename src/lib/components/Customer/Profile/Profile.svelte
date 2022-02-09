@@ -93,7 +93,7 @@
 				credentials: 'include',
 				body: '',
 			});
-			goto('/' + $session.lang + '/customer/login');
+			goto('/' + $session.locale + '/customer/login');
 		}}
 	>
 		{$t.save()}

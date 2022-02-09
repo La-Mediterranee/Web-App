@@ -89,11 +89,13 @@ export const initAcceptLanguageHeaderDetector =
 			.filter(part => !part.startsWith('q'))
 			.map(part => part.trim())
 			.filter(part => part !== '*')
-			.filter(value => value === '') || [];
+			.filter(value => value !== '') || [];
 
 export function getSession(event: RequestEvent): App.Session {
 	if (!event.locals.locale) {
 		// set the preffered language
+		console.log(event.request.headers.get('accept-language'));
+
 		const acceptLanguageDetector = initAcceptLanguageHeaderDetector(event.request.headers);
 		event.locals.locale = detectLocale(acceptLanguageDetector);
 	}

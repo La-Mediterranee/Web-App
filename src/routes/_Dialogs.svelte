@@ -19,7 +19,6 @@
 	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
 
 	let active = false;
-
 	let modalBody: (new (...args: any) => SvelteComponent) | null = null;
 	let componentProps: Object = {};
 
@@ -30,6 +29,8 @@
 	function open<T>(component: new (...args: any) => SvelteComponentTyped<T>, props?: T) {
 		modalBody = component;
 		componentProps = props || {};
+
+		// m.showModal();
 
 		active = true;
 	}
@@ -49,6 +50,6 @@
 
 <slot />
 
-<Dialog width="auto" role="dialog" bind:active>
+<Dialog target="#main-content" width="auto" role="dialog" bind:active>
 	<svelte:component this={modalBody} {...componentProps} on:close={close} />
 </Dialog>

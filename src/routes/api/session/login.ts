@@ -1,7 +1,6 @@
 import { auth } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
-import type { ShopLocals } from 'src/hooks';
 import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
 export interface SessionLogin {
@@ -9,7 +8,7 @@ export interface SessionLogin {
 	csrfToken: string;
 }
 
-export async function post(event: RequestEvent<ShopLocals>): Promise<EndpointOutput> {
+export async function post(event: RequestEvent): Promise<EndpointOutput> {
 	const body = (await event.request.json()) as SessionLogin;
 
 	try {

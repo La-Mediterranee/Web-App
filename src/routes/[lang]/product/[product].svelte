@@ -11,27 +11,27 @@
 		params: ProductParams;
 	}
 
-	export async function load({ params, fetch }: ProductLoadInput): Promise<LoadOutput> {
-		try {
-			const url = `/product/${params.product}.json`;
-			const res = await fetch(url);
-			const props = await res.json();
+	// export async function load({ params, fetch }: ProductLoadInput): Promise<LoadOutput> {
+	// 	try {
+	// 		const url = `/product/${params.product}.json`;
+	// 		const res = await fetch(url);
+	// 		const props = await res.json();
 
-			const output: LoadOutput = {
-				status: res.status,
-				props: props,
-			};
+	// 		const output: LoadOutput = {
+	// 			status: res.status,
+	// 			props: props,
+	// 		};
 
-			return output;
-		} catch (error) {
-			return { status: 500 };
-		}
-	}
+	// 		return output;
+	// 	} catch (error) {
+	// 		return { status: 500 };
+	// 	}
+	// }
 </script>
 
 <script lang="ts">
 	import LDTag from '$components/LDTag';
-	import metatags from '$lib/stores/metatags';
+	import metatags from '$lib/stores/seo/metatags';
 
 	export let product: Product;
 

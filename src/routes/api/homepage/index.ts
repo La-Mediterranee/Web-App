@@ -1,7 +1,5 @@
 import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
-type GetRequest<Locals = Record<string, any>, Input = unknown> = RequestEvent<Locals>;
-
 import { promisify } from 'util';
 import { randomUUID } from 'crypto';
 

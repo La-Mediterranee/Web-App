@@ -2,6 +2,7 @@
 
 type Locales = import('$i18n/i18n-types').Locales;
 type DecodedIdToken = import('firebase-admin/auth').DecodedIdToken;
+type FirebaseUser = import('firebase/auth').User;
 
 interface Cookies {
 	'sessionId': string;
@@ -9,7 +10,7 @@ interface Cookies {
 	'pref-locale': Locales;
 }
 
-interface User {
+interface User extends FirebaseUser {
 	uid: string;
 	email: string;
 	photoURL: string;
@@ -31,5 +32,7 @@ declare namespace App {
 		rtl: boolean;
 	}
 
-	interface Stuff {}
+	interface Stuff {
+		locale: Locales;
+	}
 }

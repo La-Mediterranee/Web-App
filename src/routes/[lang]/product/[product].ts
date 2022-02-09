@@ -1,17 +1,16 @@
 import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
 
-type GetRequest<Locals = Record<string, any>> = RequestEvent<Locals>;
-
 import { promisify } from 'util';
 import { randomUUID } from 'crypto';
 
 import type { Product } from 'types/product';
+import type { JSONValue } from '@sveltejs/kit/types/helper';
 
 interface GetBody {
 	product?: Product;
 }
 
-export async function get({ params }: GetRequest): Promise<EndpointOutput> {
+export async function get({ params }: RequestEvent): Promise<EndpointOutput> {
 	// const { product } = params;
 	const product: Product = {
 		ID: randomUUID(),
@@ -30,6 +29,6 @@ export async function get({ params }: GetRequest): Promise<EndpointOutput> {
 	};
 
 	return {
-		body: JSON.stringify(body),
+		body: body as JSONValue,
 	};
 }

@@ -26,7 +26,7 @@
 
 	$: paths = $t.nav.desktop.routes as Record<string, () => LocalizedString>;
 
-	const user: User = $session.user;
+	const user = $session.user;
 	console.log(user);
 </script>
 

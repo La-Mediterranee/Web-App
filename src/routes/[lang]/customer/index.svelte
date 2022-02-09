@@ -2,11 +2,9 @@
 	import type { User } from 'firebase/auth';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	import type { Session } from '../../../../src/hooks';
-
 	type Rec<T = any> = Record<string, T>;
 
-	export function load({ session, url }: LoadInput<Rec<string>, Rec<any>, Session>): LoadOutput {
+	export function load({ session, url }: LoadInput<Rec<string>>): LoadOutput {
 		if (!session.user) {
 			return {
 				redirect: `${url.pathname}/login`,

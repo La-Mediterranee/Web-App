@@ -46,7 +46,7 @@
 		}
 
 		// stuff.lang = session.locale;
-		stuff.lang = lang;
+		stuff.locale = lang;
 
 		// load dictionary data
 		await initI18n(lang);
@@ -68,7 +68,7 @@
 
 	import t from '$i18n/i18n-svelte';
 	import rtl from '$stores/rtl';
-	import metatags from '$lib/stores/metatags';
+	import metatags from '$lib/stores/seo/metatags';
 
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
@@ -115,7 +115,7 @@
 <Providers>
 	<MaterialApp theme="custom">
 		<Modals>
-			<div id="mainContent">
+			<div id="main-content">
 				<Statusbar message={$t.connectionStatus()} {online} />
 				<Navbar locale={lang} routes={desktopNavItems} />
 				<main>

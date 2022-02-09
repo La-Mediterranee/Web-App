@@ -98,11 +98,12 @@ $mediaqueries: (
 
 html {
 	scroll-behavior: smooth;
-	box-sizing: border-box;
+	overflow-x: hidden;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 }
 
 body {
-	height: 100%;
 	background: var(--body-bg1);
 	font-family: 'Fira Sans', sans-serif;
 	background-attachment: fixed;

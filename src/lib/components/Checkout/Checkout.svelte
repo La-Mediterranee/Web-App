@@ -9,6 +9,21 @@
 	} from '@stripe/stripe-js';
 	import type { User } from 'firebase/auth';
 	import type { CustomerInfo } from 'types/customer';
+
+	const panels = [
+		{
+			id: 0,
+			header: '1. Lieferdetails',
+		},
+		{
+			id: 1,
+			header: '2. Zahlungdetails',
+		},
+		{
+			id: 2,
+			header: '3. Zusammenfassung',
+		},
+	];
 </script>
 
 <script lang="ts">
@@ -24,7 +39,7 @@
 	import { cart } from '$lib/stores/cart';
 	import { getStripeContext } from '$lib/utils/helper';
 
-	export let user: User | null;
+	export let user: User | undefined;
 
 	let value = [0];
 	let currentValue = 0;
@@ -70,21 +85,6 @@
 		console.debug(`can make request:`, canMakePayment);
 	}
 
-	const panels = [
-		{
-			id: 0,
-			header: '1. Lieferdetails',
-		},
-		{
-			id: 1,
-			header: '2. Zahlungdetails',
-		},
-		{
-			id: 2,
-			header: '3. Zusammenfassung',
-		},
-	];
-
 	const customer: CustomerInfo = {
 		name: user?.displayName || '',
 		surname: '',
@@ -99,7 +99,7 @@
 	};
 </script>
 
-<h1 style="text-align: center;">Checkout</h1>
+<h1>Checkout</h1>
 
 <div id="checkout">
 	<CartSummary cart={$cart} total={cart.totalAmount} quantity={cart.totalQuantity} />
@@ -127,6 +127,10 @@
 <style lang="scss" global>
 	@use 'variables' as *;
 	// @use "mixins" as *;
+
+	h1 {
+		text-align: center;
+	}
 
 	#checkout {
 		padding: 1em;

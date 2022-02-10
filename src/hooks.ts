@@ -9,10 +9,11 @@ import { detectLocale } from '$i18n/i18n-util';
 import { parse } from '$lib/server/cookie';
 import { auth } from '$lib/server/firebase';
 import { attachCsrfToken } from '$lib/server/csrf';
+import type { LocaleDetector } from 'typesafe-i18n/detectors';
 
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { Locale } from 'typesafe-i18n/types/core';
-import type { LocaleDetector } from 'typesafe-i18n/detectors';
+import type { AuthError } from 'firebase/auth';
 
 const cookieParser: Handle = async ({ event, resolve }) => {
 	const cookies = parse<Cookies>(event.request.headers.get('cookie') || '');
@@ -43,8 +44,9 @@ const parseUser: Handle = async ({ event, resolve }) => {
 			// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
 			event.locals.user = await auth.verifySessionCookie(sessionId);
 		}
-	} catch (err) {
-		console.error(err);
+	} catch (_e) {
+		const err = _e as AuthError;
+		console.error(`parseUser() -> ${err.code}: ${err.message}`);
 		event.locals.user = null;
 	}
 
@@ -82,22 +84,27 @@ export const handle = sequence(
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 
 export const initAcceptLanguageHeaderDetector =
-	(headers: Headers, headerKey = 'accept-language'): LocaleDetector =>
+	(request: Request, headerKey = 'accept-language'): LocaleDetector =>
 	(): Locale[] =>
-		(headers.get(headerKey) as string)
+		(request.headers.get(headerKey) as string)
 			?.split(REGEX_ACCEPT_LANGUAGE_SPLIT)
 			.filter(part => !part.startsWith('q'))
 			.map(part => part.trim())
 			.filter(part => part !== '*')
 			.filter(value => value !== '') || [];
 
+function initRequestCookiesDetector(request: Request, headerKey = 'pref-locale'): LocaleDetector {
+	const prefLang = request.headers.get(headerKey);
+	return () => (prefLang ? [prefLang] : []);
+}
+
 export function getSession(event: RequestEvent): App.Session {
 	if (!event.locals.locale) {
 		// set the preffered language
-		console.log(event.request.headers.get('accept-language'));
+		const requestCookies = initRequestCookiesDetector(event.request);
+		const acceptLanguageDetector = initAcceptLanguageHeaderDetector(event.request);
 
-		const acceptLanguageDetector = initAcceptLanguageHeaderDetector(event.request.headers);
-		event.locals.locale = detectLocale(acceptLanguageDetector);
+		event.locals.locale = detectLocale(requestCookies, acceptLanguageDetector);
 	}
 
 	return {

@@ -27,9 +27,9 @@ export interface HomepageProps {
 
 async function homepage(): Promise<HomepageProps> {
 	const responses = await Promise.all([
-		fetch('http://localhost:8080/products'),
-		fetch('http://localhost:8080/products'),
-		fetch('http://localhost:8080/products'),
+		fetch('http://localhost:8000/products'),
+		fetch('http://localhost:8000/products'),
+		fetch('http://localhost:8000/products'),
 	]);
 
 	const sections = await Promise.all(responses.map(res => res.json()));

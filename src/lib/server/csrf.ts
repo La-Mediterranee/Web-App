@@ -12,6 +12,7 @@ const randomBytesAsync = promisify(crypto.randomBytes);
  * Create a new CSRF token.
  */
 export async function createToken() {
+	// return Math.random().toString(36).slice(2);
 	return (await randomBytesAsync(32)).toString('hex');
 }
 
@@ -21,7 +22,6 @@ export function attachCsrfToken(url: string, cookieName: string): Handle {
 
 		if (event.url.pathname === url) {
 			setCookie(res, cookieName, await createToken());
-			// res.headers.set('set-cookie', serialize(cookieName, await createToken()));
 		}
 
 		return res;

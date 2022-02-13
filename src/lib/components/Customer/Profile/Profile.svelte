@@ -13,6 +13,7 @@
 	import type { User } from 'firebase/auth';
 
 	export let user: User;
+	let loading = false;
 </script>
 
 <div>
@@ -88,15 +89,25 @@
 		rounded
 		on:click={async () => {
 			// await user.logOut();
-			await fetch('/api/session/logout', {
-				method: 'post',
+			loading = true;
+
+			const res = await fetch('/api/session/logout', {
+				method: 'head',
 				credentials: 'include',
-				body: '',
 			});
-			goto('/' + $session.locale + '/customer/login');
+
+			if (!res.ok) {
+				loading = false;
+
+				return;
+			}
+
+			$session.user = undefined;
+			goto('/' + $session.locale);
+			// window.location.replace('/' + $session.locale);
 		}}
 	>
-		{$t.save()}
+		{$t.customer.logout()}
 	</Button>
 </div>
 

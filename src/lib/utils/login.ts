@@ -81,7 +81,7 @@ export async function signInWithMicrosoft(auth: Auth) {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
-			}
+			},
 		);
 
 		const url = window.URL || window.webkitURL;
@@ -105,7 +105,7 @@ export async function signInWithDiscord(auth: Auth) {
 			'Discord Auth',
 			{
 				height: 740,
-			}
+			},
 		);
 		const info = getAdditionalUserInfo(userCredential);
 		const user = userCredential.user;
@@ -117,12 +117,12 @@ export async function signInWithDiscord(auth: Auth) {
 async function runProviderLogin(
 	auth: Auth,
 	provider: AuthProvider,
-	cb: (userCredential: UserCredential, newUser: boolean) => Promise<LoginInfo>
+	cb: (userCredential: UserCredential, newUser: boolean) => Promise<LoginInfo>,
 ) {
 	return await runAsyncLogin(async () => {
 		const userCredential = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 
-		const info = getAdditionalUserInfo(userCredential);
+		const info = userCredential ? getAdditionalUserInfo(userCredential) : null;
 
 		return await cb(userCredential, info?.isNewUser ?? true);
 	});
@@ -155,7 +155,12 @@ export interface WindowFeatures {
 	status?: 'yes' | 'no';
 }
 
-async function withPopup(auth: Auth, url: string, name: string, options?: WindowFeatures): Promise<UserCredential> {
+async function withPopup(
+	auth: Auth,
+	url: string,
+	name: string,
+	options?: WindowFeatures,
+): Promise<UserCredential> {
 	const width = options?.width || 500;
 	const height = options?.height || 640;
 	const top = options?.top || (window.screen.availHeight - height) / 2;

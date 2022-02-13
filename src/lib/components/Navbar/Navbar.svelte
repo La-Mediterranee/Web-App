@@ -25,9 +25,6 @@
 	});
 
 	$: paths = $t.nav.desktop.routes as Record<string, () => LocalizedString>;
-
-	const user = $session.user;
-	console.log(user);
 </script>
 
 <header id="top-bar">
@@ -62,10 +59,10 @@
 	</nav>
 
 	<div id="profile">
-		{#if user}
+		{#if $session.user}
 			<a href={`/${$session.locale}/customer`}>
 				<img
-					src={user.photoURL ||
+					src={$session.user.photoURL ||
 						`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
 					alt="Your Avatar"
 					loading="eager"
@@ -109,6 +106,10 @@
 		position: var(--header-position, sticky);
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
+
+		:global(.has-scrollbar.no-scroll) & {
+			width: calc(100% - 17px);
+		}
 
 		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {
 			padding: 0.3em 0.5em;

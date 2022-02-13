@@ -5,6 +5,8 @@
 	type Rec<T = any> = Record<string, T>;
 
 	export function load({ session, url }: LoadInput<Rec<string>>): LoadOutput {
+		console.log(session.user);
+
 		if (!session.user) {
 			return {
 				redirect: `${url.pathname}/login`,

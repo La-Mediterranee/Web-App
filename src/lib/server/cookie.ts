@@ -13,13 +13,64 @@ export { parse, serialize };
 
 export type SameSite = 'lax' | 'none' | 'strict';
 
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+ */
 export interface Options {
+	/**
+	 * Indicates the number of seconds until the cookie expires.
+	 * A zero or negative number will expire the cookie immediately.
+	 * If both {@link expires} and {@link maxAge} are set, {@link maxAge} has precedence.
+	 */
 	maxAge?: number;
+	/**
+	 * Defines the host to which the cookie will be sent.
+	 *
+	 * If omitted, this attribute defaults to the host of the current document URL, not including subdomains.
+	 *
+	 * Contrary to earlier specifications, leading dots in domain names (.example.com) are ignored.
+	 *
+	 * Multiple host/domain values are not allowed, but if a domain is specified,
+	 * then subdomains are always included.
+	 */
 	domain?: string;
+	/**
+	 * Indicates the path that must exist in the requested URL for the browser to send the Cookie header.
+	 *
+	 * The forward slash (/) character is interpreted as a directory separator,
+	 * and subdirectories are matched as well.
+	 * For example, for Path=/docs,
+	 * -	the request paths /docs, /docs/, /docs/Web/, and /docs/Web/HTTP will all match.
+	 * -	the request paths /, /docsets, /fr/docs will not match.
+	 */
 	path?: string;
+	/**
+	 * Indicates the maximum lifetime of the cookie as an HTTP-date timestamp.
+	 * See {@link Date} for the required formatting.
+	 *
+	 * If unspecified, the cookie becomes a session cookie.
+	 * A session finishes when the client shuts down, after which the session cookie is removed.
+	 * When an Expires date is set, the deadline is relative
+	 * to the client the cookie is being set on, not the server.
+	 */
 	expires?: Date;
+	/**
+	 * Forbids JavaScript from accessing the cookie, for example, through the Document.cookie property.
+	 * Note that a cookie that has been created with HttpOnly will still be sent
+	 * with JavaScript-initiated requests, for example, when calling XMLHttpRequest.send() or fetch().
+	 * This mitigates attacks against cross-site scripting (XSS).
+	 */
 	httpOnly?: boolean;
+	/**
+	 * Indicates that the cookie is sent to the server only when a request is
+	 * made with the https: scheme (except on localhost), and therefore,
+	 * is more resistant to man-in-the-middle attacks.
+	 */
 	secure?: boolean;
+	/**
+	 * Controls whether or not a cookie is sent with cross-origin requests,
+	 * providing some protection against cross-site request forgery attacks (CSRF).
+	 */
 	sameSite?: boolean | SameSite;
 	decode?: typeof decodeURIComponent;
 	encode?: typeof decodeURIComponent;

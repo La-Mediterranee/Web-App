@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { slide } from 'svelte/transition';
 
-	import { getCookie } from '$lib/utils';
+	import { getCookie, getFocusableChildren } from '$lib/utils';
 	import { getAuthContext } from '$lib/firebase/helpers';
 	import { account, key, eye, eyeOff } from '$lib/Icons/filled';
 	import {
@@ -21,6 +21,8 @@
 	import type { Auth, User } from 'firebase/auth';
 
 	type LoginCallback = (auth: Auth) => Promise<LoginInfo | null>;
+
+	const providers = ['google', 'facebook', 'microsoft', 'twitter'];
 
 	// A Map or Object should theoretically be faster than a switch statement
 	const providerMethods: {
@@ -85,6 +87,8 @@
 	import t from '$i18n/i18n-svelte';
 
 	import { session } from '$app/stores';
+	import Button from 'svelty-material/components/Button/Button.svelte';
+	import Link from 'svelty-material/components/Button/Link.svelte';
 
 	const auth = getAuthContext();
 
@@ -95,12 +99,8 @@
 	let error: boolean = false;
 
 	let abortController: AbortController;
-
-	onMount(() => {
-		return () => {
-			abortController.abort();
-		};
-	});
+	let loginView: HTMLDivElement;
+	let disabled = false;
 
 	async function login(e: MouseEvent | Event) {
 		try {
@@ -108,6 +108,14 @@
 
 			const target = e.currentTarget as HTMLButtonElement;
 			const value = target.value;
+
+			disabled = true;
+
+			// const focusableChildren = getFocusableChildren(loginView);
+			// for (const child of focusableChildren) {
+			// 	child.setAttribute('disabled', '');
+			// 	child.classList.add('disabled');
+			// }
 
 			if (value === 'login') {
 				if (!validateInput(email!, password!)) return;
@@ -131,7 +139,6 @@
 			const user = userObject?.user;
 
 			if (user) {
-				abortController = new window.AbortController();
 				const token = await user.getIdToken();
 				const csrfToken = getCookie('csrfToken');
 
@@ -147,134 +154,177 @@
 					signal: abortController.signal,
 				});
 
-				goto(`/${$session.locale}/customer`);
-
+				window.location.replace(`${window.location.origin}/${$session.locale}/customer`);
 				error = false;
 			} else {
 				error = true;
 			}
+
+			disabled = false;
+			// for (const child of focusableChildren) {
+			// 	child.removeAttribute('disabled');
+			// }
 		} catch (err) {
 			console.error(err);
 			error = true;
 		}
 	}
+
+	onMount(() => {
+		abortController = new AbortController();
+
+		return () => {
+			abortController.abort();
+		};
+	});
 </script>
 
-<div class="login-error" on:click={() => (error = !error)}>
-	<Alert
-		class="error-color"
-		transition={slide}
-		transitionOpts={{ duration: 500 }}
-		bind:visible={error}
-	>
-		<div slot="icon">
-			<Icon path={mdiAlert} />
-		</div>
-		Es gab ein Fehler beim Einloggen.
-	</Alert>
-</div>
+<div id="login-view" bind:this={loginView}>
+	<div class="login-error" on:click={() => (error = !error)}>
+		<Alert
+			class="error-color"
+			transition={slide}
+			transitionOpts={{ duration: 500 }}
+			bind:visible={error}
+		>
+			<div slot="icon">
+				<Icon path={mdiAlert} />
+			</div>
+			Es gab ein Fehler beim Einloggen.
+		</Alert>
+	</div>
 
-<h1>{$t.customer.login()}</h1>
+	<h1>{$t.customer.login()}</h1>
 
-<section id="emailPassword">
-	<form
-		bind:this={form}
-		on:submit|preventDefault={login}
-		name="login"
-		method="post"
-		action="/api/auth/login"
-	>
-		<div class="wrapper">
-			<TextField
-				bind:value={email}
-				type="email"
-				name="email"
-				autocomplete="email"
-				rules={emailRules}
-				pattern={emailPattern}
-				required
-				filled
-				rounded
-			>
-				<div slot="prepend">
-					<Icon style="color:#fff" path={account} />
-				</div>
-				Email
-			</TextField>
-		</div>
-		<div class="wrapper">
-			<TextField
-				bind:value={password}
-				name="password"
-				minlength={minLength}
-				type={show ? 'text' : 'password'}
-				rules={passwordRules}
-				counter={`${minLength}+`}
-				autocomplete="current-password"
-				required
-				rounded
-				filled
-			>
-				<div slot="prepend">
-					<Icon style="color:#fff" path={key} />
-				</div>
-				Passwort
-				<div
-					slot="append"
-					on:click={() => {
-						show = !show;
-					}}
+	<section id="emailPassword">
+		<form
+			bind:this={form}
+			on:submit|preventDefault={login}
+			name="login"
+			method="post"
+			action="/api/auth/login"
+		>
+			<div class="wrapper">
+				<TextField
+					bind:value={email}
+					type="email"
+					name="email"
+					autocomplete="email"
+					rules={emailRules}
+					pattern={emailPattern}
+					{disabled}
+					required
+					filled
+					rounded
 				>
-					<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
-				</div>
-			</TextField>
-		</div>
+					<div slot="prepend">
+						<Icon style="color:#fff" path={account} />
+					</div>
+					Email
+				</TextField>
+			</div>
+			<div class="wrapper">
+				<TextField
+					bind:value={password}
+					name="password"
+					minlength={minLength}
+					type={show ? 'text' : 'password'}
+					rules={passwordRules}
+					counter={`${minLength}+`}
+					autocomplete="current-password"
+					{disabled}
+					required
+					rounded
+					filled
+				>
+					<div slot="prepend">
+						<Icon style="color:#fff" path={key} />
+					</div>
+					Passwort
+					<div
+						slot="append"
+						on:click={() => {
+							show = !show;
+						}}
+					>
+						<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
+					</div>
+				</TextField>
+			</div>
 
-		<button value="login">{$t.customer.login()}</button>
-	</form>
+			<Button
+				style="--theme-app-bar: white; color: black"
+				type="submit"
+				value="login"
+				rounded
+				{disabled}
+			>
+				{$t.customer.login()}
+			</Button>
 
-	<a id="register" href="./register" role="button">{$t.customer.signUp()}</a>
-</section>
+			<!-- <button value="login" {disabled}>{$t.customer.login()}</button> -->
+		</form>
 
-<section>
-	<h2>Weiter Optionen:</h2>
-	<noscript> Diese Optionen sind nur mit JS verfügbar </noscript>
-	<button id="google" type="button" class="provider" value="google" on:click={login}>
-		<img src="/svg/google.svg" alt="Google Logo" />
-		<span class="buttonText"> Anmelden mit Google</span>
-	</button>
+		<Link
+			style="--theme-app-bar: white; color: black"
+			id="register"
+			href="./register"
+			role="button"
+			rounded
+		>
+			{$t.customer.signUp()}
+		</Link>
+	</section>
 
-	<button id="facebook" type="button" class="provider" value="facebook" on:click={login}>
-		<img src="/svg/facebook.svg" alt="Facebook Logo" />
-		<span class="buttonText"> Anmelden mit Facebook</span>
-	</button>
+	<section>
+		<h2>Weiter Optionen:</h2>
+		<noscript> Diese Optionen sind nur mit JS verfügbar </noscript>
+		{#each providers as provider}
+			{@const text = provider.charAt(0).toUpperCase() + provider.slice(1)}
+			<button
+				id={provider}
+				type="button"
+				class="provider"
+				value={provider}
+				{disabled}
+				on:click={login}
+			>
+				<img src="/svg/{provider}.svg" alt="{provider} Logo" />
+				<span class="buttonText"> {'Anmelden mit'} {text}</span>
+			</button>
+		{/each}
+	</section>
 
-	<button id="microsoft" type="button" class="provider" value="microsoft" on:click={login}>
-		<img src="/svg/microsoft.svg" alt="Microsoft Logo" />
-		<span class="buttonText"> Anmelden mit Microsoft</span>
-	</button>
+	<section>
+		<h2>Für Devs:</h2>
+		<button
+			id="github"
+			type="button"
+			class="provider"
+			value="github"
+			{disabled}
+			on:click={login}
+		>
+			<img src="/svg/github.svg" alt="Github Logo" />
+			<span class="buttonText"> Anmelden mit Github</span>
+		</button>
+	</section>
 
-	<button id="twitter" type="button" class="provider" value="twitter" on:click={login}>
-		<img src="/svg/twitter.svg" alt="Facebook Logo" />
-		<span class="buttonText"> Anmelden mit Twitter</span>
-	</button>
-</section>
-
-<section>
-	<h2>Für Devs:</h2>
-	<button id="github" type="button" class="provider" value="github" on:click={login}>
-		<img src="/svg/github.svg" alt="Github Logo" />
-		<span class="buttonText"> Anmelden mit Github</span>
-	</button>
-</section>
-
-<section>
-	<h2>Für Gamer:</h2>
-	<button id="discord" type="button" class="provider" value="discord" on:click={login}>
-		<img src="/svg/discord.svg" alt="Discord Logo" />
-		<span class="buttonText"> Anmelden mit Discord</span>
-	</button>
-</section>
+	<section>
+		<h2>Für Gamer:</h2>
+		<button
+			id="discord"
+			type="button"
+			class="provider"
+			value="discord"
+			{disabled}
+			on:click={login}
+		>
+			<img src="/svg/discord.svg" alt="Discord Logo" />
+			<span class="buttonText"> Anmelden mit Discord</span>
+		</button>
+	</section>
+</div>
 
 <style lang="scss" src="./Login.scss">
 </style>

@@ -14,21 +14,6 @@
 	font-weight: 400;
 }
 
-:global(.login-error) {
-	position: fixed;
-	bottom: 50px;
-	left: 10px;
-	right: 10px;
-	z-index: 10;
-}
-
-:global(.icon) {
-	position: absolute;
-	padding: 3px;
-	min-width: 40px;
-	color: #000;
-}
-
 section {
 	margin: 1em;
 	display: flex;
@@ -72,6 +57,21 @@ button {
 	background: white;
 }
 
+:-webkit-any([disabled], :disabled, .disabled) {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+:matches([disabled], :disabled, .disabled) {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+:is([disabled], :disabled, .disabled) {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
 span {
 	height: 100%;
 }
@@ -79,7 +79,9 @@ span {
 .provider {
 	width: 17em;
 	display: flex;
-	box-shadow: 1px 1px 1px grey;
+	// box-shadow: 1px 1px 1px grey;
+	box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+		0 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
 	align-items: center;
 	font-family: 'SegoeUI', sans-serif;
 	color: #fff;
@@ -95,6 +97,38 @@ span {
 		font-weight: bold;
 		// margin: auto;
 		text-align: left;
+	}
+}
+
+#login-view {
+	text-align: center;
+	padding: 1.5em;
+
+	:global(.login-error) {
+		position: fixed;
+		bottom: 50px;
+		left: 10px;
+		right: 10px;
+		z-index: 10;
+	}
+
+	@media screen and (min-width: map-get($map: $breakpoints, $key: md)) {
+		:global(.login-error) {
+			bottom: 0px;
+		}
+	}
+
+	:global(.icon) {
+		position: absolute;
+		padding: 3px;
+		min-width: 40px;
+		color: #000;
+	}
+
+	:global(#register) {
+		margin-top: 1.5em;
+		width: 14em;
+		padding: 0.5em;
 	}
 }
 
@@ -127,8 +161,3 @@ span {
 // #apple {
 // 	background: #000000;
 // }
-
-#register {
-	width: 14em;
-	padding: 0.5em;
-}

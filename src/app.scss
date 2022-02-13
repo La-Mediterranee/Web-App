@@ -97,8 +97,7 @@ $mediaqueries: (
 }
 
 html {
-	scroll-behavior: smooth;
-	overflow-x: hidden;
+	// scroll-behavior: smooth;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 }
@@ -116,7 +115,6 @@ main {
 	padding-top: 1.2em;
 	min-height: 90vh;
 	position: relative;
-	content-visibility: auto;
 }
 
 .theme--custom {
@@ -288,4 +286,15 @@ a {
 	padding: 0;
 	position: absolute;
 	white-space: nowrap;
+}
+
+// .noscroll{
+// 	position: fixed;
+// 	overflow-y: scroll;
+// 	width: 100%;
+// }
+
+.noscroll {
+	overflow: hidden;
+	padding-right: 17px;
 }

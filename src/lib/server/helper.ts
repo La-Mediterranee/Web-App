@@ -3,6 +3,7 @@ import { serialize } from './cookie';
 
 import type { Options } from './cookie';
 import type { EndpointOutput } from '@sveltejs/kit';
+import type { ResponseHeaders } from '@sveltejs/kit/types/helper';
 
 /**
  * Decodes the JSON Web Token sent via the frontend app.
@@ -25,15 +26,10 @@ export function clearCookie(
 	options: Record<string, any> = {},
 ) {
 	const opt = Object.assign({ expires: new Date(1), path: '/' }, options);
-
-	if (response instanceof Response) {
-		return response.headers.set('set-cookie', serialize(name, '', options));
-	}
-
-	response.headers = {
-		'set-cookie': serialize(name, '', opt),
-	};
+	setCookie(response, name, '', opt);
 }
+
+const COOKIE_HEADER = 'set-cookie';
 
 export function setCookie(
 	response: EndpointOutput | Response,
@@ -41,11 +37,49 @@ export function setCookie(
 	value: string,
 	options: Options = {},
 ) {
-	if (response instanceof Response) {
-		return response.headers.set('set-cookie', serialize(name, value, options));
+	const cookie = serialize(name, value, options);
+
+	if (response.headers instanceof Headers) {
+		return response.headers.set(COOKIE_HEADER, cookie);
 	}
 
-	response.headers = {
-		'set-cookie': serialize(name, value, options),
+	if (response.headers != null) {
+		const headers = (response as EndpointOutput).headers as Partial<ResponseHeaders>;
+		const currentCookies = headers[COOKIE_HEADER] as string | string[] | undefined;
+
+		headers[COOKIE_HEADER] = currentCookies
+			? Array.isArray(currentCookies)
+				? currentCookies.push(cookie)
+				: [cookie, currentCookies]
+			: cookie;
+	}
+
+	(response as EndpointOutput).headers = {
+		'set-cookie': cookie,
 	};
+}
+
+export async function refreshSessionCookie(uid: string, expiresIn: number) {
+	const config = import.meta.env.VITE_GOOGLE_API_KEY;
+
+	const token = await auth.createCustomToken(uid);
+	const res = await fetch(
+		`https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${config}`,
+		{
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify({
+				token,
+				returnSecureToken: true,
+			}),
+		},
+	).then(r => r.json());
+
+	const sessionCookie = await auth.createSessionCookie(res.idToken, {
+		expiresIn,
+	});
+
+	return sessionCookie;
 }

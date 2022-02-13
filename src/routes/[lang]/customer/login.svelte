@@ -1,5 +1,17 @@
 <script context="module" lang="ts">
 	export const prerender = true;
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+
+	export async function load({ session }: LoadInput): Promise<LoadOutput> {
+		if (session.user) {
+			return {
+				status: 302,
+				redirect: `/${session.locale}/customer`,
+			};
+		}
+
+		return {};
+	}
 </script>
 
 <script lang="ts">
@@ -8,14 +20,5 @@
 </script>
 
 <Auth>
-	<div>
-		<Login />
-	</div>
+	<Login />
 </Auth>
-
-<style>
-	div {
-		text-align: center;
-		padding: 1.5em;
-	}
-</style>

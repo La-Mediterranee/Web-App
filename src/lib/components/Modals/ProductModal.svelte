@@ -93,6 +93,57 @@
 				{/each}
 			</fieldset>
 		{/each}
+		{#each variations?.toppings || [] as topping}
+			<fieldset class="topping">
+				<legend>{topping}</legend>
+
+				{#each ['kraken', 'sasquatch', 'mothman'] as item}
+					<div class="topping-item">
+						<RadioButton id={`${topping}-${item}`} name={topping} value={item} />
+						<label for={`${topping}-${item}`}
+							>{item.slice(0, 1)?.toUpperCase() + item.substring(1)}</label
+						>
+						<button class="info-button" type="button" on:click={() => console.log('Hi')}
+							>&#9432;</button
+						>
+					</div>
+				{/each}
+			</fieldset>
+		{/each}
+		{#each variations?.toppings || [] as topping}
+			<fieldset class="topping">
+				<legend>{topping}</legend>
+
+				{#each ['kraken', 'sasquatch', 'mothman'] as item}
+					<div class="topping-item">
+						<RadioButton id={`${topping}-${item}`} name={topping} value={item} />
+						<label for={`${topping}-${item}`}
+							>{item.slice(0, 1)?.toUpperCase() + item.substring(1)}</label
+						>
+						<button class="info-button" type="button" on:click={() => console.log('Hi')}
+							>&#9432;</button
+						>
+					</div>
+				{/each}
+			</fieldset>
+		{/each}
+		{#each variations?.toppings || [] as topping}
+			<fieldset class="topping">
+				<legend>{topping}</legend>
+
+				{#each ['kraken', 'sasquatch', 'mothman'] as item}
+					<div class="topping-item">
+						<RadioButton id={`${topping}-${item}`} name={topping} value={item} />
+						<label for={`${topping}-${item}`}
+							>{item.slice(0, 1)?.toUpperCase() + item.substring(1)}</label
+						>
+						<button class="info-button" type="button" on:click={() => console.log('Hi')}
+							>&#9432;</button
+						>
+					</div>
+				{/each}
+			</fieldset>
+		{/each}
 	</div>
 
 	<div class="actions pt-2">
@@ -118,12 +169,13 @@
 
 <style lang="scss" global>
 	.s-dialog__content {
-		overflow-y: visible !important;
+		--s-dialog-content-overflow: visible;
+		--s-dialog-justify-content: flex-start;
 	}
 
 	#product-modal {
 		accent-color: var(--accent-color, orange);
-		width: 42em;
+		max-width: 42em;
 		padding: 2em;
 		color: #fff;
 

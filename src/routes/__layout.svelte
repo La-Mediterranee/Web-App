@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import { dev } from '$app/env';
+	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
 
 	import { RTL_LANGS } from '$i18n/utils';
@@ -88,6 +88,13 @@
 
 	let online: boolean = true;
 
+	$: if (
+		browser &&
+		(document.defaultView || window).innerWidth > document.documentElement.clientWidth
+	) {
+		document.body.classList.add('has-scrollbar');
+	}
+
 	onMount(async () => {
 		if (dev) return;
 
@@ -118,13 +125,15 @@
 			<div id="main-content">
 				<Statusbar message={$t.connectionStatus()} {online} />
 				<Navbar locale={lang} routes={desktopNavItems} />
-				<main>
-					<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
-					<slot />
-					<!-- <UpdatePrompt /> -->
-				</main>
+				<div class="inner-content">
+					<main>
+						<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
+						<slot />
+						<!-- <UpdatePrompt /> -->
+					</main>
+					<Footer />
+				</div>
 				<Tabbar locale={lang} routes={mobileNavItems} />
-				<Footer />
 			</div>
 		</Modals>
 	</MaterialApp>
@@ -132,4 +141,8 @@
 
 <style lang="scss" global>
 	@import '../app.scss';
+
+	#main-content {
+		scroll-behavior: smooth;
+	}
 </style>

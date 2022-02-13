@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/firebase';
+import { auth, firebase } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
 import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
@@ -23,6 +23,7 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 		}
 
 		const decodedIdToken = await auth.verifyIdToken(idToken);
+
 		// Only process if the user just signed in in the last 5 minutes.
 		if (new Date().getTime() / 1000 - decodedIdToken.auth_time > 5 * 60) {
 			return {
@@ -30,6 +31,8 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 				body: 'Recent sign in required!',
 			};
 		}
+
+		await auth.setCustomUserClaims(decodedIdToken.uid, { locale: event.locals.locale });
 
 		const days = 14;
 		const expiresIn = days * 60 * 60 * 24 * 1000;
@@ -39,16 +42,19 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 		});
 
 		const response: EndpointOutput = {
-			status: 303,
+			status: 302,
+			headers: new Headers({
+				location: `/${event.locals.locale}/customer`,
+			}),
 		};
 
 		setCookie(response, 'sessionId', sessionCookie, {
-			expires: new Date(0),
-			maxAge: expiresIn,
+			// expires: new Date(0),
+			maxAge: expiresIn / 1000,
 			httpOnly: true,
-			// domain: ".",
-			// secure: true,
 			path: '/',
+			secure: true,
+			// domain: ".",
 		});
 
 		return response;

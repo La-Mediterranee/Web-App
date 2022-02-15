@@ -58,17 +58,17 @@ button {
 }
 
 :-webkit-any([disabled], :disabled, .disabled) {
-	opacity: 0.6;
+	opacity: 0.7;
 	pointer-events: none;
 }
 
 :matches([disabled], :disabled, .disabled) {
-	opacity: 0.6;
+	opacity: 0.7;
 	pointer-events: none;
 }
 
 :is([disabled], :disabled, .disabled) {
-	opacity: 0.6;
+	opacity: 0.7;
 	pointer-events: none;
 }
 

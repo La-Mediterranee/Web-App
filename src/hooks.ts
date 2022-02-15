@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { sequence } from '@sveltejs/kit/hooks';
 
 import { RTL_LANGS } from '$i18n/utils';
-import { detectLocale } from '$i18n/i18n-util';
+import { baseLocale, detectLocale } from '$i18n/i18n-util';
 
 import { parse } from '$lib/server/cookie';
 import { auth } from '$lib/server/firebase';
@@ -14,6 +14,7 @@ import type { AuthError } from 'firebase/auth';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { Locale } from 'typesafe-i18n/types/core';
 import type { LocaleDetector } from 'typesafe-i18n/detectors';
+import type { BaseLocale } from '$i18n/i18n-types';
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 
@@ -63,11 +64,24 @@ const browserChecker: Handle = async ({ resolve, event }) => {
 
 	const response = await resolve(event);
 
-	const lang = event.locals.locale;
+	const locale = event.locals.locale;
 	// check for unsupported browsers
-	if (/MSIE \d|Trident.*rv:/.test(event.request.headers.get('user-agent') || '')) {
-		response.headers.set('Location', `/${lang}/unsupported`);
+	if (
+		/MSIE \d|Trident.*rv:/.test(event.request.headers.get('user-agent') || '') &&
+		!event.url.pathname.includes('unsupported')
+	) {
+		console.log('redirecting');
+		return new Response(null, {
+			status: 301,
+			headers: {
+				location: `/unsupported`,
+			},
+		});
+		// response.status = 301;
+		// response.headers.set('Location', `/${locale}/unsupported`);
 	}
+
+	console.log(response.status);
 
 	return response;
 };
@@ -86,6 +100,8 @@ const parseUser: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event);
+
+	console.log(response.status);
 
 	if (event.locals.user) {
 		const expiration = new Date(1970, 0, 1).setSeconds(event.locals.user.exp);
@@ -118,17 +134,15 @@ export const handle = sequence(
 	attachCsrfToken('/', 'csrfToken'),
 );
 
-// export interface User {
-// 	uid: string;
-// 	email: string;
-// 	photoURL: string;
-// 	displayName: string;
-// }
-
 export async function getSession(event: RequestEvent): Promise<App.Session> {
 	return {
 		user: getUser(event.locals),
 		locale: event.locals.locale,
+		//@ts-ignore
+		urlLocale:
+			event.locals.locale !== baseLocale
+				? '/' + (event.locals.locale as Exclude<Locales, BaseLocale>)
+				: '',
 		rtl: RTL_LANGS.has(event.locals.locale),
 	};
 }

@@ -1,3 +1,4 @@
+import { locales as l } from './i18n-util';
 export const RTL_LANGS = new Set([
 	'ae' /* Avestan */,
 	'ar' /* 'العربية', Arabic */,
@@ -19,3 +20,5 @@ export const RTL_LANGS = new Set([
 	'ur' /* 'اردو', Urdu */,
 	'yi' /* 'ייִדיש', Yiddish */,
 ]);
+
+export const locales = new Set(l);

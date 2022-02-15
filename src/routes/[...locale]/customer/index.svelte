@@ -33,7 +33,7 @@
 	// // check in a load function if there is a firebase token, if not redirect to login page
 	// if (browser) {
 	// 	if (!$user) {
-	// 		goto('/' + $session.locale + '/customer/login');
+	// 		goto($session.urlLocale + '/customer/login');
 	// 	}
 	// }
 </script>

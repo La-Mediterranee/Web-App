@@ -29,6 +29,7 @@ declare namespace App {
 	interface Session {
 		user?: User;
 		locale: Locales;
+		urlLocale: Exclude<Locales, import('./i18n/i18n-types').BaseLocale> | '';
 		rtl: boolean;
 	}
 

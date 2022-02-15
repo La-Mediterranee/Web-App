@@ -1,3 +1,4 @@
+import { baseLocale } from '$i18n/i18n-util';
 import { auth, firebase } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
@@ -42,9 +43,12 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 		});
 
 		const response: EndpointOutput = {
-			status: 302,
-			headers: new Headers({
-				location: `/${event.locals.locale}/customer`,
+			// status: 302,
+			// headers: new Headers({}),
+			body: JSON.stringify({
+				location: `${
+					event.locals.locale !== baseLocale ? '/' + event.locals.locale : ''
+				}/customer`,
 			}),
 		};
 

@@ -16,7 +16,7 @@
 
 	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
 		return {
-			href: `/${locale}${href}`.replace(/\/$/, ''),
+			href: `${locale}${href}`.replace(/\/$/, ''),
 			rel: rel instanceof Array ? rel.join(' ') : rel,
 			icon,
 			pathLabel,
@@ -29,7 +29,7 @@
 
 <header id="top-bar">
 	<div id="nav-logo">
-		<a href={`/${$session.locale}`}>
+		<a href={`${$session.urlLocale || '/'}`}>
 			<img src="/Logos/V1_210.webp" alt="" />
 		</a>
 	</div>
@@ -60,7 +60,7 @@
 
 	<div id="profile">
 		{#if $session.user}
-			<a href={`/${$session.locale}/customer`}>
+			<a href={`${$session.urlLocale}/customer`}>
 				<img
 					src={$session.user.photoURL ||
 						`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
@@ -72,11 +72,11 @@
 				/>
 			</a>
 		{:else}
-			<a href={`/${$session.locale}/customer/login`}>{$t.customer.login()}</a>
+			<a href={`${$session.urlLocale}/customer/login`}>{$t.customer.login()}</a>
 		{/if}
 	</div>
 	<div class="cart">
-		<a href={`/${$session.locale}/cart`} sveltekit:prefetch>
+		<a href={`${$session.urlLocale}/cart`} sveltekit:prefetch>
 			<Icon path={mdiCart} />
 		</a>
 	</div>

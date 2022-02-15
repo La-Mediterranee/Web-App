@@ -16,14 +16,6 @@
 
 	export let homePageData: HomepageProps | undefined;
 
-	onMount(() => {
-		document.documentElement.style.setProperty('--header-position', 'fixed');
-
-		return () => {
-			document.documentElement.style.setProperty('--header-position', 'sticky');
-		};
-	});
-
 	const sections = homePageData?.sections || [];
 </script>
 
@@ -53,10 +45,6 @@
 </div>
 
 <style lang="scss">
-	:global(:root) {
-		--header-position: fixed;
-	}
-
 	h1 {
 		margin-top: 1em;
 		text-transform: uppercase;
@@ -64,24 +52,11 @@
 
 	section {
 		margin-bottom: 1em;
-
-		div {
-			> :global(*) {
-				margin: 0.5em;
-
-				&:first-child {
-					margin-inline-start: 0;
-				}
-
-				&:last-child {
-					margin-inline-end: 0;
-				}
-			}
-		}
 	}
 
 	.banner {
-		padding-top: 2.2em;
+		// padding-top: 2.2em;
+		transform: translateY(-2.2em);
 	}
 
 	.sections {
@@ -96,7 +71,11 @@
 		--siema-item-min-width: 235px;
 		--siema-content-max-width: 1200px;
 		// --siema-inner-padding: 0 1em;
-		// --siema-content-padding: 0 4%;
+
+		:global(.content .item:first-child) {
+			// --siema-content-padding: 0 14px;
+			margin-inline-start: 14px;
+		}
 
 		@media screen and (min-width: 1200px) {
 			margin: 0 auto;

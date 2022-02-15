@@ -65,23 +65,6 @@
 		</section>
 	</section>
 
-	<!-- <Button
-		type="button"
-		size="x-large"
-		class="form-elements-color"
-		rounded
-		on:click={async () => {
-			// await user.logOut();
-			await fetch('/api/session/logout', {
-				method: 'post',
-				credentials: 'include',
-				body: '',
-			});
-			goto('/' + $session.lang + '/customer/login');
-		}}
-	>
-		{$t.customer.logout()}
-	</Button> -->
 	<Button
 		type="button"
 		size="x-large"
@@ -103,8 +86,8 @@
 			}
 
 			$session.user = undefined;
-			goto('/' + $session.locale);
-			// window.location.replace('/' + $session.locale);
+			goto($session.urlLocale);
+			// window.location.replace($session.urlLocale);
 		}}
 	>
 		{$t.customer.logout()}

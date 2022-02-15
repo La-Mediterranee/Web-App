@@ -219,7 +219,7 @@
 		overflow-x: scroll;
 		white-space: nowrap;
 		scroll-behavior: smooth;
-		scroll-snap-type: x var(--siema-scroll-snap, mandatory);
+		scroll-snap-type: x var(--siema-scroll-snap, x mandatory);
 		padding: var(--siema-inner-padding);
 
 		scrollbar-width: none;
@@ -229,7 +229,7 @@
 	}
 
 	.content {
-		display: flex;
+		display: inline-flex;
 		flex-wrap: nowrap;
 		white-space: nowrap;
 		margin-left: auto;
@@ -237,7 +237,7 @@
 		width: 100%;
 		max-width: var(--siema-content-max-width);
 
-		padding: var(--siema-content-padding, 0em 3.6%);
+		padding: var(--siema-content-padding);
 		// margin-inline-start: -1rem;
 	}
 </style>

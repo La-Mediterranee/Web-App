@@ -2,59 +2,53 @@
 	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
 
-	import { RTL_LANGS } from '$i18n/utils';
 	import { initI18n } from '$i18n/i18n-svelte';
+	import { baseLocale } from '$i18n/i18n-util';
+	import { RTL_LANGS, locales } from '$i18n/utils';
+
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
+	import { replaceLocaleInUrl } from '$lib/utils';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	import type { Locales } from '$i18n/i18n-types';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export async function load({ params, session, stuff, url }: LoadInput): Promise<LoadOutput> {
-		const lang = params.lang as Locales;
-		// const lang = page.path.split('/')[1] as Locales | undefined;
+	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
+		const locale = params.locale as Locales;
 
-		// if (page.path.includes('api')) {
-		// 	return {
-		// 		props: {
-		// 			lang: session.locale,
-		// 		},
-		// 	};
-		// }
+		console.log(`\nlocale: ${JSON.stringify(params)}`);
+		// console.log(params.locale?.split('/')?.length > 1);
+
+		if (params.locale?.split('/').length > 1) {
+			return {
+				status: 400,
+			};
+		}
 
 		// redirect to preferred language if user comes from page root
-		if (!lang) {
+		if (locale !== session.locale && session.locale !== baseLocale) {
 			return {
 				status: 302,
 				redirect: `/${session.locale}`,
 			};
 		}
 
-		// if (lang !== session.locale) {
-		// 	return {
-		// 		status: 302,
-		// 		redirect: replaceLocaleInUrl(page.path, baseLocale),
-		// 	};
-		// }
-
 		// redirect to base locale if language is not present
-		if (!locales.includes(lang)) {
+		// for trailing slash add: (locale as string) !== '/' &&
+		if ((locale as string) !== '' && !locales.has(locale)) {
 			return {
 				status: 302,
-				redirect: replaceLocaleInUrl(url.pathname, baseLocale),
+				redirect: replaceLocaleInUrl(url.pathname, ''),
 			};
 		}
 
-		// stuff.lang = session.locale;
-		stuff.locale = lang;
-
 		// load dictionary data
-		await initI18n(lang);
+		await initI18n(session.locale);
 
 		return {
 			props: {
-				lang: lang,
-				dir: RTL_LANGS.has(lang) ? 'rtl' : 'ltr',
+				lang: session.locale,
+				dir: RTL_LANGS.has(locale) ? 'rtl' : 'ltr',
 			},
 		};
 	}
@@ -77,9 +71,6 @@
 	import Statusbar from '$lib/components/Statusbar';
 	// import Installprompt from '$lib/pwa/components/Prompts/Installprompt/Installprompt.svelte';
 	// import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
-
-	import { replaceLocaleInUrl } from '$lib/utils';
-	import { baseLocale, locales } from '$i18n/i18n-util';
 
 	export let dir: 'rtl' | 'ltr' | 'auto';
 	export let lang: Locales;
@@ -115,24 +106,25 @@
 	}}
 />
 
-<svelte:head>
+<!-- <svelte:head>
 	<html {lang} {dir} />
-</svelte:head>
+</svelte:head> -->
 
 <Providers>
 	<MaterialApp theme="custom">
+		<slot />
 		<Modals>
 			<div id="main-content">
 				<Statusbar message={$t.connectionStatus()} {online} />
 				<Navbar locale={lang} routes={desktopNavItems} />
+				<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
 				<div class="inner-content">
 					<main>
-						<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
 						<slot />
-						<!-- <UpdatePrompt /> -->
 					</main>
 					<Footer />
 				</div>
+				<!-- <UpdatePrompt /> -->
 				<Tabbar locale={lang} routes={mobileNavItems} />
 			</div>
 		</Modals>

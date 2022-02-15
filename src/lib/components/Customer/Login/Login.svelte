@@ -142,7 +142,7 @@
 				const token = await user.getIdToken();
 				const csrfToken = getCookie('csrfToken');
 
-				await fetch('/api/session/login', {
+				const res = await fetch('/api/session/login', {
 					method: 'post',
 					headers: {
 						'content-type': 'application/json; charset=utf-8',
@@ -154,7 +154,11 @@
 					signal: abortController.signal,
 				});
 
-				window.location.replace(`${window.location.origin}/${$session.locale}/customer`);
+				const url = (await res.json()).location;
+
+				console.log(`${window.location.origin}${url}`);
+
+				window.location.replace(url);
 				error = false;
 			} else {
 				error = true;
@@ -270,6 +274,7 @@
 			id="register"
 			href="./register"
 			role="button"
+			{disabled}
 			rounded
 		>
 			{$t.customer.signUp()}

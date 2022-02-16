@@ -2,53 +2,31 @@
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
 	const amount = 5;
-
-	export function load({ params }: LoadInput): LoadOutput {
-		return {
-			props: {
-				categories: [
-					'burger',
-					'sandwiches',
-					'fish',
-					'burger',
-					'sandwiches',
-					'fish',
-					'burger',
-					'sandwiches',
-					'fish',
-					'burger',
-					'sandwiches',
-					'fish',
-				],
-			},
-		};
-	}
 </script>
 
 <script lang="ts">
 	export let categories: string[];
 </script>
 
-<ul class="hexagon-grid">
-	{#each categories as category, i}
-		<li
-			class="hexagon"
-			style="animation-delay: {(i + 4) % 4 === 0 ? 0.1 : i * 0.06}s;"
-		>
-			<div class="hexagon-inner">
-				<a href="./food/{category}">
-					<!-- <img
+<div class="wrapper">
+	<ul class="hexagon-grid">
+		{#each categories as category, i}
+			<li class="hexagon" style="animation-delay: {(i + 4) % 4 === 0 ? 0.1 : i * 0.06}s;">
+				<div class="hexagon-inner">
+					<a href="./food/{category}">
+						<!-- <img
 						src="https://farm9.staticflickr.com/8461/8048823381_0fbc2d8efb.jpg"
 						alt=""
-					/> -->
-					<h1>
-						{category}
-					</h1>
-				</a>
-			</div>
-		</li>
-	{/each}
-</ul>
+						/> -->
+						<h1>
+							{category}
+						</h1>
+					</a>
+				</div>
+			</li>
+		{/each}
+	</ul>
+</div>
 
 <style lang="scss">
 	@use 'variables' as *;
@@ -70,6 +48,16 @@
 		overflow: hidden;
 		transform: skewY(-30deg) rotate3d(0, 0, 1, 60deg);
 		background-color: var(--body-bg2);
+	}
+
+	.wrapper {
+		@media screen and (min-width: 600px) {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+			height: 100vh; //calc(100vh - var(--top-bar-height));
+		}
 	}
 
 	.hexagon-grid {

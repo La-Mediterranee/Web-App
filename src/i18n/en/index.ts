@@ -5,23 +5,13 @@ const en: Translation = {
 	save: 'Save',
 	addToCart: '',
 	nav: {
-		desktop: {
-			arialabel: 'desktop primary',
-			routes: {
-				homepage: 'Homepage',
-				food: 'Food',
-				drinks: 'Drinks',
-			},
-		},
-		mobile: {
-			arialabel: 'mobile primary',
-			routes: {
-				homepage: 'Homepage',
-				food: 'Food',
-				drinks: 'Drinks',
-				account: 'Profile',
-				cart: 'Cart',
-			},
+		navbarAriaLabel: 'secundary',
+		routes: {
+			homepage: 'Homepage',
+			food: 'Food',
+			drinks: 'Drinks',
+			account: 'Profile',
+			cart: 'Cart',
 		},
 	},
 	cart: {

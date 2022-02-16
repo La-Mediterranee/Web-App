@@ -24,16 +24,17 @@
 
 	let activeRoute: string;
 	$: activeRoute = $page.url.pathname;
-	$: paths = $t.nav.mobile.routes as Record<string, () => LocalizedString>;
+	$: paths = $t.nav.routes as Record<string, () => LocalizedString>;
 </script>
 
-<nav aria-label={`${$t.nav.mobile.arialabel()}`}>
+<nav>
 	{#each _routes as { pathLabel, icon, href, size, rel } (href)}
+		{@const active = activeRoute.startsWith(href)}
 		<a
 			{href}
 			{rel}
 			class="item"
-			class:active={activeRoute === href ? false : activeRoute.startsWith(href)}
+			class:active
 			title={paths[pathLabel]()}
 			on:click={() => (activeRoute = href)}
 		>
@@ -43,6 +44,7 @@
 				<div class="image">
 					<Icon
 						path={icon}
+						size={size?.width || 30}
 						width={size ? size.width : 30}
 						height={size ? size.height : 30}
 					/>
@@ -52,7 +54,7 @@
 				</div>
 			</div>
 			<div class="title-container">
-				{#if activeRoute === href}
+				{#if active}
 					<span style="color: var(--tint-color);">
 						{paths[pathLabel]()}
 					</span>

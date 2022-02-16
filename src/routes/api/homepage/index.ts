@@ -33,10 +33,10 @@ async function homepage(): Promise<HomepageProps> {
 	]);
 
 	const sections = await Promise.all(responses.map(res => res.json()));
-
+	const titles = ['Bestseller', 'Food', 'Drinks'];
 	return {
-		sections: sections.map(v => ({
-			title: 'Bestseller',
+		sections: sections.map((v, i) => ({
+			title: titles[i],
 			body: v,
 		})),
 		bestseller: sections[0],

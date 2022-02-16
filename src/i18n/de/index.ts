@@ -5,23 +5,13 @@ const de: BaseTranslation = {
 	save: 'Speichern',
 	addToCart: '',
 	nav: {
-		desktop: {
-			arialabel: 'Desktop primär',
-			routes: {
-				homepage: 'Startseite',
-				food: 'Speisen',
-				drinks: 'Getränke',
-			},
-		},
-		mobile: {
-			arialabel: 'Mobil primär',
-			routes: {
-				homepage: 'Startseite',
-				food: 'Essen',
-				drinks: 'Getränke',
-				account: 'Profil',
-				cart: 'Warenkorb',
-			},
+		navbarAriaLabel: 'Sekundär',
+		routes: {
+			homepage: 'Startseite',
+			food: 'Speisen',
+			drinks: 'Getränke',
+			account: 'Profil',
+			cart: 'Warenkorb',
 		},
 	},
 	cart: {

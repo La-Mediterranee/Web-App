@@ -24,7 +24,7 @@
 		};
 	});
 
-	$: paths = $t.nav.desktop.routes as Record<string, () => LocalizedString>;
+	$: paths = $t.nav.routes as Record<string, () => LocalizedString>;
 </script>
 
 <header id="top-bar">
@@ -34,9 +34,9 @@
 		</a>
 	</div>
 
-	<nav aria-label={`${$t.nav.desktop.arialabel()}`}>
+	<nav aria-label={`${$t.nav.navbarAriaLabel()}`}>
 		<ul>
-			{#each _routes as { pathLabel, icon, href, rel } (href)}
+			{#each _routes as { pathLabel, icon, href, rel, size } (href)}
 				<li class="nav-item">
 					<a
 						{href}
@@ -45,11 +45,11 @@
 							'aria-current': href === $page.url.pathname && 'page',
 						}}
 					>
-						<div>
-							<Icon path={icon} width={30} height={30} />
-							<!-- color={'var(--tint-color, #fff)'} -->
-						</div>
-						<span>
+						<!-- <div>
+							<Icon path={icon} size={size?.width || 30} />
+						</div> -->
+						<!-- color={'var(--tint-color, #fff)'} -->
+						<span class="label">
 							{paths[pathLabel]()}
 						</span>
 					</a>
@@ -78,6 +78,7 @@
 	<div class="cart">
 		<a href={`${$session.urlLocale}/cart`} sveltekit:prefetch>
 			<Icon path={mdiCart} />
+			<span class="visually-hidden">{$t.cart.cart()}</span>
 		</a>
 	</div>
 </header>
@@ -174,8 +175,9 @@
 			height: 30px;
 		}
 
-		span {
+		.label {
 			font-size: 1.2em;
+			margin-inline-start: 0.2em;
 		}
 	}
 

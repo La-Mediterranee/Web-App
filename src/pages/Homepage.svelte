@@ -33,8 +33,8 @@
 
 <div class="sections">
 	{#each sections as section}
-		<section class="section-carousel">
-			<h2 class="row-header">{section.title}</h2>
+		<section aria-labelledby={section.title.toLocaleLowerCase()} class="section-carousel">
+			<h2 id={section.title.toLocaleLowerCase()} class="row-header">{section.title}</h2>
 			{#if Array.isArray(section.body)}
 				<Siema rtl={$session.rtl} items={section.body} let:item={product} let:visible>
 					<ProductCard {product} isVisible={visible} />
@@ -77,8 +77,9 @@
 			margin-inline-start: 14px;
 		}
 
-		@media screen and (min-width: 1200px) {
-			margin: 0 auto;
+		@media screen and (min-width: 1220px) {
+			align-self: center;
+			// margin: 0 auto;
 		}
 	}
 

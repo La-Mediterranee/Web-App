@@ -17,8 +17,8 @@
 	</svg>
 	<div class="content">
 		<div>
-			<h3>Über LA Mediterranee</h3>
-			<ul>
+			<h3 id="footer-about">Über LA Mediterranee</h3>
+			<ul role="group" aria-labelledby="footer-about">
 				<li><a href="/"> Kontakt </a></li>
 				<li><a href="/ueber-uns"> Über uns </a></li>
 				<li><a href="/impressum">Impressum</a></li>
@@ -26,8 +26,8 @@
 			</ul>
 		</div>
 		<div>
-			<h3>Lieferzeiten</h3>
-			<ul>
+			<h3 id="footer-deliverytimes">Lieferzeiten</h3>
+			<ul role="group" aria-labelledby="footer-deliverytimes">
 				<li>Mo-Do: 20:00-02:00</li>
 				<li>Fr und Sa: 20:00-04:00</li>
 				<li>So: 20:00-02:00</li>

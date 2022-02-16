@@ -3,7 +3,7 @@
 	export let message: string;
 </script>
 
-<div role="status" aria-live="polite" class:offline={online === false}>
+<div role="status" aria-hidden={online} aria-live="polite" class:offline={online === false}>
 	<em>{message}</em>
 </div>
 

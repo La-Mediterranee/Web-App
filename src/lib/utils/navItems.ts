@@ -1,4 +1,4 @@
-import { home, person, fastfood, cart } from '../Icons';
+import { home, person, fastfood, cart, drink, burger } from '../Icons';
 import { mdiFoodForkDrink } from '@mdi/js';
 
 import type { NavItem } from 'types/index';
@@ -10,7 +10,7 @@ export const desktopNavItems: NavItem[] = [
 		href: '/',
 	},
 	{
-		icon: fastfood,
+		icon: burger,
 		pathLabel: 'food',
 		href: '/food',
 		size: {
@@ -19,7 +19,7 @@ export const desktopNavItems: NavItem[] = [
 		},
 	},
 	{
-		icon: mdiFoodForkDrink,
+		icon: drink, //mdiFoodForkDrink
 		pathLabel: 'drinks',
 		href: '/drinks',
 	},
@@ -27,16 +27,16 @@ export const desktopNavItems: NavItem[] = [
 
 export const mobileNavItems: NavItem[] = [
 	{
-		icon: fastfood,
+		icon: burger,
 		pathLabel: 'food',
 		href: '/food',
-		size: {
-			width: 27,
-			height: 27,
-		},
+		// size: {
+		// 	width: 27,
+		// 	height: 27,
+		// },
 	},
 	{
-		icon: person,
+		icon: drink,
 		pathLabel: 'drinks',
 		href: '/drinks',
 	},

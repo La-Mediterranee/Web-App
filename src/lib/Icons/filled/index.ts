@@ -1,6 +1,8 @@
 // @index('./*.ts', (f) => `export { default as ${f.name} } from '${f.path}'`)
 export { default as account } from './account';
+export { default as burger } from './burger';
 export { default as cart } from './cart';
+export { default as drink } from './drink';
 export { default as eye } from './eye';
 export { default as eyeOff } from './eyeOff';
 export { default as fastfood } from './fastfood';

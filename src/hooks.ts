@@ -56,32 +56,28 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 
 	event.locals.cookies = cookies;
 
+	console.log('parsing cookies');
+
 	return resolve(event);
 };
 
 const browserChecker: Handle = async ({ resolve, event }) => {
 	const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
 
-	const response = await resolve(event);
-
-	const locale = event.locals.locale;
 	// check for unsupported browsers
 	if (
 		/MSIE \d|Trident.*rv:/.test(event.request.headers.get('user-agent') || '') &&
 		!event.url.pathname.includes('unsupported')
 	) {
-		console.log('redirecting');
 		return new Response(null, {
 			status: 301,
 			headers: {
 				location: `/unsupported`,
 			},
 		});
-		// response.status = 301;
-		// response.headers.set('Location', `/${locale}/unsupported`);
 	}
 
-	console.log(response.status);
+	const response = await resolve(event);
 
 	return response;
 };
@@ -127,10 +123,10 @@ const parseUser: Handle = async ({ event, resolve }) => {
 };
 
 export const handle = sequence(
+	browserChecker,
 	cookieParser,
 	parseUser,
 	parseLocale,
-	browserChecker,
 	attachCsrfToken('/', 'csrfToken'),
 );
 

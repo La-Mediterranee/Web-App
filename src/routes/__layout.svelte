@@ -112,7 +112,7 @@
 
 <Providers>
 	<MaterialApp theme="custom">
-		<slot />
+		<!-- <slot /> -->
 		<Modals>
 			<div id="main-content">
 				<Statusbar message={$t.connectionStatus()} {online} />

@@ -102,7 +102,7 @@
 				{/if}
 			</div>
 
-			<div class="actionsContainer">
+			<div class="actionsContainer" aria-hidden="false">
 				<svg
 					class="wave"
 					viewBox="0 0 400 100"

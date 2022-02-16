@@ -21,7 +21,6 @@
 	import SiemaItem from './SiemaItem.svelte';
 	import LeftButton from './LeftButton.svelte';
 	import RightButton from './RightButton.svelte';
-	import { children } from 'svelte/internal';
 
 	type T = $$Generic;
 

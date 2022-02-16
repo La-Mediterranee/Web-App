@@ -298,3 +298,12 @@ a {
 	overflow: hidden;
 	padding-right: 17px;
 }
+
+[id]::before {
+	display: block;
+	content: ' ';
+	margin-top: calc(var(--top-bar-height, 75px) * -1);
+	height: var(--top-bar-height, 75px);
+	visibility: hidden;
+	pointer-events: none;
+}

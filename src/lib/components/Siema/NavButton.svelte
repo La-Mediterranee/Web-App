@@ -21,6 +21,7 @@
 
 <style lang="scss" global>
 	.carousel-nav-btn {
+		opacity: 0;
 		cursor: pointer;
 		position: absolute;
 		display: flex;
@@ -33,7 +34,22 @@
 
 		background: white;
 		border: none;
-		transition: transform 0.1s ease-in-out;
+		will-change: transform, opacity;
+		transition: transform 0.1s ease-in-out, opacity 0.2s ease-out;
+
+		&:focus-visible {
+			transition: opacity 0.2s ease-in;
+			transform: translate(0%, -50%);
+		}
+
+		:global(.container):hover & {
+			transform: translate(0%, -50%);
+		}
+
+		&:focus-visible,
+		:global(.container):hover & {
+			opacity: 1;
+		}
 	}
 
 	.left {
@@ -41,11 +57,6 @@
 		transform: translate(-150%, -50%);
 		visibility: var(--has-items-left, all);
 		margin-left: 0.2em;
-
-		&:focus-visible,
-		:global(.container):hover & {
-			transform: translate(0%, -50%);
-		}
 	}
 
 	.right {
@@ -53,10 +64,5 @@
 		transform: translate(150%, -50%);
 		visibility: var(--has-items-right, all);
 		margin-right: 0.2em;
-
-		&:focus-visible,
-		:global(.container):hover & {
-			transform: translate(0%, -50%);
-		}
 	}
 </style>

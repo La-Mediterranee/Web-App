@@ -16,9 +16,6 @@
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
 		const locale = params.locale as Locales;
 
-		console.log(`\nlocale: ${JSON.stringify(params)}`);
-		// console.log(params.locale?.split('/')?.length > 1);
-
 		if (params.locale?.split('/').length > 1) {
 			return {
 				status: 400,
@@ -35,7 +32,7 @@
 
 		// redirect to base locale if language is not present
 		// for trailing slash add: (locale as string) !== '/' &&
-		if ((locale as string) !== '' && !locales.has(locale)) {
+		if (((locale as string) !== '' && !locales.has(locale)) || baseLocale === locale) {
 			return {
 				status: 302,
 				redirect: replaceLocaleInUrl(url.pathname, ''),

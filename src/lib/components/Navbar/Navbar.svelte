@@ -16,7 +16,7 @@
 
 	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
 		return {
-			href: `${locale}${href}`.replace(/\/$/, ''),
+			href: `/${locale}${href}`, //.replace(/\/$/, '')
 			rel: rel instanceof Array ? rel.join(' ') : rel,
 			icon,
 			pathLabel,

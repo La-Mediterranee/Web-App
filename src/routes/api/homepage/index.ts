@@ -29,11 +29,10 @@ async function homepage(): Promise<HomepageProps> {
 	const responses = await Promise.all([
 		fetch('http://localhost:8080/products'),
 		fetch('http://localhost:8080/products'),
-		fetch('http://localhost:8080/products'),
 	]);
 
 	const sections = await Promise.all(responses.map(res => res.json()));
-	const titles = ['Bestseller', 'Food', 'Drinks'];
+	const titles = ['Bestseller', 'Recommendation'];
 	return {
 		sections: sections.map((v, i) => ({
 			title: titles[i],

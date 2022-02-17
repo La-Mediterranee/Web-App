@@ -16,7 +16,7 @@
 	export let product: Product;
 	export let locale: string = 'de-DE';
 	export let currency: string = 'EUR';
-	export let style: string = '';
+	export let style: string | undefined = undefined;
 	export let isVisible = true;
 
 	let tabindex = 0;
@@ -168,6 +168,7 @@
 		}
 
 		img {
+			position: relative;
 			width: 100%;
 			transition: transform 500ms ease;
 		}
@@ -223,10 +224,14 @@
 
 		.wave {
 			position: absolute;
-			top: 0px;
+			top: 0;
 			left: 0;
 			width: 200%;
 			animation: wave linear 3s infinite;
+
+			@media (prefers-reduced-motion: no-preference) {
+				animation-play-state: running;
+			}
 		}
 
 		.content {
@@ -252,18 +257,16 @@
 			}
 
 			.actionsContainer {
+				left: 0;
+				bottom: 0;
 				position: absolute;
-				visibility: hidden;
-				transition: transform 750ms ease, visibility 750ms ease;
+				will-change: transform;
+				transform: translateY(100%);
+				transition: transform 750ms ease;
 				// padding-top: 4.2em;
 			}
 
 			.wave {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 200%;
-				animation: wave linear 3s infinite;
 				animation-play-state: paused;
 			}
 
@@ -279,12 +282,11 @@
 				}
 
 				.actionsContainer {
-					transform: translateY(-100%);
-					visibility: visible;
+					transform: translateY(0);
 				}
 
-				.wave {
-					@media (prefers-reduced-motion: no-preference) {
+				@media (prefers-reduced-motion: no-preference) {
+					.wave {
 						animation-play-state: running;
 					}
 				}

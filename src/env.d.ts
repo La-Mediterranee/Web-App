@@ -1,3 +1,4 @@
+// +++++++++++++ CLIENT +++++++++++++
 interface ImportMetaEnv {
 	// Shop
 	readonly VITE_SHOP_NAME: string;
@@ -19,4 +20,14 @@ interface ImportMetaEnv {
 	readonly VITE_FIREBASE_APP_ID: string;
 	readonly VITE_FIREBASE_MEASUREMENT_ID: string;
 	readonly VITE_FIREBASE_VAPID_KEY: string;
+}
+
+// +++++++++++++ SERVER +++++++++++++
+declare namespace NodeJS {
+	interface ProcessEnv {
+		readonly EDAMAM_API_KEY: string;
+		readonly STRIPE_SECRET_API: string;
+		readonly STRIPE_WEBHOOK_SECRET: string;
+		readonly GOOGLE_API_KEY: string;
+	}
 }

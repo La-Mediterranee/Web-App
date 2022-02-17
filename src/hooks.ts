@@ -56,8 +56,6 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 
 	event.locals.cookies = cookies;
 
-	console.log('parsing cookies');
-
 	return resolve(event);
 };
 

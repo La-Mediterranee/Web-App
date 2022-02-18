@@ -14,6 +14,7 @@
 
 <script lang="ts">
 	import LDTag from '$components/LDTag';
+	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
 	import metatags from '$lib/stores/seo/metatags';
 
 	export let product: Product;
@@ -49,9 +50,7 @@
 <LDTag schema={jsonLd} />
 
 <div>
-	<pre>
-		{JSON.stringify(product, null, 4)}
-	</pre>
+	<ProductModal {product} />
 </div>
 
 <style>

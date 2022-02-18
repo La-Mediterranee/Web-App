@@ -3,6 +3,7 @@
 	import CardText from 'svelty-material/components/Card/CardText.svelte';
 	import CardTitle from 'svelty-material/components/Card/CardTitle.svelte';
 	import Link from 'svelty-material/components/Button/Link.svelte';
+	import ProductTile from '$lib/components/ProductTile/ProductTile.svelte';
 
 	export let categories: string[];
 	export let res: any;
@@ -11,7 +12,8 @@
 <div class="wrapper">
 	{#each res as recipe, i (recipe.label)}
 		<div class="category">
-			<Card raised>
+			<ProductTile product={recipe} />
+			<!-- <Card raised>
 				<div class="card-content">
 					<div style="border-radius: inherit;">
 						<img
@@ -38,10 +40,6 @@
 								<span
 									style="text-overflow: ellipsis; hyphens: auto; overflow: hidden; align-self:center; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;"
 								>
-									{recipe.ing}
-									<!-- {#each recipe.ingredients as ingredient}
-										{ingredient.text}
-									{/each} -->
 								</span>
 							</CardText>
 						</div>
@@ -60,7 +58,7 @@
 						</div>
 					</div>
 				</div>
-			</Card>
+			</Card> -->
 		</div>
 	{/each}
 
@@ -87,18 +85,6 @@
 	// 	text-align: center;
 	// }
 
-	img {
-		// width: 100%;
-		flex: 1;
-		height: 100%;
-		border-radius: inherit;
-	}
-
-	a {
-		text-align: center;
-		width: 100%;
-	}
-
 	.wrapper {
 		--wrapper-padding: 1em;
 		padding: var(--wrapper-padding);
@@ -116,16 +102,11 @@
 
 			@media screen and (max-width: 1199px) {
 				&:nth-child(2n) {
-					.card-content {
+					:global(.card-content) {
 						flex-direction: row-reverse;
 					}
 				}
 			}
-		}
-
-		.card-content {
-			display: flex;
-			text-align: center;
 		}
 
 		@media screen and (min-width: 1200px) {
@@ -138,7 +119,7 @@
 			.category {
 				&:nth-child(4n + 3),
 				&:nth-child(4n + 4) {
-					.card-content {
+					:global(.card-content) {
 						flex-direction: row-reverse;
 					}
 				}

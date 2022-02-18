@@ -4,10 +4,11 @@
 	export let id: string;
 	export let name: string;
 	export let value: string;
-	export let checked: boolean = false;
+	export let checked = false;
+	export let required = false;
 </script>
 
-<input type="radio" class="theme-radio-btn" {id} {name} {value} {checked} />
+<input type="radio" class="theme-radio-btn" {id} {name} {value} {checked} {required} />
 
 <style lang="scss" global>
 	.theme-radio-btn {

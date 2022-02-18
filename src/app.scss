@@ -112,8 +112,7 @@ body {
 }
 
 main {
-	padding-top: 1.2em;
-	min-height: 90vh;
+	// min-height: 90vh;
 	position: relative;
 }
 
@@ -122,6 +121,9 @@ main {
 	--tint-color: #83a5c3;
 	--accent-color: #dd3900;
 	--modal-bg: white;
+	--tab-bar-height: 60px;
+	--tab-bar-active-height: calc(var(--tab-bar-height) + calc(var(--tab-bar-height) * 0.5));
+
 	--theme-tabs: rgba(255, 255, 255, 0.6);
 	/* --theme-surface: #d81717e5; */
 	/* --theme-surface: #4994f5e5; */
@@ -299,11 +301,15 @@ a {
 	padding-right: 17px;
 }
 
-[id]::before {
-	display: block;
-	content: ' ';
-	margin-top: calc(var(--top-bar-height, 75px) * -1);
-	height: var(--top-bar-height, 75px);
-	visibility: hidden;
-	pointer-events: none;
+h1,
+h2,
+h3 {
+	&[id]::before {
+		display: block;
+		content: ' ';
+		margin-top: calc(var(--top-bar-height, 75px) * -1);
+		height: var(--top-bar-height, 75px);
+		visibility: hidden;
+		pointer-events: none;
+	}
 }

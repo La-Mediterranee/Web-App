@@ -1,7 +1,12 @@
 <script></script>
 
 <footer>
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 500" fill="url(#MyGradient)">
+	<!-- <svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 1440 500"
+		fill="url(#MyGradient)"
+		preserveAspectRatio="none"
+	>
 		<defs>
 			<linearGradient id="MyGradient">
 				<stop offset="0" stop-color="var(--top1)" />
@@ -14,7 +19,27 @@
 			d="M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,149.3C672,117,768,75,864,85.3C960,96,1056,160,1152,176C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
 		/>
 		<rect y="319" width="1440" height="100%" />
+	</svg> -->
+	<svg
+		width="1440"
+		height="237"
+		viewBox="0 0 1440 237"
+		fill="url(#MyGradient)"
+		xmlns="http://www.w3.org/2000/svg"
+		preserveAspectRatio="none"
+	>
+		<defs>
+			<linearGradient id="MyGradient">
+				<stop offset="0" stop-color="var(--top1)" />
+				<stop offset="100%" stop-color="var(--top2)" />
+			</linearGradient>
+		</defs>
+		<path
+			fill-opacity="1"
+			d="M0 44.2864L48 60.2864C96 76.2864 192 108.286 288 113.586C384 119.286 480 97.2864 576 65.5864C672 33.2864 768 -8.71355 864 1.58645C960 12.2865 1056 76.2864 1152 92.2864C1248 108.286 1344 76.2864 1392 60.2864L1440 44.2864V236.286H1392C1344 236.286 1248 236.286 1152 236.286C1056 236.286 960 236.286 864 236.286C768 236.286 672 236.286 576 236.286C480 236.286 384 236.286 288 236.286C192 236.286 96 236.286 48 236.286H0V44.2864Z"
+		/>
 	</svg>
+
 	<div class="content">
 		<div>
 			<h3 id="footer-about">Über LA Mediterranee</h3>
@@ -49,16 +74,25 @@
 	@use 'variables' as *;
 
 	footer {
+		display: flex;
+		width: 100%;
+
 		position: relative;
 		text-align: center;
-		padding-top: clamp(10px, 6%, 40px);
+		// padding-top: clamp(10px, 6%, 40px);
 		height: 100%;
+		margin-top: 5.5em;
 	}
 
 	svg {
 		display: block;
 		position: absolute;
 		top: 0;
+		height: 130px;
+		width: 100%;
+		transform: translateY(-5em);
+
+		// transform: translateY(-4em);
 
 		path {
 			stroke: none;
@@ -82,8 +116,9 @@
 		z-index: 1;
 		display: block;
 		background: var(--theme-app-bar);
-		margin-top: 13%;
-		padding-bottom: 6em;
+		padding-bottom: var(--tab-bar-active-height);
+
+		width: 100%;
 
 		// @media (min-width: 325px) {
 		// 	margin-bottom: clamp(0px, 1%, 20px);

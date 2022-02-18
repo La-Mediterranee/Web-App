@@ -102,7 +102,7 @@
 				{/if}
 			</div>
 
-			<div class="actionsContainer" aria-hidden="false">
+			<div class="actionsContainer">
 				<svg
 					class="wave"
 					viewBox="0 0 400 100"
@@ -275,8 +275,8 @@
 				border-radius: var(--theme-card-border-radius);
 			}
 
-			&:hover,
-			&:focus-within {
+			&:focus-within,
+			&:hover {
 				img {
 					transform: scale(1.1);
 				}

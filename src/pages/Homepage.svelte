@@ -56,7 +56,7 @@
 
 	.banner {
 		// padding-top: 2.2em;
-		transform: translateY(-2.2em);
+		transform: translateY(-1em);
 	}
 
 	.sections {

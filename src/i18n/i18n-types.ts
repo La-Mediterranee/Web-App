@@ -10,104 +10,108 @@ export type Locales =
 	| 'de'
 	| 'en'
 
-export type Translation = {
+export type Translation = RootTranslation
+
+export type Translations = RootTranslation
+
+type RootTranslation = {
 	/**
 	 * Sie sind derzeit Offline
 	 */
-	'connectionStatus': string
+	connectionStatus: string
 	/**
 	 * Speichern
 	 */
-	'save': string
-	'addToCart': string
-	'nav': {	
+	save: string
+	addToCart: string
+	nav: {
 		/**
 		 * Sekundär
 		 */
-		'navbarAriaLabel': string
-		'routes': {	
+		navbarAriaLabel: string
+		routes: {
 			/**
 			 * Startseite
 			 */
-			'homepage': string
+			homepage: string
 			/**
 			 * Speisen
 			 */
-			'food': string
+			food: string
 			/**
 			 * Getränke
 			 */
-			'drinks': string
+			drinks: string
 			/**
 			 * Profil
 			 */
-			'account': string
+			account: string
 			/**
 			 * Warenkorb
 			 */
-			'cart': string
+			cart: string
 		}
 	}
-	'cart': {	
+	cart: {
 		/**
 		 * Warenkorb
 		 */
-		'cart': string
+		cart: string
 		/**
 		 * Anmerkungen
 		 */
-		'remarks': string
+		remarks: string
 		/**
 		 * Anzahl
 		 */
-		'qty': string
+		qty: string
 	}
-	'customer': {	
+	customer: {
 		/**
 		 * Konto
 		 */
-		'account': string
+		account: string
 		/**
 		 * Sprache
 		 */
-		'language': string
+		language: string
 		/**
 		 * Einstellungen
 		 */
-		'settings': string
+		settings: string
 		/**
 		 * Einloggen
 		 */
-		'login': string
+		login: string
 		/**
 		 * Registrieren
 		 */
-		'signUp': string
+		signUp: string
 		/**
 		 * Abmelden
 		 */
-		'logout': string
+		logout: string
 		/**
 		 * Zahlungsmethoden
 		 */
-		'paymentMethods': string
-		'profile': {	
+		paymentMethods: string
+		profile: {
 			/**
 			 * Sprache auswählen
 			 */
 			'select-language': string
 		}
 	}
-	'footer': {	
+	footer: {
 		/**
 		 * Über {shopname}
 		 * @param {string} shopname
 		 */
-		'about': RequiredParams1<'shopname'>
+		about: RequiredParams1<'shopname'>
 		/**
 		 * Lieferzeiten
 		 */
-		'deliverytimes': string
+		deliverytimes: string
 	}
 }
 
@@ -115,99 +119,99 @@ export type TranslationFunctions = {
 	/**
 	 * Sie sind derzeit Offline
 	 */
-	'connectionStatus': () => LocalizedString
+	connectionStatus: () => LocalizedString
 	/**
 	 * Speichern
 	 */
-	'save': () => LocalizedString
-	'addToCart': () => LocalizedString
-	'nav': {	
+	save: () => LocalizedString
+	addToCart: () => LocalizedString
+	nav: {
 		/**
 		 * Sekundär
 		 */
-		'navbarAriaLabel': () => LocalizedString
-		'routes': {	
+		navbarAriaLabel: () => LocalizedString
+		routes: {
 			/**
 			 * Startseite
 			 */
-			'homepage': () => LocalizedString
+			homepage: () => LocalizedString
 			/**
 			 * Speisen
 			 */
-			'food': () => LocalizedString
+			food: () => LocalizedString
 			/**
 			 * Getränke
 			 */
-			'drinks': () => LocalizedString
+			drinks: () => LocalizedString
 			/**
 			 * Profil
 			 */
-			'account': () => LocalizedString
+			account: () => LocalizedString
 			/**
 			 * Warenkorb
 			 */
-			'cart': () => LocalizedString
+			cart: () => LocalizedString
 		}
 	}
-	'cart': {	
+	cart: {
 		/**
 		 * Warenkorb
 		 */
-		'cart': () => LocalizedString
+		cart: () => LocalizedString
 		/**
 		 * Anmerkungen
 		 */
-		'remarks': () => LocalizedString
+		remarks: () => LocalizedString
 		/**
 		 * Anzahl
 		 */
-		'qty': () => LocalizedString
+		qty: () => LocalizedString
 	}
-	'customer': {	
+	customer: {
 		/**
 		 * Konto
 		 */
-		'account': () => LocalizedString
+		account: () => LocalizedString
 		/**
 		 * Sprache
 		 */
-		'language': () => LocalizedString
+		language: () => LocalizedString
 		/**
 		 * Einstellungen
 		 */
-		'settings': () => LocalizedString
+		settings: () => LocalizedString
 		/**
 		 * Einloggen
 		 */
-		'login': () => LocalizedString
+		login: () => LocalizedString
 		/**
 		 * Registrieren
 		 */
-		'signUp': () => LocalizedString
+		signUp: () => LocalizedString
 		/**
 		 * Abmelden
 		 */
-		'logout': () => LocalizedString
+		logout: () => LocalizedString
 		/**
 		 * Zahlungsmethoden
 		 */
-		'paymentMethods': () => LocalizedString
-		'profile': {	
+		paymentMethods: () => LocalizedString
+		profile: {
 			/**
 			 * Sprache auswählen
 			 */
 			'select-language': () => LocalizedString
 		}
 	}
-	'footer': {	
+	footer: {
 		/**
 		 * Über {shopname}
 		 */
-		'about': (arg: { shopname: string }) => LocalizedString
+		about: (arg: { shopname: string }) => LocalizedString
 		/**
 		 * Lieferzeiten
 		 */
-		'deliverytimes': () => LocalizedString
+		deliverytimes: () => LocalizedString
 	}
 }
 

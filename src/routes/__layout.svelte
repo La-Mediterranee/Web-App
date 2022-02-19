@@ -2,7 +2,8 @@
 	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
 
-	import { initI18n } from '$i18n/i18n-svelte';
+	import { setLocale } from '$i18n/i18n-svelte';
+	import { loadLocaleAsync } from '$i18n/i18n-util.async';
 	import { baseLocale } from '$i18n/i18n-util';
 	import { RTL_LANGS, locales } from '$i18n/utils';
 
@@ -13,34 +14,36 @@
 	import type { Locales } from '$i18n/i18n-types';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
+	export async function load({ params, session, url, stuff }: LoadInput): Promise<LoadOutput> {
 		const locale = params.locale as Locales;
 
-		if (params.locale?.split('/').length > 1) {
-			return {
-				status: 400,
-			};
-		}
+		console.log(stuff);
 
-		// redirect to preferred language if user comes from page root
-		if (locale !== session.locale && session.locale !== baseLocale) {
-			return {
-				status: 302,
-				redirect: `/${session.locale}`,
-			};
-		}
+		// if (params.locale?.split('/').length > 1) {
+		// 	return {
+		// 		status: 400,
+		// 	};
+		// }
 
-		// redirect to base locale if language is not present
-		// for trailing slash add: (locale as string) !== '/' &&
-		if (((locale as string) !== '' && !locales.has(locale)) || baseLocale === locale) {
-			return {
-				status: 302,
-				redirect: replaceLocaleInUrl(url.pathname, ''),
-			};
-		}
+		// // redirect to preferred language if user comes from page root
+		// if (locale !== session.locale && session.locale !== baseLocale) {
+		// 	return {
+		// 		status: 302,
+		// 		redirect: `/${session.locale}`,
+		// 	};
+		// }
+
+		// // redirect to base locale if language is not present
+		// // for trailing slash add: (locale as string) !== '/' &&
+		// if (((locale as string) !== '' && !locales.has(locale)) || baseLocale === locale) {
+		// 	return {
+		// 		status: 302,
+		// 		redirect: replaceLocaleInUrl(url.pathname, ''),
+		// 	};
+		// }
 
 		// load dictionary data
-		await initI18n(session.locale);
+		await loadLocaleAsync(session.locale);
 
 		return {
 			props: {
@@ -57,31 +60,24 @@
 	import Modals from './_Dialogs.svelte';
 	import Providers from './_layoutProviders.svelte';
 
-	import t from '$i18n/i18n-svelte';
-	import rtl from '$stores/rtl';
-	import metatags from '$lib/stores/seo/metatags';
+	// import t from '$i18n/i18n-svelte';
+	// import rtl from '$stores/rtl';
+	// import metatags from '$lib/stores/seo/metatags';
 
-	import LDTag from '$lib/components/LDTag';
-	import Navbar from '$lib/components/Navbar';
-	import Footer from '$lib/components/Footer';
-	import Tabbar from '$lib/components/Tabbar';
-	import Statusbar from '$lib/components/Statusbar';
+	// import LDTag from '$lib/components/LDTag';
+	// import Navbar from '$lib/components/Navbar';
+	// import Footer from '$lib/components/Footer';
+	// import Tabbar from '$lib/components/Tabbar';
+	// import Statusbar from '$lib/components/Statusbar';
 	// import Installprompt from '$lib/pwa/components/Prompts/Installprompt/Installprompt.svelte';
 	// import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
 
-	export let dir: 'rtl' | 'ltr' | 'auto';
-	export let lang: Locales;
+	// export let dir: 'rtl' | 'ltr' | 'auto';
+	// export let lang: Locales;
 
-	$rtl = dir === 'rtl';
+	// setLocale(lang);
 
-	let online: boolean = true;
-
-	$: if (
-		browser &&
-		(document.defaultView || window).innerWidth > document.documentElement.clientWidth
-	) {
-		document.body.classList.add('has-scrollbar');
-	}
+	// $rtl = dir === 'rtl';
 
 	onMount(async () => {
 		if (dev) return;
@@ -95,36 +91,13 @@
 	});
 </script>
 
-<svelte:window
-	bind:online
-	on:sveltekit:navigation-start={() => {
-		console.log('Navigation started!');
-		metatags.reset();
-	}}
-/>
-
 <!-- <svelte:head>
 	<html {lang} {dir} />
 </svelte:head> -->
 
 <Providers>
 	<MaterialApp theme="custom">
-		<!-- <slot /> -->
-		<Modals>
-			<div id="main-content">
-				<Statusbar message={$t.connectionStatus()} {online} />
-				<Navbar locale={lang} routes={desktopNavItems} />
-				<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
-				<div class="inner-content">
-					<main>
-						<slot />
-					</main>
-					<Footer />
-				</div>
-				<!-- <UpdatePrompt /> -->
-				<Tabbar locale={lang} routes={mobileNavItems} />
-			</div>
-		</Modals>
+		<slot />
 	</MaterialApp>
 </Providers>
 
@@ -133,5 +106,6 @@
 
 	#main-content {
 		scroll-behavior: smooth;
+		min-height: calc(100vh - var(--top-bar-height));
 	}
 </style>

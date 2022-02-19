@@ -18,33 +18,15 @@
 	import metatags from '$lib/stores/seo/metatags';
 
 	export let product: Product;
+	export let jsonLd: WithContext<DTSProduct>;
 
-	const { categories, image, name, price, rating, sku, description } = product;
+	const { image, name, description } = product;
 
 	metatags.newTitle = name;
 	metatags.newDesc = description;
 	metatags.newImage = image.src;
 	metatags.newAlt = image.alt || `Das leckere ${name}`;
 	metatags.newUrl = '';
-
-	const jsonLd: WithContext<DTSProduct> = {
-		'@context': 'https://schema.org',
-		'@type': 'Product',
-		'image': image?.src,
-		'name': name,
-		'sku': sku,
-		'offers': {
-			'@type': 'Offer',
-			'price': price,
-			'priceCurrency': 'EUR',
-			'availability': 'https://schema.org/InStock',
-		},
-		'aggregateRating': {
-			'@type': 'AggregateRating',
-			'ratingValue': rating?.value,
-			'reviewCount': rating?.count,
-		},
-	};
 </script>
 
 <LDTag schema={jsonLd} />
@@ -53,6 +35,10 @@
 	<ProductModal {product} />
 </div>
 
-<style>
-	/* your styles go here */
+<style lang="scss">
+	div {
+		transform: translateY(-1em);
+		--product-modal-aside-padding: 1em 0 0 0;
+		// padding-bottom: 0.3em;
+	}
 </style>

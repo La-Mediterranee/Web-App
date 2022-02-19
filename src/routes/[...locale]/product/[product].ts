@@ -4,10 +4,12 @@ import { promisify } from 'util';
 import { randomUUID } from 'crypto';
 
 import type { Product } from 'types/product';
-import type { JSONValue } from '@sveltejs/kit/types/helper';
+import type { JSONObject, JSONValue } from '@sveltejs/kit/types/helper';
+import type { WithContext, Product as DTSProduct } from 'schema-dts';
 
 interface GetBody {
-	product?: Product;
+	product: Product;
+	jsonLd: WithContext<DTSProduct>;
 }
 
 export async function get({ params }: RequestEvent): Promise<EndpointOutput> {
@@ -26,9 +28,27 @@ export async function get({ params }: RequestEvent): Promise<EndpointOutput> {
 
 	const body: GetBody = {
 		product,
+		jsonLd: {
+			'@context': 'https://schema.org',
+			'@type': 'Product',
+			'image': product.image?.src,
+			'name': product.name,
+			'sku': product.sku,
+			'offers': {
+				'@type': 'Offer',
+				'price': product.price,
+				'priceCurrency': 'EUR',
+				'availability': 'https://schema.org/InStock',
+			},
+			'aggregateRating': {
+				'@type': 'AggregateRating',
+				'ratingValue': product.rating?.value,
+				'reviewCount': product.rating?.count,
+			},
+		},
 	};
 
 	return {
-		body: body as JSONValue,
+		body: body as unknown as JSONObject,
 	};
 }

@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
 	// import type { HttpStatusCode } from 'types/index';
+	import type { ErrorLoadInput } from '@sveltejs/kit';
 
 	type HttpStatusCode = number;
 
@@ -15,12 +16,15 @@
 		500: 'Es gab einen Fehler auf unserem Server',
 	};
 
-	export function load({ error, status }: Props) {
+	export function load({ error, status }: ErrorLoadInput) {
 		return {
 			props: {
 				status,
-				message: errorMessages[status] || error.message,
+				message: errorMessages[status || 404] || error?.message,
 				error,
+			},
+			stuff: {
+				error: true,
 			},
 		};
 	}
@@ -28,10 +32,14 @@
 
 <script lang="ts">
 	import { dev } from '$app/env';
+	import Link from 'svelty-material/components/Button/Link.svelte';
+	import { page } from '$app/stores';
 
 	export let status: HttpStatusCode;
 	export let message: string;
 	export let error: Error;
+
+	console.log($page.stuff);
 </script>
 
 <svelte:head>
@@ -44,18 +52,21 @@
 	<p>
 		{message}
 	</p>
-</div>
+	<Link href="/">back to La-Mediterrane</Link>
 
-{#if dev && error.stack}
-	<pre>{error.stack}</pre>
-{/if}
+	{#if dev && error.stack}
+		<pre>{error.stack}</pre>
+	{/if}
+</div>
 
 <style>
 	div {
-		display: block;
-		text-align: center;
-		place-items: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		padding-top: 4em;
+		min-height: 100vh;
 	}
 
 	h1,

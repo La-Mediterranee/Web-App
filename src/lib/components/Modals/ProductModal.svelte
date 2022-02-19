@@ -53,7 +53,9 @@
 <div class="container">
 	<aside>
 		<div class="sidebar-container">
-			<img src={image.src} alt={image.alt} />
+			<div class="sidebar-img">
+				<img src={image.src} alt={image.alt} />
+			</div>
 			<header class="info">
 				<div class="header">
 					<slot name="title">
@@ -153,17 +155,27 @@
 	}
 
 	.sidebar-container {
+		display: flex;
+		flex-direction: column;
 		padding: var(--container-padding);
 	}
 
 	aside {
 		// background-color: var(--accent-color, orange);
 		background: var(--top2);
-		border-end-end-radius: 1em;
+		border-radius: 0 0 1em 1em;
+		padding: var(--product-modal-aside-padding);
+
+		.sidebar-img {
+			max-height: 350px;
+			align-self: center;
+			text-align: center;
+		}
 
 		img {
 			height: auto;
 			width: 100%;
+			// margin: auto;
 		}
 	}
 
@@ -178,7 +190,10 @@
 		padding-inline-start: 0.2em;
 	}
 
-	@media screen and (min-width: 700px) {
+	// $modalBP: 765px;
+	$modalBP: 850px;
+
+	@media screen and (min-width: $modalBP) {
 		.container {
 			display: flex;
 		}
@@ -223,10 +238,13 @@
 			border: none;
 			margin: 1em 0;
 			padding: 0.4em 0;
+			display: flex;
+			flex-wrap: wrap;
 
 			legend {
 				font-size: 1.5em;
 				font-weight: 600;
+				flex: 1 1 100%;
 			}
 		}
 
@@ -234,6 +252,7 @@
 			display: flex;
 			align-items: center;
 			padding: 0 0.6em;
+			flex: 0 1 50%;
 
 			&:hover {
 				background: rgb(99, 165, 209);
@@ -256,6 +275,7 @@
 				height: 100%;
 				display: flex;
 				align-items: center;
+				cursor: pointer;
 			}
 		}
 

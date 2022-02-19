@@ -95,8 +95,6 @@ const parseUser: Handle = async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	console.log(response.status);
-
 	if (event.locals.user) {
 		const expiration = new Date(1970, 0, 1).setSeconds(event.locals.user.exp);
 		const current = Date.now();

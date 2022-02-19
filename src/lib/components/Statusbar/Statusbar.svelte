@@ -17,9 +17,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		transform: translateY(-100%);
+		transform: translateY(-300%);
 		transition: transform 0.5s ease-in-out;
 		font-size: 1.3em;
+		top: 0;
 	}
 
 	.offline {

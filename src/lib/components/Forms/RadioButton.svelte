@@ -12,12 +12,15 @@
 
 <style lang="scss" global>
 	.theme-radio-btn {
+		--radio-btn-size: 24px;
+
 		color: rgba(41, 34, 34, 0.4);
-		border: 3px solid;
-		width: 18px;
-		height: 18px;
+		border: 4px solid;
+		width: var(--radio-btn-size);
+		height: var(--radio-btn-size);
 		transition: all 0.2s ease-in-out;
-		border-radius: 43%;
+		border-radius: 47%;
+		position: relative;
 
 		appearance: none;
 		-webkit-font-smoothing: inherit;
@@ -25,7 +28,8 @@
 
 		&:checked {
 			border-color: var(--accent-color, orange);
-			border-width: 9px;
+			border-width: calc(var(--radio-btn-size) * 0.32);
+			// background: var(--accent-color, orange);
 		}
 	}
 </style>

@@ -1,12 +1,25 @@
-<script lang="ts">
-	import LL, { initI18n } from '$i18n/i18n-svelte';
+<script context="module" lang="ts">
+	import { loadLocaleAsync } from '$i18n/i18n-util.async';
+
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
 	export async function load({ session }: LoadInput): Promise<LoadOutput> {
-		await initI18n(session.locale);
+		await loadLocaleAsync(session.locale);
 
-		return {};
+		return {
+			props: {
+				lang: session.locale,
+			},
+		};
 	}
+</script>
+
+<script lang="ts">
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+
+	export let lang: Locales;
+
+	setLocale(lang);
 </script>
 
 <div>

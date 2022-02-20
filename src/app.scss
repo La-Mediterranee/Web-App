@@ -175,7 +175,7 @@ main {
 }
 
 .form-elements-color {
-	accent-color: var(--accent-color, orange) !important;
+	accent-color: var(--accent-color, orange);
 	background-color: var(--accent-color, orange) !important;
 	border-color: var(--accent-color, orange) !important;
 }
@@ -265,29 +265,15 @@ a {
 	z-index: 15;
 }
 
-.screen-reader-text {
-	border: 0;
-	padding: 0;
-	margin: -1px;
-	height: 1px;
-	width: 1px;
-	position: absolute !important;
-	overflow: hidden;
-	clip: rect(1px, 1px, 1px, 1px);
-	clip-path: inset(50%);
-	word-wrap: normal !important;
-}
-
-.visually-hidden {
-	border: 0;
+.visually-hidden:not(:focus):not(:active) {
 	clip: rect(0 0 0 0);
-	width: 2px;
-	height: 2px;
-	margin: -2px;
+	clip-path: inset(50%);
+	height: 1px;
 	overflow: hidden;
-	padding: 0;
 	position: absolute;
 	white-space: nowrap;
+	width: 1px;
+	text-indent: -9999px;
 }
 
 // .noscroll{

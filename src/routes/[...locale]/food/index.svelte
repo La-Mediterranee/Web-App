@@ -1,65 +1,12 @@
 <script lang="ts">
-	import Card from 'svelty-material/components/Card/Card.svelte';
-	import CardText from 'svelty-material/components/Card/CardText.svelte';
-	import CardTitle from 'svelty-material/components/Card/CardTitle.svelte';
-	import Link from 'svelty-material/components/Button/Link.svelte';
-	import ProductTile from '$lib/components/ProductTile/ProductTile.svelte';
+	import CatergoryCard from './_CategoryCard.svelte';
 
 	export let categories: string[];
-	export let res: any;
 </script>
 
 <div class="wrapper">
-	{#each res as recipe, i (recipe.label)}
-		<div class="category">
-			<ProductTile product={recipe} />
-			<!-- <Card raised>
-				<div class="card-content">
-					<div style="border-radius: inherit;">
-						<img
-							src={recipe.image}
-							decoding="async"
-							width="300"
-							height="300"
-							alt="background"
-						/>
-					</div>
-
-					<div style="flex: 1; display: flex; flex-direction: column;">
-						<div
-							style="flex: 1 1 auto; max-width: 100%; overflow: hidden; display: flex; flex-direction: column;"
-						>
-							<CardTitle>
-								<a href="./food/{recipe.label}">
-									{recipe.label}
-								</a>
-							</CardTitle>
-							<CardText
-								style="height:100%; padding: 0 1em; display:flex; align-content: center;"
-							>
-								<span
-									style="text-overflow: ellipsis; hyphens: auto; overflow: hidden; align-self:center; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;"
-								>
-								</span>
-							</CardText>
-						</div>
-						<div
-							style="justify-self: flex-end; padding: 1em; flex: 0 0 auto; align-self: center"
-						>
-							<Link
-								href="./food/{recipe.label}"
-								class="form-elements-color"
-								ariaHasPopup="dialog"
-								text
-								rounded
-							>
-								<span>In den Warenkorb</span>
-							</Link>
-						</div>
-					</div>
-				</div>
-			</Card> -->
-		</div>
+	{#each categories as category, i (category)}
+		<CatergoryCard {category} />
 	{/each}
 
 	<!-- <ul class="hexagon-grid">
@@ -80,52 +27,22 @@
 <style lang="scss">
 	@use 'variables' as *;
 
-	// li {
-	// 	list-style: none;
-	// 	text-align: center;
-	// }
-
 	.wrapper {
 		--wrapper-padding: 1em;
 		padding: var(--wrapper-padding);
-
-		.category {
-			height: 300px;
-			// max-width: calc(50% - var(--wrapper-padding));
-
-			flex: 1 0 40%;
-			margin: 1.2em;
-
-			:global(.card) {
-				height: inherit;
-			}
-
-			@media screen and (max-width: 1199px) {
-				&:nth-child(2n) {
-					:global(.card-content) {
-						flex-direction: row-reverse;
-					}
-				}
-			}
-		}
+		display: flex;
+		flex-wrap: wrap;
 
 		@media screen and (min-width: 1200px) {
 			position: relative;
 			min-height: 100vh; //calc(100vh - var(--top-bar-height));
-
-			display: flex;
-			flex-wrap: wrap;
-
-			.category {
-				&:nth-child(4n + 3),
-				&:nth-child(4n + 4) {
-					:global(.card-content) {
-						flex-direction: row-reverse;
-					}
-				}
-			}
 		}
 	}
+
+	// li {
+	// 	list-style: none;
+	// 	text-align: center;
+	// }
 
 	// .hexagon .hexagon {
 	// 	position: relative;

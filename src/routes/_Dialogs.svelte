@@ -16,22 +16,16 @@
 
 <script lang="ts">
 	import Dialog from 'svelty-material/components/Dialog/Dialog.svelte';
-	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
+	import ProductModal from '$lib/components/Modals/ProductModal';
 
 	let mql: MediaQueryList;
 	let active = false;
-	let fullscreen = true;
 
 	let componentProps: Object = {};
 	let modalBody: (new (...args: any) => SvelteComponent) | null = null;
 
-	onMount(() => {
-		mql = window.matchMedia('(max-width: 959px)');
-	});
-
 	function openProductModal(product: Product) {
 		open(ProductModal, { product });
-		fullscreen = mql.matches;
 	}
 
 	function open<T>(component: new (...args: any) => SvelteComponentTyped<T>, props?: T) {
@@ -59,7 +53,7 @@
 	role="dialog"
 	width="fit-content"
 	alignItems="flex-start"
-	{fullscreen}
+	fullscreen={true}
 	on:close={() => close()}
 >
 	<svelte:component this={modalBody} {...componentProps} on:close={() => (active = false)} />

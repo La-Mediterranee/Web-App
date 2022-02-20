@@ -155,10 +155,8 @@
 				});
 
 				const url = (await res.json()).location;
-
-				console.log(`${window.location.origin}${url}`);
-
 				window.location.replace(url);
+
 				error = false;
 			} else {
 				error = true;

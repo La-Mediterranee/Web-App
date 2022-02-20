@@ -29,5 +29,6 @@ declare namespace NodeJS {
 		readonly STRIPE_SECRET_API: string;
 		readonly STRIPE_WEBHOOK_SECRET: string;
 		readonly GOOGLE_API_KEY: string;
+		readonly SERVER_PORT: string;
 	}
 }

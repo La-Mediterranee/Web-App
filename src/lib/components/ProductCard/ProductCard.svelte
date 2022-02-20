@@ -121,7 +121,6 @@
 						href=""
 						class="form-elements-color ma-auto"
 						ariaHasPopup="dialog"
-						text
 						rounded
 						{tabindex}
 						on:click={openPopUp}

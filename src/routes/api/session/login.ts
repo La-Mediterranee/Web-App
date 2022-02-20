@@ -42,13 +42,15 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 			expiresIn,
 		});
 
+		const location = `${
+			event.locals.locale !== baseLocale ? '/' + event.locals.locale : ''
+		}/customer`;
+
 		const response: EndpointOutput = {
-			// status: 302,
-			// headers: new Headers({}),
+			status: 302,
+			headers: { location },
 			body: JSON.stringify({
-				location: `${
-					event.locals.locale !== baseLocale ? '/' + event.locals.locale : ''
-				}/customer`,
+				location,
 			}),
 		};
 

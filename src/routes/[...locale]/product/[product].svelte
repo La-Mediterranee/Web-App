@@ -14,8 +14,8 @@
 
 <script lang="ts">
 	import LDTag from '$components/LDTag';
-	import ProductModal from '$lib/components/Modals/ProductModal.svelte';
 	import metatags from '$lib/stores/seo/metatags';
+	import ProductPage from '$lib/components/Product/ProductPage/ProductPage.svelte';
 
 	export let product: Product;
 	export let jsonLd: WithContext<DTSProduct>;
@@ -32,7 +32,7 @@
 <LDTag schema={jsonLd} />
 
 <div>
-	<ProductModal {product} />
+	<ProductPage {product} />
 </div>
 
 <style lang="scss">

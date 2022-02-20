@@ -2,6 +2,8 @@
 
 <footer>
 	<svg
+		id="footer-wave"
+		aria-hidden="true"
 		width="1440"
 		height="237"
 		viewBox="0 0 1440 237"
@@ -24,7 +26,7 @@
 	<div class="content">
 		<div>
 			<h3 id="footer-about">Über LA Mediterranee</h3>
-			<ul role="group" aria-labelledby="footer-about">
+			<ul aria-labelledby="footer-about">
 				<li><a href="/"> Kontakt </a></li>
 				<li><a href="/ueber-uns"> Über uns </a></li>
 				<li><a href="/impressum">Impressum</a></li>
@@ -33,7 +35,7 @@
 		</div>
 		<div>
 			<h3 id="footer-deliverytimes">Lieferzeiten</h3>
-			<ul role="group" aria-labelledby="footer-deliverytimes">
+			<ul aria-labelledby="footer-deliverytimes">
 				<li>Mo-Do: 20:00-02:00</li>
 				<li>Fr und Sa: 20:00-04:00</li>
 				<li>So: 20:00-02:00</li>
@@ -41,7 +43,7 @@
 		</div>
 	</div>
 	<a href="#top-of-site" class="top-of-site-link" data-visible="true">
-		<span class="screen-reader-text">Back to Top</span>
+		<span class="visually-hidden">Back to Top</span>
 		<svg width="32" height="32" viewBox="0 0 100 100">
 			<path
 				fill="white"
@@ -63,7 +65,7 @@
 		height: 100%;
 		margin-top: 5em;
 
-		svg {
+		#footer-wave {
 			display: block;
 			position: absolute;
 			top: 0;

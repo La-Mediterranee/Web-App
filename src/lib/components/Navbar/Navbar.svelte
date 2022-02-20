@@ -9,7 +9,6 @@
 <script lang="ts">
 	import t from '$i18n/i18n-svelte';
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
-	import type { User } from 'firebase/auth';
 
 	export let routes: NavItem[] = [];
 	export let locale: string = 'en';
@@ -30,7 +29,8 @@
 <header id="top-bar">
 	<div id="nav-logo">
 		<a href={`${$session.urlLocale || '/'}`}>
-			<img src="/Logos/V1_210.webp" alt="" />
+			<img src="/Logos/V1_210.webp" aria-hidden="true" alt="" />
+			<span class="visually-hidden">Home</span>
 		</a>
 	</div>
 

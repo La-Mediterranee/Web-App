@@ -4,6 +4,7 @@ import { promisify } from 'util';
 import { randomUUID } from 'crypto';
 
 import type { Product } from 'types/product';
+import { SERVER_PORT } from '$lib/server/constants';
 
 interface GetBody {
 	product?: Product;
@@ -27,8 +28,8 @@ export interface HomepageProps {
 
 async function homepage(): Promise<HomepageProps> {
 	const responses = await Promise.all([
-		fetch('http://localhost:8080/products'),
-		fetch('http://localhost:8080/products'),
+		fetch(`http://localhost:${SERVER_PORT}/products`),
+		fetch(`http://localhost:${SERVER_PORT}/products`),
 	]);
 
 	const sections = await Promise.all(responses.map(res => res.json()));

@@ -2,9 +2,7 @@
 	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
 
-	import { setLocale } from '$i18n/i18n-svelte';
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
-	import { baseLocale } from '$i18n/i18n-util';
 	import { RTL_LANGS, locales } from '$i18n/utils';
 
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
@@ -14,41 +12,11 @@
 	import type { Locales } from '$i18n/i18n-types';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export async function load({ params, session, url, stuff }: LoadInput): Promise<LoadOutput> {
-		const locale = params.locale as Locales;
-
-		console.log(stuff);
-
-		// if (params.locale?.split('/').length > 1) {
-		// 	return {
-		// 		status: 400,
-		// 	};
-		// }
-
-		// // redirect to preferred language if user comes from page root
-		// if (locale !== session.locale && session.locale !== baseLocale) {
-		// 	return {
-		// 		status: 302,
-		// 		redirect: `/${session.locale}`,
-		// 	};
-		// }
-
-		// // redirect to base locale if language is not present
-		// // for trailing slash add: (locale as string) !== '/' &&
-		// if (((locale as string) !== '' && !locales.has(locale)) || baseLocale === locale) {
-		// 	return {
-		// 		status: 302,
-		// 		redirect: replaceLocaleInUrl(url.pathname, ''),
-		// 	};
-		// }
-
-		// load dictionary data
-		await loadLocaleAsync(session.locale);
-
+	export async function load({ session }: LoadInput): Promise<LoadOutput> {
 		return {
 			props: {
 				lang: session.locale,
-				dir: RTL_LANGS.has(locale) ? 'rtl' : 'ltr',
+				dir: RTL_LANGS.has(session.locale) ? 'rtl' : 'ltr',
 			},
 		};
 	}
@@ -106,6 +74,19 @@
 
 	#main-content {
 		scroll-behavior: smooth;
-		min-height: calc(100vh - var(--top-bar-height));
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.inner-content {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		flex: 1;
+	}
+
+	main {
+		flex: 1;
 	}
 </style>

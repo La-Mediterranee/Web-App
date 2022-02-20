@@ -36,7 +36,6 @@
 					href="./food/{product.label}"
 					class="form-elements-color"
 					ariaHasPopup="dialog"
-					text
 					rounded
 					on:click={() => {}}
 				>
@@ -56,9 +55,11 @@
 
 	.img-container {
 		border-radius: inherit;
+		// display: flex;
+		flex: 0 1 300px;
 
 		img {
-			flex: 1;
+			width: 100%;
 			height: 100%;
 			border-radius: inherit;
 		}
@@ -66,7 +67,17 @@
 
 	.product {
 		&-name {
-			padding: 0.5em 1em;
+			padding: 0.5em 1em 0 0.5em;
+			span,
+			a {
+				display: -webkit-box;
+				text-overflow: ellipsis;
+				hyphens: auto;
+
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
 		}
 
 		&-desc {
@@ -87,16 +98,18 @@
 		}
 	}
 
-	.text-container {
-		flex: 1 1 auto;
-		max-width: 100%;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-	}
+	@media screen and (min-width: 570px) {
+		.card-content {
+			display: flex;
+			text-align: center;
+		}
 
-	.card-content {
-		display: flex;
-		text-align: center;
+		.text-container {
+			flex: 1 1 auto;
+			max-width: 100%;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+		}
 	}
 </style>

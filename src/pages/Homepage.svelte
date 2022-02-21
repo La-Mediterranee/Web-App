@@ -70,11 +70,27 @@
 		--siema-item-width: 270px;
 		--siema-item-min-width: 235px;
 		--siema-content-max-width: 1200px;
+		--siema-item-scroll-margin: 0 0 0 2em;
+		--siema-scroll-snap-align: start;
+
+		[dir='rtl'] & {
+			--siema-item-scroll-margin: 0 14px 0 0;
+		}
+
 		// --siema-inner-padding: 0 1em;
 
-		:global(.content .item:first-child) {
+		:global(.item) {
 			// --siema-content-padding: 0 14px;
-			margin-inline-start: 14px;
+
+			scroll-margin-left: 2em;
+
+			&:first-child {
+				padding-inline-start: 10px;
+			}
+
+			&:last-child {
+				padding-inline-end: 10px;
+			}
 		}
 
 		@media screen and (min-width: 1220px) {

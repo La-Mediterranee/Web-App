@@ -134,11 +134,6 @@
 </article>
 
 <style lang="scss" global>
-	article,
-	div {
-		position: relative;
-	}
-
 	.red.darken-5 {
 		// background-color: #e32a00 !important;
 		// border-color: #e32a00 !important;
@@ -147,6 +142,9 @@
 	}
 
 	.product-card-container {
+		// display: flex;
+		// flex-wrap: wrap;
+		// flex-direction: column;
 		flex: 0 0 auto;
 		outline: none;
 		position: relative;
@@ -154,6 +152,11 @@
 
 		* {
 			text-align: center;
+		}
+
+		article,
+		div {
+			position: relative;
 		}
 
 		:global(.s-card-title) {
@@ -164,11 +167,16 @@
 		.inner-card {
 			overflow: hidden;
 			z-index: 1;
+			// height: 100%;
 		}
 
 		img {
 			position: relative;
 			width: 100%;
+			border-top-right-radius: inherit;
+			border-top-left-radius: inherit;
+			margin-bottom: 10px;
+
 			transition: transform 500ms ease;
 		}
 
@@ -247,20 +255,15 @@
 			font-size: 1.2rem;
 			padding: 0 0 0.3em 0;
 		}
-	}
 
-	@media (hover: hover) and (pointer: fine) {
-		.product-card-container {
-			img {
-				margin-bottom: 10px;
-			}
-
+		@media (hover: hover) and (pointer: fine) {
 			.actionsContainer {
 				left: 0;
 				bottom: 0;
 				position: absolute;
 				will-change: transform;
-				transform: translateY(100%);
+
+				transform: translateY(110%);
 				transition: transform 750ms ease;
 				// padding-top: 4.2em;
 			}

@@ -4,7 +4,6 @@
 
 <style lang="scss">
 	.item {
-		$snap-margin: 0 2em;
 		padding: var(--siema-item-padding, 0 0.625em);
 		margin: var(--siema-item-margin, 0.5em 0);
 		// margin-inline-start: 0.5rem;
@@ -16,13 +15,18 @@
 
 		scroll-snap-align: var(--siema-scroll-snap-align, center);
 
-		@supports (scroll-margin: 0) or (scroll-snap-margin: 0) {
-			scroll-margin: $snap-margin;
-			scroll-snap-margin: $snap-margin;
-		}
-
 		&:first-child {
 			padding-inline-start: 0;
+		}
+
+		&:last-child {
+			padding-inline-end: 0;
+		}
+
+		$snap-margin: 0 2em;
+		@supports (scroll-margin: 0) or (scroll-snap-margin: 0) {
+			scroll-margin: var(--siema-item-scroll-margin, $snap-margin);
+			scroll-snap-margin: var(--siema-item-scroll-margin, $snap-margin);
 		}
 	}
 </style>

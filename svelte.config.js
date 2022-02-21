@@ -158,6 +158,7 @@ const preprocess = sveltePreprocess({
 		plugins: [autoprefixer()],
 	},
 	sourceMap: process.env.NODE_ENV === 'development' ? true : false,
+	preserve: ['ld+json'],
 });
 
 /** @type {import('@sveltejs/kit').Config} */

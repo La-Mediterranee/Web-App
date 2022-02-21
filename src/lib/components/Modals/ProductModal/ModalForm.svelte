@@ -164,6 +164,10 @@
 			display: flex;
 			flex-wrap: wrap;
 
+			&:last-child {
+				margin-bottom: 0;
+			}
+
 			legend {
 				font-size: 1.5em;
 				font-weight: 600;
@@ -245,6 +249,12 @@
 			.title {
 				font-size: 2.5em;
 				text-align: center;
+			}
+
+			.actions {
+				left: 10px;
+				bottom: 0;
+				right: 10px;
 			}
 
 			// .actions {

@@ -13,23 +13,25 @@
 	}).format(price);
 </script>
 
-<aside>
+<aside aria-labelledby="product-aside-title">
 	<div class="sidebar-container">
 		<div class="sidebar-img">
 			<img src={image.src} alt={image.alt} />
 		</div>
 		<header class="info">
 			<div class="header">
-				<slot name="title">
-					<h1 class="title">{name}</h1>
+				<slot name="title" id="product-aside-title">
+					<h1 id="product-aside-title" class="title">{name}</h1>
 				</slot>
 				<span class="price">
 					<data value={`${price}`}>{_price}</data>
 				</span>
 			</div>
-			<p class="description">
-				{description || ''}
-			</p>
+			{#if description}
+				<p class="description">
+					{description}
+				</p>
+			{/if}
 		</header>
 	</div>
 </aside>
@@ -90,6 +92,9 @@
 		aside {
 			flex: 0 0 var(--aside-width);
 			max-width: var(--aside-width);
+			height: 100vh;
+			position: sticky;
+			top: 0;
 
 			:global(.s-dialog) & {
 				min-height: 100vh;

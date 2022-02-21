@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { session } from '$app/stores';
+
 	import Link from 'svelty-material/components/Button/Link.svelte';
 	import Card from 'svelty-material/components/Card/Card.svelte';
 
@@ -18,7 +20,7 @@
 						{product.label}
 					</span>
 					<noscript>
-						<a href="./food/{product.label}">
+						<a href="/product/{product.label}">
 							{product.label}
 						</a>
 					</noscript>
@@ -33,7 +35,7 @@
 			<div style="justify-self: flex-end; padding: 1em; flex: 0 0 auto; align-self: center">
 				<Link
 					role="button"
-					href="./food/{product.label}"
+					href="{$session.urlLocale}/product/{product.label}"
 					class="form-elements-color"
 					ariaHasPopup="dialog"
 					rounded

@@ -135,16 +135,22 @@
 		btn.matches(':focus-visible') && btn.setAttribute(FOCUS_ATTRIBUTE, '');
 	}
 
-	function scrollToElement(el: HTMLElement | null, offset = 0) {
+	function scrollToElement(el: HTMLElement | null, offset = 0, dir: 'next' | 'prev' = 'next') {
 		if (!containerInner || !el) return;
 
 		// const clc =
 		// 	el.getBoundingClientRect().width / 2 - containerInner.getBoundingClientRect().width / 2;
 		// const newScrollPosition = el.offsetLeft + clc;
 
-		containerInner.scroll({
-			left: el.offsetLeft + offset,
+		// containerInner.scroll({
+		// 	left: el.offsetLeft + offset,
+		// 	behavior: 'smooth',
+		// });
+
+		el.scrollIntoView({
 			behavior: 'smooth',
+			inline: dir === 'next' ? 'start' : 'end',
+			block: 'nearest',
 		});
 	}
 
@@ -159,7 +165,7 @@
 				const offset = rtl
 					? 0
 					: -(containerWidth - (prevElement?.getBoundingClientRect().width || 0));
-				scrollToElement(prevElement, offset);
+				scrollToElement(prevElement, offset, 'prev');
 				break;
 			}
 			case 'next': {
@@ -222,6 +228,7 @@
 		padding: var(--siema-inner-padding);
 
 		scrollbar-width: none;
+
 		&::-webkit-scrollbar {
 			display: none;
 		}
@@ -229,11 +236,11 @@
 
 	.content {
 		display: inline-flex;
-		flex-wrap: nowrap;
-		white-space: nowrap;
-		margin-left: auto;
-		margin-right: auto;
-		width: 100%;
+		// flex-wrap: nowrap;
+		// white-space: nowrap;
+		// margin-left: auto;
+		// margin-right: auto;
+		// width: 100%;
 		max-width: var(--siema-content-max-width);
 
 		padding: var(--siema-content-padding);

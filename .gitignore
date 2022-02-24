@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+# private static files 
+# /static/drinks
+
 # OS
 .DS_Store
 

@@ -9,8 +9,18 @@
 	import type { CartItem } from 'types/product';
 
 	export let item: CartItem;
+	export let currency: string = 'EUR';
+	export let updateQty: (e: number) => void;
+	export let deleteItem: () => void;
 
-	const { image, name, price, sku } = item;
+	function update(e: Event) {
+		updateQty(+(<HTMLInputElement>e.target).value);
+	}
+
+	let qty = item.quantity;
+	// $: updateQty(qty);
+
+	const { image, name, price, ID } = item;
 </script>
 
 <!-- <div itemscope itemtype="https://schema.org/Product">
@@ -23,26 +33,35 @@
 <tr>
 	<th scope="row" title="Produkt">
 		<div>
-			<img src={image?.src} alt={image?.alt} />
+			<img src={image.src} alt={image.alt} />
 			<h3>{name}</h3>
-			<input type="hidden" name="product" id={sku} value={sku || name} />
+			<p />
+			<input type="hidden" name="product" id={ID} value={ID} />
 		</div>
 	</th>
 	<td title="Anzahl">
 		<Input>
 			<input
+				id="quantity"
 				type="number"
 				min="1"
 				inputmode="numeric"
-				id="quantity"
-				bind:value={item.quantity}
+				on:change={e => update(e)}
+				bind:value={qty}
 			/>
 		</Input>
 	</td>
-	<td title="Preis"><span>{price}</span></td>
+	<td title="Preis">
+		<span>
+			{new Intl.NumberFormat('de-DE', {
+				style: 'currency',
+				currency,
+			}).format(price / 100)}
+		</span>
+	</td>
 	<!-- <td title="Teilsumme"><span>{sum}</span></td> -->
 	<td>
-		<button on:click={() => console.log('delete')} aria-label="Produkt vom Warenkorb entfernen">
+		<button on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
 			<Icon path={trash} />
 		</button>
 	</td>
@@ -111,6 +130,10 @@
 		&:first-child,
 		&:nth-child(2) {
 			border: 0 none;
+		}
+
+		:global(.s-input__slot) {
+			margin: 0;
 		}
 
 		input {

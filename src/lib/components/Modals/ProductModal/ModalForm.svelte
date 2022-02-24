@@ -14,13 +14,12 @@
 	import Button from 'svelty-material/components/Button/Button.svelte';
 
 	import RadioButton from '$lib/components/Forms/RadioButton.svelte';
+	import Checkbox from '$lib/components/Forms/Checkbox.svelte';
 
 	export let product: Product;
 	export let valid: boolean;
 	export let quantitiy: number;
 	export let addToCart: AddToCart;
-
-	const { variations } = product;
 
 	const addToCartBtnText = 'Zum Warenkorb hinzufügen';
 </script>
@@ -28,7 +27,7 @@
 <form
 	id="product-modal"
 	action="/add-to-cart"
-	on:change={e => console.log((valid = e.currentTarget.checkValidity()))}
+	on:change={e => (valid = e.currentTarget.checkValidity())}
 	on:submit|preventDefault={e => addToCart(e, product.variations)}
 >
 	<h1 class="title">Customization</h1>
@@ -36,16 +35,25 @@
 	<div class="toppings">
 		{#each product.variations?.toppings || [] as topping}
 			<fieldset class="topping">
-				<legend>{topping}</legend>
+				<legend>{topping.name}</legend>
 
-				{#each ['Kraken', 'Sasquatch', 'Mothman'] as item}
-					{@const id = `${topping}-${item}`.toLowerCase()}
+				{#each topping.options as option}
+					{@const id = `${topping.ID}-${option.ID}`.toLowerCase()}
 					<div class="topping-item">
 						<label for={id}>
-							<RadioButton {id} name={topping} value={item} required />
+							{#if topping.qtyMin === 1}
+								<RadioButton {id} name={topping.name} value={option.ID} required />
+							{:else}
+								<Checkbox
+									{id}
+									name={topping.name}
+									value={option.ID}
+									required={topping.qtyMin !== 0}
+								/>
+							{/if}
 							<img width="70" src="/burger.png" alt="" role="presentation" />
 							<span class="input-label">
-								{item}
+								{option.name}
 							</span>
 						</label>
 						<!-- style="color: var(--accent-color, orange); background-color: white;" -->
@@ -132,12 +140,16 @@
 	#product-modal {
 		--actions-height: 62.5px;
 
-		accent-color: var(--accent-color, orange);
 		// max-width: 42em;
-		padding: var(--container-padding);
-		color: #fff;
-		flex: 0 0 calc(100% - var(--aside-width));
+		display: flex;
+		flex-direction: column;
 		position: relative;
+
+		padding: var(--container-padding);
+		flex: 0 0 calc(100% - var(--aside-width));
+
+		color: #fff;
+		accent-color: var(--accent-color, orange);
 
 		input::-webkit-outer-spin-button,
 		input::-webkit-inner-spin-button {
@@ -155,6 +167,8 @@
 		}
 
 		.toppings {
+			// height: 100%;
+			flex: 1;
 		}
 
 		.topping {
@@ -178,8 +192,8 @@
 		.topping-item {
 			display: flex;
 			align-items: center;
-			padding: 0 0.6em;
-			flex: 0 1 50%;
+			// padding: 0 0.6em;
+			flex: 1 1 50%;
 
 			&:hover {
 				background: rgb(99, 165, 209);
@@ -195,14 +209,15 @@
 			}
 
 			label {
-				font-size: 1.2em;
-				padding: 0.6em 0;
-				padding-left: 0.5em;
-				width: 100%;
-				height: 100%;
 				display: flex;
 				align-items: center;
 				cursor: pointer;
+
+				width: 100%;
+				height: 100%;
+				font-size: 1.2em;
+				padding: 0.6em 0;
+				padding-inline-start: 0.5em;
 			}
 		}
 
@@ -220,6 +235,7 @@
 			justify-content: space-between;
 
 			padding: 0.7em;
+			margin-top: 0.6em;
 			border-radius: 2em;
 			// background: #fff;
 			box-shadow: 4px 7px 24px 0 rgb(0 0 0 / 31%);
@@ -252,9 +268,11 @@
 			}
 
 			.actions {
-				left: 10px;
 				bottom: 0;
-				right: 10px;
+
+				:global(.s-dialog) & {
+					bottom: 10px;
+				}
 			}
 
 			// .actions {

@@ -15,7 +15,7 @@
 
 	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
 		return {
-			href: `/${locale}${href}`, //.replace(/\/$/, '')
+			href: `${locale}${href}`, //.replace(/\/$/, '')
 			rel: rel instanceof Array ? rel.join(' ') : rel,
 			icon,
 			pathLabel,
@@ -58,7 +58,7 @@
 		</ul>
 	</nav>
 
-	<div id="profile">
+	<div id="avatar">
 		{#if $session.user}
 			<a href={`${$session.urlLocale}/customer`}>
 				<img
@@ -181,16 +181,20 @@
 		}
 	}
 
-	#profile {
+	#avatar {
 		width: 65px;
 		height: 100%;
 		display: flex;
 		align-items: center;
 		margin-right: 0.5em;
+
+		img {
+			border-radius: 0.3em;
+		}
 	}
 
 	@media (hover: hover) and (pointer: fine) {
-		#profile:hover {
+		#avatar:hover {
 		}
 	}
 

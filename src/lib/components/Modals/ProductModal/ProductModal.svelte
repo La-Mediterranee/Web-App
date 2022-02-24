@@ -14,12 +14,6 @@
 		const ev = e as SubmitEvent;
 		const form = ev.target as HTMLFormElement;
 		const formData = new FormData(form);
-
-		const selects = variations?.toppings?.map(topping => {
-			return { [topping]: formData.get(topping) };
-		});
-
-		console.log(selects);
 	}
 </script>
 
@@ -71,15 +65,15 @@
 		--container-padding: 1.5em 0.8em 1.2em;
 		display: block;
 		position: relative;
-	}
 
-	.dialog-close-btn {
-		position: absolute;
-		top: 10px;
-		right: 1em;
-		// transform: translateY(-50%);
-		background: var(--theme-surface);
-		z-index: 10;
+		.dialog-close-btn {
+			position: absolute;
+			top: 10px;
+			right: 1em;
+			// transform: translateY(-50%);
+			background: var(--theme-surface);
+			z-index: 10;
+		}
 	}
 
 	// $modalBP: 765px;
@@ -88,6 +82,10 @@
 	@media screen and (min-width: $modalBP) {
 		.container {
 			display: flex;
+
+			form {
+				min-height: 100vh;
+			}
 		}
 	}
 </style>

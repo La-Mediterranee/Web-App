@@ -45,6 +45,7 @@
 		return {
 			props: {
 				lang: session.locale,
+				urlLocale: session.urlLocale,
 				dir: RTL_LANGS.has(locale) ? 'rtl' : 'ltr',
 			},
 		};
@@ -64,15 +65,32 @@
 	import Statusbar from '$lib/components/Statusbar';
 
 	import Modals from '../_Dialogs.svelte';
+	import { page } from '$app/stores';
+	import { activeRoute } from '$lib/stores/activeRoute';
 
-	export let dir: 'rtl' | 'ltr' | 'auto';
+	import type { TabbarItem } from '$lib/components/Tabbar/Tabbar.svelte';
+
 	export let lang: Locales;
-
-	setLocale(lang);
-
-	$rtl = dir === 'rtl';
+	export let urlLocale: Locales | '';
+	export let dir: 'rtl' | 'ltr' | 'auto';
 
 	let online: boolean = true;
+
+	$rtl = dir === 'rtl';
+	setLocale(lang);
+
+	let tabbarRoutes: TabbarItem[];
+	$: tabbarRoutes = mobileNavItems.map(({ href, icon, pathLabel, rel, size }) => {
+		return {
+			href: `${urlLocale}${href.replace(/\/$/, '')}`,
+			rel: rel instanceof Array ? rel.join(' ') : rel,
+			icon,
+			pathLabel,
+			size,
+			// prettier-ignore
+			isActive: (href === $activeRoute) || false,
+		};
+	});
 
 	$: if (
 		browser &&
@@ -93,13 +111,7 @@
 	});
 </script>
 
-<svelte:window
-	bind:online
-	on:sveltekit:navigation-start={() => {
-		console.log('Navigation started!');
-		metatags.reset();
-	}}
-/>
+<svelte:window bind:online />
 
 <svelte:head>
 	<html {lang} {dir} />
@@ -129,7 +141,7 @@
 <Modals>
 	<div id="main-content">
 		<Statusbar message={$t.connectionStatus()} {online} />
-		<Navbar locale={lang} routes={desktopNavItems} />
+		<Navbar locale={urlLocale} routes={desktopNavItems} />
 		<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
 		<div class="inner-content">
 			<main>
@@ -138,6 +150,6 @@
 			<Footer />
 		</div>
 		<!-- <UpdatePrompt /> -->
-		<Tabbar locale={lang} routes={mobileNavItems} />
+		<Tabbar paths={$t.nav.routes} routes={tabbarRoutes} />
 	</div>
 </Modals>

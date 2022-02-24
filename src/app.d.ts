@@ -35,5 +35,6 @@ declare namespace App {
 
 	interface Stuff {
 		locale: Locales;
+		activeRoute?: string;
 	}
 }

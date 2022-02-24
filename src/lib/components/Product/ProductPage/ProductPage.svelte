@@ -14,12 +14,6 @@
 		const ev = e as SubmitEvent;
 		const form = ev.target as HTMLFormElement;
 		const formData = new FormData(form);
-
-		const selects = variations?.toppings?.map(topping => {
-			return { [topping]: formData.get(topping) };
-		});
-
-		console.log(selects);
 	}
 </script>
 

@@ -1,10 +1,12 @@
-<!-- <svelte:options immutable tag="product-component" /> -->
+<svelte:options immutable />
+
+<!-- tag="product-component" -->
 <script context="module" lang="ts">
 	import star from '$lib/Icons/outline/star';
 
 	import { getProductModalContext } from '$lib/utils/helper';
 
-	import type { Product } from 'types/product';
+	import type { CartItem, Product } from 'types/product';
 </script>
 
 <script lang="ts">
@@ -12,6 +14,7 @@
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Link from 'svelty-material/components/Button/Link.svelte';
 	import CardTitle from 'svelty-material/components/Card/CardTitle.svelte';
+	import { cart } from '$lib/stores/cart';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
@@ -31,13 +34,17 @@
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
 		currency,
-	}).format(price);
+	}).format(price / 100);
 
 	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
 	function openPopUp(e: Event) {
 		e.preventDefault();
-		modal.open(product);
+		if (product.variations?.toppings?.length || product.toppings?.length) {
+			modal.open(product);
+		}
+
+		cart.addItem(<CartItem>Object.assign({ quantity: 1 }, product));
 	}
 </script>
 
@@ -54,13 +61,10 @@
 <article
 	bind:this={container}
 	class="product-card-container"
-	tabindex={isVisible ? 0 : -1}
-	on:focus={() => (tabindex = 0)}
-	on:blur={() => (tabindex = -1)}
+	itemtype="http://schema.org/Product"
+	itemscope
 	{action}
 	{style}
-	itemscope
-	itemtype="http://schema.org/Product"
 >
 	<Card raised>
 		<div class="inner-card">
@@ -69,13 +73,22 @@
 				decoding="async"
 				loading="lazy"
 				src={image.src}
-				alt={image?.alt || name}
-				width="250"
-				height="181"
+				alt={image.alt || name}
+				width={image.width || '250'}
+				height={image.height || '181'}
 			/>
 
-			<CardTitle itemprop="name" class="justify-center h4">
-				{name}
+			<CardTitle itemprop="name" style="height: 2.4em;" class="d-flex justify-center h4">
+				<a
+					href="./product/{product.ID}"
+					tabindex={isVisible ? undefined : -1}
+					aria-haspopup="dialog"
+					on:click={openPopUp}
+				>
+					<!-- on:focus={() => (tabindex = 0)}
+					on:blur={() => (tabindex = -1)} -->
+					{name}
+				</a>
 			</CardTitle>
 
 			<div class="content">
@@ -102,7 +115,7 @@
 				{/if}
 			</div>
 
-			<div class="actionsContainer">
+			<footer class="actionsContainer">
 				<svg
 					class="wave"
 					viewBox="0 0 400 100"
@@ -118,17 +131,17 @@
 				<div class="card-actions">
 					<!-- class="orange darken-4 ma-auto" -->
 					<Link
-						href=""
+						href="./product/{product.ID}"
 						class="form-elements-color ma-auto"
 						ariaHasPopup="dialog"
 						rounded
-						{tabindex}
+						tabindex={-1}
 						on:click={openPopUp}
 					>
 						<span class="add-to-cart-text">In den Warenkorb</span>
 					</Link>
 				</div>
-			</div>
+			</footer>
 		</div>
 	</Card>
 </article>
@@ -142,10 +155,10 @@
 	}
 
 	.product-card-container {
-		// display: flex;
-		// flex-wrap: wrap;
-		// flex-direction: column;
-		flex: 0 0 auto;
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		// flex: 0 0 auto;
 		outline: none;
 		position: relative;
 		height: var(--product-card-height, 100%);
@@ -154,25 +167,50 @@
 			text-align: center;
 		}
 
-		article,
-		div {
-			position: relative;
-		}
-
 		:global(.s-card-title) {
 			// padding: 0 1em;
 			padding: 0;
 		}
 
 		.inner-card {
+			position: relative;
 			overflow: hidden;
 			z-index: 1;
-			// height: 100%;
+			height: 100%;
+		}
+
+		.s-card {
+			height: 100%;
+		}
+
+		a {
+			outline: none;
+			text-decoration: none;
+
+			word-break: break-word;
+			display: -webkit-box;
+			text-overflow: ellipsis;
+			hyphens: auto;
+
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+
+			&::after {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+			}
 		}
 
 		img {
 			position: relative;
 			width: 100%;
+			max-width: 100%;
+			height: auto;
 			border-top-right-radius: inherit;
 			border-top-left-radius: inherit;
 			margin-bottom: 10px;
@@ -221,12 +259,18 @@
 		}
 
 		.actionsContainer {
+			all: unset;
+
 			width: 100%;
 			padding-top: 2em;
 			position: relative;
 			overflow: hidden;
 			border-bottom-left-radius: var(--theme-card-border-radius);
 			border-bottom-right-radius: var(--theme-card-border-radius);
+
+			:global(.s-btn__content) {
+				height: 100%;
+			}
 		}
 
 		.wave {
@@ -278,6 +322,7 @@
 			}
 
 			&:focus-within,
+			// :global(a.s-btn):focus-visible,
 			&:hover {
 				img {
 					transform: scale(1.1);
@@ -292,6 +337,10 @@
 						animation-play-state: running;
 					}
 				}
+			}
+
+			&:focus-within a.s-btn {
+				box-shadow: 0 0 0 3px var(--theme-focus-visible);
 			}
 		}
 	}

@@ -9,7 +9,7 @@
 
 <div class="category">
 	<Card>
-		<a href="./food/{category}">
+		<a href="./food/{category.toLowerCase()}">
 			<img src="/burger.png" alt="" />
 			<span>
 				{category}

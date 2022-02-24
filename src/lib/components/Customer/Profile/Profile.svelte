@@ -1,3 +1,6 @@
+<script context="module" lang="ts">
+</script>
+
 <script lang="ts">
 	import t from '$i18n/i18n-svelte';
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
@@ -13,12 +16,31 @@
 
 	export let user: User;
 	let loading = false;
+
+	async function logout(e: MouseEvent) {
+		// await user.logOut();
+		loading = true;
+
+		const res = await fetch('/api/session/logout', {
+			method: 'head',
+			credentials: 'include',
+		});
+
+		if (!res.ok) {
+			loading = false;
+			return;
+		}
+
+		$session.user = undefined;
+		goto($session.urlLocale);
+		// window.location.replace($session.urlLocale);
+	}
 </script>
 
 <div>
 	<h1>{$t.customer.account()}</h1>
 
-	<section>
+	<section id="user">
 		<img
 			src={`${user.photoURL || ''}`}
 			alt={`${user.displayName || 'Users'} Profilbild`}
@@ -64,39 +86,18 @@
 		</section>
 	</section>
 
-	<Button
-		type="button"
-		size="x-large"
-		class="form-elements-color"
-		rounded
-		on:click={async () => {
-			// await user.logOut();
-			loading = true;
-
-			const res = await fetch('/api/session/logout', {
-				method: 'head',
-				credentials: 'include',
-			});
-
-			if (!res.ok) {
-				loading = false;
-
-				return;
-			}
-
-			$session.user = undefined;
-			goto($session.urlLocale);
-			// window.location.replace($session.urlLocale);
-		}}
-	>
+	<Button type="button" size="x-large" class="form-elements-color" rounded on:click={logout}>
 		{$t.customer.logout()}
 	</Button>
 </div>
 
 <style lang="scss">
-	img {
-		width: 7em;
-		height: 7em;
+	#user {
+		img {
+			width: 8em;
+			height: 8em;
+			border-radius: 0.7em;
+		}
 	}
 
 	div {

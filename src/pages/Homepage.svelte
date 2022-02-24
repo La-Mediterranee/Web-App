@@ -70,19 +70,11 @@
 		--siema-item-width: 270px;
 		--siema-item-min-width: 235px;
 		--siema-content-max-width: 1200px;
-		--siema-item-scroll-margin: 0 0 0 2em;
+		--siema-item-scroll-margin: 0; //14px
 		--siema-scroll-snap-align: start;
-
-		[dir='rtl'] & {
-			--siema-item-scroll-margin: 0 14px 0 0;
-		}
-
-		// --siema-inner-padding: 0 1em;
 
 		:global(.item) {
 			// --siema-content-padding: 0 14px;
-
-			scroll-margin-left: 2em;
 
 			&:first-child {
 				padding-inline-start: 10px;

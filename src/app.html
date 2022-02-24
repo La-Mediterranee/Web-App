@@ -11,12 +11,16 @@
 
 		<link rel="preconnect" href="https://fonts.gstatic.com" />
 		<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
 		<link rel="preconnect" href="https://www.googletagmanager.com" />
 		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+		<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+		<link rel="preconnect" href="https://polyfill.io" />
+		<link rel="dns-prefetch" href="https://polyfill.io" />
 
 		<!-- <link rel="icon" href="/favicon.ico" crossorigin="" /> -->
 		<!-- <link rel="manifest" href="/manifest.webmanifest" crossorigin="" /> -->
@@ -26,6 +30,16 @@
 		/>
 
 		<script type="module">
+			document.documentElement.classList.add('js');
+
+			if (!('scrollBehavior' in document.documentElement.style)) {
+				const src =
+					'https://cdn.jsdelivr.net/npm/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js';
+				const script = document.createElement('script');
+				script.src = src;
+				document.head.appendChild(script);
+			}
+
 			function hasIntlGetCanonicalLocalesBug() {
 				try {
 					//@ts-ignore
@@ -36,13 +50,6 @@
 			}
 
 			const polyfills = [];
-
-			if (!('FormData' in window)) {
-				const src = 'https://cdn.jsdelivr.net/npm/formdata-polyfill@4.0.10/formdata.min.js';
-				const script = document.createElement('script');
-				script.src = src;
-				document.head.appendChild(script);
-			}
 
 			if (!('AbortController' in window)) {
 				polyfills.push('AbortController');
@@ -92,10 +99,6 @@
 
 					return Promise.all(wrappedPromises);
 				};
-		</script>
-
-		<script>
-			document.documentElement.classList.add('js');
 		</script>
 
 		<!-- <script type="module">

@@ -2,8 +2,23 @@ type SKU = string;
 type ID = string;
 
 export type Variations = DeepReadonly<{
-	toppings?: string[];
+	toppings?: Topping[];
 }>;
+
+export interface ToppingOption {
+	readonly ID: ID;
+	readonly name: string;
+	readonly desc: string;
+	readonly price: number;
+}
+
+export interface Topping {
+	readonly ID: ID;
+	readonly name: string;
+	readonly options: ToppingOption[];
+	readonly qtyMin: number;
+	readonly qtyMax: number;
+}
 
 export interface Image {
 	readonly src: string;
@@ -16,9 +31,10 @@ export interface Product {
 	readonly name: string;
 	readonly description: string;
 	readonly price: number;
-	readonly image: readonly Image;
+	readonly image: Image;
 	readonly categories: readonly string[];
-	readonly variations?: readonly Variations;
+	readonly variations?: Variations;
+	readonly toppings: readonly Topping[];
 	readonly rating?: {
 		readonly value: number;
 		readonly count: number;

@@ -74,15 +74,12 @@ export async function signInWithMicrosoft(auth: Auth) {
 		const credential = OAuthProvider.credentialFromResult(userCredential);
 		const accessToken = credential?.accessToken;
 
-		const res = await fetch(
-			// "https://graph.microsoft.com/v1.0/me/photos/96x96/$value",
-			'https://graph.microsoft.com/beta/me/photos/96x96/$value',
-			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
+		const res = await fetch('https://graph.microsoft.com/v1.0/me/photos/64x64/$value', {
+			headers: {
+				'Authorization': `Bearer ${accessToken}`,
+				'Content-Type': 'image/jpg',
 			},
-		);
+		});
 
 		const url = window.URL || window.webkitURL;
 		const data = await res.blob();

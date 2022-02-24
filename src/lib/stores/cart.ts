@@ -5,37 +5,44 @@ import type { Subscriber, Unsubscriber } from 'svelte/store';
 import type { CartItem, ID } from 'types/product';
 import type { Invalidator } from 'types/index';
 
-export type Cart = Map<ID, CartItem>;
+type CartItems = Map<ID, CartItem>;
 
-interface CartStore {
+export interface Cart {
+	readonly items: CartItems;
+	totalAmount: number;
+	totalQuantity: number;
+}
+
+export interface CartStore {
 	subscribe: (
 		this: void,
 		run: Subscriber<Cart>,
-		invalidate?: Invalidator<Cart> | undefined
+		invalidate?: Invalidator<Cart> | undefined,
 	) => Unsubscriber;
+	addItem: (item: CartItem) => void;
 	removeItem: (oldItem: CartItem) => void;
-	addItem: (oldItem: CartItem) => void;
-	removeAll: (oldItem: CartItem) => void;
+	removeAll: () => void;
 	upadateItem: (id: ID, quantity: number) => void;
-	readonly totalQuantity: number;
-	readonly totalAmount: number;
 }
 
 const CART_STORE_KEY = 'cart';
 const storage = typeof localStorage !== 'undefined' ? localStorage : null;
 
-function createCartStore(startItems: Cart = new Map()): CartStore {
-	let totalAmount = 0;
-	let totalQuantity = 0;
-
-	const items = startItems;
-
+function createCartStore(startItems: CartItems = new Map()): CartStore {
 	const sound = browser ? new Audio('') : null;
 
-	const store = writable<Cart>(items, () => {
+	const cart = {
+		items: startItems,
+		totalAmount: 0,
+		totalQuantity: 0,
+	};
+
+	calculateTotal(cart);
+
+	const store = writable<Cart>(cart, () => {
 		return () => {
 			sound?.pause();
-			storage?.setItem(CART_STORE_KEY, JSON.stringify(items));
+			storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
 		};
 	});
 
@@ -48,59 +55,61 @@ function createCartStore(startItems: Cart = new Map()): CartStore {
 
 	function addItem(item: CartItem) {
 		sound?.play();
-		update(items => {
-			items.set(item.ID, item);
-			calculateTotal(items);
-			return items;
+		update(cart => {
+			cart.items.set(item.ID, item);
+			calculateTotal(cart);
+			return cart;
 		});
 	}
 
 	function removeItem(oldItem: CartItem) {
 		sound?.play();
-		update(items => {
-			items.delete(oldItem.ID || oldItem.name);
-			calculateTotal(items);
-			return items;
+		update(cart => {
+			cart.items.delete(oldItem.ID || oldItem.name);
+			calculateTotal(cart);
+			return cart;
 		});
 	}
 
 	function upadateItem(id: ID, quantity: number) {
 		sound?.play();
-		update(items => {
-			const item = items.get(id);
+		update(cart => {
+			const item = cart.items.get(id);
 			if (item) {
-				items.set(id, {
+				cart.items.set(id, {
 					...item,
 					quantity,
 				});
-				calculateTotal(items);
+				calculateTotal(cart);
 			}
-			return items;
+			return cart;
 		});
 	}
 
 	function removeAll() {
 		sound?.play();
-		update(() => {
-			items.clear();
-			return items;
+		update(cart => {
+			cart.totalQuantity = 0;
+			cart.totalAmount = 0;
+			cart.items.clear();
+			return cart;
 		});
 		// or
 		// store.set(new Map<SKU, CartItem>())
 	}
 
-	function calculateTotal(items: Cart) {
+	function calculateTotal(cart: Cart) {
 		let amount = 0;
 		let quantity = 0;
 
-		for (const [id, item] of items) {
+		for (const [id, item] of cart.items) {
 			amount += item.price * item.quantity;
 			quantity += item.quantity;
 		}
 
-		totalAmount = amount;
-		totalQuantity = quantity;
-		storage?.setItem(CART_STORE_KEY, JSON.stringify(items));
+		cart.totalAmount = amount;
+		cart.totalQuantity = quantity;
+		storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
 	}
 
 	return {
@@ -109,8 +118,6 @@ function createCartStore(startItems: Cart = new Map()): CartStore {
 		addItem,
 		removeAll,
 		upadateItem,
-		totalAmount,
-		totalQuantity,
 	};
 }
 
@@ -122,7 +129,7 @@ function createCartStore(startItems: Cart = new Map()): CartStore {
 // 	return createCartStore(items);
 // })();
 
-const dummyCart: Cart = new Map([
+const dummyCart: CartItems = new Map([
 	[
 		'1312',
 		{
@@ -133,7 +140,8 @@ const dummyCart: Cart = new Map([
 			image: {
 				src: '/burger.webp',
 			},
-			price: 2.3,
+			toppings: [],
+			price: 830,
 			quantity: 1,
 		},
 	],
@@ -147,7 +155,8 @@ const dummyCart: Cart = new Map([
 			image: {
 				src: '/burger.webp',
 			},
-			price: 2.3,
+			toppings: [],
+			price: 890,
 			quantity: 1,
 		},
 	],

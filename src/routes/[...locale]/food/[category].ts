@@ -1,11 +1,12 @@
 import { EDAMAM_API_KEY } from '$lib/server/constants';
 import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
-import type { JSONObject } from '@sveltejs/kit/types/helper';
+import type { JSONObject } from '@sveltejs/kit/types/internal';
 
 const data = new Map();
 
 export async function get(event: RequestEvent): Promise<EndpointOutput> {
 	const { category } = event.params;
+
 	if (!data.has(category)) {
 		console.log('fetching');
 		const res = await fetch(

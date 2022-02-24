@@ -8,16 +8,16 @@
 	export let required = false;
 </script>
 
-<input type="radio" class="theme-radio-btn" {id} {name} {value} {checked} {required} />
+<input type="radio" class="theme-radio" {id} {name} {value} {checked} {required} />
 
 <style lang="scss" global>
-	.theme-radio-btn {
-		--radio-btn-size: 24px;
+	.theme-radio {
+		--radio-size: 24px;
 
 		color: rgba(41, 34, 34, 0.4);
 		border: 4px solid;
-		width: var(--radio-btn-size);
-		height: var(--radio-btn-size);
+		width: var(--radio-size);
+		height: var(--radio-size);
 		transition: all 0.2s ease-in-out;
 		border-radius: 47%;
 		position: relative;
@@ -28,7 +28,7 @@
 
 		&:checked {
 			border-color: var(--accent-color, orange);
-			border-width: calc(var(--radio-btn-size) * 0.32);
+			border-width: calc(var(--radio-size) * 0.32);
 			// background: var(--accent-color, orange);
 		}
 	}

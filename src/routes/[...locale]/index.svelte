@@ -11,6 +11,9 @@
 
 <script lang="ts">
 	import Homepage from '$pages/Homepage.svelte';
+	import { activeRoute } from '$lib/stores/activeRoute';
+
+	activeRoute.setRoute('/');
 
 	export let homePageData: HomepageProps | undefined;
 </script>

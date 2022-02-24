@@ -6,7 +6,7 @@
 		if (session.user) {
 			return {
 				status: 302,
-				redirect: `/${session.locale}/customer`,
+				redirect: `${session.urlLocale}/customer`,
 			};
 		}
 

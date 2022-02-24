@@ -8,14 +8,16 @@
 	export let required = false;
 </script>
 
-<input type="checkbox" class="theme-radio-btn" {id} {name} {value} {checked} {required} />
+<input type="checkbox" class="theme-checkbox" {id} {name} {value} {checked} {required} />
 
 <style lang="scss" global>
-	.theme-radio-btn {
+	.theme-checkbox {
+		--checkbox-size: 24px;
+
 		color: rgba(41, 34, 34, 0.4);
-		border: 3px solid;
-		width: 20px;
-		height: 20px;
+		border: 4px solid;
+		width: var(--checkbox-size);
+		height: var(--checkbox-size);
 		transition: all 0.2s ease-in-out;
 		border-radius: 41%;
 
@@ -25,7 +27,7 @@
 
 		&:checked {
 			border-color: var(--accent-color, orange);
-			border-width: 9px;
+			border-width: calc(var(--checkbox-size) * 0.5);
 		}
 	}
 </style>

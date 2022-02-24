@@ -15,5 +15,8 @@ export default async function (
 
 	return {
 		props: { homePageData },
+		stuff: {
+			activeRoute: '/',
+		},
 	};
 }

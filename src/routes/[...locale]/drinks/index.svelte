@@ -1,8 +1,48 @@
-<script>
-	// your script goes here
+<script lang="ts">
+	import ProductCard from '$lib/components/ProductCard/ProductCard.svelte';
+
+	export let drinks: any[];
+
+	const header = 'Drinks';
 </script>
 
-<!-- markup (zero or more items) goes here -->
-<style>
-	/* your styles go here */
+<h1>{header}</h1>
+<div>
+	{#each drinks as drink}
+		<ProductCard style="flex: 0 1 32%; max-height: 330px" product={drink} />
+	{/each}
+</div>
+
+<style lang="scss">
+	h1 {
+		padding-top: 0.6em;
+		text-align: center;
+		width: 100%;
+	}
+
+	div {
+		--repeat: auto-fill;
+
+		$drink-cars-size: 15.3125em;
+		$grid-gap: 1em;
+		$mq: calc($drink-cars-size * 4 + 3 * $grid-gap);
+
+		display: grid;
+		grid-template-columns: repeat(var(--repeat), $drink-cars-size);
+
+		gap: $grid-gap;
+		padding: 1em;
+		justify-content: center;
+
+		@media screen and (min-width: $mq) {
+			--repeat: 4;
+		}
+
+		:global(img) {
+			margin-top: 1em;
+			margin-bottom: 0.2em;
+			object-fit: contain;
+			height: 11em;
+		}
+	}
 </style>

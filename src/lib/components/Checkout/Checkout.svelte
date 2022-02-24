@@ -102,7 +102,7 @@
 <h1>Checkout</h1>
 
 <div id="checkout">
-	<CartSummary cart={$cart} total={cart.totalAmount} quantity={cart.totalQuantity} />
+	<CartSummary cart={$cart} total={$cart.totalAmount} quantity={$cart.totalQuantity} />
 	<div>
 		{#if canMakePayment}
 			<ExpressPayment stripe={$stripe} {paymentRequest} {elements} />

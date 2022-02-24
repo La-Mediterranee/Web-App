@@ -146,11 +146,6 @@ const preprocess = sveltePreprocess({
 	typescript: {
 		tsconfigFile: './tsconfig.json',
 	},
-	defaults: {
-		markup: 'html',
-		script: 'typescript',
-		style: 'scss',
-	},
 	scss: {
 		includePaths: ['src/styles', 'theme', 'node_modules'],
 	},

@@ -1,21 +1,12 @@
 import { goto } from '$app/navigation';
 
-export function enhance(
-	form: HTMLFormElement,
-	{
-		pending,
-		error,
-		result,
-	}: {
-		pending?: (data: FormData, form: HTMLFormElement) => void;
-		error?: (
-			res: Response | null,
-			error: Error | null,
-			form: HTMLFormElement
-		) => void;
-		result: (res: Response, form: HTMLFormElement) => void;
-	}
-) {
+interface FormEnhance {
+	pending?: (data: FormData, form: HTMLFormElement) => void;
+	error?: (res: Response | null, error: Error | null, form: HTMLFormElement) => void;
+	result: (res: Response, form: HTMLFormElement) => void;
+}
+
+export function enhance(form: HTMLFormElement, { pending, error, result }: FormEnhance) {
 	let current_token: {};
 
 	async function handle_submit(e: Event) {
@@ -25,44 +16,38 @@ export function enhance(
 
 		const elements = Array.from(form.elements) as HTMLInputElement[];
 
-		elements.forEach((e) => {
-			console.log(e.value);
-		});
-
 		const body = new FormData(form);
 		console.log(body.values());
 
-		goto('/checkout');
+		if (pending) pending(body, form);
 
-		return;
+		console.log(form.action);
 
-		// if (pending) pending(body, form);
+		try {
+			const res = await fetch(form.action, {
+				method: form.method,
+				// headers: {
+				// 	accept: 'application/json',
+				// },
+				body,
+			});
 
-		// try {
-		// 	const res = await fetch(form.action, {
-		// 		method: form.method,
-		// 		headers: {
-		// 			accept: 'application/json'
-		// 		},
-		// 		body
-		// 	});
+			if (token !== current_token) return;
 
-		// 	if (token !== current_token) return;
-
-		// 	if (res.ok) {
-		// 		result(res, form);
-		// 	} else if (error) {
-		// 		error(res, null, form);
-		// 	} else {
-		// 		console.error(await res.text());
-		// 	}
-		// } catch (e) {
-		// 	if (error) {
-		// 		error(null, e, form);
-		// 	} else {
-		// 		throw e;
-		// 	}
-		// }
+			if (res.ok) {
+				result(res, form);
+			} else if (error) {
+				error(res, null, form);
+			} else {
+				console.error(await res.text());
+			}
+		} catch (_e) {
+			if (error) {
+				error(null, _e as Error, form);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	form.addEventListener('submit', handle_submit);

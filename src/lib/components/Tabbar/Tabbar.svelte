@@ -1,43 +1,25 @@
-<svelte:options immutable={true} />
-
-<script lang="ts">
-	import t from '$i18n/i18n-svelte';
-	import Icon from 'svelty-material/components/Icon/Icon.svelte';
-
-	import { page } from '$app/stores';
-
+<!-- <svelte:options immutable={true} /> -->
+<script context="module" lang="ts">
 	import type { NavItem } from 'types/index';
 	import type { LocalizedString } from 'typesafe-i18n';
 
-	export let routes: NavItem[];
-	export let locale: string = 'en';
+	export interface TabbarItem extends Omit<NavItem, 'rel'> {
+		isActive: boolean;
+		rel: string | undefined;
+	}
+</script>
 
-	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
-		return {
-			href: `/${locale}${href}`.replace(/\/$/, ''),
-			rel: rel instanceof Array ? rel.join(' ') : rel,
-			icon,
-			pathLabel,
-			size,
-		};
-	});
+<script lang="ts">
+	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 
-	let activeRoute: string;
-	$: activeRoute = $page.url.pathname;
-	$: paths = $t.nav.routes as Record<string, () => LocalizedString>;
+	export let routes: TabbarItem[];
+	export let paths: Record<string, () => LocalizedString>;
 </script>
 
 <nav>
-	{#each _routes as { pathLabel, icon, href, size, rel } (href)}
-		{@const active = activeRoute.startsWith(href)}
-		<a
-			{href}
-			{rel}
-			class="item"
-			class:active
-			title={paths[pathLabel]()}
-			on:click={() => (activeRoute = href)}
-		>
+	{#each routes as { pathLabel, icon, href, size, rel, isActive } (href)}
+		<!-- on:click={() => (activeRoute = href)} -->
+		<a {href} {rel} class="item" class:active={isActive} title={paths[pathLabel]()}>
 			<div class="item-container">
 				<div class="bubble" />
 				<div class="mini-bubble" />
@@ -54,7 +36,7 @@
 				</div>
 			</div>
 			<div class="title-container">
-				{#if active}
+				{#if isActive}
 					<span style="color: var(--tint-color);">
 						{paths[pathLabel]()}
 					</span>

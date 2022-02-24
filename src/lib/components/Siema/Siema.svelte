@@ -138,20 +138,18 @@
 	function scrollToElement(el: HTMLElement | null, offset = 0, dir: 'next' | 'prev' = 'next') {
 		if (!containerInner || !el) return;
 
-		// const clc =
-		// 	el.getBoundingClientRect().width / 2 - containerInner.getBoundingClientRect().width / 2;
-		// const newScrollPosition = el.offsetLeft + clc;
+		const css = getComputedStyle(container);
 
-		// containerInner.scroll({
-		// 	left: el.offsetLeft + offset,
-		// 	behavior: 'smooth',
-		// });
-
-		el.scrollIntoView({
+		containerInner.scroll({
+			left: el.offsetLeft + offset - parseInt(css.paddingInlineStart || css.paddingLeft),
 			behavior: 'smooth',
-			inline: dir === 'next' ? 'start' : 'end',
-			block: 'nearest',
 		});
+
+		// el.scrollIntoView({
+		// 	behavior: 'smooth',
+		// 	inline: dir === 'next' ? 'start' : 'end',
+		// 	block: 'nearest',
+		// });
 	}
 
 	function scroll(e: Event) {
@@ -217,7 +215,7 @@
 		// if writing mode is set to something else
 		writing-mode: horizontal-tb;
 		touch-action: pan-y;
-		padding: var(--siema-container-padding, 0 1em);
+		margin: var(--siema-container-padding, 0 1em);
 	}
 
 	.inner {

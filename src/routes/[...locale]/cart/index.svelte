@@ -8,6 +8,12 @@
 	import CartPage from '$lib/components/Cart';
 
 	import { cart } from '$lib/stores/cart';
+
+	console.debug();
 </script>
 
-<CartPage cart={$cart} />
+<svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
+<CartPage store={cart} cart={$cart} />

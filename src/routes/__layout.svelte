@@ -12,7 +12,7 @@
 	import type { Locales } from '$i18n/i18n-types';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
-	export async function load({ session }: LoadInput): Promise<LoadOutput> {
+	export async function load({ session, params, url }: LoadInput): Promise<LoadOutput> {
 		return {
 			props: {
 				lang: session.locale,

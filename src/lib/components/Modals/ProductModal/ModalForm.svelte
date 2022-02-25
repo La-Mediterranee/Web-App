@@ -41,7 +41,9 @@
 					{@const id = `${topping.ID}-${option.ID}`.toLowerCase()}
 					<div class="topping-item">
 						<label for={id}>
-							{#if topping.qtyMin === 1}
+							<!-- {#if topping.qtyMin === 1 && topping.qtyMax === 1} -->
+							<!-- because qtyMax can only be one -->
+							{#if (topping.qtyMax & topping.qtyMin) | topping.qtyMin}
 								<RadioButton {id} name={topping.name} value={option.ID} required />
 							{:else}
 								<Checkbox

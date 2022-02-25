@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	import type { User } from 'firebase/auth';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	type Rec<T = any> = Record<string, T>;
 

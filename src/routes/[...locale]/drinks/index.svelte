@@ -9,7 +9,7 @@
 <h1>{header}</h1>
 <div>
 	{#each drinks as drink}
-		<ProductCard style="flex: 0 1 32%; max-height: 330px" product={drink} />
+		<ProductCard style="flex: 0 1 32%;" product={drink} />
 	{/each}
 </div>
 
@@ -24,14 +24,14 @@
 		--repeat: auto-fill;
 
 		$drink-cars-size: 15.3125em;
-		$grid-gap: 1em;
+		$grid-gap: 1.2em;
 		$mq: calc($drink-cars-size * 4 + 3 * $grid-gap);
 
 		display: grid;
 		grid-template-columns: repeat(var(--repeat), $drink-cars-size);
 
 		gap: $grid-gap;
-		padding: 1em;
+		padding: 1em 0.4em;
 		justify-content: center;
 
 		@media screen and (min-width: $mq) {

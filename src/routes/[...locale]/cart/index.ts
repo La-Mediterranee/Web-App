@@ -1,4 +1,4 @@
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
 
 // export async function get() {}
 

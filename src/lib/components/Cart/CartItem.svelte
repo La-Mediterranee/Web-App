@@ -1,8 +1,34 @@
 <svelte:options immutable />
 
+<script context="module" lang="ts">
+	export const animationDuration = 600;
+
+	const [send, receive] = crossfade({
+		duration: d => Math.sqrt(d * 200),
+
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: animationDuration,
+				easing: quintOut,
+				css: t => `
+					transform: ${transform} scale(${t});
+					opacity: ${t};
+				`,
+			};
+		},
+	});
+</script>
+
 <script lang="ts">
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Input from 'svelty-material/components/Input/Input.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
+
+	import { quintOut } from 'svelte/easing';
+	import { crossfade } from 'svelte/transition';
 
 	import { trash } from '$lib/Icons/filled';
 
@@ -30,7 +56,7 @@
 	<span class="price" itemprop="price" content={`price`}>{sum}</span>
 </div> -->
 
-<tr>
+<tr in:receive={{ key: item.ID }} out:send={{ key: item.ID }}>
 	<th scope="row" title="Produkt">
 		<div>
 			<img src={image.src} alt={image.alt} />
@@ -41,10 +67,12 @@
 	</th>
 	<td title="Anzahl">
 		<Input>
+			<!-- pattern="[0-9]*" -->
 			<input
 				id="quantity"
-				type="number"
 				min="1"
+				max="10"
+				type="number"
 				inputmode="numeric"
 				on:change={e => update(e)}
 				bind:value={qty}
@@ -61,9 +89,9 @@
 	</td>
 	<!-- <td title="Teilsumme"><span>{sum}</span></td> -->
 	<td>
-		<button on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
+		<Button icon on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
 			<Icon path={trash} />
-		</button>
+		</Button>
 	</td>
 </tr>
 

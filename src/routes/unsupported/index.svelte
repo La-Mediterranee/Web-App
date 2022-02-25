@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
 
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ session }: LoadInput): Promise<LoadOutput> {
 		await loadLocaleAsync(session.locale);

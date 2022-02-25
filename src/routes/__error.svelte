@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	// import type { HttpStatusCode } from 'types/index';
-	import type { ErrorLoadInput } from '@sveltejs/kit';
+	import type { ErrorLoadInput } from '@sveltejs/kit/types/internal';
 
 	type HttpStatusCode = number;
 

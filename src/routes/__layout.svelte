@@ -10,7 +10,7 @@
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	import type { Locales } from '$i18n/i18n-types';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ session, params, url }: LoadInput): Promise<LoadOutput> {
 		return {

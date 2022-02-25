@@ -1,4 +1,4 @@
-import type { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit/types/internal';
 
 export async function get(req: RequestEvent) {
 	const sessionId = '1234';

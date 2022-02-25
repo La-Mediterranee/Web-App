@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 	import type { WithContext, Product as DTSProduct } from 'schema-dts';
 	import type { Product } from 'types/product';
 

@@ -1,6 +1,6 @@
 import { EDAMAM_API_KEY } from '$lib/server/constants';
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
-import type { JSONObject } from '@sveltejs/kit/types/internal';
+
+import type { EndpointOutput, RequestEvent, JSONObject } from '@sveltejs/kit/types/internal';
 
 const data = new Map();
 

@@ -9,6 +9,7 @@
 <script lang="ts">
 	import t from '$i18n/i18n-svelte';
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import Link from 'svelty-material/components/Button/Link.svelte';
 
 	export let routes: NavItem[] = [];
 	export let locale: string = 'en';
@@ -26,7 +27,8 @@
 	$: paths = $t.nav.routes as Record<string, () => LocalizedString>;
 </script>
 
-<header id="top-bar">
+<header id="top-bar" itemscope itemtype="https://schema.org/WPHeader">
+	<a href="#main-start" class="skip-main">Skip to main</a>
 	<div id="nav-logo">
 		<a href={`${$session.urlLocale || '/'}`}>
 			<img src="/Logos/V1_210.webp" aria-hidden="true" alt="" />
@@ -34,7 +36,11 @@
 		</a>
 	</div>
 
-	<nav aria-label={`${$t.nav.navbarAriaLabel()}`}>
+	<nav
+		aria-label={`${$t.nav.navbarAriaLabel()}`}
+		itemscope
+		itemtype="https://schema.org/SiteNavigationElement"
+	>
 		<ul>
 			{#each _routes as { pathLabel, icon, href, rel, size } (href)}
 				<li class="nav-item">
@@ -72,14 +78,18 @@
 				/>
 			</a>
 		{:else}
-			<a href={`${$session.urlLocale}/customer/login`}>{$t.customer.login()}</a>
+			<Link text href={`${$session.urlLocale}/customer/login`} sveltekit:prefetch>
+				<!-- <Icon path={mdiCart} /> -->
+				<span>{$t.customer.login()}</span>
+			</Link>
+			<!-- <a href={`${$session.urlLocale}/customer/login`}>{$t.customer.login()}</a> -->
 		{/if}
 	</div>
 	<div class="cart">
-		<a href={`${$session.urlLocale}/cart`} sveltekit:prefetch>
+		<Link icon size="large" href={`${$session.urlLocale}/cart`} sveltekit:prefetch>
 			<Icon path={mdiCart} />
 			<span class="visually-hidden">{$t.cart.cart()}</span>
-		</a>
+		</Link>
 	</div>
 </header>
 
@@ -90,6 +100,21 @@
 	a {
 		color: inherit;
 		text-decoration: none;
+	}
+
+	.skip-main {
+		padding: 8px;
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		transform: translateY(-100%);
+		background: var(--theme-app-bar);
+
+		z-index: 101;
+
+		&:focus {
+			transform: translateY(0);
+		}
 	}
 
 	// nav,
@@ -134,7 +159,7 @@
 	}
 
 	nav {
-		width: 88%;
+		flex: 0 1 88%;
 		justify-content: flex-end;
 
 		@media (min-width: map-get($map: $breakpoints, $key: md)) {
@@ -182,7 +207,7 @@
 	}
 
 	#avatar {
-		width: 65px;
+		flex: 1 0 65px;
 		height: 100%;
 		display: flex;
 		align-items: center;

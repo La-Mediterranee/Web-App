@@ -112,8 +112,13 @@ body {
 }
 
 main {
+	--carousel-nav-btn-display: none;
 	// min-height: 90vh;
 	position: relative;
+
+	@media (any-hover: hover) {
+		--carousel-nav-btn-display: initial;
+	}
 }
 
 .theme--custom {
@@ -223,6 +228,13 @@ a {
 	letter-spacing: 0.0073529412em !important;
 }
 
+.h5 {
+	font-size: 1.8rem !important;
+	font-weight: 400 !important;
+	line-height: 2.5rem !important;
+	letter-spacing: 0.0073529412em !important;
+}
+
 .justify-center {
 	justify-content: center !important;
 }
@@ -289,7 +301,8 @@ a {
 
 h1,
 h2,
-h3 {
+h3,
+main {
 	&[id]::before {
 		display: block;
 		content: ' ';

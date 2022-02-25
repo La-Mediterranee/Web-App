@@ -93,6 +93,7 @@ span {
 		height: 30px;
 		margin-right: 1.2em;
 	}
+
 	span {
 		font-weight: bold;
 		// margin: auto;
@@ -119,7 +120,7 @@ span {
 	}
 
 	:global(.icon) {
-		position: absolute;
+		// position: absolute;
 		padding: 3px;
 		min-width: 40px;
 		color: #000;

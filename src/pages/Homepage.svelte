@@ -71,7 +71,6 @@
 		--siema-item-min-width: 235px;
 		--siema-content-max-width: 1200px;
 		--siema-item-scroll-margin: 0; //14px
-		--siema-scroll-snap-align: start;
 
 		:global(.item) {
 			// --siema-content-padding: 0 14px;

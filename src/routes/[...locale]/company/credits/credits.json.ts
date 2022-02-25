@@ -1,4 +1,4 @@
-import type { EndpointOutput } from '@sveltejs/kit';
+import type { EndpointOutput } from '@sveltejs/kit/types/internal';
 
 const credits = {
 	posts: {

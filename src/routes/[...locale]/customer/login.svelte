@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	export const prerender = true;
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ session }: LoadInput): Promise<LoadOutput> {
 		if (session.user) {

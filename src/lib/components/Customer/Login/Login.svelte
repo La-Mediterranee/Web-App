@@ -243,14 +243,16 @@
 						<Icon style="color:#fff" path={key} />
 					</div>
 					Passwort
-					<div
-						slot="append"
-						on:click={() => {
-							show = !show;
-						}}
-					>
-						<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
-					</div>
+					<svelte:fragment slot="append">
+						<Button
+							icon
+							on:click={() => {
+								show = !show;
+							}}
+						>
+							<Icon style="cursor: pointer; color:#fff;" path={show ? eye : eyeOff} />
+						</Button>
+					</svelte:fragment>
 				</TextField>
 			</div>
 

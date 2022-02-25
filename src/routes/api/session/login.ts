@@ -2,7 +2,7 @@ import { baseLocale } from '$i18n/i18n-util';
 import { auth, firebase } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
 
 export interface SessionLogin {
 	idToken: string;

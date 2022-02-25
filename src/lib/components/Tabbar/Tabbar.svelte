@@ -11,12 +11,13 @@
 
 <script lang="ts">
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
 
 	export let routes: TabbarItem[];
 	export let paths: Record<string, () => LocalizedString>;
 </script>
 
-<nav>
+<nav itemscope itemtype="https://schema.org/SiteNavigationElement">
 	{#each routes as { pathLabel, icon, href, size, rel, isActive } (href)}
 		<!-- on:click={() => (activeRoute = href)} -->
 		<a {href} {rel} class="item" class:active={isActive} title={paths[pathLabel]()}>

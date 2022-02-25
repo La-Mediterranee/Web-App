@@ -2,8 +2,7 @@ import { auth } from './firebase';
 import { serialize } from './cookie';
 
 import type { Options } from './cookie';
-import type { EndpointOutput } from '@sveltejs/kit';
-import type { ResponseHeaders } from '@sveltejs/kit/types/internal';
+import type { ResponseHeaders, EndpointOutput } from '@sveltejs/kit/types/internal';
 
 /**
  * Decodes the JSON Web Token sent via the frontend app.

@@ -23,6 +23,8 @@ export interface Topping {
 export interface Image {
 	readonly src: string;
 	readonly alt?: string;
+	readonly width?: number;
+	readonly height?: number;
 }
 
 export interface Product {
@@ -43,4 +45,5 @@ export interface Product {
 
 export interface CartItem extends Product {
 	quantity: number;
+	selectedToppings: ToppingOption[];
 }

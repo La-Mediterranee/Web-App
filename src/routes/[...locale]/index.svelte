@@ -2,7 +2,7 @@
 	import { homepageLoader } from '$loaders';
 
 	import type { HomepageProps } from '../api/homepage';
-	import type { LoadInput } from '@sveltejs/kit';
+	import type { LoadInput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ fetch }: LoadInput) {
 		return homepageLoader(fetch);

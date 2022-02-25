@@ -3,7 +3,7 @@
 
 	import About from '$pages/About.svelte';
 
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 	// we don't need any JS on this page, though we'll load
 	// it in dev so that we get hot module replacement...
 	export const hydrate = dev;

@@ -1,6 +1,6 @@
 import { clearCookie } from '$lib/server/helper';
 
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
 
 // export async function post(req: RequestEvent): Promise<EndpointOutput> {
 // 	req.locals.user = null;

@@ -119,4 +119,10 @@ export function getFlagEmoji(countryCode: string): string {
 	return String.fromCodePoint.apply(null, codePoints);
 }
 
+export async function promiseTimeout(ms: number): Promise<number | NodeJS.Timeout> {
+	return new Promise(resolve => {
+		const id: NodeJS.Timeout | number = setTimeout(() => resolve(id), ms);
+	});
+}
+
 export * from './helper';

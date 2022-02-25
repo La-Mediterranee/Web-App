@@ -22,8 +22,9 @@
 	@import 'svelty-material/styles/tools/colors';
 
 	.category {
+		text-align: end;
 		position: relative;
-		flex: 0 1 50%;
+		flex: 0 1 100%;
 
 		:global(.s-card) {
 			height: inherit;
@@ -46,8 +47,12 @@
 			text-transform: uppercase;
 		}
 
-		@media screen and (min-width: 600px) {
+		@media screen and (min-width: 540px) {
+			flex: 0 1 50%;
+
 			&:nth-child(2n) {
+				text-align: start;
+
 				span {
 					top: unset;
 					right: unset;
@@ -60,6 +65,8 @@
 
 	@media screen and (min-width: 1200px) {
 		.category {
+			flex: 0 1 33%;
+
 			&:nth-child(4n + 3),
 			&:nth-child(4n + 4) {
 				:global(.card-content) {

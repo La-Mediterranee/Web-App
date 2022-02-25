@@ -6,7 +6,7 @@ export const activeRoute = (() => {
 	return {
 		subscribe,
 		setRoute: (route: string) => {
-			console.debug('setting route:', route);
+			// console.debug('setting route:', route);
 			set(route);
 		},
 	};

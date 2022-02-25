@@ -24,7 +24,7 @@
 		opacity: 0;
 		cursor: pointer;
 		position: absolute;
-		display: flex;
+		display: var(--carousel-nav-btn-display, flex);
 
 		top: 50%;
 		z-index: 5;

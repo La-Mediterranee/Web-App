@@ -1,6 +1,6 @@
 <script></script>
 
-<footer>
+<footer id="page-footer" itemscope itemtype="https://schema.org/WPFooter">
 	<svg
 		id="footer-wave"
 		aria-hidden="true"
@@ -56,14 +56,14 @@
 <style lang="scss" global>
 	@use 'variables' as *;
 
-	footer {
+	#page-footer {
 		display: flex;
 		position: relative;
 		text-align: center;
 
 		width: 100%;
 		height: 100%;
-		margin-top: 5em;
+		margin-top: 5.3em;
 
 		#footer-wave {
 			display: block;

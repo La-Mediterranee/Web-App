@@ -1,13 +1,14 @@
 <script lang="ts">
 	import Button from 'svelty-material/components/Button/Button.svelte';
 
-	import CartItemComponent from './CartItem.svelte';
+	import CartItemComponent, { animationDuration } from './CartItem.svelte';
 
 	import { goto } from '$app/navigation';
 
 	import { enhance } from './action';
 
 	import type { Cart, CartStore } from '$lib/stores/cart';
+	import { promiseTimeout } from '$lib/utils';
 
 	export let cart: Cart;
 	export let store: CartStore;
@@ -25,11 +26,13 @@
 	]; //'Teilsumme',
 </script>
 
-<h1>Warenkorb</h1>
+<h1 id="main-start">Warenkorb</h1>
 
 <div id="cart">
 	{#if cart.totalQuantity === 0}
-		<p>No items in cart yet.</p>
+		{#await promiseTimeout(animationDuration) then _}
+			<p>No items in cart yet.</p>
+		{/await}
 	{:else}
 		<form
 			method="post"
@@ -68,10 +71,6 @@
 							deleteItem={() => store.removeItem(item)}
 						/>
 					{/each}
-
-					<!-- {#each [...$cart] as [SKU, item] (SKU)}
-						<CartItemComponent {item} />
-					{/each} -->
 				</tbody>
 				<tfoot>
 					<tr>
@@ -101,6 +100,11 @@
 <style lang="scss">
 	#cart {
 		display: block;
+		text-align: center;
+
+		p {
+			padding: 2em 0;
+		}
 	}
 
 	h1 {

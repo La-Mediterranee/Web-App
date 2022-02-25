@@ -11,7 +11,7 @@
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	import type { Locales } from '$i18n/i18n-types';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { LoadInput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
 		const locale = params.locale as Locales;
@@ -54,7 +54,6 @@
 
 <script lang="ts">
 	// import { metatags } from '$lib/stores/metatags';
-	import rtl from '$stores/rtl';
 	import t from '$i18n/i18n-svelte';
 	import metatags from '$lib/stores/seo/metatags';
 
@@ -69,6 +68,7 @@
 	import { activeRoute } from '$lib/stores/activeRoute';
 
 	import type { TabbarItem } from '$lib/components/Tabbar/Tabbar.svelte';
+	import type { LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
@@ -76,7 +76,6 @@
 
 	let online: boolean = true;
 
-	$rtl = dir === 'rtl';
 	setLocale(lang);
 
 	let tabbarRoutes: TabbarItem[];
@@ -88,7 +87,7 @@
 			pathLabel,
 			size,
 			// prettier-ignore
-			isActive: (href === $activeRoute) || false,
+			isActive: (href === $page.stuff.activeRoute) || false,
 		};
 	});
 
@@ -144,7 +143,7 @@
 		<Navbar locale={urlLocale} routes={desktopNavItems} />
 		<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
 		<div class="inner-content">
-			<main>
+			<main class="margin-navbar">
 				<slot />
 			</main>
 			<Footer />

@@ -65,7 +65,7 @@
 			],
 		});
 
-		paymentRequest = createPaymentRequest(stripe as Stripe, cart.totalAmount, 'Bestellung', [
+		paymentRequest = createPaymentRequest(stripe as Stripe, $cart.totalAmount, 'Bestellung', [
 			{
 				id: 'free-delivery',
 				label: 'Gratis Lieferung',
@@ -76,7 +76,7 @@
 				id: 'tip',
 				label: 'Trinkgeld',
 				detail: 'Trinkgeld',
-				amount: cart.totalAmount * 1.05,
+				amount: $cart.totalAmount * 1.05,
 			},
 		]);
 

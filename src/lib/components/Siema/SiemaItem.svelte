@@ -8,7 +8,10 @@
 		margin: var(--siema-item-margin, 0.5em 0);
 		// margin-inline-start: 0.5rem;
 		// margin-inline-end: 0.5rem;
-		min-width: var(--siema-item-width, 100%);
+		flex: 1 0 var(--siema-item-width, 100%);
+		width: var(--siema-item-width, 100%);
+		// min-width: var(--siema-item-width, 100%);
+
 		max-width: var(--siema-item-max-width, 100%);
 		// width: var(--siema-item-width, 100%);
 		// min-width: var(--siema-item-min-width);
@@ -23,7 +26,7 @@
 			padding-inline-end: 0;
 		}
 
-		$snap-margin: 0 2em;
+		$snap-margin: 0 0.4em;
 		@supports (scroll-margin: 0) or (scroll-snap-margin: 0) {
 			scroll-margin: var(--siema-item-scroll-margin, $snap-margin);
 			scroll-snap-margin: var(--siema-item-scroll-margin, $snap-margin);

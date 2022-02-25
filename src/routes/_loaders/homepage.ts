@@ -1,4 +1,4 @@
-import type { LoadOutput } from '@sveltejs/kit';
+import type { LoadOutput } from '@sveltejs/kit/types/internal';
 import type { HomepageProps } from '../api/homepage';
 
 interface HomepageLoaderInput {

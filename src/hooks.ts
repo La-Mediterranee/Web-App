@@ -11,9 +11,10 @@ import { refreshSessionCookie, setCookie } from '$lib/server/helper';
 import { attachCsrfToken } from '$lib/server/csrf';
 
 import type { AuthError } from 'firebase/auth';
-import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { Locale } from 'typesafe-i18n/types/core';
 import type { LocaleDetector } from 'typesafe-i18n/detectors';
+import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
+
 import type { BaseLocale } from '$i18n/i18n-types';
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;

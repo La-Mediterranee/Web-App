@@ -1,4 +1,4 @@
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
 import type { JSONObject } from '@sveltejs/kit/types/internal';
 
 const categories: Record<Locales, string[]> = {

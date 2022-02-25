@@ -78,7 +78,7 @@
 				height={image.height || '181'}
 			/>
 
-			<CardTitle itemprop="name" style="height: 2.4em;" class="d-flex justify-center h4">
+			<div itemprop="name" class="title">
 				<a
 					href="./product/{product.ID}"
 					tabindex={isVisible ? undefined : -1}
@@ -89,7 +89,7 @@
 					on:blur={() => (tabindex = -1)} -->
 					{name}
 				</a>
-			</CardTitle>
+			</div>
 
 			<div class="content">
 				<p class="price">
@@ -167,9 +167,13 @@
 			text-align: center;
 		}
 
-		:global(.s-card-title) {
-			// padding: 0 1em;
-			padding: 0;
+		.title {
+			display: flex;
+			padding: 0 0.3em;
+			height: 2.4em;
+			font-size: 1.8rem;
+			justify-content: center;
+			align-items: center;
 		}
 
 		.inner-card {
@@ -259,8 +263,6 @@
 		}
 
 		.actionsContainer {
-			all: unset;
-
 			width: 100%;
 			padding-top: 2em;
 			position: relative;
@@ -296,11 +298,11 @@
 		}
 
 		.price {
-			font-size: 1.2rem;
+			font-size: 1.4rem;
 			padding: 0 0 0.3em 0;
 		}
 
-		@media (hover: hover) and (pointer: fine) {
+		@media (any-hover: hover) and (pointer: fine) {
 			.actionsContainer {
 				left: 0;
 				bottom: 0;
@@ -339,8 +341,8 @@
 				}
 			}
 
-			&:focus-within a.s-btn {
-				box-shadow: 0 0 0 3px var(--theme-focus-visible);
+			&:focus-within .s-btn::before {
+				opacity: var(--s-btn-focus-opacity, 0.24);
 			}
 		}
 	}

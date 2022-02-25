@@ -60,7 +60,8 @@
 		function updateCalc() {
 			const rect = node.getBoundingClientRect();
 
-			const children = Array.from(node.children[0]?.children);
+			// const children = Array.from(node.children[0]?.children);
+			const children = Array.from(node.children);
 			const visibleElements = (children as HTMLElement[]).filter((child, i) => {
 				const childRect = child.getBoundingClientRect();
 
@@ -191,13 +192,13 @@
 	</slot>
 
 	<div class="inner" bind:this={containerInner} use:position>
-		<div class="content">
-			{#each items as item, i}
-				<SiemaItem>
-					<slot {item} visible={itemsVisibility[i]} />
-				</SiemaItem>
-			{/each}
-		</div>
+		{#each items as item, i}
+			<SiemaItem>
+				<slot {item} visible={itemsVisibility[i]} />
+			</SiemaItem>
+		{/each}
+		<!-- <div class="content">
+		</div> -->
 	</div>
 
 	<slot name="right" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'prev' : 'next'}>
@@ -219,11 +220,18 @@
 	}
 
 	.inner {
-		overflow-x: scroll;
+		display: flex;
+		flex-wrap: nowrap;
+
 		white-space: nowrap;
+
+		overflow-x: scroll;
 		scroll-behavior: smooth;
 		scroll-snap-type: x var(--siema-scroll-snap, x mandatory);
 		padding: var(--siema-inner-padding);
+		// max-width: var(--siema-content-max-width);
+		width: 100vw;
+		height: auto;
 
 		scrollbar-width: none;
 

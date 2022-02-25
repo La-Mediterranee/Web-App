@@ -1,10 +1,10 @@
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
-
 import { promisify } from 'util';
 import { randomUUID } from 'crypto';
 
-import type { Product } from 'types/product';
 import { SERVER_PORT } from '$lib/server/constants';
+
+import type { Product } from 'types/product';
+import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
 
 interface GetBody {
 	product?: Product;

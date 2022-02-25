@@ -4,9 +4,8 @@ import { randomUUID } from 'crypto';
 import { SERVER_PORT } from '$lib/server/constants';
 
 import type { Product } from 'types/product';
-import type { JSONObject } from '@sveltejs/kit/types/internal';
 import type { WithContext, Product as DTSProduct } from 'schema-dts';
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit';
+import type { EndpointOutput, RequestEvent, JSONObject } from '@sveltejs/kit/types/internal';
 
 interface GetBody {
 	product: Product;

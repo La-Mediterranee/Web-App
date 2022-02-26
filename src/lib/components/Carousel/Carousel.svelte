@@ -18,7 +18,7 @@
 </script>
 
 <script lang="ts">
-	import SiemaItem from './SiemaItem.svelte';
+	import SiemaItem from './CarouselItem.svelte';
 	import LeftButton from './LeftButton.svelte';
 	import RightButton from './RightButton.svelte';
 
@@ -45,7 +45,7 @@
 	export let rtl: boolean = false;
 
 	let container: HTMLDivElement;
-	let containerInner: HTMLDivElement;
+	let containerInner: HTMLUListElement;
 	let prevElement: HTMLElement | null = null;
 	let nextElement: HTMLElement | null = null;
 	let scrollDir: 'prev' | 'next';
@@ -191,7 +191,7 @@
 		<LeftButton {scroll} {setKeyboardFocus} value={rtl ? 'next' : 'prev'} />
 	</slot>
 
-	<div class="inner" bind:this={containerInner} use:position>
+	<ul class="inner" bind:this={containerInner} use:position>
 		{#each items as item, i}
 			<SiemaItem>
 				<slot {item} visible={itemsVisibility[i]} />
@@ -199,7 +199,7 @@
 		{/each}
 		<!-- <div class="content">
 		</div> -->
-	</div>
+	</ul>
 
 	<slot name="right" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'prev' : 'next'}>
 		<RightButton {scroll} {setKeyboardFocus} value={rtl ? 'prev' : 'next'} />
@@ -216,22 +216,19 @@
 		// if writing mode is set to something else
 		writing-mode: horizontal-tb;
 		touch-action: pan-y;
-		margin: var(--siema-container-padding, 0 1em);
+		margin: var(--carousel-container-padding, 0 1em);
 	}
 
 	.inner {
-		display: flex;
-		flex-wrap: nowrap;
+		list-style: none;
+		display: inline-flex;
+		overflow-x: auto;
+		justify-content: flex-start;
 
-		white-space: nowrap;
-
-		overflow-x: scroll;
 		scroll-behavior: smooth;
-		scroll-snap-type: x var(--siema-scroll-snap, x mandatory);
-		padding: var(--siema-inner-padding);
-		// max-width: var(--siema-content-max-width);
-		width: 100vw;
-		height: auto;
+		scroll-snap-type: var(--carousel-scroll-snap, x mandatory);
+		padding: var(--carousel-inner-padding);
+		// max-width: var(--carousel-content-max-width);
 
 		scrollbar-width: none;
 
@@ -247,9 +244,9 @@
 		// margin-left: auto;
 		// margin-right: auto;
 		// width: 100%;
-		max-width: var(--siema-content-max-width);
+		max-width: var(--carousel-content-max-width);
 
-		padding: var(--siema-content-padding);
+		padding: var(--carousel-content-padding);
 		// margin-inline-start: -1rem;
 	}
 </style>

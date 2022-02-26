@@ -23,6 +23,6 @@
 	svg {
 		width: var(--siema-right-arrow-size, 30px);
 		height: var(--siema-right-arrow-size, 30px);
-		stroke: var(--siema-right-arrow-color, #000);
+		stroke: var(--siema-right-arrow-color, #fff);
 	}
 </style>

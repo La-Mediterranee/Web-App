@@ -50,6 +50,8 @@
 	}
 }  */
 
+@import 'svelty-material/components/Button/Button';
+
 $mediaqueries: (
 	mobile-only: 'only screen and (max-width: 767px)',
 	mobile-and-tablet: 'only screen and (max-width: 1190px)',
@@ -113,18 +115,21 @@ body {
 
 main {
 	--carousel-nav-btn-display: none;
+	--carousel-scroll-snap-align: center;
 	// min-height: 90vh;
 	position: relative;
 
 	@media (any-hover: hover) {
 		--carousel-nav-btn-display: initial;
+		--carousel-scroll-snap-align: initial;
 	}
 }
 
 .theme--custom {
 	/* --tint-color: #729abe; */
 	--tint-color: #83a5c3;
-	--accent-color: #dd3900;
+	// --accent-color: #dd3900;
+	--accent-color: #cc4619;
 	--modal-bg: white;
 	--tab-bar-height: 60px;
 	--tab-bar-active-height: calc(var(--tab-bar-height) + calc(var(--tab-bar-height) * 0.5));

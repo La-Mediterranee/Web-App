@@ -10,7 +10,7 @@
 <button
 	{value}
 	type="button"
-	class="carousel-nav-btn {klass}"
+	class="s-btn carousel-nav-btn {klass}"
 	class:left={side === 'left'}
 	class:right={side === 'right'}
 	on:focus={setKeyboardFocus}
@@ -20,7 +20,7 @@
 </button>
 
 <style lang="scss" global>
-	.carousel-nav-btn {
+	.s-btn.carousel-nav-btn {
 		opacity: 0;
 		cursor: pointer;
 		position: absolute;
@@ -30,12 +30,16 @@
 		z-index: 5;
 		padding: 0.5rem;
 		font-size: 2.5vw;
-		border-radius: 0.4em;
+		border-radius: 0.5em;
 
-		background: white;
+		background: var(--accent-color);
 		border: none;
 		will-change: transform, opacity;
 		transition: transform 0.1s ease-in-out, opacity 0.2s ease-out;
+
+		&::before {
+			z-index: 6;
+		}
 
 		&:focus-visible {
 			transition: opacity 0.2s ease-in;

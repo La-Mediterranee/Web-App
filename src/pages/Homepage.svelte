@@ -8,7 +8,7 @@
 
 <script lang="ts">
 	import t from '$i18n/i18n-svelte';
-	import Siema from '$components/Siema';
+	import Siema from '$lib/components/Carousel';
 	import ProductCard from '$components/ProductCard';
 
 	import { rtl } from '$stores/rtl';
@@ -67,13 +67,13 @@
 	.section-carousel {
 		max-width: 1200px;
 
-		--siema-item-width: 270px;
-		--siema-item-min-width: 235px;
-		--siema-content-max-width: 1200px;
-		--siema-item-scroll-margin: 0; //14px
+		--carousel-item-width: 270px;
+		--carousel-item-min-width: 235px;
+		--carousel-content-max-width: 1200px;
+		--carousel-item-scroll-margin: 40px;
 
 		:global(.item) {
-			// --siema-content-padding: 0 14px;
+			// --carousel-content-padding: 0 14px;
 
 			&:first-child {
 				padding-inline-start: 10px;

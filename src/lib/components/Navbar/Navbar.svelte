@@ -133,10 +133,6 @@
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
 
-		:global(.has-scrollbar.no-scroll) & {
-			width: calc(100% - 17px);
-		}
-
 		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {
 			padding: 0.3em 0.5em;
 		}

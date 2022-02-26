@@ -21,8 +21,8 @@
 
 <style lang="scss">
 	svg {
-		width: var(--siema-left-arrow-size, 30px);
-		height: var(--siema-left-arrow-size, 30px);
-		stroke: var(--siema-left-arrow-color, #000);
+		width: var(--carousel-left-arrow-size, 30px);
+		height: var(--carousel-left-arrow-size, 30px);
+		stroke: var(--carousel-left-arrow-color, #fff);
 	}
 </style>

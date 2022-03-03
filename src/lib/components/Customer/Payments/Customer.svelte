@@ -2,7 +2,7 @@
 	//@ts-nocheck
 	import CreditCard from '$components/CreditCard/CreditCardPlaceholder.svelte';
 	import SignOut from '$components/Buttons/SignOut.svelte';
-	import { fetchFromAPI, getStripeContext } from '$lib/utils/helper';
+	import { fetchFromAPI, getStripeContext } from '$lib/utils';
 	import { getAuthContext } from '$lib/firebase/helpers';
 
 	import type { SetupIntent } from '@stripe/stripe-js';

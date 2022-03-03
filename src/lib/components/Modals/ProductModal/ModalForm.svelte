@@ -95,28 +95,28 @@
 		<div class="amount-container">
 			<Button
 				size="small"
-				style="font-size: 1.5em"
 				class="form-elements-color"
 				disabled={quantitiy <= 1 || quantitiy == null}
 				fab
 				on:click={() => quantitiy--}
 			>
-				-
+				<span style="font-size: 2.8rem; font-weight:400"> - </span>
 			</Button>
 			<label for="amount" class="visually-hidden">{AmountLabel}</label>
-			<input id="amount" type="number" inputmode="numeric" bind:value={quantitiy} min="1" />
-			<Button
-				size="small"
-				class="form-elements-color"
-				style="font-size: 1.5em"
-				fab
-				on:click={() => quantitiy++}
-			>
-				+
+			<input
+				id="amount"
+				type="number"
+				inputmode="numeric"
+				min="1"
+				max="10"
+				bind:value={quantitiy}
+			/>
+			<Button size="small" class="form-elements-color" fab on:click={() => quantitiy++}>
+				<span style="font-size: 2.8rem; font-weight:400"> + </span>
 			</Button>
 		</div>
 
-		<Button type="submit" class="form-elements-color" disabled={!valid} rounded>
+		<Button text type="submit" class="form-elements-color" disabled={!valid} rounded>
 			<span class="add-to-cart-text">{addToCartBtnText}</span>
 		</Button>
 	</div>
@@ -137,6 +137,8 @@
 	.amount-container {
 		font-weight: bold;
 		color: #fff;
+		// margin-bottom: 0.8rem;
+		display: flex;
 	}
 
 	#product-modal {
@@ -147,7 +149,6 @@
 		flex-direction: column;
 		position: relative;
 
-		padding: var(--container-padding);
 		flex: 0 0 calc(100% - var(--aside-width));
 
 		color: #fff;
@@ -225,19 +226,19 @@
 
 		.add-to-cart-text {
 			color: inherit;
-			font-size: 1.2em;
-			font-weight: 600;
+			font-size: 0.9em;
+			font-weight: bold;
 		}
 
 		.actions {
-			height: var(--actions-height);
+			// height: var(--actions-height);
 
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 
 			padding: 0.7em;
-			margin-top: 0.6em;
+			margin: 0.6em 0.2em 0;
 			border-radius: 2em;
 			// background: #fff;
 			box-shadow: 4px 7px 24px 0 rgb(0 0 0 / 31%);
@@ -250,8 +251,8 @@
 				right: 10px;
 			}
 
-			input {
-				width: 3em;
+			#amount {
+				width: 2em;
 				text-align: center;
 				appearance: textfield;
 				color: inherit;
@@ -263,6 +264,7 @@
 
 		@media screen and (min-width: $modalBP) {
 			padding-bottom: 0;
+			padding: var(--container-padding);
 
 			.title {
 				font-size: 2.5em;

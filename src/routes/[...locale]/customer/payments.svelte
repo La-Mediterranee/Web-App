@@ -2,17 +2,13 @@
 	import { onMount, tick } from 'svelte';
 	import { loadStripe } from '@stripe/stripe-js';
 
-	import { fetchFromAPI } from '$lib/utils/helper';
+	import { fetchFromAPI } from '$lib/utils/helper/helper';
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
+
 	import CreditCard from '$components/CreditCard';
 
 	import type { User } from 'firebase/auth';
-	import type {
-		StripeCardElement,
-		StripeElements,
-		Stripe,
-		SetupIntent,
-	} from '@stripe/stripe-js';
+	import type { StripeCardElement, StripeElements, Stripe, SetupIntent } from '@stripe/stripe-js';
 
 	interface PaymentSource {
 		id: string;

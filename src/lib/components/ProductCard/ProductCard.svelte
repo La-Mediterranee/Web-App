@@ -4,7 +4,7 @@
 <script context="module" lang="ts">
 	import star from '$lib/Icons/outline/star';
 
-	import { getProductModalContext } from '$lib/utils/helper';
+	import { getProductModalContext } from '$lib/utils';
 
 	import type { CartItem, Product } from 'types/product';
 </script>

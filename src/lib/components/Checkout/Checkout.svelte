@@ -37,7 +37,7 @@
 	import ExpressPayment from './checkout-sections/ExpressPayment.svelte';
 
 	import { cart } from '$lib/stores/cart';
-	import { getStripeContext } from '$lib/utils/helper';
+	import { getStripeContext } from '$lib/utils';
 
 	export let user: User | undefined;
 

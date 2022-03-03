@@ -14,6 +14,7 @@ type CartItems = Map<ID, CartItem>;
 export interface Cart {
 	readonly totalAmount: number;
 	readonly totalQuantity: number;
+	readonly displayTotalAmount: string;
 	readonly items: CartItems;
 }
 
@@ -31,20 +32,13 @@ export interface CartStore {
 }
 
 class ClientCart implements Cart {
-	// private _totalAmount = 0;
-	// private _totalQuantity = 0;
 	totalAmount = 0;
 	totalQuantity = 0;
+	displayTotalAmount = '0';
+
+	_totalAmount = 0;
 
 	constructor(public readonly items: CartItems) {}
-
-	// get totalQuantity() {
-	// 	return this._totalQuantity;
-	// }
-
-	// get totalAmount() {
-	// 	return this._totalAmount;
-	// }
 }
 
 const SHOP_DB = 'shop-db';
@@ -56,6 +50,13 @@ export type CartState = 'Loading' | 'Done'; //| 'Animating';
 export interface CartWithState {
 	state: CartState;
 	cart: ClientCart;
+}
+
+function formatPrice(amount: number) {
+	return new Intl.NumberFormat('de-DE', {
+		style: 'currency',
+		currency: 'EUR',
+	}).format(amount / 100);
 }
 
 function createCartStore(startItems: CartItems = new Map()): CartStore {
@@ -70,34 +71,11 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 	};
 
 	const store = writable<CartWithState>(start, set => {
-		onMount(() => {
+		onMount(async () => {
 			console.debug('mounted store');
-		});
 
-		return () => {
-			sound?.pause();
-			storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
-			db?.close();
-		};
-	});
-
-	const { subscribe, update, set } = store;
-
-	let db: IDBPDatabase<Cart>;
-
-	if (browser) {
-		console.debug('store inbrowser');
-		(async () => {
 			let cart: ClientCart;
 			try {
-				// db = await openDB(SHOP_DB, 1, {
-				// 	upgrade(db) {
-				// 		db.createObjectStore(SHOP_DB);
-				// 	},
-				// });
-
-				// cart = await db.get(SHOP_DB, CART_STORE_KEY)
-
 				cart = (await get(CART_STORE_KEY)) || startCart;
 				cart.items.set('1312', {
 					ID: '1312',
@@ -123,8 +101,19 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 				cart: cart,
 				state: 'Done',
 			});
-		})();
-	}
+		});
+
+		return () => {
+			sound?.pause();
+			storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
+			db?.close();
+		};
+	});
+
+	const { subscribe, update, set } = store;
+
+	let db: IDBPDatabase<Cart>;
+
 	/*
 	 	TODO: Add localstorage for persistent
 	 	Optional: sync with firestore
@@ -219,6 +208,7 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 		update(store => {
 			store.cart.totalQuantity = 0;
 			store.cart.totalAmount = 0;
+			store.cart.displayTotalAmount = formatPrice(0);
 			store.cart.items.clear();
 			// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
 			keyvalSet(CART_STORE_KEY, store.cart);
@@ -237,8 +227,10 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 			quantity += item.quantity;
 		}
 
-		cart.totalAmount = amount;
 		cart.totalQuantity = quantity;
+		cart.totalAmount = amount;
+		cart.displayTotalAmount = formatPrice(cart.totalAmount);
+
 		// storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
 	}
 
@@ -302,4 +294,4 @@ const dummyCart: CartItems = new Map([
 	],
 ]);
 
-export const cart = createCartStore(dummyCart);
+export const cart = createCartStore();

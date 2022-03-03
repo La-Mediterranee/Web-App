@@ -1,9 +1,3 @@
-import { getContext } from 'svelte';
-import { MODAL, PRODUCT_MODAL } from './constants';
-
-import type { StripeContext } from 'types/index';
-import type { Product } from 'types/product';
-
 const API = 'http://localhost:3333';
 
 export async function fetchFromAPI(endpointURL: string, opt?: Object) {
@@ -31,7 +25,7 @@ export async function fetchFromAPI(endpointURL: string, opt?: Object) {
 export function promiseEvent<T>(
 	emitter: Element | Window,
 	eventName: string,
-	timeout: number
+	timeout: number,
 ): Promise<T> {
 	return new Promise((resolve, reject) => {
 		let timer: number;
@@ -50,9 +44,7 @@ export function promiseEvent<T>(
 	});
 }
 
-export async function runAsync<T>(
-	promise: Promise<T>
-): Promise<[T | null, any | null]> {
+export async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any | null]> {
 	try {
 		const data = await promise;
 		return [data, null];
@@ -60,21 +52,4 @@ export async function runAsync<T>(
 		console.error(error);
 		return [null, error];
 	}
-}
-
-export function getStripeContext() {
-	return getContext<StripeContext>('stripe');
-}
-
-interface ModalContext {
-	open: (product: Product) => void;
-	close: () => void;
-}
-
-export function getModalContext() {
-	return getContext<ModalContext>(MODAL);
-}
-
-export function getProductModalContext() {
-	return getContext<ModalContext>(PRODUCT_MODAL);
 }

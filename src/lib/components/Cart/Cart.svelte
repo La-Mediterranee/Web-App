@@ -6,7 +6,6 @@
 	import { cubicInOut, quintOut } from 'svelte/easing';
 
 	import { enhance } from './action';
-	import { promiseTimeout } from '$lib/utils';
 
 	import type { Cart, CartState, CartStore } from '$lib/stores/cart';
 	import type { FormEnhance } from './action';
@@ -74,11 +73,6 @@
 	export let cart: Cart;
 	export let state: CartState;
 	export let store: CartStore;
-
-	$: totalAmount = new Intl.NumberFormat('de-DE', {
-		style: 'currency',
-		currency: 'EUR',
-	}).format(cart.totalAmount / 100);
 
 	const tableHeaders = [
 		{ header: 'Produkt', headerClass: 'cart-product-header', className: undefined },
@@ -162,7 +156,7 @@
 							aria-colspan={tableHeaders.length - 2}
 						>
 							<span style="display: flex; height: 100%; align-items: center;">
-								Summe ({cart.totalQuantity} Produkte): {totalAmount}
+								Summe ({cart.totalQuantity} Produkte): {cart.displayTotalAmount}
 							</span>
 						</td>
 						<td role="cell" colspan="2">

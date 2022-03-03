@@ -12,10 +12,4 @@
 	}
 </script>
 
-<script>
-	import { activeRoute } from '$lib/stores/activeRoute';
-
-	activeRoute.setRoute(routeName);
-</script>
-
 <slot />

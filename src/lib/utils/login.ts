@@ -74,6 +74,8 @@ export async function signInWithMicrosoft(auth: Auth) {
 		const credential = OAuthProvider.credentialFromResult(userCredential);
 		const accessToken = credential?.accessToken;
 
+		console.log(accessToken);
+
 		const res = await fetch('https://graph.microsoft.com/v1.0/me/photos/64x64/$value', {
 			headers: {
 				'Authorization': `Bearer ${accessToken}`,
@@ -81,11 +83,11 @@ export async function signInWithMicrosoft(auth: Auth) {
 			},
 		});
 
-		const url = window.URL || window.webkitURL;
-		const data = await res.blob();
-		const imageUrl = url.createObjectURL(data);
+		if (res.ok) {
+			const url = window.URL || window.webkitURL;
+			const data = await res.blob();
+			const imageUrl = url.createObjectURL(data);
 
-		if (auth?.currentUser) {
 			//@ts-ignore
 			auth.currentUser.photoURL = imageUrl;
 		}

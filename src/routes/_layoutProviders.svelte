@@ -74,9 +74,3 @@
 		</MaterialApp> -->
 	</Stripe>
 </Firebase>
-
-<!-- <Firebase {firebase}>
-	<Stripe>
-		<slot />
-	</Stripe>
-</Firebase> -->

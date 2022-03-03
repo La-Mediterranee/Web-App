@@ -143,7 +143,7 @@
 				}
 			</style>
 		</noscript>
-		<div id="svelte">%svelte.body%</div>
+		<div id="svelte" class="s-app theme--custom">%svelte.body%</div>
 		<script type="module">
 			// Lighthouse lowers the score because firebase auth iframe doesn't have a title/(visibility not hidden)
 			const observer = new MutationObserver(mutations => {

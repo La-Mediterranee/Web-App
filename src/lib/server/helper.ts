@@ -2,7 +2,11 @@ import { auth } from './firebase';
 import { serialize } from './cookie';
 
 import type { Options } from './cookie';
-import type { ResponseHeaders, EndpointOutput } from '@sveltejs/kit/types/internal';
+import type {
+	ResponseHeaders,
+	ShadowEndpointOutput,
+	RequestHandlerOutput,
+} from '@sveltejs/kit/types/internal';
 
 /**
  * Decodes the JSON Web Token sent via the frontend app.
@@ -20,7 +24,7 @@ export async function decodeJWT(authorization: string) {
 }
 
 export function clearCookie(
-	response: EndpointOutput | Response,
+	response: ShadowEndpointOutput | Response,
 	name: string,
 	options: Record<string, any> = {},
 ) {
@@ -31,7 +35,7 @@ export function clearCookie(
 const COOKIE_HEADER = 'set-cookie';
 
 export function setCookie(
-	response: EndpointOutput | Response,
+	response: ShadowEndpointOutput | Response,
 	name: string,
 	value: string,
 	options: Options = {},
@@ -43,7 +47,7 @@ export function setCookie(
 	}
 
 	if (response.headers != null) {
-		const headers = (response as EndpointOutput).headers as Partial<ResponseHeaders>;
+		const headers = (response as ShadowEndpointOutput).headers as Partial<ResponseHeaders>;
 		const currentCookies = headers[COOKIE_HEADER] as string | string[] | undefined;
 
 		headers[COOKIE_HEADER] = currentCookies
@@ -53,7 +57,7 @@ export function setCookie(
 			: cookie;
 	}
 
-	(response as EndpointOutput).headers = {
+	(response as ShadowEndpointOutput).headers = {
 		'set-cookie': cookie,
 	};
 }

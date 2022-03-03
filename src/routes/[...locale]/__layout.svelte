@@ -1,17 +1,17 @@
 <script context="module" lang="ts">
-	import { baseLocale } from '$i18n/i18n-util';
-	import { RTL_LANGS, locales } from '$i18n/utils';
-	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
+	import { browser, dev } from '$app/env';
 
+	import { baseLocale } from '$i18n/i18n-util';
 	import { setLocale } from '$i18n/i18n-svelte';
+	import { RTL_LANGS, locales } from '$i18n/utils';
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
-	import { replaceLocaleInUrl } from '$lib/utils';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	import type { Locales } from '$i18n/i18n-types';
-	import type { LoadInput } from '@sveltejs/kit/types/internal';
+	import type { TabbarItem } from '$lib/components/Tabbar/Tabbar.svelte';
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
 		const locale = params.locale as Locales;
@@ -24,17 +24,25 @@
 
 		// redirect to preferred language if user comes from page root
 		if (locale !== session.locale && session.locale !== baseLocale) {
+			const path = `${session.urlLocale}` + url.pathname; //replaceLocaleInUrl(, );
+			const redirect = new URL(path, url.origin);
+
 			return {
 				status: 302,
-				redirect: `/${session.locale}`,
+				redirect: path,
 			};
 		}
 
 		// redirect to base locale if language is not present
-		if ((locale as string) !== '/' && (locale as string) !== '' && !locales.has(locale)) {
+		// (locale as string) !== '/' &&
+		if ((locale as string) !== '' && !locales.has(locale)) {
+			// const path = replaceLocaleInUrl(url.pathname, '');
+			const path = `${session.urlLocale}` + url.pathname;
+			const redirect = new URL(path, url.origin);
+
 			return {
 				status: 302,
-				redirect: replaceLocaleInUrl(url.pathname, ''),
+				redirect: path,
 				// redirect: '/',
 			};
 		}
@@ -55,7 +63,6 @@
 <script lang="ts">
 	// import { metatags } from '$lib/stores/metatags';
 	import t from '$i18n/i18n-svelte';
-	import metatags from '$lib/stores/seo/metatags';
 
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
@@ -64,11 +71,8 @@
 	import Statusbar from '$lib/components/Statusbar';
 
 	import Modals from '../_Dialogs.svelte';
-	import { page } from '$app/stores';
-	import { activeRoute } from '$lib/stores/activeRoute';
 
-	import type { TabbarItem } from '$lib/components/Tabbar/Tabbar.svelte';
-	import type { LoadOutput } from '@sveltejs/kit/types/internal';
+	import { page } from '$app/stores';
 
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
@@ -78,16 +82,15 @@
 
 	setLocale(lang);
 
-	let tabbarRoutes: TabbarItem[];
-	$: tabbarRoutes = mobileNavItems.map(({ href, icon, pathLabel, rel, size }) => {
+	$: tabbarRoutes = <TabbarItem[]>mobileNavItems.map(({ href, icon, pathLabel, rel, size }) => {
 		return {
 			href: `${urlLocale}${href.replace(/\/$/, '')}`,
 			rel: rel instanceof Array ? rel.join(' ') : rel,
 			icon,
 			pathLabel,
 			size,
-			// prettier-ignore
-			isActive: (href === $page.stuff.activeRoute) || false,
+			isActive: href === $page.stuff.activeRoute,
+			// isActive: (href === $activeRoute()),
 		};
 	});
 

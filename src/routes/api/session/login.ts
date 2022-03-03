@@ -2,14 +2,14 @@ import { baseLocale } from '$i18n/i18n-util';
 import { auth, firebase } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
 
 export interface SessionLogin {
 	idToken: string;
 	csrfToken: string;
 }
 
-export async function post(event: RequestEvent): Promise<EndpointOutput> {
+export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const body = (await event.request.json()) as SessionLogin;
 
 	try {
@@ -46,7 +46,7 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 			event.locals.locale !== baseLocale ? '/' + event.locals.locale : ''
 		}/customer`;
 
-		const response: EndpointOutput = {
+		const response: RequestHandlerOutput = {
 			status: 302,
 			headers: { location },
 			body: JSON.stringify({
@@ -54,7 +54,7 @@ export async function post(event: RequestEvent): Promise<EndpointOutput> {
 			}),
 		};
 
-		setCookie(response, 'sessionId', sessionCookie, {
+		setCookie(<Response>response, 'sessionId', sessionCookie, {
 			// expires: new Date(0),
 			maxAge: expiresIn / 1000,
 			httpOnly: true,

@@ -4,6 +4,7 @@
 	import { loadStripe } from '@stripe/stripe-js';
 
 	import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
+
 	import type { Stripe } from '@stripe/stripe-js';
 
 	const STRIPE_CONTEXT = 'stripe';
@@ -11,10 +12,7 @@
 </script>
 
 <script lang="ts">
-	if (
-		typeof STRIPE_PUBLIC_KEY !== 'string' ||
-		typeof STRIPE_PUBLIC_KEY === 'undefined'
-	) {
+	if (typeof STRIPE_PUBLIC_KEY !== 'string' || typeof STRIPE_PUBLIC_KEY === 'undefined') {
 		throw new Error('VITE_STRIPE_PUBLIC_KEY must be added to .env');
 	}
 
@@ -34,7 +32,9 @@
 				console.error(error);
 			}
 		});
-	} catch (error) {}
+	} catch (error) {
+		console.error(error);
+	}
 </script>
 
 <svelte:head>

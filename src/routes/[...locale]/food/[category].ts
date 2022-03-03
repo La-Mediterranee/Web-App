@@ -1,10 +1,10 @@
 import { EDAMAM_API_KEY } from '$lib/server/constants';
 
-import type { EndpointOutput, RequestEvent, JSONObject } from '@sveltejs/kit/types/internal';
+import type { ShadowEndpointOutput, RequestEvent, JSONObject } from '@sveltejs/kit/types/internal';
 
 const data = new Map();
 
-export async function get(event: RequestEvent): Promise<EndpointOutput> {
+export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	const { category } = event.params;
 
 	if (!data.has(category)) {

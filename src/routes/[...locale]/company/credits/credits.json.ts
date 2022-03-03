@@ -1,4 +1,4 @@
-import type { EndpointOutput } from '@sveltejs/kit/types/internal';
+import type { ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
 const credits = {
 	posts: {
@@ -32,8 +32,8 @@ const credits = {
 	// },
 };
 
-export function get(): EndpointOutput {
+export function get(): ShadowEndpointOutput {
 	return {
-		body: JSON.stringify(credits),
+		body: credits,
 	};
 }

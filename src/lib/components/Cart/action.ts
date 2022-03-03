@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 
-interface FormEnhance {
+export interface FormEnhance {
 	pending?: (data: FormData, form: HTMLFormElement) => void;
 	error?: (res: Response | null, error: Error | null, form: HTMLFormElement) => void;
 	result: (res: Response, form: HTMLFormElement) => void;
@@ -17,7 +17,7 @@ export function enhance(form: HTMLFormElement, { pending, error, result }: FormE
 		const elements = Array.from(form.elements) as HTMLInputElement[];
 
 		const body = new FormData(form);
-		console.log(body.values());
+		console.log(body);
 
 		if (pending) pending(body, form);
 

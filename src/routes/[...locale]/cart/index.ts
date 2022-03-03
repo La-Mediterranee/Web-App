@@ -1,8 +1,8 @@
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
 // export async function get() {}
 
-export async function post(event: RequestEvent): Promise<EndpointOutput> {
+export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	const form = await event.request.formData();
 
 	for (const entry of form.entries()) {

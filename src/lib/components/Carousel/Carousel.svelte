@@ -179,14 +179,14 @@
 
 	$: hasItemsOnLeft = rtl ? nextElement !== null : prevElement !== null;
 	$: hasItemsOnRight = rtl ? prevElement !== null : nextElement !== null;
-
-	$: style = `
-	--has-items-left: ${hasItemsOnLeft ? 'all' : 'hidden'};
-	--has-items-right: ${hasItemsOnRight ? 'all' : 'hidden'};
-	`.trim();
 </script>
 
-<div class="container" bind:this={container} {style}>
+<div
+	class="container"
+	bind:this={container}
+	style:--has-items-left={hasItemsOnLeft ? 'all' : 'hidden'}
+	style:--has-items-right={hasItemsOnRight ? 'all' : 'hidden'}
+>
 	<slot name="left" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'next' : 'prev'}>
 		<LeftButton {scroll} {setKeyboardFocus} value={rtl ? 'next' : 'prev'} />
 	</slot>
@@ -239,13 +239,7 @@
 
 	.content {
 		display: inline-flex;
-		// flex-wrap: nowrap;
-		// white-space: nowrap;
-		// margin-left: auto;
-		// margin-right: auto;
-		// width: 100%;
 		max-width: var(--carousel-content-max-width);
-
 		padding: var(--carousel-content-padding);
 		// margin-inline-start: -1rem;
 	}

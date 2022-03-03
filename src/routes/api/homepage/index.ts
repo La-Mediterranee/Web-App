@@ -4,13 +4,13 @@ import { randomUUID } from 'crypto';
 import { SERVER_PORT } from '$lib/server/constants';
 
 import type { Product } from 'types/product';
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
 
 interface GetBody {
 	product?: Product;
 }
 
-export async function get({ locals }: RequestEvent): Promise<EndpointOutput> {
+export async function get({ locals }: RequestEvent): Promise<RequestHandlerOutput> {
 	return {
 		body: JSON.stringify(await homepage()),
 	};

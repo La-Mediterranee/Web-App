@@ -1,7 +1,7 @@
+import { onMount } from 'svelte';
 import { readable, writable } from 'svelte/store';
 
 import type { Readable, Subscriber, Unsubscriber } from 'svelte/store';
-import { onMount } from 'svelte';
 
 export const rtl2 = readable(false, set => {
 	let observer: MutationObserver;

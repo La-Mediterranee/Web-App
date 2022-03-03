@@ -30,7 +30,7 @@
 		z-index: 5;
 		padding: 0.5rem;
 		font-size: 2.5vw;
-		border-radius: 0.5em;
+		border-radius: 0.6rem;
 
 		background: var(--accent-color);
 		border: none;

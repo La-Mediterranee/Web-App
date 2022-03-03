@@ -59,14 +59,11 @@
 	});
 </script>
 
-<!-- <svelte:head>
-	<html {lang} {dir} />
-</svelte:head> -->
-
 <Providers>
-	<MaterialApp theme="custom">
+	<slot />
+	<!-- <MaterialApp theme="custom">
 		<slot />
-	</MaterialApp>
+	</MaterialApp> -->
 </Providers>
 
 <style lang="scss" global>

@@ -12,10 +12,8 @@
 	}
 </script>
 
-<script>
-	import { activeRoute } from '$lib/stores/activeRoute';
-
-	activeRoute.setRoute(routeName);
-</script>
+<svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+</svelte:head>
 
 <slot />

@@ -56,48 +56,50 @@
 	<span class="price" itemprop="price" content={`price`}>{sum}</span>
 </div> -->
 
-<tr in:receive={{ key: item.ID }} out:send={{ key: item.ID }}>
-	<th scope="row" title="Produkt">
-		<div>
-			<img src={image.src} alt={image.alt} />
-			<h3>{name}</h3>
-			<p />
-			<input type="hidden" name="product" id={ID} value={ID} />
-		</div>
-	</th>
-	<td title="Anzahl">
-		<Input>
-			<!-- pattern="[0-9]*" -->
-			<input
-				id="quantity"
-				min="1"
-				max="10"
-				type="number"
-				inputmode="numeric"
-				on:change={e => update(e)}
-				bind:value={qty}
-			/>
-		</Input>
-	</td>
-	<td title="Preis">
-		<span>
-			{new Intl.NumberFormat('de-DE', {
-				style: 'currency',
-				currency,
-			}).format(price / 100)}
-		</span>
-	</td>
-	<!-- <td title="Teilsumme"><span>{sum}</span></td> -->
-	<td>
-		<Button icon on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
-			<Icon path={trash} />
-		</Button>
-	</td>
-</tr>
+<th class="item-product" role="rowheader" scope="row">
+	<div>
+		<img src={image.src} alt={image.alt} />
+		<h3>{name}</h3>
+		<p />
+		<input type="hidden" name="product" id={ID} value={ID} />
+	</div>
+</th>
+<td role="cell">
+	<Input>
+		<!-- pattern="[0-9]*" -->
+		<input
+			id="quantity-{ID}"
+			min="1"
+			max="10"
+			name="quantity"
+			type="number"
+			inputmode="numeric"
+			required
+			on:change={e => update(e)}
+			bind:value={qty}
+		/>
+	</Input>
+</td>
+<td role="cell">
+	<span>
+		{new Intl.NumberFormat('de-DE', {
+			style: 'currency',
+			currency,
+		}).format(price / 100)}
+	</span>
+</td>
+<td role="cell">
+	<Button icon on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
+		<Icon path={trash} />
+	</Button>
+</td>
 
 <style lang="scss">
 	img {
-		height: 10rem;
+		height: auto;
+		width: auto;
+		max-width: 100%;
+		max-height: 8rem;
 	}
 
 	th,
@@ -108,22 +110,10 @@
 		padding: 0.5em;
 	}
 
-	tr {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: center;
-		background-color: var(--theme-secondary-color);
-		border-radius: 1em;
-		border-bottom: 0;
-		margin-bottom: 0.625em;
-		padding: 0.3em 0.2em;
-	}
-
 	div {
 		width: 100%;
 		text-align: center;
-		margin-bottom: 0.6em;
+		margin: 0.4em 0 0.3em;
 	}
 
 	button {
@@ -134,7 +124,8 @@
 	}
 
 	th {
-		flex: 1 0 100%;
+		// flex: 1 0 100%;
+		flex: 1 0 var(--cart-item-product-width);
 	}
 
 	td input {
@@ -193,6 +184,11 @@
 			&:last-child {
 				border: 0;
 			}
+		}
+
+		.item-product {
+			flex: 1 0 var(--cart-item-product-width);
+			max-width: var(--cart-item-product-width);
 		}
 
 		th,

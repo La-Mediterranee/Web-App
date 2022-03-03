@@ -1,5 +1,6 @@
-import type { EndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
-import type { JSONObject } from '@sveltejs/kit/types/internal';
+import { randomUUID } from 'node:crypto';
+
+import type { RequestEvent, JSONObject, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
 const cans = [
 	{
@@ -133,7 +134,7 @@ const half = [
 	},
 ];
 
-export async function get(event: RequestEvent): Promise<EndpointOutput> {
+export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	const drinks = [
 		//++++++++++++++++++++ 0.33L ++++++++++++++++++++//
 		...cans,
@@ -215,6 +216,8 @@ export async function get(event: RequestEvent): Promise<EndpointOutput> {
 	//aluvera 0.5L/0.3L
 
 	return {
-		body: <JSONObject>{ drinks },
+		body: <JSONObject>{
+			drinks: drinks.map(drink => Object.assign(drink, { ID: randomUUID() })),
+		},
 	};
 }

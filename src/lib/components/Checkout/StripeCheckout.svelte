@@ -3,8 +3,10 @@
 
 	import { fetchFromAPI } from '$lib/utils/helper';
 
-	import { loadStripe, Stripe } from '@stripe/stripe-js';
+	import { loadStripe } from '@stripe/stripe-js';
 	import { onMount } from 'svelte';
+
+	import type { Stripe } from '@stripe/stripe-js';
 
 	interface Product {
 		name: string;

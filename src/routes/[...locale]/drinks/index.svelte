@@ -42,7 +42,7 @@
 			margin-top: 1em;
 			margin-bottom: 0.2em;
 			object-fit: contain;
-			height: 11em;
+			height: 9.5em;
 		}
 	}
 </style>

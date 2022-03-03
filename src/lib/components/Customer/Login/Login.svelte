@@ -22,7 +22,7 @@
 
 	type LoginCallback = (auth: Auth) => Promise<LoginInfo | null>;
 
-	const providers = ['google', 'facebook', 'microsoft', 'twitter'];
+	const providers = ['google', 'facebook', 'twitter']; //'microsoft'
 
 	// A Map or Object should theoretically be faster than a switch statement
 	const providerMethods: {
@@ -31,7 +31,7 @@
 		google: { value: signInWithGoogle },
 		facebook: { value: signInWithFacebook },
 		twitter: { value: signInWithTwitter },
-		microsoft: { value: signInWithMicrosoft },
+		// microsoft: { value: signInWithMicrosoft },
 		github: { value: signInWithGithub },
 		discord: { value: signInWithDiscord },
 	});
@@ -289,7 +289,7 @@
 			<button
 				id={provider}
 				type="button"
-				class="provider"
+				class="s-btn provider"
 				value={provider}
 				{disabled}
 				on:click={login}
@@ -305,7 +305,7 @@
 		<button
 			id="github"
 			type="button"
-			class="provider"
+			class="s-btn provider"
 			value="github"
 			{disabled}
 			on:click={login}
@@ -320,7 +320,7 @@
 		<button
 			id="discord"
 			type="button"
-			class="provider"
+			class="s-btn provider"
 			value="discord"
 			{disabled}
 			on:click={login}

@@ -69,13 +69,12 @@
 	<Card raised>
 		<div class="inner-card">
 			<img
-				class="ml-auto"
 				decoding="async"
 				loading="lazy"
 				src={image.src}
 				alt={image.alt || name}
-				width={image.width || '250'}
-				height={image.height || '181'}
+				width={image.width || 219}
+				height={image.height || 150}
 			/>
 
 			<div itemprop="name" class="title">
@@ -294,7 +293,8 @@
 			font-weight: 400;
 			line-height: 1.375rem;
 			letter-spacing: 0.0071428571em;
-			padding: 0.4em 1em 1em 1em;
+			// padding: 0.4em 1em 1em 1em;
+			padding: 0.4em 1em;
 		}
 
 		.price {
@@ -327,7 +327,7 @@
 			// :global(a.s-btn):focus-visible,
 			&:hover {
 				img {
-					transform: scale(1.1);
+					transform: scale(1.18);
 				}
 
 				.actionsContainer {

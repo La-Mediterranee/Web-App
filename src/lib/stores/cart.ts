@@ -1,104 +1,234 @@
+import { onMount } from 'svelte';
 import { browser } from '$app/env';
 import { writable } from 'svelte/store';
+// import { openDB } from 'idb';
+import { get, set as keyvalSet } from 'idb-keyval';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
 import type { CartItem, ID } from 'types/product';
 import type { Invalidator } from 'types/index';
+import type { IDBPDatabase } from 'idb';
 
 type CartItems = Map<ID, CartItem>;
 
 export interface Cart {
+	readonly totalAmount: number;
+	readonly totalQuantity: number;
 	readonly items: CartItems;
-	totalAmount: number;
-	totalQuantity: number;
 }
 
 export interface CartStore {
 	subscribe: (
 		this: void,
-		run: Subscriber<Cart>,
-		invalidate?: Invalidator<Cart> | undefined,
+		run: Subscriber<CartWithState>,
+		invalidate?: Invalidator<CartWithState> | undefined,
 	) => Unsubscriber;
 	addItem: (item: CartItem) => void;
 	removeItem: (oldItem: CartItem) => void;
 	removeAll: () => void;
 	upadateItem: (id: ID, quantity: number) => void;
+	setState(newState: CartState): void;
 }
 
+class ClientCart implements Cart {
+	// private _totalAmount = 0;
+	// private _totalQuantity = 0;
+	totalAmount = 0;
+	totalQuantity = 0;
+
+	constructor(public readonly items: CartItems) {}
+
+	// get totalQuantity() {
+	// 	return this._totalQuantity;
+	// }
+
+	// get totalAmount() {
+	// 	return this._totalAmount;
+	// }
+}
+
+const SHOP_DB = 'shop-db';
 const CART_STORE_KEY = 'cart';
+
 const storage = typeof localStorage !== 'undefined' ? localStorage : null;
+
+export type CartState = 'Loading' | 'Done'; //| 'Animating';
+export interface CartWithState {
+	state: CartState;
+	cart: ClientCart;
+}
 
 function createCartStore(startItems: CartItems = new Map()): CartStore {
 	const sound = browser ? new Audio('') : null;
 
-	const cart = {
-		items: startItems,
-		totalAmount: 0,
-		totalQuantity: 0,
+	const startCart = new ClientCart(startItems);
+	// calculateTotal(start);
+
+	const start: CartWithState = {
+		cart: startCart,
+		state: 'Loading',
 	};
 
-	calculateTotal(cart);
+	const store = writable<CartWithState>(start, set => {
+		onMount(() => {
+			console.debug('mounted store');
+		});
 
-	const store = writable<Cart>(cart, () => {
 		return () => {
 			sound?.pause();
 			storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
+			db?.close();
 		};
 	});
 
-	const { subscribe, update } = store;
+	const { subscribe, update, set } = store;
 
+	let db: IDBPDatabase<Cart>;
+
+	if (browser) {
+		console.debug('store inbrowser');
+		(async () => {
+			let cart: ClientCart;
+			try {
+				// db = await openDB(SHOP_DB, 1, {
+				// 	upgrade(db) {
+				// 		db.createObjectStore(SHOP_DB);
+				// 	},
+				// });
+
+				// cart = await db.get(SHOP_DB, CART_STORE_KEY)
+
+				cart = (await get(CART_STORE_KEY)) || startCart;
+				cart.items.set('1312', {
+					ID: '1312',
+					name: 'Burger',
+					categories: ['burger'],
+					description: '',
+					image: {
+						src: '/burger.webp',
+					},
+					toppings: [],
+					selectedToppings: [],
+					price: 830,
+					quantity: 1,
+				});
+			} catch (error) {
+				console.error(error);
+			}
+
+			cart ||= startCart;
+			calculateTotal(cart);
+
+			set({
+				cart: cart,
+				state: 'Done',
+			});
+		})();
+	}
 	/*
 	 	TODO: Add localstorage for persistent
 	 	Optional: sync with firestore
 	*/
 
 	function addItem(item: CartItem) {
-		sound?.play();
-		update(cart => {
-			cart.items.set(item.ID, item);
-			calculateTotal(cart);
-			return cart;
-		});
+		try {
+			// sound?.play();
+
+			// update(cart => {
+			// 	cart.items.set(item.ID, item);
+			// 	calculateTotal(cart);
+			// 	db.put(SHOP_DB, cart, CART_STORE_KEY);
+			// 	return cart;
+			// });
+
+			update(store => {
+				store.cart.items.set(item.ID, item);
+				calculateTotal(store.cart);
+				// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
+				keyvalSet(CART_STORE_KEY, store.cart);
+				return store;
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
-	function removeItem(oldItem: CartItem) {
-		sound?.play();
-		update(cart => {
-			cart.items.delete(oldItem.ID || oldItem.name);
-			calculateTotal(cart);
-			return cart;
-		});
+	async function removeItem(oldItem: CartItem) {
+		try {
+			// sound?.play();
+
+			// update(cart => {
+			// 	store.cart.items.delete(oldItem.ID || oldItem.name);
+			// 	calculateTotal(cart);
+			// 	db.put(SHOP_DB, cart, CART_STORE_KEY);
+			// 	return cart;
+			// });
+
+			update(store => {
+				// store.state = 'Animating';
+				store.cart.items.delete(oldItem.ID);
+				calculateTotal(store.cart);
+				// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
+				keyvalSet(CART_STORE_KEY, store.cart);
+				return store;
+			});
+		} catch (_e) {
+			console.error(_e);
+		}
 	}
 
 	function upadateItem(id: ID, quantity: number) {
-		sound?.play();
-		update(cart => {
-			const item = cart.items.get(id);
+		// sound?.play();
+
+		// update(cart => {
+		// 	const item = cart.items.get(id);
+		// 	if (item) {
+		// 		cart.items.set(id, {
+		// 			...item,
+		// 			quantity,
+		// 		});
+		// 		calculateTotal(cart);
+		// 		db.put(SHOP_DB, cart, CART_STORE_KEY);
+		// 	}
+		// 	return cart;
+		// });
+		update(store => {
+			const item = store.cart.items.get(id);
 			if (item) {
-				cart.items.set(id, {
+				store.cart.items.set(id, {
 					...item,
 					quantity,
 				});
-				calculateTotal(cart);
+				calculateTotal(store.cart);
+				// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
+				keyvalSet(CART_STORE_KEY, store.cart);
 			}
-			return cart;
+			return store;
 		});
 	}
 
 	function removeAll() {
 		sound?.play();
-		update(cart => {
-			cart.totalQuantity = 0;
-			cart.totalAmount = 0;
-			cart.items.clear();
-			return cart;
+		// update(cart => {
+		// 	cart.totalQuantity = 0;
+		// 	cart.totalAmount = 0;
+		// 	cart.items.clear();
+		// 	db.add(SHOP_DB, cart, CART_STORE_KEY);
+		// 	return cart;
+		// });
+		update(store => {
+			store.cart.totalQuantity = 0;
+			store.cart.totalAmount = 0;
+			store.cart.items.clear();
+			// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
+			keyvalSet(CART_STORE_KEY, store.cart);
+			return store;
 		});
 		// or
 		// store.set(new Map<SKU, CartItem>())
 	}
 
-	function calculateTotal(cart: Cart) {
+	function calculateTotal(cart: ClientCart) {
 		let amount = 0;
 		let quantity = 0;
 
@@ -109,7 +239,14 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 
 		cart.totalAmount = amount;
 		cart.totalQuantity = quantity;
-		storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
+		// storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
+	}
+
+	function setState(newState: CartState) {
+		update(store => {
+			store.state = newState;
+			return store;
+		});
 	}
 
 	return {
@@ -118,6 +255,7 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 		addItem,
 		removeAll,
 		upadateItem,
+		setState,
 	};
 }
 

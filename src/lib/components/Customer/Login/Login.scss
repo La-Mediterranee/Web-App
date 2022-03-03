@@ -2,17 +2,17 @@
 
 @use 'variables' as *;
 
-@font-face {
-	font-family: SegoeUI;
-	src: local('Segoe UI'),
-		url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/normal/latest.woff2)
-			format('woff2'),
-		url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/normal/latest.woff)
-			format('woff'),
-		url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/normal/latest.ttf)
-			format('truetype');
-	font-weight: 400;
-}
+// @font-face {
+// 	font-family: SegoeUI;
+// 	src: local('Segoe UI'),
+// 		url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/normal/latest.woff2)
+// 			format('woff2'),
+// 		url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/normal/latest.woff)
+// 			format('woff'),
+// 		url(//c.s-microsoft.com/static/fonts/segoe-ui/west-european/normal/latest.ttf)
+// 			format('truetype');
+// 	font-weight: 400;
+// }
 
 section {
 	margin: 1em;
@@ -83,9 +83,10 @@ span {
 	box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
 		0 1px 5px 0 rgba(0, 0, 0, 0.12) !important;
 	align-items: center;
-	font-family: 'SegoeUI', sans-serif;
+	// font-family: 'SegoeUI', sans-serif;
 	color: #fff;
 	border-radius: 2em;
+	justify-content: flex-start;
 
 	img {
 		margin-left: 1em;

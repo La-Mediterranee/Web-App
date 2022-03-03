@@ -1,8 +1,7 @@
 <script context="module" lang="ts">
 	import { goto } from '$app/navigation';
-	import { scale, fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import { crossfade } from 'svelte/transition';
+	import { scale, fade, crossfade } from 'svelte/transition';
 	import { cubicInOut, quintOut } from 'svelte/easing';
 
 	import { enhance } from './action';
@@ -49,7 +48,7 @@
 		},
 	});
 
-	function submit(): FormEnhance {
+	function submitBuilder(): FormEnhance {
 		return {
 			result: res => {
 				//
@@ -63,23 +62,25 @@
 			},
 		};
 	}
-</script>
 
-<script lang="ts">
-	import Button from 'svelty-material/components/Button/Button.svelte';
-
-	import CartItemComponent from './CartItem.svelte';
-
-	export let cart: Cart;
-	export let state: CartState;
-	export let store: CartStore;
-
-	const tableHeaders = [
+	const tableHeaders: TableHeader[] = [
 		{ header: 'Produkt', headerClass: 'cart-product-header', className: undefined },
 		{ header: 'Anzahl', headerClass: undefined, className: undefined },
 		{ header: 'Preis', headerClass: undefined, className: undefined },
 		{ header: 'Actions', headerClass: undefined, className: 'visually-hidden' },
 	]; //'Teilsumme',
+</script>
+
+<script lang="ts">
+	import CartItemComponent from './table/CartItem.svelte';
+	import CartFooter from './table/CartFooter.svelte';
+	import CartHeader from './table/CartHeader.svelte';
+
+	import type { TableHeader } from './table/CartHeader.svelte';
+
+	export let cart: Cart;
+	export let state: CartState;
+	export let store: CartStore;
 </script>
 
 <h1 id="main-start">Warenkorb</h1>
@@ -98,7 +99,7 @@
 			Loading
 		</p>
 	{:else if cart.totalQuantity !== 0}
-		<form method="post" data-action="./cart" use:enhance={submit()}>
+		<form method="post" data-action="./cart" use:enhance={submitBuilder()}>
 			<!-- 
 			if the table's diplay property changes it loses it's role and that goes for any table element
 			https://css-tricks.com/position-sticky-and-table-headers/
@@ -111,16 +112,12 @@
 					duration: 600,
 				}}
 			>
-				<!-- <caption id="table-title" colspan={tableHeaders.length}>Produkte</caption> -->
+				<caption id="table-title" class="visually-hidden" colspan={tableHeaders.length}>
+					Warenkorb
+				</caption>
 				<thead role="rowgroup">
 					<tr role="row">
-						{#each tableHeaders as { header, className, headerClass }}
-							<th role="columnheader" scope="col" class={headerClass}>
-								<span class={className}>
-									{header}
-								</span>
-							</th>
-						{/each}
+						<CartHeader headers={tableHeaders} />
 					</tr>
 				</thead>
 				<tbody role="rowgroup" aria-live="polite">
@@ -140,34 +137,11 @@
 					{/each}
 				</tbody>
 				<tfoot role="rowgroup">
-					<tr role="row">
-						<td id="notes-container" role="cell" colspan={tableHeaders.length}>
-							<div>
-								<label for="notes">Anmerkungen: </label>
-								<textarea name="notes" id="notes" placeholder="Anmerkungen: " />
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td
-							role="cell"
-							class="sum"
-							colspan={tableHeaders.length - 2}
-							aria-colspan={tableHeaders.length - 2}
-						>
-							<span style="display: flex; height: 100%; align-items: center;">
-								Summe ({cart.totalQuantity} Produkte): {cart.displayTotalAmount}
-							</span>
-						</td>
-						<td role="cell" colspan="2">
-							<Button
-								type="submit"
-								class="form-elements-color"
-								disabled={!cart.totalQuantity}
-								rounded>Zur Kasse</Button
-							>
-						</td>
-					</tr>
+					<CartFooter
+						headersLength={tableHeaders.length}
+						totalQuantity={cart.totalQuantity}
+						totalAmount={cart.displayTotalAmount}
+					/>
 				</tfoot>
 			</table>
 		</form>
@@ -252,37 +226,9 @@
 			// top: -9999px;
 			// left: -9999px;
 
-			display: flex;
 			position: sticky;
 			width: 100%;
 			top: calc(var(--top-bar-height) + 10px);
-
-			th {
-				flex: 0 1 50%;
-			}
-		}
-
-		th {
-			padding: 8px;
-			padding-top: 12px;
-			padding-bottom: 12px;
-			text-align: center;
-			color: var(--cart-table-color);
-		}
-
-		#notes-container {
-			width: 100%;
-		}
-
-		#notes {
-			display: block;
-			resize: none;
-			border: 2px solid var(--tint-color);
-			width: 100%;
-			min-height: 6em;
-			border-radius: 0.9em;
-			padding: 0.8em;
-			margin-top: 0.75em;
 		}
 
 		.item {
@@ -300,21 +246,6 @@
 			border-radius: 1em;
 			background-color: var(--theme-secondary-color);
 			width: 100%;
-
-			tr {
-				color: var(--cart-table-color);
-				text-align: center;
-				width: 100%;
-			}
-
-			div {
-				text-align: left;
-			}
-
-			td {
-				padding: 1em;
-				text-align: right;
-			}
 		}
 
 		@media screen and (min-width: 460px) {
@@ -348,12 +279,7 @@
 
 			.item {
 				// display: table-row;
-				// border-bottom: 1px solid var(--cart-table-color);
 				width: 100%;
-
-				&:last-child {
-					border: 0;
-				}
 			}
 		}
 	}

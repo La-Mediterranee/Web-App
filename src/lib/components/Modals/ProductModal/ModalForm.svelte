@@ -30,65 +30,72 @@
 	on:change={e => (valid = e.currentTarget.checkValidity())}
 	on:submit|preventDefault={e => addToCart(e, product.variations)}
 >
-	<h1 class="title">Customization</h1>
+	<div class="selection">
+		<h1 class="title">Customization</h1>
 
-	<div class="toppings">
-		{#each product.variations?.toppings || [] as topping}
-			<fieldset class="topping">
-				<legend>{topping.name}</legend>
+		<div class="toppings">
+			{#each product.variations?.toppings || [] as topping}
+				<fieldset class="topping">
+					<legend>{topping.name}</legend>
 
-				{#each topping.options as option}
-					{@const id = `${topping.ID}-${option.ID}`.toLowerCase()}
-					<div class="topping-item">
-						<label for={id}>
-							<!-- {#if topping.qtyMin === 1 && topping.qtyMax === 1} -->
-							<!-- because qtyMax can only be one -->
-							{#if (topping.qtyMax & topping.qtyMin) | topping.qtyMin}
-								<RadioButton {id} name={topping.name} value={option.ID} required />
-							{:else}
-								<Checkbox
-									{id}
-									name={topping.name}
-									value={option.ID}
-									required={topping.qtyMin !== 0}
-								/>
-							{/if}
-							<img width="70" src="/burger.png" alt="" role="presentation" />
-							<span class="input-label">
-								{option.name}
-							</span>
-						</label>
-						<!-- style="color: var(--accent-color, orange); background-color: white;" -->
-						<Button icon type="button" on:click={() => console.log('Hi')}>
-							<Icon path={mdiInformation} />
-						</Button>
-					</div>
-				{/each}
-			</fieldset>
-		{/each}
-		{#each ['mama', 'dsd'] || [] as topping}
-			<fieldset class="topping">
-				<legend>{topping}</legend>
+					{#each topping.options as option}
+						{@const id = `${topping.ID}-${option.ID}`.toLowerCase()}
+						<div class="topping-item">
+							<label for={id}>
+								<!-- {#if topping.qtyMin === 1 && topping.qtyMax === 1} -->
+								<!-- because qtyMax can only be one -->
+								{#if (topping.qtyMax & topping.qtyMin) | topping.qtyMin}
+									<RadioButton
+										{id}
+										name={topping.name}
+										value={option.ID}
+										required
+									/>
+								{:else}
+									<Checkbox
+										{id}
+										name={topping.name}
+										value={option.ID}
+										required={topping.qtyMin !== 0}
+									/>
+								{/if}
+								<img width="70" src="/burger.png" alt="" role="presentation" />
+								<span class="input-label">
+									{option.name}
+								</span>
+							</label>
+							<!-- style="color: var(--accent-color, orange); background-color: white;" -->
+							<Button icon type="button" on:click={() => console.log('Hi')}>
+								<Icon path={mdiInformation} />
+							</Button>
+						</div>
+					{/each}
+				</fieldset>
+			{/each}
+			{#each ['mama', 'dsd'] || [] as topping}
+				<fieldset class="topping">
+					<legend>{topping}</legend>
 
-				{#each ['Kraken', 'Sasquatch', 'Mothman'] as item}
-					{@const id = `${topping}-${item}`.toLowerCase()}
-					<div class="topping-item">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label>
-							<RadioButton {id} name={topping} value={item} required />
-							<img width="70" src="/burger.png" alt="" role="presentation" />
-							<span class="input-label">
-								{item}
-							</span>
-						</label>
-						<!-- style="color: var(--accent-color, orange); background-color: white;" -->
-						<Button icon type="button" on:click={() => console.log('Hi')}>
-							<Icon path={mdiInformation} />
-						</Button>
-					</div>
-				{/each}
-			</fieldset>
-		{/each}
+					{#each ['Kraken', 'Sasquatch', 'Mothman'] as item}
+						{@const id = `${topping}-${item}`.toLowerCase()}
+						<div class="topping-item">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label>
+								<RadioButton {id} name={topping} value={item} required />
+								<img width="70" src="/burger.png" alt="" role="presentation" />
+								<span class="input-label">
+									{item}
+								</span>
+							</label>
+							<!-- style="color: var(--accent-color, orange); background-color: white;" -->
+							<Button icon type="button" on:click={() => console.log('Hi')}>
+								<Icon path={mdiInformation} />
+							</Button>
+						</div>
+					{/each}
+				</fieldset>
+			{/each}
+		</div>
 	</div>
 
 	<div class="actions">
@@ -169,6 +176,11 @@
 			justify-content: space-between;
 		}
 
+		.selection {
+			flex: 1;
+			padding: 0.3em 0.8em;
+		}
+
 		.toppings {
 			// height: 100%;
 			flex: 1;
@@ -226,7 +238,7 @@
 
 		.add-to-cart-text {
 			color: inherit;
-			font-size: 0.9em;
+			font-size: min(3.2vw, 0.82rem);
 			font-weight: bold;
 		}
 
@@ -237,8 +249,9 @@
 			align-items: center;
 			justify-content: space-between;
 
-			padding: 0.7em;
-			margin: 0.6em 0.2em 0;
+			padding: 0.4em;
+			// margin: 0.6em 0.2em 0;
+			margin: 0 0.2em;
 			border-radius: 2em;
 			// background: #fff;
 			box-shadow: 4px 7px 24px 0 rgb(0 0 0 / 31%);
@@ -247,7 +260,7 @@
 
 			:global(.s-dialog) & {
 				left: 10px;
-				bottom: 20px;
+				bottom: 10px;
 				right: 10px;
 			}
 
@@ -261,6 +274,16 @@
 
 		// $modalBP: 765px;
 		$modalBP: 850px;
+
+		@media screen and (min-width: 450px) {
+			.add-to-cart-text {
+				font-size: 1rem;
+			}
+
+			.actions {
+				padding: 0.6em;
+			}
+		}
 
 		@media screen and (min-width: $modalBP) {
 			padding-bottom: 0;

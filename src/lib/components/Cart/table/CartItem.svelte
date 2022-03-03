@@ -33,9 +33,9 @@
 	import { trash } from '$lib/Icons/filled';
 
 	import type { CartItem } from 'types/product';
+	import { formatPrice } from '$lib/stores/cart';
 
 	export let item: CartItem;
-	export let currency: string = 'EUR';
 	export let updateQty: (e: number) => void;
 	export let deleteItem: () => void;
 
@@ -58,9 +58,9 @@
 
 <th class="item-product" role="rowheader" scope="row">
 	<div>
-		<img src={image.src} alt={image.alt} />
+		<img aria-hidden="true" src={image.src} alt={image.alt} />
 		<h3>{name}</h3>
-		<p />
+		<p class="desc" />
 		<input type="hidden" name="product" id={ID} value={ID} />
 	</div>
 </th>
@@ -81,12 +81,7 @@
 	</Input>
 </td>
 <td role="cell">
-	<span>
-		{new Intl.NumberFormat('de-DE', {
-			style: 'currency',
-			currency,
-		}).format(price / 100)}
-	</span>
+	{formatPrice(price)}
 </td>
 <td role="cell">
 	<Button icon on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
@@ -95,13 +90,6 @@
 </td>
 
 <style lang="scss">
-	img {
-		height: auto;
-		width: auto;
-		max-width: 100%;
-		max-height: 8rem;
-	}
-
 	th,
 	td {
 		color: var(--cart-table-color);
@@ -110,41 +98,25 @@
 		padding: 0.5em;
 	}
 
+	th {
+		flex: 1 0 var(--cart-item-product-width);
+	}
+
 	div {
 		width: 100%;
 		text-align: center;
 		margin: 0.4em 0 0.3em;
 	}
 
-	button {
-		height: 100%;
-		// width: 100%;
-		padding: 0.35em 1.2em;
-		text-align: end;
-	}
-
-	th {
-		// flex: 1 0 100%;
-		flex: 1 0 var(--cart-item-product-width);
-	}
-
-	td input {
-		flex: 1 0 30%;
-		padding: 0.6em;
-		width: 3em;
-		border-radius: 5px;
-		border: 1px solid var(--cart-table-color);
-		text-align: center;
-		color: inherit;
+	img {
+		height: auto;
+		width: auto;
+		max-width: 100%;
+		max-height: 8rem;
 	}
 
 	td {
 		flex: 0 1 50%;
-
-		span {
-			width: 50%;
-			text-align: center;
-		}
 
 		&:first-child,
 		&:nth-child(2) {
@@ -156,8 +128,13 @@
 		}
 
 		input {
-			padding: 0.2em;
 			flex: 1 0 30%;
+			padding: 0.2em;
+			width: 3em;
+			border-radius: 5px;
+			border: 1px solid var(--cart-table-color);
+			text-align: center;
+			color: inherit;
 		}
 
 		&:before {
@@ -177,15 +154,6 @@
 	}
 
 	@media screen and (min-width: 460px) {
-		tr {
-			display: table-row;
-			border-bottom: 1px solid var(--cart-table-color);
-
-			&:last-child {
-				border: 0;
-			}
-		}
-
 		.item-product {
 			flex: 1 0 var(--cart-item-product-width);
 			max-width: var(--cart-item-product-width);

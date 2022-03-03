@@ -52,7 +52,7 @@ export interface CartWithState {
 	cart: ClientCart;
 }
 
-function formatPrice(amount: number) {
+export function formatPrice(amount: number) {
 	return new Intl.NumberFormat('de-DE', {
 		style: 'currency',
 		currency: 'EUR',
@@ -72,8 +72,6 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 
 	const store = writable<CartWithState>(start, set => {
 		onMount(async () => {
-			console.debug('mounted store');
-
 			let cart: ClientCart;
 			try {
 				cart = (await get(CART_STORE_KEY)) || startCart;
@@ -110,7 +108,7 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 		};
 	});
 
-	const { subscribe, update, set } = store;
+	const { subscribe, update } = store;
 
 	let db: IDBPDatabase<Cart>;
 

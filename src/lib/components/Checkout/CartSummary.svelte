@@ -2,7 +2,7 @@
 	import ExpansionPanel from 'svelty-material/components/ExpansionPanels/ExpansionPanel.svelte';
 	import ExpansionPanels from 'svelty-material/components/ExpansionPanels/ExpansionPanels.svelte';
 
-	import CartItem from '../Cart/CartItem.svelte';
+	import CartItem from '../Cart/table/CartItem.svelte';
 
 	import type { SKU, CartItem as ICartItem } from 'types/product';
 	import type { Cart } from '$lib/stores/cart';

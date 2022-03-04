@@ -16,6 +16,12 @@ const de: BaseTranslation = {
 	},
 	cart: {
 		cart: 'Warenkorb',
+		cartItems: 'Warenkorb Artikel',
+		header: {
+			product: 'Produkt',
+			price: 'Preis',
+			quantity: 'Anzahl',
+		},
 		remarks: 'Anmerkungen',
 		qty: 'Anzahl',
 	},

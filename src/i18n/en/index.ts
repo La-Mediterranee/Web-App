@@ -16,6 +16,7 @@ const en: Translation = {
 	},
 	cart: {
 		cart: 'Cart',
+		cartItems: 'Cart items',
 		remarks: 'Remarks',
 		qty: 'Qty',
 	},

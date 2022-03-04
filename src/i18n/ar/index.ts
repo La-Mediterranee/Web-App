@@ -16,6 +16,7 @@ const ar: Translation = {
 	},
 	cart: {
 		cart: 'عربة التسوق',
+		cartItems: 'Cart items',
 		remarks: 'ملاحظات',
 		qty: 'كمية',
 	},

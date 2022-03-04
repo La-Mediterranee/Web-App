@@ -1,55 +1,38 @@
 <script lang="ts">
 	import Button from 'svelty-material/components/Button/Button.svelte';
 
-	export let headersLength: number;
 	export let totalQuantity: number;
 	export let totalAmount: string;
 </script>
 
 <!-- svelte-ignore a11y-no-redundant-roles -->
-<tr role="row">
-	<td id="notes-container" role="cell" colspan={headersLength}>
-		<div>
-			<label for="notes">Anmerkungen: </label>
-			<textarea name="notes" id="notes" placeholder="Anmerkungen: " />
-		</div>
-	</td>
-</tr>
-<tr>
-	<td role="cell" class="sum" colspan={headersLength - 2} aria-colspan={headersLength - 2}>
+<div class="notes-container">
+	<div>
+		<label>
+			Anmerkungen:
+			<textarea name="notes" class="cart-notes" placeholder="Anmerkungen: " />
+		</label>
+	</div>
+</div>
+<div class="actions">
+	<div class="sum">
 		<span style="display: flex; height: 100%; align-items: center;">
 			Summe ({totalQuantity} Produkte): {totalAmount}
 		</span>
-	</td>
-	<td role="cell" colspan="2">
+	</div>
+	<div id="cart-checkout">
 		<Button type="submit" class="form-elements-color" disabled={!totalQuantity} rounded>
 			Zur Kasse
 		</Button>
-	</td>
-</tr>
+	</div>
+</div>
 
 <style lang="scss">
-	tr {
-		color: var(--cart-table-color);
-		text-align: center;
+	.notes-container {
 		width: 100%;
 	}
 
-	div {
-		text-align: left;
-	}
-
-	td {
-		padding: 1em;
-		text-align: right;
-	}
-
-	#notes-container {
-		width: 100%;
-	}
-
-	#notes {
-		display: block;
+	.cart-notes {
 		resize: none;
 		border: 2px solid var(--tint-color);
 		width: 100%;
@@ -57,5 +40,22 @@
 		border-radius: 0.9em;
 		padding: 0.8em;
 		margin-top: 0.75em;
+		color: white;
+	}
+
+	.sum {
+		flex: 1;
+	}
+
+	#cart-checkout {
+		display: flex;
+		justify-content: flex-end;
+		margin-inline-start: 1em;
+	}
+
+	.actions {
+		display: flex;
+		margin-top: 0.6em;
+		width: 100%;
 	}
 </style>

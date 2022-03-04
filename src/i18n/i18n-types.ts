@@ -58,6 +58,24 @@ type RootTranslation = {
 		 */
 		cart: string
 		/**
+		 * Warenkorb Artikel
+		 */
+		cartItems: string
+		header: {
+			/**
+			 * Produkt
+			 */
+			product: string
+			/**
+			 * Preis
+			 */
+			price: string
+			/**
+			 * Anzahl
+			 */
+			quantity: string
+		}
+		/**
 		 * Anmerkungen
 		 */
 		remarks: string
@@ -158,6 +176,24 @@ export type TranslationFunctions = {
 		 * Warenkorb
 		 */
 		cart: () => LocalizedString
+		/**
+		 * Warenkorb Artikel
+		 */
+		cartItems: () => LocalizedString
+		header: {
+			/**
+			 * Produkt
+			 */
+			product: () => LocalizedString
+			/**
+			 * Preis
+			 */
+			price: () => LocalizedString
+			/**
+			 * Anzahl
+			 */
+			quantity: () => LocalizedString
+		}
 		/**
 		 * Anmerkungen
 		 */

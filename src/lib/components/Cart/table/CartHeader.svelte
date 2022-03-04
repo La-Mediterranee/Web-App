@@ -27,4 +27,8 @@
 		color: var(--cart-table-color);
 		flex: 0 1 50%;
 	}
+
+	th {
+		text-transform: capitalize;
+	}
 </style>

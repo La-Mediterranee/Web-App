@@ -40,7 +40,7 @@
 	export let deleteItem: () => void;
 
 	function update(e: Event) {
-		updateQty(+(<HTMLInputElement>e.target).value);
+		updateQty(+(<HTMLInputElement>e.currentTarget).value);
 	}
 
 	let qty = item.quantity;
@@ -48,13 +48,6 @@
 
 	const { image, name, price, ID } = item;
 </script>
-
-<!-- <div itemscope itemtype="https://schema.org/Product">
-	<img itemprop="image" decoding="async" class="ml-auto" src={image?.src} alt={image?.alt} />
-	<h4 itemprop="name" class="justify-center h4">{name}</h4>
-	<span itemprop="priceCurrency" content="EUR">€</span>
-	<span class="price" itemprop="price" content={`price`}>{sum}</span>
-</div> -->
 
 <th class="item-product" role="rowheader" scope="row">
 	<div>
@@ -64,7 +57,7 @@
 		<input type="hidden" name="product" id={ID} value={ID} />
 	</div>
 </th>
-<td role="cell">
+<td role="cell" class="item-quantity">
 	<Input>
 		<!-- pattern="[0-9]*" -->
 		<input
@@ -80,10 +73,10 @@
 		/>
 	</Input>
 </td>
-<td role="cell">
+<td role="cell" class="item-price">
 	{formatPrice(price)}
 </td>
-<td role="cell">
+<td role="cell" class="item-action">
 	<Button icon on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
 		<Icon path={trash} />
 	</Button>
@@ -94,8 +87,8 @@
 	td {
 		color: var(--cart-table-color);
 		display: flex;
-		text-align: right;
 		padding: 0.5em;
+		justify-content: center;
 	}
 
 	th {
@@ -145,18 +138,32 @@
 		}
 	}
 
-	@media screen and (max-width: 459px) {
-		td[title]:not(:first-child):before {
-			content: attr(title) ': ';
-			display: flex;
-			align-items: center;
+	.item {
+		&-quantity {
+			flex: 0 0 var(--cart-item-quantity-width);
+		}
+
+		&-price {
+			flex: 0 0 var(--cart-item-price-width);
+		}
+
+		&-action {
+			flex: 0 0 var(--cart-item-actions-width);
 		}
 	}
+
+	// @media screen and (max-width: 459px) {
+	// 	td[title]:not(:first-child):before {
+	// 		content: attr(title) ': ';
+	// 		display: flex;
+	// 		align-items: center;
+	// 	}
+	// }
 
 	@media screen and (min-width: 460px) {
 		.item-product {
 			flex: 1 0 var(--cart-item-product-width);
-			max-width: var(--cart-item-product-width);
+			// max-width: var(--cart-item-product-width);
 		}
 
 		th,

@@ -25,7 +25,6 @@
 		padding-bottom: 12px;
 		text-align: center;
 		color: var(--cart-table-color);
-		flex: 0 1 50%;
 	}
 
 	th {

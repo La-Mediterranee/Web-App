@@ -174,15 +174,17 @@
 
 	#cart {
 		--cart-item-product-width: 8rem;
-		--cart-item-quantity-width: 6em;
-		--cart-item-price-width: 6em;
+		--cart-item-quantity-width: 7em;
+		--cart-item-price-width: 7em;
 		--cart-item-actions-width: 3em;
+
+		padding: 0 0.7em;
 
 		display: flex;
 		flex-direction: column;
-		text-align: center;
-		margin-bottom: 1em;
+
 		height: 100%;
+		margin-bottom: 1em;
 
 		.state {
 			padding: 2em 0;
@@ -191,7 +193,7 @@
 
 		.cart {
 			&-product-header {
-				flex: 1 0 var(--cart-item-product-width);
+				flex: 1 1 var(--cart-item-product-width);
 			}
 
 			&-quantity-header {
@@ -199,7 +201,7 @@
 			}
 
 			&-price-header {
-				flex: 0 0 var(--cart-item-price-width);
+				flex: 0 1 var(--cart-item-price-width);
 			}
 
 			&-actions-header {
@@ -212,7 +214,6 @@
 			justify-content: center;
 			flex-wrap: wrap;
 			width: 100%;
-			max-width: 93%;
 			margin: 0 auto;
 		}
 
@@ -258,8 +259,8 @@
 			background-color: var(--theme-secondary-color);
 			border-radius: 1em;
 			margin-bottom: 0.625em;
-			padding: 0.3em 0.2em;
 			height: 13rem;
+			// flex-wrap: wrap;
 
 			&:last-child {
 				margin-bottom: 0;
@@ -277,6 +278,18 @@
 			position: var(--cart-action-position);
 		}
 
+		@media screen and (min-width: 340px) {
+			.item-product {
+				flex: initial;
+			}
+		}
+
+		@media screen and (min-width: 360px) {
+			.item-product {
+				flex: 1 0 var(--cart-item-product-width);
+			}
+		}
+
 		@media screen and (min-width: 460px) {
 			tbody {
 				width: 100%;
@@ -290,15 +303,13 @@
 			}
 		}
 
-		@media screen and (min-width: 800px) {
+		@media screen and (min-width: 960px) {
 			--cart-item-product-width: 11rem;
 			--cart-action-position: sticky;
 
-			padding: 1em;
-
 			table {
-				flex: 1 0 50%;
-				max-width: 60%;
+				flex: 1 0 58%;
+				max-width: 58%;
 				align-self: flex-start;
 			}
 
@@ -311,25 +322,26 @@
 			}
 
 			.cart-actions {
-				flex: 1 0 40%;
+				flex: 1 0 30%;
 				align-self: flex-start;
 				top: calc(var(--top-bar-height) + 10px);
-				margin: 0 auto;
-				max-width: 25rem;
-			}
-
-			.item {
-				// display: table-row;
-				width: 100%;
+				margin: 0 0 0 auto;
+				max-width: 23.5rem;
 			}
 		}
 
 		@media screen and (min-width: 1060px) {
 			--cart-item-product-width: 11rem;
+
 			padding: 1em;
+
+			form {
+				max-width: 93%;
+			}
 
 			table {
 				flex: 1 0 60%;
+				max-width: 60%;
 			}
 		}
 	}

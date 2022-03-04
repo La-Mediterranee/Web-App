@@ -92,8 +92,8 @@
 	.bubble {
 		position: absolute;
 		align-self: center;
-		height: 16px;
-		width: 16px;
+		height: 14px;
+		width: 14px;
 		background: var(--bar-color);
 		border-radius: 50%;
 	}
@@ -103,8 +103,8 @@
 		align-self: center;
 		// width: 22px;
 		// height: 22px;
-		width: 32px;
-		height: 32px;
+		width: 28px;
+		height: 28px;
 		background: var(--bar-color);
 		border-radius: 50%;
 	}
@@ -136,8 +136,10 @@
 		text-decoration: none;
 		position: relative;
 		background: var(--bar-color);
-		width: 60px;
-		height: 100%;
+		width: 50px;
+		height: 50px;
+
+		// height: 100%;
 		border-radius: 50%;
 
 		&.active {

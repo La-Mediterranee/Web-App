@@ -16,8 +16,9 @@
 </div>
 <div class="actions">
 	<div class="sum">
-		<span style="display: flex; height: 100%; align-items: center;">
-			Summe ({totalQuantity} Produkte): {totalAmount}
+		Summe ({totalQuantity} Produkte):
+		<span style="flex: 1; text-align: end;">
+			{totalAmount}
 		</span>
 	</div>
 	<div id="cart-checkout">
@@ -44,18 +45,22 @@
 	}
 
 	.sum {
-		flex: 1;
+		display: flex;
+		flex: 1 0 100%;
 	}
 
 	#cart-checkout {
 		display: flex;
 		justify-content: flex-end;
-		margin-inline-start: 1em;
+		margin-top: 1em;
+		flex: 1;
+		// margin-inline-start: 1em;
 	}
 
 	.actions {
 		display: flex;
 		margin-top: 0.6em;
 		width: 100%;
+		flex-wrap: wrap;
 	}
 </style>

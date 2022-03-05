@@ -1,4 +1,6 @@
 <script context="module" lang="ts">
+	import { browser } from '$app/env';
+
 	import type { LoadOutput } from '@sveltejs/kit/types/internal';
 
 	const routeName = '/cart';

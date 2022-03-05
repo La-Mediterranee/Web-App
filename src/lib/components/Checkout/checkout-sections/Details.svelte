@@ -1,4 +1,6 @@
 <script lang="ts">
+	import throttle from '$lib/utils/helper/throttle';
+
 	import Button from 'svelty-material/components/Button/Button.svelte';
 	import TextField from 'svelty-material/components/TextField/TextField.svelte';
 

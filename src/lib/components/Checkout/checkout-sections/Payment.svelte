@@ -217,7 +217,7 @@
 					<div>
 						<label for="sofort">Sofort Überweisung</label>
 						<img
-							src="https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/sofort.svg"
+							src="https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/klarna.svg"
 							alt="Klarna Logo"
 							width={38}
 							height={24}

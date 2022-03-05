@@ -65,20 +65,25 @@
 			],
 		});
 
-		paymentRequest = createPaymentRequest(stripe as Stripe, $cart.totalAmount, 'Bestellung', [
-			{
-				id: 'free-delivery',
-				label: 'Gratis Lieferung',
-				detail: 'Lieferung in 30-60 Minuten',
-				amount: 0,
-			},
-			{
-				id: 'tip',
-				label: 'Trinkgeld',
-				detail: 'Trinkgeld',
-				amount: $cart.totalAmount * 1.05,
-			},
-		]);
+		paymentRequest = createPaymentRequest(
+			stripe as Stripe,
+			$cart.cart.totalAmount,
+			'Bestellung',
+			[
+				{
+					id: 'free-delivery',
+					label: 'Gratis Lieferung',
+					detail: 'Lieferung in 30-60 Minuten',
+					amount: 0,
+				},
+				{
+					id: 'tip',
+					label: 'Trinkgeld',
+					detail: 'Trinkgeld',
+					amount: $cart.cart.totalAmount * 1.05,
+				},
+			],
+		);
 
 		// Check the availability of the Payment Request API first.
 		canMakePayment = await paymentRequest.canMakePayment();
@@ -102,7 +107,11 @@
 <h1>Checkout</h1>
 
 <div id="checkout">
-	<CartSummary cart={$cart} total={$cart.totalAmount} quantity={$cart.totalQuantity} />
+	<CartSummary
+		cart={$cart.cart}
+		total={$cart.cart.displayTotalAmount}
+		quantity={$cart.cart.totalQuantity}
+	/>
 	<div>
 		{#if canMakePayment}
 			<ExpressPayment stripe={$stripe} {paymentRequest} {elements} />

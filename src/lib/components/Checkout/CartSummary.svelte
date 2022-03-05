@@ -20,7 +20,7 @@
 	// 	},
 	// ]);
 
-	export let total: number;
+	export let total: string;
 	export let quantity: number;
 
 	let showSummary = false;
@@ -86,7 +86,7 @@
 				<th scope="row" colspan={headers.length - 1}>
 					Summe <em>(inkl. MwSt.)</em>
 				</th>
-				<td> 30 €</td>
+				<td>{total}</td>
 			</tr>
 		</tfoot>
 	</table>

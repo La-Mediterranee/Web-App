@@ -22,6 +22,7 @@ declare namespace App {
 		user?: DecodedIdToken | null;
 		cookies: Cookies;
 		locale: Locales;
+		urlLocale: Exclude<Locales, import('./i18n/i18n-types').BaseLocale> | '';
 	}
 
 	interface Platform {}

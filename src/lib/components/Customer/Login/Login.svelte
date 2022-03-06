@@ -145,7 +145,7 @@
 				const res = await fetch('/api/session/login', {
 					method: 'post',
 					headers: {
-						'content-type': 'application/json; charset=utf-8',
+						'content-type': 'application/json;',
 					},
 					body: JSON.stringify({
 						idToken: token,
@@ -154,21 +154,24 @@
 					signal: abortController.signal,
 				});
 
+				if (res.ok) {
+					throw new Error(res.statusText);
+				}
+
 				const url = (await res.json()).location;
 				window.location.replace(url);
-
-				error = false;
 			} else {
 				error = true;
 			}
 
-			disabled = false;
 			// for (const child of focusableChildren) {
 			// 	child.removeAttribute('disabled');
 			// }
 		} catch (err) {
 			console.error(err);
 			error = true;
+		} finally {
+			disabled = false;
 		}
 	}
 

@@ -49,6 +49,11 @@ const parseLocale: Handle = async ({ event, resolve }) => {
 		event.locals.locale = detectLocale(customClaims, requestCookies, acceptLanguageDetector);
 	}
 
+	//@ts-ignore
+	event.locals.urlLocale =
+		event.locals.locale !== baseLocale
+			? '/' + (event.locals.locale as Exclude<Locales, BaseLocale>)
+			: '';
 	return resolve(event);
 };
 
@@ -132,10 +137,7 @@ export async function getSession(event: RequestEvent): Promise<App.Session> {
 		user: getUser(event.locals),
 		locale: event.locals.locale,
 		//@ts-ignore
-		urlLocale:
-			event.locals.locale !== baseLocale
-				? '/' + (event.locals.locale as Exclude<Locales, BaseLocale>)
-				: '',
+		urlLocale: event.locals.urlLocale,
 		rtl: RTL_LANGS.has(event.locals.locale),
 	};
 }

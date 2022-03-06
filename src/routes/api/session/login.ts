@@ -1,4 +1,5 @@
 import { baseLocale } from '$i18n/i18n-util';
+import { SERVER_PORT } from '$lib/server/constants';
 import { auth, firebase } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
@@ -8,6 +9,18 @@ export interface SessionLogin {
 	idToken: string;
 	csrfToken: string;
 }
+
+async function fetchWithJSON(init: RequestInit) {
+	Object.assign(init, {
+		headers: {
+			'content-type': 'application/json',
+		},
+	});
+	return fetch(`http://localhost:${SERVER_PORT}/auth/session`, init);
+}
+
+const days = 14;
+const defaultExpiresIn = days * 60 * 60 * 24 * 1000;
 
 export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const body = (await event.request.json()) as SessionLogin;
@@ -23,24 +36,19 @@ export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 			};
 		}
 
-		const decodedIdToken = await auth.verifyIdToken(idToken);
+		const res = await fetchWithJSON({
+			method: 'POST',
+			body: JSON.stringify({
+				idToken,
+				locale: event.locals.locale,
+			}),
+		});
 
-		// Only process if the user just signed in in the last 5 minutes.
-		if (new Date().getTime() / 1000 - decodedIdToken.auth_time > 5 * 60) {
-			return {
-				status: 401,
-				body: 'Recent sign in required!',
-			};
+		if (!res.ok) {
+			throw new Error('Error creating session cookie');
 		}
 
-		await auth.setCustomUserClaims(decodedIdToken.uid, { locale: event.locals.locale });
-
-		const days = 14;
-		const expiresIn = days * 60 * 60 * 24 * 1000;
-
-		const sessionCookie = await auth.createSessionCookie(idToken, {
-			expiresIn,
-		});
+		const { cookie, expiresIn = defaultExpiresIn } = await res.json();
 
 		const location = `${
 			event.locals.locale !== baseLocale ? '/' + event.locals.locale : ''
@@ -54,7 +62,7 @@ export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 			}),
 		};
 
-		setCookie(<Response>response, 'sessionId', sessionCookie, {
+		setCookie(<Response>response, 'sessionId', cookie, {
 			// expires: new Date(0),
 			maxAge: expiresIn / 1000,
 			httpOnly: true,

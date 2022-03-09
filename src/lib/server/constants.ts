@@ -9,3 +9,5 @@ export const {
 	GOOGLE_APPLICATION_CREDENTIALS,
 	SERVER_PORT,
 } = process.env;
+
+export const SERVER_URL = `http://localhost:${SERVER_PORT}`;

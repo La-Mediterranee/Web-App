@@ -16,7 +16,7 @@ async function fetchWithJSON(init: RequestInit) {
 			'content-type': 'application/json',
 		},
 	});
-	return fetch(`http://localhost:${SERVER_PORT}/auth/session`, init);
+	return fetch(`http://localhost:${SERVER_PORT}/v1/auth/session`, init);
 }
 
 const days = 14;

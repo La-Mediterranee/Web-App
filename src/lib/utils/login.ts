@@ -13,6 +13,8 @@ import {
 	browserPopupRedirectResolver,
 } from 'firebase/auth';
 
+import { SERVER_URL } from '$utils/constants';
+
 import type { User, Auth, UserCredential, AuthProvider } from 'firebase/auth';
 
 interface AuthError {
@@ -100,7 +102,7 @@ export async function signInWithDiscord(auth: Auth) {
 	return runAsyncLogin(async () => {
 		const userCredential = await withPopup(
 			auth,
-			'http://localhost:8080/auth/login?provider=discord',
+			`${SERVER_URL}/v1/auth/login?provider=discord`,
 			'Discord Auth',
 			{
 				height: 740,
@@ -186,27 +188,45 @@ async function withPopup(
 	}
 
 	try {
-		const origin = new URL(url).origin;
-		const data = await waitForPopupLogin<OAuthUser>(origin);
+		const userCredential = await new Promise<UserCredential>((resolve, rej) => {
+			let hasUser = false;
+			(async () => {
+				const origin = new URL(url).origin;
+				const data = await waitForPopupLogin<OAuthUser>(origin);
 
-		const userCredential = await signInWithCustomToken(auth, data.token);
-		const user = userCredential.user;
+				const userCredential = await signInWithCustomToken(auth, data.token);
 
-		const info = getAdditionalUserInfo(userCredential);
+				// const user = userCredential.user;
 
-		info?.isNewUser &&
-			Promise.all([
-				updateEmail(user, data.email),
-				updateProfile(user, {
-					displayName: data.displayName,
-					photoURL: data.photoURL,
-				}),
-			]);
+				// const info = getAdditionalUserInfo(userCredential);
 
-		authWindow?.close();
+				// info?.isNewUser &&
+				// 	Promise.all([
+				// 		updateEmail(user, data.email),
+				// 		updateProfile(user, {
+				// 			displayName: data.displayName,
+				// 			photoURL: data.photoURL,
+				// 		}),
+				// 	]);
+
+				hasUser = true;
+				authWindow?.close();
+				resolve(userCredential);
+			})();
+
+			function checkWindow() {
+				if (authWindow == null || authWindow?.closed) {
+					window.clearInterval(intervalID);
+					if (hasUser) return;
+					rej(new Error('window closed'));
+				}
+			}
+
+			const intervalID = window.setInterval(checkWindow, 500);
+		});
+
 		return userCredential;
 	} catch (error) {
-		console.error(error);
 		throw new Error((error as Error).message);
 	}
 }

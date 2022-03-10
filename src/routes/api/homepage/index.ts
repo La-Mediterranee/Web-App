@@ -1,7 +1,4 @@
-import { promisify } from 'util';
-import { randomUUID } from 'crypto';
-
-import { SERVER_PORT } from '$lib/server/constants';
+import { SERVER_PORT, SERVER_URL } from '$lib/server/constants';
 
 import type { Product } from 'types/product';
 import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
@@ -28,8 +25,8 @@ export interface HomepageProps {
 
 async function homepage(): Promise<HomepageProps> {
 	const responses = await Promise.all([
-		fetch(`http://localhost:${SERVER_PORT}/products`),
-		fetch(`http://localhost:${SERVER_PORT}/products`),
+		fetch(`${SERVER_URL}/v1/products`),
+		fetch(`${SERVER_URL}/v1/products`),
 	]);
 
 	const sections = await Promise.all(responses.map(res => res.json()));

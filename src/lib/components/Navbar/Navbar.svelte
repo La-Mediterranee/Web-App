@@ -44,7 +44,8 @@
 		<ul>
 			{#each _routes as { pathLabel, icon, href, rel, size } (href)}
 				<li class="nav-item">
-					<a
+					<Link
+						text
 						{href}
 						{rel}
 						{...{
@@ -58,7 +59,7 @@
 						<span class="label">
 							{paths[pathLabel]()}
 						</span>
-					</a>
+					</Link>
 				</li>
 			{/each}
 		</ul>
@@ -66,17 +67,17 @@
 
 	<div id="avatar">
 		{#if $session.user}
-			<a href={`${$session.urlLocale}/customer`}>
+			<Link text size="x-large" class="img-url" href={`${$session.urlLocale}/customer`}>
 				<img
 					src={$session.user.photoURL ||
 						`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
 					alt="Your Avatar"
 					loading="eager"
-					width={50}
-					height={50}
+					width={48}
+					height={48}
 					referrerpolicy="no-referrer"
 				/>
-			</a>
+			</Link>
 		{:else}
 			<Link text href={`${$session.urlLocale}/customer/login`} sveltekit:prefetch>
 				<!-- <Icon path={mdiCart} /> -->
@@ -96,11 +97,6 @@
 <style lang="scss">
 	// box-shadow: 0 2px 20px 0 var(--subtle);
 	@use 'variables' as *;
-
-	a {
-		color: inherit;
-		text-decoration: none;
-	}
 
 	.skip-main {
 		padding: 8px;
@@ -179,17 +175,6 @@
 	.nav-item {
 		list-style: none;
 
-		&:not(:last-child) {
-			margin-right: 1.15rem;
-		}
-
-		a {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			flex-direction: row;
-		}
-
 		div {
 			height: fit-content;
 			width: 27px;
@@ -197,8 +182,7 @@
 		}
 
 		.label {
-			font-size: 1.2em;
-			margin-inline-start: 0.2em;
+			font-size: 1.3em;
 		}
 	}
 
@@ -208,6 +192,14 @@
 		display: flex;
 		align-items: center;
 		margin-right: 0.5em;
+		border-radius: 0.3em;
+
+		:global(.img-url) {
+			padding: 0.3em;
+			min-width: unset;
+			height: 56px;
+			border-radius: inherit;
+		}
 
 		img {
 			border-radius: 0.3em;
@@ -232,14 +224,6 @@
 		}
 
 		:global([dir='rtl']) {
-			.nav-item {
-				margin-right: 0;
-
-				&:not(:last-child) {
-					margin-left: 1.15rem;
-				}
-			}
-
 			.cart :global(svg path) {
 				transform-origin: 50% 50%;
 				// transform: scale(1, -1) translate(0, -100%);

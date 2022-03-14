@@ -102,6 +102,11 @@ const parseUser: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event);
+	response.headers.append('access-control-allow-credentials', 'true');
+	response.headers.append(
+		'access-control-allow-headers',
+		'Accept,Accept-Language,Authorization,Content-Type,Cookie',
+	);
 
 	if (!event.locals.user) return response;
 

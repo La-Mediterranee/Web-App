@@ -126,6 +126,7 @@
 				<a
 					href="./product/{product.ID}"
 					tabindex={isVisible ? undefined : -1}
+					role="button"
 					aria-haspopup="dialog"
 					on:click={openPopUp}
 					use:captureRipple={ctaEl}

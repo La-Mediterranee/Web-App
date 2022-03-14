@@ -40,7 +40,11 @@
 	// import Image from '$lib/components/Image/Image.svelte';
 	import CreditCard from '$lib/components/CreditCard/CreditCard.svelte';
 
-	import { onMount } from 'svelte';
+	import TipButton from './TipButton.svelte';
+	import PaymentPreProcessor from './PaymentPreProcessor.svelte';
+	import RadioButton from '$lib/components/Forms/RadioButton.svelte';
+	import { slide } from 'svelte/transition';
+	import { browser } from '$app/env';
 
 	export let elements: StripeElements;
 	export let value: number[] = [1];
@@ -49,16 +53,13 @@
 	let form: HTMLFormElement;
 	let sum = 0;
 	let tip = 'none';
-	let mounted = false;
 	let paymentMethod: PaymentMethods = 'credit';
 	let selected: HTMLFieldSetElement | null = null;
 	let checked: 'summary' | 'details' | null = null;
 
-	const name = 'Zahlungsmethode';
+	$: console.debug(TAG, paymentMethod);
 
-	onMount(() => {
-		mounted = true;
-	});
+	const paymentName = 'Zahlungsmethode';
 
 	function backToOrderDetails() {
 		console.debug(TAG, 'checkOrderDetails');
@@ -100,11 +101,21 @@
 		// const submitter: HTMLButtonElement = (event.submitter as HTMLButtonElement)
 		// submitter?.value;
 	}
+
+	const tips = [
+		{ value: '5', text: '5%', money: sum * 0.05 },
+		{ value: '10', text: '10%', money: sum * 0.05 },
+		{ value: '15', text: '15%', money: sum * 0.05 },
+		{ value: 'custom', text: 'Benutzerdefiniert', money: undefined },
+		{ value: 'none', text: 'Keines', money: undefined },
+	];
 </script>
+
+<!-- action="./checkout?next=details" -->
 
 <form
 	bind:this={form}
-	action="/checkout?section=details"
+	action="./checkout?next=2"
 	method="POST"
 	on:submit|preventDefault={checkNextStep}
 >
@@ -113,57 +124,21 @@
 		<fieldset id="tips">
 			<legend class="visually-hidden"> Trinkgeld Prozent Optionen </legend>
 			<div class="tip-container">
-				<div class="tip">
-					<label for="tip-5">5%</label>
-					<input
-						bind:group={tip}
-						id="tip-5"
-						type="radio"
-						class="visually-hidden-radio"
-						value="5"
-					/>
-					<div>{sum * 0.05}</div>
-					<div class="checked" />
-				</div>
-				<div class="tip">
-					<label for="tip-10">10%</label>
-					<input
-						bind:group={tip}
-						id="tip-10"
-						type="radio"
-						class="visually-hidden-radio"
-						value="10"
-					/>
-					<div>{sum * 0.1}</div>
-					<div class="checked" />
-				</div>
-				<div class="tip">
-					<label for="tip-15">15%</label>
-					<input
-						bind:group={tip}
-						id="tip-15"
-						type="radio"
-						class="visually-hidden-radio"
-						value="15"
-					/>
-					<div>{sum * 0.15}</div>
-					<div class="checked" />
-				</div>
-				<div class="tip">
-					<label for="no-tip"> <span> Keines </span> </label>
-					<input
-						bind:group={tip}
-						id="no-tip"
-						type="radio"
-						class="visually-hidden-radio"
-						value="none"
-						checked
-					/>
-					<div class="checked" />
-				</div>
+				{#each tips as { value, money, text } (value)}
+					<TipButton bind:group={tip} name={'tips'} {value}>
+						{text}
+						<svelte:fragment slot="money">
+							{#if money != null}
+								{money}
+							{/if}
+						</svelte:fragment>
+					</TipButton>
+				{/each}
 			</div>
 			<div class="custom-tip-container">
-				<TextField outlined rounded>Benutzerdefiniertes Trinkgeld</TextField>
+				<TextField disabled={browser && tip !== 'custom'} outlined rounded>
+					Benutzerdefiniertes Trinkgeld
+				</TextField>
 			</div>
 		</fieldset>
 	</section>
@@ -176,67 +151,71 @@
 
 				<div class="payment-processor">
 					<span>
-						<input
-							bind:group={paymentMethod}
-							type="radio"
+						<RadioButton
 							id="credit"
 							value="credit"
-							{name}
+							name={paymentName}
+							bind:group={paymentMethod}
 						/>
 					</span>
 					<div>
-						<label for="credit">Kreditkarte</label>
-						<ul>
-							{#each Array.from( [logos.visa, logos.mastercard, logos.maestroAlt, logos.amex], ) as logo}
-								<li>
-									<img src={logo} width={38} height={24} />
-								</li>
-							{/each}
-						</ul>
+						<label class="processorLabel" for="credit">
+							Kreditkarte
+							<ul aria-hidden="true">
+								{#each Array.from( [logos.visa, logos.mastercard, logos.maestroAlt, logos.amex], ) as logo}
+									<li>
+										<!-- svelte-ignore a11y-missing-attribute -->
+										<img src={logo} width={38} height={24} />
+									</li>
+								{/each}
+							</ul>
+						</label>
 					</div>
 				</div>
 
-				<div id="card-element" hidden={paymentMethod !== 'credit'}>
-					{#if elements}
-						<CreditCard {elements} />
-					{:else}
-						<p>Lädt ...</p>
-					{/if}
-				</div>
+				{#if paymentMethod === 'credit'}
+					<div transition:slide id="card-element" hidden={paymentMethod !== 'credit'}>
+						{#if elements}
+							<CreditCard {elements} />
+						{:else}
+							<p>Lädt ...</p>
+						{/if}
+					</div>
+				{/if}
 
-				<div class="payment-processor">
+				<PaymentPreProcessor>
 					<span>
-						<input
-							bind:group={paymentMethod}
-							type="radio"
+						<RadioButton
 							id="sofort"
 							value="sofort"
-							{name}
+							name={paymentName}
+							bind:group={paymentMethod}
 						/>
 					</span>
 					<div>
-						<label for="sofort">Sofort Überweisung</label>
-						<img
-							src="https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/klarna.svg"
-							alt="Klarna Logo"
-							width={38}
-							height={24}
-						/>
+						<label class="processorLabel" for="sofort">
+							Sofort Überweisung
+							<img
+								src="https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/klarna.svg"
+								alt="Klarna Logo"
+								width={38}
+								height={24}
+							/>
+						</label>
 					</div>
-				</div>
+				</PaymentPreProcessor>
 
 				<div class="payment-processor">
 					<span>
-						<input
-							bind:group={paymentMethod}
-							type="radio"
+						<RadioButton
 							id="bar"
 							value="bar"
-							{name}
+							name={paymentName}
+							bind:group={paymentMethod}
 						/>
 					</span>
 					<div>
-						<label for="bar">Zahlung bei Abholung/Lieferung</label>
+						<label class="processorLabel" for="bar">Barzahlung</label>
 					</div>
 				</div>
 			</fieldset>
@@ -245,24 +224,27 @@
 					type="submit"
 					name="summary"
 					class="form-elements-color"
+					style="font-weight: bold; font-size: 0.95em"
+					size="large"
 					rounded
 					on:click={() => {
 						checked = 'summary';
 					}}
 				>
-					Weiter zur Zusammenfassung
+					Zur Zusammenfassung
 				</Button>
 				<Button
 					type="submit"
 					name="details"
-					formaction="/checkout?section=summary"
+					formaction="./checkout?prev=0"
 					rounded
 					on:click={() => {
 						checked = 'details';
 					}}
 				>
-					Zurück zu den Lieferdetails
+					Zurück zu Lieferdetails
 				</Button>
+				<!-- formaction="./checkout?prev=summary" -->
 			</div>
 		</div>
 	</section>
@@ -270,6 +252,10 @@
 
 <style lang="scss">
 	@use 'variables' as *;
+
+	form {
+		--radio-size: 20px;
+	}
 
 	form,
 	div {
@@ -302,6 +288,7 @@
 	.tip-container {
 		display: flex;
 		width: 100%;
+		flex-flow: wrap;
 	}
 
 	.custom-tip-container {
@@ -310,68 +297,72 @@
 		width: 100%;
 	}
 
-	.tip {
-		position: relative;
-		text-align: center;
-		border: 2px solid;
-		padding: 0.5em 0.4em;
-		border-left-width: 0;
-
-		span {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100%;
-			width: 100%;
-		}
-
-		input {
-			cursor: pointer;
-
-			&:checked {
-				~ .checked {
-					border: 3px solid #fb8c00;
-				}
-			}
-		}
-
-		&:first-child {
-			border-left-width: 2px;
-			border-top-left-radius: 0.45em;
-			border-bottom-left-radius: 0.45em;
-
-			.checked {
-				border-top-left-radius: 0.3em;
-				border-bottom-left-radius: 0.3em;
-			}
-		}
-
-		&:last-child {
-			border-top-right-radius: 0.45em;
-			border-bottom-right-radius: 0.45em;
-
-			.checked {
-				border-top-right-radius: 0.3em;
-				border-bottom-right-radius: 0.3em;
-			}
-		}
-	}
-
-	.visually-hidden-radio,
-	.checked {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
+	.none {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		height: 100%;
+		width: 100%;
 	}
 
-	.visually-hidden-radio {
-		opacity: 0;
-		z-index: 1;
+	.processorLabel {
+		word-break: normal;
 	}
 
-	.payment-processor {
+	// .tip {
+	// 	position: relative;
+	// 	text-align: center;
+	// 	border: 2px solid;
+	// 	padding: 0.5em 0.4em;
+	// 	border-left-width: 0;
+
+	// 	input {
+	// 		cursor: pointer;
+
+	// 		&:checked {
+	// 			~ .checked {
+	// 				border: 3px solid #fb8c00;
+	// 			}
+	// 		}
+	// 	}
+
+	// 	&:first-child {
+	// 		border-left-width: 2px;
+	// 		border-top-left-radius: 0.45em;
+	// 		border-bottom-left-radius: 0.45em;
+
+	// 		.checked {
+	// 			border-top-left-radius: 0.3em;
+	// 			border-bottom-left-radius: 0.3em;
+	// 		}
+	// 	}
+
+	// 	&:last-child {
+	// 		border-top-right-radius: 0.45em;
+	// 		border-bottom-right-radius: 0.45em;
+
+	// 		.checked {
+	// 			border-top-right-radius: 0.3em;
+	// 			border-bottom-right-radius: 0.3em;
+	// 		}
+	// 	}
+	// }
+
+	// .visually-hidden-radio,
+	// .checked {
+	// 	position: absolute;
+	// 	top: 0;
+	// 	left: 0;
+	// 	width: 100%;
+	// 	height: 100%;
+	// }
+
+	// .visually-hidden-radio {
+	// 	opacity: 0;
+	// 	z-index: 1;
+	// }
+
+	:global(.payment-processor) {
 		display: flex;
 		padding: 0.65em;
 		cursor: pointer;
@@ -385,10 +376,6 @@
 			display: flex;
 		}
 
-		span {
-			padding-right: 0.75em;
-		}
-
 		label,
 		div {
 			width: 100%;
@@ -396,7 +383,10 @@
 
 		label {
 			cursor: pointer;
-			display: table-cell;
+			display: inline-flex;
+			justify-content: space-between;
+			padding-inline-start: 0.75em;
+			flex-flow: wrap;
 		}
 
 		ul {
@@ -405,25 +395,6 @@
 
 			li {
 				padding: 0 0.2em;
-			}
-		}
-
-		input {
-			color: rgb(170, 155, 155);
-			// border: 2px solid;
-			// color: rgba(41, 34, 34, 0.4);
-			border: 3px solid;
-			width: 18px;
-			height: 18px;
-			transition: all 0.2s ease-in-out;
-			border-radius: 43%;
-
-			appearance: none;
-			-webkit-font-smoothing: inherit;
-
-			&:checked {
-				border-color: #fb8c00;
-				border-width: 9px;
 			}
 		}
 	}
@@ -453,9 +424,9 @@
 			transition: height 1s ease-out;
 		}
 
-		> :global(*) {
-			padding: 0.2em 0em;
-		}
+		// > :global(*) {
+		// 	padding: 0.2em 0em;
+		// }
 	}
 
 	.actions {
@@ -464,6 +435,7 @@
 		text-align: center;
 		display: flex;
 		flex-direction: row-reverse;
+		flex-wrap: wrap;
 
 		> :global(*) {
 			margin: 0.3em;

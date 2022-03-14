@@ -35,7 +35,7 @@ export interface Product {
 	readonly price: number;
 	readonly image: Image;
 	readonly categories: readonly string[];
-	readonly variations?: Variations;
+	// readonly variations?: Variations;
 	readonly toppings: readonly Topping[];
 	readonly rating?: {
 		readonly value: number;

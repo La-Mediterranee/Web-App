@@ -23,7 +23,6 @@ type RootTranslation = {
 	 * Speichern
 	 */
 	save: string
-	addToCart: string
 	nav: {
 		/**
 		 * Sekundär
@@ -120,6 +119,20 @@ type RootTranslation = {
 			'select-language': string
 		}
 	}
+	product: {
+		/**
+		 * Preis
+		 */
+		price: string
+		/**
+		 * In den Warenkorb
+		 */
+		addToCart: string
+		/**
+		 * Optionen Auswählen
+		 */
+		chooseOptions: string
+	}
 	footer: {
 		/**
 		 * Über {shopname}
@@ -142,7 +155,6 @@ export type TranslationFunctions = {
 	 * Speichern
 	 */
 	save: () => LocalizedString
-	addToCart: () => LocalizedString
 	nav: {
 		/**
 		 * Sekundär
@@ -238,6 +250,20 @@ export type TranslationFunctions = {
 			 */
 			'select-language': () => LocalizedString
 		}
+	}
+	product: {
+		/**
+		 * Preis
+		 */
+		price: () => LocalizedString
+		/**
+		 * In den Warenkorb
+		 */
+		addToCart: () => LocalizedString
+		/**
+		 * Optionen Auswählen
+		 */
+		chooseOptions: () => LocalizedString
 	}
 	footer: {
 		/**

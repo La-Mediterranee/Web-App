@@ -3,7 +3,6 @@ import type { BaseTranslation } from '../i18n-types';
 const de: BaseTranslation = {
 	connectionStatus: 'Sie sind derzeit Offline',
 	save: 'Speichern',
-	addToCart: '',
 	nav: {
 		navbarAriaLabel: 'Sekundär',
 		routes: {
@@ -36,6 +35,11 @@ const de: BaseTranslation = {
 		profile: {
 			'select-language': 'Sprache auswählen',
 		},
+	},
+	product: {
+		price: 'Preis',
+		addToCart: 'In den Warenkorb',
+		chooseOptions: 'Toppings Auswählen',
 	},
 	footer: {
 		about: 'Über {shopname: string}',

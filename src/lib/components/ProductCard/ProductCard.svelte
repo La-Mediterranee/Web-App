@@ -7,14 +7,58 @@
 	import { getProductModalContext } from '$lib/utils';
 
 	import type { CartItem, Product } from 'types/product';
+
+	function captureRipple(node: HTMLElement, rippleNode?: HTMLElement) {
+		function handleKeyboard(e: KeyboardEvent) {
+			const event = new KeyboardEvent(e.type, {
+				code: e.code,
+				keyCode: e.keyCode,
+			});
+			rippleNode?.dispatchEvent(event);
+		}
+
+		function handleClicks(e: PointerEvent) {
+			const event = new PointerEvent(e.type, {
+				clientX: e.clientX,
+				clientY: e.clientY,
+			});
+			rippleNode?.dispatchEvent(event);
+		}
+
+		node.addEventListener('pointerdown', handleClicks);
+		node.addEventListener('pointerup', handleClicks);
+		node.addEventListener('pointerleave', handleClicks);
+		node.addEventListener('keydown', handleKeyboard);
+		node.addEventListener('keyup', handleKeyboard);
+
+		function destroy() {
+			node.removeEventListener('pointerdown', handleClicks);
+			node.removeEventListener('pointerup', handleClicks);
+			node.removeEventListener('pointerleave', handleClicks);
+			node.removeEventListener('keydown', handleKeyboard);
+			node.removeEventListener('keyup', handleKeyboard);
+		}
+
+		return {
+			update(newRippleNode: HTMLElement) {
+				rippleNode = newRippleNode;
+			},
+			destroy,
+		};
+	}
 </script>
 
 <script lang="ts">
 	import Card from 'svelty-material/components/Card/Card.svelte';
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Link from 'svelty-material/components/Button/Link.svelte';
+	import Button from 'svelty-material/components/Button/Button.svelte';
 	import CardTitle from 'svelty-material/components/Card/CardTitle.svelte';
+
+	import Ripple from 'svelty-material/actions/Ripple';
+
 	import { cart } from '$lib/stores/cart';
+	import LL from '$i18n/i18n-svelte';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';
@@ -22,10 +66,11 @@
 	export let style: string | undefined = undefined;
 	export let isVisible = true;
 
+	const modal = getProductModalContext();
+
 	let tabindex = 0;
 	let container: HTMLElement;
-
-	const modal = getProductModalContext();
+	let ctaEl: HTMLElement | undefined;
 
 	const { image, name, price, sku, rating, categories } = product;
 
@@ -38,12 +83,13 @@
 
 	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
+	const hasToppings = product.toppings?.length > 0;
+
+	let cta = hasToppings ? $LL.product.chooseOptions() : $LL.product.addToCart();
+
 	function openPopUp(e: Event) {
 		e.preventDefault();
-		if (product.variations?.toppings?.length || product.toppings?.length) {
-			modal.open(product);
-		}
-
+		if (hasToppings) modal.open(product);
 		cart.addItem(<CartItem>Object.assign({ quantity: 1 }, product));
 	}
 </script>
@@ -63,7 +109,6 @@
 	class="product-card-container"
 	itemtype="http://schema.org/Product"
 	itemscope
-	{action}
 	{style}
 >
 	<Card raised>
@@ -83,16 +128,15 @@
 					tabindex={isVisible ? undefined : -1}
 					aria-haspopup="dialog"
 					on:click={openPopUp}
+					use:captureRipple={ctaEl}
 				>
-					<!-- on:focus={() => (tabindex = 0)}
-					on:blur={() => (tabindex = -1)} -->
 					{name}
+					<span class="visually-hidden"> - {cta}</span>
 				</a>
 			</div>
 
 			<div class="content">
-				<p class="price">
-					<!-- <span content="EUR">€</span> -->
+				<p aria-label={$LL.product.price()} class="price">
 					<data class="price" value={`${price}`}>{_price}</data>
 				</p>
 
@@ -114,12 +158,13 @@
 				{/if}
 			</div>
 
-			<footer class="actionsContainer">
+			<footer class="actionsContainer" aria-hidden="true">
 				<svg
 					class="wave"
 					viewBox="0 0 400 100"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
+					aria-hidden="true"
 				>
 					<path
 						d="M0.222221 0C50.2222 0 50.0002 25 100 25C150 25 150.222 4.86802e-06 200.223 0C250.224 -4.86802e-06 249.999 25 300 25C350.001 25 350.222 1.52588e-05 400.223 0C450.224 -1.52588e-05 400.223 250 400.223 250H0.222221C0.222221 250 -49.7778 0 0.222221 0Z"
@@ -129,16 +174,38 @@
 
 				<div class="card-actions">
 					<!-- class="orange darken-4 ma-auto" -->
-					<Link
+					<!-- <Link
 						href="./product/{product.ID}"
 						class="form-elements-color ma-auto"
 						ariaHasPopup="dialog"
+						style="z-index: 4;"
 						rounded
 						tabindex={-1}
 						on:click={openPopUp}
 					>
-						<span class="add-to-cart-text">In den Warenkorb</span>
-					</Link>
+						<span class="add-to-cart-text" aria-hidden="true"> In den Warenkorb </span>
+					</Link> -->
+					<!-- <form {action}>
+						<Button
+							type="submit"
+							class="form-elements-color ma-auto"
+							aria-hidden="true"
+							rounded
+						>
+							<span class="add-to-cart-text">In den Warenkorb</span>
+						</Button>
+					</form> -->
+					<!--Choose Options-->
+
+					<div
+						bind:this={ctaEl}
+						use:Ripple
+						class="s-btn size-default rounded s-ripple-container form-elements-color ma-auto cta"
+					>
+						<span class="s-btn__content add-to-cart-text" aria-hidden="true">
+							{cta}
+						</span>
+					</div>
 				</div>
 			</footer>
 		</div>
@@ -160,6 +227,7 @@
 		// flex: 0 0 auto;
 		outline: none;
 		position: relative;
+		width: var(--product-card-width, 100%);
 		height: var(--product-card-height, 100%);
 
 		* {
@@ -206,6 +274,7 @@
 				top: 0;
 				right: 0;
 				bottom: 0;
+				z-index: 2;
 			}
 		}
 
@@ -246,19 +315,23 @@
 			-moz-appearance: none;
 		}
 
-		.add-to-cart-text {
-			// color: #191818;
-			color: #fff;
-			// color: #503604;
-			font-size: 1.36em;
-			font-weight: 600;
+		.cta {
+			cursor: pointer;
 		}
 
 		.card-actions {
 			display: flex;
-			padding: 0.7em;
+			padding: 0.7em 0;
 			opacity: 1;
 			z-index: 5;
+			max-width: 100%;
+		}
+
+		.s-btn .add-to-cart-text {
+			color: #fff;
+			font-weight: 700;
+			font-size: 1.3em;
+			letter-spacing: 0.05em;
 		}
 
 		.actionsContainer {
@@ -341,9 +414,9 @@
 				}
 			}
 
-			&:focus-within .s-btn::before {
-				opacity: var(--s-btn-focus-opacity, 0.24);
-			}
+			// &:focus-within .s-btn::before {
+			// 	opacity: var(--s-btn-focus-opacity, 0.24);
+			// }
 		}
 	}
 

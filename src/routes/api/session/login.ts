@@ -1,6 +1,4 @@
-import { baseLocale } from '$i18n/i18n-util';
 import { SERVER_PORT } from '$lib/server/constants';
-import { auth, firebase } from '$lib/server/firebase';
 import { setCookie } from '$lib/server/helper';
 
 import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
@@ -50,9 +48,7 @@ export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 
 		const { cookie, expiresIn = defaultExpiresIn } = await res.json();
 
-		const location = `${
-			event.locals.locale !== baseLocale ? '/' + event.locals.locale : ''
-		}/customer`;
+		const location = `${event.locals.urlLocale}/customer`;
 
 		const response: RequestHandlerOutput = {
 			status: 302,
@@ -63,12 +59,12 @@ export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 		};
 
 		setCookie(<Response>response, 'sessionId', cookie, {
-			// expires: new Date(0),
 			maxAge: expiresIn / 1000,
 			httpOnly: true,
 			path: '/',
 			secure: true,
-			// domain: ".",
+			// domain: '127.0.0.1',
+			// sameSite: 'none',
 		});
 
 		return response;

@@ -19,7 +19,7 @@
 		width: var(--checkbox-size);
 		height: var(--checkbox-size);
 		transition: all 0.2s ease-in-out;
-		border-radius: 41%;
+		border-radius: 38%;
 
 		appearance: none;
 		-webkit-font-smoothing: inherit;

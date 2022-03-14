@@ -18,7 +18,13 @@
 	}
 </script>
 
-<form novalidate action="/checkout?section=payment" on:submit|preventDefault={checkOrderDeatils}>
+<!-- ./checkout?next=payment -->
+<form
+	novalidate
+	action="./checkout?next=1"
+	method="post"
+	on:submit|preventDefault={checkOrderDeatils}
+>
 	<fieldset>
 		<legend>Kontaktinformation:</legend>
 		<div>

@@ -67,7 +67,9 @@
 	.section-carousel {
 		max-width: 1200px;
 
-		--carousel-item-width: 270px;
+		--carousel-item-width: 50%;
+		--product-card-width: 270px;
+
 		--carousel-item-min-width: 235px;
 		--carousel-content-max-width: 1200px;
 		--carousel-item-scroll-margin: 40px;

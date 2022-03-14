@@ -3,7 +3,6 @@ import type { Translation } from '../i18n-types';
 const ar: Translation = {
 	connectionStatus: 'أنت حاليا غير متصل بالإنترنت',
 	save: '',
-	addToCart: 'أضف إلى العربة',
 	nav: {
 		navbarAriaLabel: 'secundary',
 		routes: {
@@ -36,6 +35,11 @@ const ar: Translation = {
 		profile: {
 			'select-language': 'اختر اللغة',
 		},
+	},
+	product: {
+		price: 'السعر',
+		addToCart: 'أضف إلى العربة',
+		chooseOptions: 'اختر الطبقة',
 	},
 	footer: {
 		about: '{shopname} عن',

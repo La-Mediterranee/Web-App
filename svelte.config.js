@@ -3,7 +3,7 @@ import * as path from 'path';
 import sveltePreprocess from 'svelte-preprocess';
 import autoprefixer from 'autoprefixer';
 
-import { readFileSync } from 'fs';
+import { fstat, readFileSync } from 'fs';
 import { typesafeI18nPlugin } from 'typesafe-i18n/rollup/rollup-plugin-typesafe-i18n';
 
 import node from '@sveltejs/adapter-node';
@@ -62,7 +62,10 @@ function vite() {
 			legalComments: 'none',
 		},
 		server: {
-			// https: true,
+			https: {
+				cert: readFileSync('./example.com+5.pem'),
+				key: readFileSync('./example.com+5-key.pem'),
+			},
 			// proxy: {
 			// 	'/api': {
 			// 		target: 'http://localhost:5000',
@@ -150,7 +153,11 @@ const preprocess = sveltePreprocess({
 		includePaths: ['src/styles', 'theme', 'node_modules'],
 	},
 	postcss: {
-		plugins: [autoprefixer()],
+		plugins: [
+			autoprefixer({
+				env: 'development',
+			}),
+		],
 	},
 	sourceMap: process.env.NODE_ENV === 'development' ? true : false,
 	preserve: ['ld+json'],

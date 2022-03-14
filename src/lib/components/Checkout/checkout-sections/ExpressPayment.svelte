@@ -30,22 +30,21 @@
 		paymentRequestButton?.mount('#payment-request-button');
 	});
 
-	paymentRequest.on('paymentmethod', async (e) => {
+	paymentRequest.on('paymentmethod', async e => {
+		console.debug(e);
+		return;
 		// Make a call to the server to create a new
 		// payment intent and store its client_secret.
-		const { error: backendError, clientSecret } = await fetch(
-			'/create-payment-intent',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					currency: 'eur',
-					paymentMethodType: 'card',
-				}),
-			}
-		).then((r) => r.json());
+		const { error: backendError, clientSecret } = await fetch('/create-payment-intent', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				currency: 'eur',
+				paymentMethodType: 'card',
+			}),
+		}).then(r => r.json());
 
 		if (backendError) {
 			console.error(backendError.message);
@@ -58,7 +57,7 @@
 			(await stripe?.confirmCardPayment(
 				clientSecret,
 				{ payment_method: e.paymentMethod.id },
-				{ handleActions: false }
+				{ handleActions: false },
 			)) || {};
 
 		if (confirmError) {
@@ -75,8 +74,7 @@
 			// instead check for: `paymentIntent.status === "requires_source_action"`.
 			if (paymentIntent?.status === 'requires_action') {
 				// Let Stripe.js handle the rest of the payment flow.
-				const { error } =
-					(await stripe?.confirmCardPayment(clientSecret)) || {};
+				const { error } = (await stripe?.confirmCardPayment(clientSecret)) || {};
 				if (error) {
 					// The payment failed -- ask your customer for a new payment method.
 				} else {
@@ -88,7 +86,7 @@
 		}
 	});
 
-	paymentRequest.on('shippingaddresschange', async (e) => {
+	paymentRequest.on('shippingaddresschange', async e => {
 		if (
 			e.shippingAddress.country !== 'AT' &&
 			(e.shippingAddress.city?.toLocaleLowerCase() !== 'wien' ||

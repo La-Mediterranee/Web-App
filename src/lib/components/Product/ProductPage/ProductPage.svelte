@@ -32,7 +32,7 @@
 	let quantitiy = 1;
 	let valid = false;
 
-	const { variations, price } = product;
+	const { toppings, price } = product;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',

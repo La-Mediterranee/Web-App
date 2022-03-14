@@ -84,6 +84,8 @@
 	export let cart: Cart;
 	export let state: CartState;
 	export let store: CartStore;
+
+	$: isEmpty = cart.totalQuantity === 0;
 </script>
 
 <h1 id="main-start">
@@ -103,7 +105,7 @@
 		>
 			Loading
 		</p>
-	{:else if cart.totalQuantity !== 0}
+	{:else}
 		<div
 			in:fade={{
 				delay: 200,
@@ -126,43 +128,46 @@
 						</tr>
 					</thead>
 					<tbody role="rowgroup" aria-live="polite">
-						{#each [...cart.items] as [ID, item] (ID)}
-							<tr
-								role="row"
-								class="item"
-								out:send|local={{ key: item.ID }}
-								animate:flip={{ duration: 600 }}
+						{#if !isEmpty}
+							{#each [...cart.items] as [ID, item] (ID)}
+								<tr
+									role="row"
+									class="item"
+									out:send|local={{ key: item.ID }}
+									animate:flip={{ duration: 600 }}
+								>
+									<CartItemComponent
+										{item}
+										updateQty={newQty => store.upadateItem(ID, newQty)}
+										deleteItem={() => store.removeItem(item)}
+									/>
+								</tr>
+							{/each}
+						{:else}
+							<!-- if cart.totalQuantity === 0 && state === 'Done' -->
+							<p
+								class="state"
+								in:fadeScale={{
+									delay: 100,
+									duration: 400,
+									easing: cubicInOut,
+									baseScale: 0.5,
+								}}
 							>
-								<CartItemComponent
-									{item}
-									updateQty={newQty => store.upadateItem(ID, newQty)}
-									deleteItem={() => store.removeItem(item)}
-								/>
-							</tr>
-						{/each}
+								No items in cart yet.
+							</p>
+						{/if}
 					</tbody>
 				</table>
 				<Card class="cart-actions" role="group">
 					<CartFooter
+						disabled={isEmpty}
 						totalQuantity={cart.totalQuantity}
 						totalAmount={cart.displayTotalAmount}
 					/>
 				</Card>
 			</form>
 		</div>
-	{:else}
-		<!-- if cart.totalQuantity === 0 && state === 'Done' -->
-		<p
-			class="state"
-			in:fadeScale={{
-				delay: 100,
-				duration: 400,
-				easing: cubicInOut,
-				baseScale: 0.5,
-			}}
-		>
-			No items in cart yet.
-		</p>
 	{/if}
 </div>
 
@@ -173,9 +178,9 @@
 	}
 
 	#cart {
-		--cart-item-product-width: 8rem;
-		--cart-item-quantity-width: 7em;
-		--cart-item-price-width: 7em;
+		--cart-item-product-width: min(25%, 8rem);
+		--cart-item-quantity-width: 5em;
+		--cart-item-price-width: min(20%, 7rem);
 		--cart-item-actions-width: 3em;
 
 		padding: 0 0.7em;
@@ -193,7 +198,7 @@
 
 		.cart {
 			&-product-header {
-				flex: 1 1 var(--cart-item-product-width);
+				flex: 1 0 var(--cart-item-product-width);
 			}
 
 			&-quantity-header {
@@ -205,7 +210,7 @@
 			}
 
 			&-actions-header {
-				flex: 0 0 var(--cart-item-actions-width);
+				flex: 0 1 var(--cart-item-actions-width);
 			}
 		}
 

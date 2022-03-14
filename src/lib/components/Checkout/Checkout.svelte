@@ -9,21 +9,6 @@
 	} from '@stripe/stripe-js';
 	import type { User } from 'firebase/auth';
 	import type { CustomerInfo } from 'types/customer';
-
-	const panels = [
-		{
-			id: 0,
-			header: '1. Lieferdetails',
-		},
-		{
-			id: 1,
-			header: '2. Zahlungdetails',
-		},
-		{
-			id: 2,
-			header: '3. Zusammenfassung',
-		},
-	];
 </script>
 
 <script lang="ts">
@@ -32,24 +17,26 @@
 
 	import CartSummary from './CartSummary.svelte';
 	import Details from './checkout-sections/Details.svelte';
-	import Payment from './checkout-sections/Payment.svelte';
+	import Payment from './checkout-sections/Payment/Payment.svelte';
 	import Summary from './checkout-sections/Summary.svelte';
 	import ExpressPayment from './checkout-sections/ExpressPayment.svelte';
 
 	import { cart } from '$lib/stores/cart';
 	import { getStripeContext } from '$lib/utils';
+	import { onMount } from 'svelte';
+	import { panels } from './panels';
 
 	export let user: User | undefined;
+	export let value = [0];
+	export let currentValue = 0;
 
-	let value = [0];
-	let currentValue = 0;
 	let canMakePayment: CanMakePaymentResult | null = null;
 	let paymentRequest: PaymentRequest;
 	let elements: StripeElements;
 
 	const stripe = getStripeContext();
 
-	$: if ($stripe) {
+	$: if ($stripe && $cart.state !== 'Loading') {
 		mountElements($stripe);
 	}
 
@@ -65,29 +52,45 @@
 			],
 		});
 
-		paymentRequest = createPaymentRequest(
-			stripe as Stripe,
-			$cart.cart.totalAmount,
-			'Bestellung',
-			[
-				{
-					id: 'free-delivery',
-					label: 'Gratis Lieferung',
-					detail: 'Lieferung in 30-60 Minuten',
-					amount: 0,
-				},
-				{
-					id: 'tip',
-					label: 'Trinkgeld',
-					detail: 'Trinkgeld',
-					amount: $cart.cart.totalAmount * 1.05,
-				},
-			],
-		);
+		try {
+			paymentRequest = createPaymentRequest(
+				stripe as Stripe,
+				$cart.cart.totalAmount,
+				'Bestellung',
+				[
+					{
+						id: 'no-tip',
+						label: 'Kein Trinkgeld',
+						detail: 'Lieferung in 30-60 Minuten',
+						amount: 0,
+					},
+					{
+						id: 'tip-5',
+						label: '5% Trinkgeld',
+						detail: 'Lieferung in 30-60 Minuten',
+						amount: parseInt($cart.cart.totalAmount * 0.05 + ''),
+					},
+					{
+						id: 'tip-10',
+						label: '10% Trinkgeld',
+						detail: 'Lieferung in 30-60 Minuten',
+						amount: parseInt($cart.cart.totalAmount * 0.1 + ''),
+					},
+					{
+						id: 'tip-15',
+						label: '15% Trinkgeld',
+						detail: 'Lieferung in 30-60 Minuten',
+						amount: parseInt($cart.cart.totalAmount * 0.15 + ''),
+					},
+				],
+			);
+			// Check the availability of the Payment Request API first.
+			canMakePayment = await paymentRequest.canMakePayment();
 
-		// Check the availability of the Payment Request API first.
-		canMakePayment = await paymentRequest.canMakePayment();
-		console.debug(`can make request:`, canMakePayment);
+			console.debug(`can make request:`, canMakePayment);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	const customer: CustomerInfo = {
@@ -107,12 +110,7 @@
 <h1>Checkout</h1>
 
 <div id="checkout">
-	<CartSummary
-		cart={$cart.cart}
-		total={$cart.cart.displayTotalAmount}
-		quantity={$cart.cart.totalQuantity}
-	/>
-	<div>
+	<div class="checkout-sections">
 		{#if canMakePayment}
 			<ExpressPayment stripe={$stripe} {paymentRequest} {elements} />
 		{/if}
@@ -131,6 +129,11 @@
 			</ExpansionPanel>
 		</ExpansionPanels>
 	</div>
+	<CartSummary
+		cart={$cart.cart}
+		total={$cart.cart.displayTotalAmount}
+		quantity={$cart.cart.totalQuantity}
+	/>
 </div>
 
 <style lang="scss" global>
@@ -142,13 +145,21 @@
 	}
 
 	#checkout {
-		padding: 1em;
-		display: block;
+		--cart-summary-width: 37%;
+		--radio-color: #aa9b9b;
+
+		display: flex;
+		flex-wrap: wrap;
 		max-width: 40em;
+		padding: min(2%, 1em);
 		margin: 0 auto;
-		font-size: 1.2em;
+		font-size: 1em;
 		font-weight: 500;
 		color: #fff;
+
+		:global(.s-expansion-panel__content) {
+			padding: 0 0.7em 1em;
+		}
 
 		> div {
 			margin-top: 1em;
@@ -158,18 +169,34 @@
 			color: #ddd;
 		}
 
+		.checkout-sections {
+			order: 1;
+			flex: 1 0 calc(100% - var(--cart-summary-width));
+		}
+
+		:global(.cart-summary) {
+			order: 0;
+		}
+
 		// @include respond-to(md) {
 		// }
 
 		@media screen and (min-width: (map-get($map: $breakpoints, $key: md) + 100px)) {
-			padding: 3em;
-			display: flex;
-			flex-direction: row-reverse;
+			padding: 1em;
 			max-width: 78em;
+			flex-wrap: nowrap;
+
+			.checkout-sections {
+				order: 0;
+				padding-inline-end: 1em;
+			}
+
+			:global(.cart-summary) {
+				order: 1;
+			}
 
 			> div {
 				margin-top: 0;
-				margin-right: 1em;
 			}
 		}
 	}

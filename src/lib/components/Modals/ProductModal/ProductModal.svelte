@@ -4,13 +4,13 @@
 	import { createEventDispatcher } from 'svelte';
 	import { mdiClose } from '@mdi/js';
 
-	import type { Product, Variations } from 'types/product';
+	import type { Product, Topping } from 'types/product';
 
 	const AmountLabel = 'Menge';
 
 	export type AddToCart = typeof addToCart;
 
-	function addToCart(e: Event, variations?: Variations) {
+	function addToCart(e: Event, toppings?: readonly Topping[]) {
 		const ev = e as SubmitEvent;
 		const form = ev.target as HTMLFormElement;
 		const formData = new FormData(form);
@@ -32,7 +32,7 @@
 	let quantitiy = 1;
 	let valid = false;
 
-	const { variations, price } = product;
+	const { toppings, price } = product;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -46,7 +46,7 @@
 	}
 </script>
 
-<div class="container">
+<div class="product-modal-container">
 	<Button fab depressed size="small" class="dialog-close-btn" on:click={close}>
 		<Icon path={mdiClose} />
 	</Button>
@@ -60,7 +60,7 @@
 		--s-dialog-justify-content: flex-start;
 	}
 
-	.container {
+	.product-modal-container {
 		--aside-width: 33.33%;
 		--container-padding: 1.5em 0.8em 1.2em;
 		display: block;
@@ -80,7 +80,7 @@
 	$modalBP: 850px;
 
 	@media screen and (min-width: $modalBP) {
-		.container {
+		.product-modal-container {
 			display: flex;
 
 			form {

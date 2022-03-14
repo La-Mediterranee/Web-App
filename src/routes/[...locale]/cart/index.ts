@@ -1,6 +1,8 @@
 import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
-// export async function get() {}
+export async function get() {
+	return {};
+}
 
 export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	const form = await event.request.formData();

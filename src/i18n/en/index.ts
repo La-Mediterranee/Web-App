@@ -3,7 +3,6 @@ import type { Translation } from '../i18n-types';
 const en: Translation = {
 	connectionStatus: 'You are currently offline',
 	save: 'Save',
-	addToCart: '',
 	nav: {
 		navbarAriaLabel: 'secundary',
 		routes: {
@@ -36,6 +35,11 @@ const en: Translation = {
 		profile: {
 			'select-language': 'Select Language',
 		},
+	},
+	product: {
+		price: 'Price',
+		addToCart: 'Add to Cart',
+		chooseOptions: 'Choose Toppings',
 	},
 	footer: {
 		about: 'About {shopname}',

@@ -59,12 +59,12 @@
 </th>
 <td role="cell" class="item-quantity">
 	<Input>
-		<!-- pattern="[0-9]*" -->
 		<input
 			id="quantity-{ID}"
 			min="1"
 			max="10"
 			name="quantity"
+			pattern="[0-9]*"
 			type="number"
 			inputmode="numeric"
 			required
@@ -78,7 +78,7 @@
 </td>
 <td role="cell" class="item-action">
 	<Button icon on:click={deleteItem} aria-label="Produkt vom Warenkorb entfernen">
-		<Icon path={trash} />
+		<Icon path={trash} ariaHidden={true} />
 	</Button>
 </td>
 
@@ -105,7 +105,9 @@
 
 	.item {
 		&-product {
-			flex: 1 1 var(--cart-item-product-width);
+			flex: 1 0 var(--cart-item-product-width);
+
+			font-size: 0.85em;
 		}
 
 		&-quantity {
@@ -124,6 +126,10 @@
 				border: 1px solid var(--cart-table-color);
 				text-align: center;
 				color: inherit;
+
+				&:out-of-range {
+					border: 2px var(--error-color-border-color) solid;
+				}
 			}
 		}
 

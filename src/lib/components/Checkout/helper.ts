@@ -19,7 +19,7 @@ export function createPaymentRequest(
 	stripe: Stripe,
 	amount: number,
 	label: string = 'Bestellung',
-	shipping?: PaymentRequestShippingOption[]
+	shipping?: PaymentRequestShippingOption[],
 ) {
 	const paymentRequest = stripe.paymentRequest({
 		country: 'AT',
@@ -27,6 +27,7 @@ export function createPaymentRequest(
 		total: { label, amount },
 		requestPayerName: true,
 		requestPayerEmail: true,
+		requestPayerPhone: true,
 		requestShipping: shipping && true,
 		shippingOptions: shipping,
 	});
@@ -37,7 +38,7 @@ export function createPaymentRequest(
 export async function createCardPayment(
 	stripe: Stripe,
 	cardElement: StripeCardElement | StripeCardNumberElement,
-	form: FormInput
+	form: FormInput,
 ) {
 	const { error: backendError, clientSecret } = await getClientSecret('card');
 
@@ -61,33 +62,28 @@ export async function createCardPayment(
 }
 
 export async function createSofortPayment(stripe: Stripe, form: FormInput) {
-	const { error: backendError, clientSecret } = await getClientSecret(
-		'sofort'
-	);
+	const { error: backendError, clientSecret } = await getClientSecret('sofort');
 
 	if (backendError) {
 		console.error(backendError.message);
 		return;
 	}
 
-	const { error, paymentIntent } = await stripe.confirmSofortPayment(
-		clientSecret,
-		{
-			payment_method: {
-				sofort: {
-					country: 'AT',
-				},
-				billing_details: {
-					name: form.name,
-					email: form.email,
-					address: form.address,
-					phone: form.phone,
-				},
+	const { error, paymentIntent } = await stripe.confirmSofortPayment(clientSecret, {
+		payment_method: {
+			sofort: {
+				country: 'AT',
 			},
-			// Return URL where the customer should be redirected after the authorization.
-			return_url: window.location.href,
-		}
-	);
+			billing_details: {
+				name: form.name,
+				email: form.email,
+				address: form.address,
+				phone: form.phone,
+			},
+		},
+		// Return URL where the customer should be redirected after the authorization.
+		return_url: window.location.href,
+	});
 }
 
 export async function createOnDeliveryPayment(form: FormInput) {
@@ -114,5 +110,5 @@ async function getClientSecret(paymentMethod: string) {
 			currency: 'eur',
 			paymentMethodType: paymentMethod,
 		}),
-	}).then((r) => r.json());
+	}).then(r => r.json());
 }

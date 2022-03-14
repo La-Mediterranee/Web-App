@@ -62,7 +62,9 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 
 	event.locals.cookies = cookies;
 
-	return resolve(event);
+	const response = await resolve(event);
+
+	return response;
 };
 
 const browserChecker: Handle = async ({ resolve, event }) => {
@@ -101,24 +103,24 @@ const parseUser: Handle = async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	if (event.locals.user) {
-		const expiration = new Date(1970, 0, 1).setSeconds(event.locals.user.exp);
-		const current = Date.now();
+	if (!event.locals.user) return response;
 
-		if (Math.abs(expiration - current) / 36e5 <= 24) {
-			const days = 14;
-			const expiresIn = days * 60 * 60 * 24 * 1000;
+	const expiration = new Date(1970, 0, 1).setSeconds(event.locals.user.exp);
+	const current = Date.now();
 
-			const newCookie = await refreshSessionCookie(event.locals.user.uid, expiresIn);
+	if (Math.abs(expiration - current) / 36e5 <= 24) {
+		const days = 14;
+		const expiresIn = days * 60 * 60 * 24 * 1000;
 
-			setCookie(response, 'sessionId', newCookie, {
-				maxAge: expiresIn / 1000,
-				httpOnly: true,
-				secure: true,
-				path: '/',
-				// domain: ".",
-			});
-		}
+		const newCookie = await refreshSessionCookie(event.locals.user.uid, expiresIn);
+
+		setCookie(response, 'sessionId', newCookie, {
+			maxAge: expiresIn / 1000,
+			httpOnly: true,
+			secure: true,
+			path: '/',
+			// domain: ".",
+		});
 	}
 
 	return response;

@@ -72,6 +72,7 @@
 		display: flex;
 		flex-direction: column;
 		padding: var(--container-padding);
+		// overflow: auto;
 	}
 
 	.description {

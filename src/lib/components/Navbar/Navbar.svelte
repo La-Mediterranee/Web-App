@@ -10,6 +10,8 @@
 	import t from '$i18n/i18n-svelte';
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Link from 'svelty-material/components/Button/Link.svelte';
+	import Badge from 'svelty-material/components/Badge/Badge.svelte';
+	import { cart } from '$lib/stores/cart';
 
 	export let routes: NavItem[] = [];
 	export let locale: string = 'en';
@@ -67,11 +69,18 @@
 
 	<div id="avatar">
 		{#if $session.user}
-			<Link text size="x-large" class="img-url" href={`${$session.urlLocale}/customer`}>
+			<Link
+				text
+				size="x-large"
+				class="img-url"
+				aria-label="Account {$session.user.displayName}"
+				href={`${$session.urlLocale}/customer`}
+			>
 				<img
 					src={$session.user.photoURL ||
 						`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
 					alt="Your Avatar"
+					aria-hidden="true"
 					loading="eager"
 					width={48}
 					height={48}
@@ -87,9 +96,27 @@
 		{/if}
 	</div>
 	<div class="cart">
-		<Link icon size="large" href={`${$session.urlLocale}/cart`} sveltekit:prefetch>
-			<Icon path={mdiCart} />
-			<span class="visually-hidden">{$t.cart.cart()}</span>
+		<Link
+			style="width: 3.7em; height:3.7em"
+			sveltekit:prefetch
+			href={`${$session.urlLocale}/cart`}
+			size="x-large"
+			icon
+		>
+			<Badge
+				class="primary-color"
+				bordered
+				offsetX={12}
+				offsetY={13}
+				active={$cart.state !== 'Loading'}
+			>
+				<Icon path={mdiCart} ariaHidden={true} />
+
+				<span class="visually-hidden">{$t.cart.cart()}</span>
+				<span slot="badge">
+					{$cart.cart.totalQuantity}
+				</span>
+			</Badge>
 		</Link>
 	</div>
 </header>
@@ -206,12 +233,14 @@
 		}
 	}
 
-	@media (hover: hover) and (pointer: fine) {
-		#avatar:hover {
-		}
-	}
+	// @media (hover: hover) and (pointer: fine) {
+	// 	#avatar:hover {
+	// 	}
+	// }
 
 	.cart {
+		--theme-cards: transparent;
+
 		display: none;
 	}
 
@@ -220,7 +249,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding: 0 1em;
+			padding: 0 0.6em 0 0;
 		}
 
 		:global([dir='rtl']) {

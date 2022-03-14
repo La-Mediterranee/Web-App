@@ -1,17 +1,20 @@
 <script lang="ts">
 	import Button from 'svelty-material/components/Button/Button.svelte';
+	import Textarea from 'svelty-material/components/Textarea/Textarea.svelte';
 
+	export let disabled: boolean = false;
 	export let totalQuantity: number;
 	export let totalAmount: string;
 </script>
 
 <!-- svelte-ignore a11y-no-redundant-roles -->
-<div class="notes-container">
+<div class="notes-container" class:disabled>
 	<div>
-		<label>
+		<Textarea name="notes" class="cart-notes" rows={3} {disabled} noResize filled solo>
 			Anmerkungen:
-			<textarea name="notes" class="cart-notes" placeholder="Anmerkungen: " />
-		</label>
+		</Textarea>
+		<!-- <label>
+		</label> -->
 	</div>
 </div>
 <div class="actions">
@@ -22,26 +25,37 @@
 		</span>
 	</div>
 	<div id="cart-checkout">
-		<Button type="submit" class="form-elements-color" disabled={!totalQuantity} rounded>
-			Zur Kasse
-		</Button>
+		<Button type="submit" class="form-elements-color" rounded {disabled}>Zur Kasse</Button>
 	</div>
 </div>
 
 <style lang="scss">
 	.notes-container {
 		width: 100%;
+
+		:global(.s-text-field__wrapper) {
+			border-radius: 0.9em !important;
+
+			:global(textarea.cart-notes) {
+				width: 100%;
+				min-height: 6em;
+				padding: 0.4em 0 0 0;
+			}
+		}
+
+		&.disabled {
+			opacity: 0.4;
+		}
 	}
 
 	.cart-notes {
 		resize: none;
 		border: 2px solid var(--tint-color);
+		border-radius: 0.9em;
+		margin-top: 0.75em;
 		width: 100%;
 		min-height: 6em;
-		border-radius: 0.9em;
-		padding: 0.8em;
-		margin-top: 0.75em;
-		color: white;
+		padding: 0.4em 0 0 0;
 	}
 
 	.sum {

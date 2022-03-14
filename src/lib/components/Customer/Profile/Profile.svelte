@@ -66,10 +66,12 @@
 			</div>
 			<form action="/api/customer" method="post">
 				<div class="select filled">
-					<label for="input1" class="visually-hidden">Form Field Label</label>
+					<label for="noscript-language-selector" class="visually-hidden"
+						>Form Field Label</label
+					>
 					<select
 						aria-labelledby="languages"
-						id="language-selector"
+						id="noscript-language-selector"
 						name="language-selector"
 					>
 						{#each locales as locale}
@@ -80,6 +82,7 @@
 					</select>
 				</div>
 			</form>
+
 			<noscript>
 				<!-- k -->
 			</noscript>
@@ -174,7 +177,7 @@
 		grid-area: select;
 	}
 
-	#language-selector {
+	#noscript-language-selector {
 		cursor: pointer;
 		appearance: none;
 		position: relative;

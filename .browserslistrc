@@ -1,7 +1,16 @@
 # Browsers that we support
-[production]
-> .1%
-not IE 11
 
-[modern]
-last 5 version
+[default]
+
+[production]
+> .1% in AT
+not dead
+not ie <= 11
+not op_mini all
+not ios_saf < 12.5
+not samsung <= 7.4
+
+[development]
+last 2 chrome version
+last 2 firefox version
+last 2 safari major version

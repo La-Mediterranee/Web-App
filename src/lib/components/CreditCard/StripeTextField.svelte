@@ -75,6 +75,7 @@
 		el.on('change', onInput);
 
 		return () => {
+			console.debug('destroying');
 			el.destroy();
 		};
 	});

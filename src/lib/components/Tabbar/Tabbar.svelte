@@ -12,6 +12,8 @@
 <script lang="ts">
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Button from 'svelty-material/components/Button/Button.svelte';
+	import Ripple from 'svelty-material/actions/Ripple';
+	import { cart } from '$lib/stores/cart';
 
 	export let routes: TabbarItem[];
 	export let paths: Record<string, () => LocalizedString>;
@@ -21,16 +23,20 @@
 	{#each routes as { pathLabel, icon, href, size, rel, isActive } (href)}
 		<!-- on:click={() => (activeRoute = href)} -->
 		<a {href} {rel} class="item" class:active={isActive} title={paths[pathLabel]()}>
-			<div class="item-container">
+			<div class="item-container" use:Ripple>
 				<div class="bubble" />
 				<div class="mini-bubble" />
 				<div class="image">
 					<Icon
 						path={icon}
+						ariaHidden={true}
 						size={size?.width || 30}
 						width={size ? size.width : 30}
 						height={size ? size.height : 30}
 					/>
+					{#if href.includes('cart')}
+						<span class="cart-badge">{$cart.cart.totalQuantity}</span>
+					{/if}
 					<!-- color={activeRoute !== href
 					? 'var(--tint-color)'
 					: 'var(--bar-color)'} -->
@@ -54,6 +60,16 @@
 		--bar-color: var(--body-bg2);
 		display: flex;
 	}
+
+	// .item-mask {
+	// 	color: var(--bar-color);
+	// 	position: absolute;
+	// 	height: 100%;
+	// 	right: 0px;
+	// 	left: -16px;
+	// 	bottom: 0;
+	// 	top: 0;
+	// }
 
 	nav {
 		display: flex;
@@ -79,34 +95,30 @@
 		align-items: center;
 	}
 
-	// .item-mask {
-	// 	color: var(--bar-color);
-	// 	position: absolute;
-	// 	height: 100%;
-	// 	right: 0px;
-	// 	left: -16px;
-	// 	bottom: 0;
-	// 	top: 0;
-	// }
-
-	.bubble {
+	.bubble,
+	.mini-bubble {
+		border-radius: 50%;
 		position: absolute;
 		align-self: center;
+		background: var(--bar-color);
+	}
+
+	.cart-badge {
+		position: absolute;
+		top: 5px;
+		color: black;
+	}
+
+	.bubble {
 		height: 14px;
 		width: 14px;
-		background: var(--bar-color);
-		border-radius: 50%;
 	}
 
 	.mini-bubble {
-		position: absolute;
-		align-self: center;
 		// width: 22px;
 		// height: 22px;
 		width: 28px;
 		height: 28px;
-		background: var(--bar-color);
-		border-radius: 50%;
 	}
 
 	.title-container {
@@ -142,6 +154,11 @@
 		// height: 100%;
 		border-radius: 50%;
 
+		&-container {
+			border-radius: inherit;
+		}
+
+		.bubble,
 		&.active {
 			transform: translateY(-50%);
 			transition-property: transform;

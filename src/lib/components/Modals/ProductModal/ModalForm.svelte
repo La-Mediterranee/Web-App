@@ -28,13 +28,13 @@
 	id="product-modal"
 	action="/add-to-cart"
 	on:change={e => (valid = e.currentTarget.checkValidity())}
-	on:submit|preventDefault={e => addToCart(e, product.variations)}
+	on:submit|preventDefault={e => addToCart(e, product.toppings)}
 >
 	<div class="selection">
 		<h1 class="title">Customization</h1>
 
 		<div class="toppings">
-			{#each product.variations?.toppings || [] as topping}
+			{#each product.toppings || [] as topping}
 				<fieldset class="topping">
 					<legend>{topping.name}</legend>
 

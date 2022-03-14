@@ -41,7 +41,7 @@
 	];
 </script>
 
-<aside aria-label={ariaLabel}>
+<aside class="cart-summary" aria-label={ariaLabel}>
 	<button type="button" aria-expanded={showSummary} aria-controls="order-summary">
 		Bestellung anzeigen
 	</button>
@@ -134,11 +134,12 @@
 		.image {
 			margin: 1.2em 0.4em;
 			position: relative;
-			width: 10em;
+			max-width: 10em;
 		}
 
 		img {
 			width: 100%;
+			height: auto;
 		}
 
 		td,

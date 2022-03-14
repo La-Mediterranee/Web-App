@@ -36,7 +36,7 @@ class ClientCart implements Cart {
 	totalQuantity = 0;
 	displayTotalAmount = '0';
 
-	_totalAmount = 0;
+	private _totalAmount = 0;
 
 	constructor(public readonly items: CartItems) {}
 }

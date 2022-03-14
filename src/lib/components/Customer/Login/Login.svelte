@@ -146,6 +146,8 @@
 					method: 'post',
 					headers: {
 						'content-type': 'application/json;',
+						// 'credentials': 'same-origin',
+						'credentials': 'include',
 					},
 					body: JSON.stringify({
 						idToken: token,
@@ -158,7 +160,9 @@
 					throw new Error(res.statusText);
 				}
 
-				const url = (await res.json()).location;
+				const body = await res.json();
+				const url = body.location;
+
 				window.location.replace(url);
 			} else {
 				error = true;

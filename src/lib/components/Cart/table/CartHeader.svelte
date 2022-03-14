@@ -20,9 +20,7 @@
 
 <style lang="scss">
 	th {
-		padding: 8px;
-		padding-top: 12px;
-		padding-bottom: 12px;
+		padding: 0.7em 0.2em;
 		text-align: center;
 		color: var(--cart-table-color);
 	}

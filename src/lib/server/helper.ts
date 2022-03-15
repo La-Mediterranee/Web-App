@@ -7,6 +7,7 @@ import type {
 	ShadowEndpointOutput,
 	RequestHandlerOutput,
 } from '@sveltejs/kit/types/internal';
+import { SERVER_URL } from './constants';
 
 /**
  * Decodes the JSON Web Token sent via the frontend app.
@@ -62,26 +63,27 @@ export function setCookie(
 	};
 }
 
-export async function refreshSessionCookie(uid: string, expiresIn: number) {
-	const config = import.meta.env.VITE_GOOGLE_API_KEY;
+export async function refreshSessionCookie(response: Response, uid: string) {
+	const days = 14;
+	const expiresIn = days * 60 * 60 * 24 * 1000;
 
-	const token = await auth.createCustomToken(uid);
-	const res = await fetch(
-		`https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${config}`,
-		{
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-			},
-			body: JSON.stringify({
-				token,
-				returnSecureToken: true,
-			}),
+	const sessionCookie = await fetch(`${SERVER_URL}/v1/auth/session/extend`, {
+		method: 'POST',
+		headers: {
+			'content-type': 'application/json',
 		},
-	).then(r => r.json());
+		body: JSON.stringify({
+			uid,
+			expiresIn,
+		}),
+	}).then(r => r.text());
 
-	const sessionCookie = await auth.createSessionCookie(res.idToken, {
-		expiresIn,
+	setCookie(response, 'sessionId', sessionCookie, {
+		maxAge: expiresIn / 1000,
+		httpOnly: true,
+		secure: true,
+		path: '/',
+		// domain: ".",
 	});
 
 	return sessionCookie;

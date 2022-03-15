@@ -22,7 +22,7 @@ declare namespace App {
 		user?: DecodedIdToken | null;
 		cookies: Cookies;
 		locale: Locales;
-		urlLocale: Exclude<Locales, import('./i18n/i18n-types').BaseLocale> | '';
+		urlLocale: `/${Exclude<Locales, import('./i18n/i18n-types').BaseLocale>}` | '';
 	}
 
 	interface Platform {}
@@ -30,7 +30,7 @@ declare namespace App {
 	interface Session {
 		user?: User;
 		locale: Locales;
-		urlLocale: Exclude<Locales, import('./i18n/i18n-types').BaseLocale> | '';
+		urlLocale: `/${Exclude<Locales, import('./i18n/i18n-types').BaseLocale>}` | '';
 		rtl: boolean;
 	}
 

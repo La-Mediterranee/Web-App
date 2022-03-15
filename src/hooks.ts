@@ -66,6 +66,8 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 
 	return response;
 };
+const animation =
+	'linear-gradient(to right, rgb(244, 244, 244) 8%, rgb(204, 204, 204) 18%, rgb(244, 244, 244) 33%) 0% 0% / 1000px 104px rgb(244, 244, 244);';
 
 const browserChecker: Handle = async ({ resolve, event }) => {
 	const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
@@ -102,6 +104,7 @@ const parseUser: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event);
+
 	response.headers.append('access-control-allow-credentials', 'true');
 	response.headers.append(
 		'access-control-allow-headers',
@@ -110,23 +113,13 @@ const parseUser: Handle = async ({ event, resolve }) => {
 
 	if (!event.locals.user) return response;
 
-	const expiration = new Date(1970, 0, 1).setSeconds(event.locals.user.exp);
 	const current = Date.now();
+	const expiration = new Date(1970, 0, 1).setSeconds(event.locals.user.exp);
+	const intervalInHours = Math.abs(expiration - current) / 36e5;
 
-	if (Math.abs(expiration - current) / 36e5 <= 24) {
-		const days = 14;
-		const expiresIn = days * 60 * 60 * 24 * 1000;
+	if (intervalInHours > 24) return response;
 
-		const newCookie = await refreshSessionCookie(event.locals.user.uid, expiresIn);
-
-		setCookie(response, 'sessionId', newCookie, {
-			maxAge: expiresIn / 1000,
-			httpOnly: true,
-			secure: true,
-			path: '/',
-			// domain: ".",
-		});
-	}
+	await refreshSessionCookie(response, event.locals.user.uid);
 
 	return response;
 };
@@ -143,7 +136,6 @@ export async function getSession(event: RequestEvent): Promise<App.Session> {
 	return {
 		user: getUser(event.locals),
 		locale: event.locals.locale,
-		//@ts-ignore
 		urlLocale: event.locals.urlLocale,
 		rtl: RTL_LANGS.has(event.locals.locale),
 	};

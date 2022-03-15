@@ -69,6 +69,26 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 const animation =
 	'linear-gradient(to right, rgb(244, 244, 244) 8%, rgb(204, 204, 204) 18%, rgb(244, 244, 244) 33%) 0% 0% / 1000px 104px rgb(244, 244, 244);';
 
+const s = `
+	.loading:after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		content: "";
+		background-image: linear-gradient(90deg,hsla(0,0%,100%,0),hsla(0,0%,100%,0.2) 20%,hsla(0,0%,100%,0.5) 60%,hsla(0,0%,100%,0));
+		animation: loading-gradient 1s infinite;
+		transform: translateX(-100%);
+	}`;
+
+const ani = `
+@keyframes loading-gradient { 
+	100% { 
+		transform: translateX(100%);
+	}
+}`;
+
 const browserChecker: Handle = async ({ resolve, event }) => {
 	const unSupportedBrowsers = ['MSIE.*', 'Trident.*'];
 

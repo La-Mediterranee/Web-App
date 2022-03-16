@@ -286,7 +286,8 @@
 			height: auto;
 			border-top-right-radius: inherit;
 			border-top-left-radius: inherit;
-			margin-bottom: 10px;
+			// margin-bottom: 10px;
+			margin-bottom: 0.6em;
 
 			transition: transform 500ms ease;
 		}

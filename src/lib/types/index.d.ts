@@ -11,7 +11,7 @@ export interface StripeContext {
 	subscribe: (
 		this: void,
 		run: Subscriber<Stripe | null>,
-		invalidate?: Invalidator<Stripe | null> | undefined
+		invalidate?: Invalidator<Stripe | null> | undefined,
 	) => Unsubscriber;
 }
 
@@ -22,6 +22,59 @@ export type ViteConfig = UserConfig & {
 };
 
 export type KitConfig = Config['kit'];
+
+// type Weekday = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type IpStringSimple = `${number}.${number}.${number}.${number}`;
+type EmailString = `${string}@${string}.${string}`;
+type UrlString = `http${'s' | ''}://${string}`;
+
+interface OpeningHours {
+	days: Weekday | Weekday[];
+	/** Uses the 24 Hour system. Always Provide 4 digets for example '12:00'. For 24 Hours openings set opens to '00:00' and closes to '23:59' */
+	opens: string;
+	/** Uses the 24 Hour system. Always Provide 4 digets for example '12:00'. For 24 Hours openings set opens to '00:00' and closes to '23:59' */
+	closes: string;
+	validFrom?: string;
+	validThrough?: string;
+}
+
+interface Logo {
+	url?: UrlString;
+	width?: string | number;
+	height?: string | number;
+	language?: string;
+}
+
+interface Address {
+	country: string;
+	city: string;
+	street: string;
+	postalCode: number;
+	latitude: number;
+	longitude: number;
+}
+
+interface Restaurant<Currency extends string> {
+	name: string;
+	address: Address;
+	telephone: string;
+	email: EmailString;
+	url: UrlString;
+	cuisines: string[];
+	priceRange: `${Currency}` | `${Currency}${Currency}` | `${Currency}${Currency}${Currency}`;
+	openingHours: OpeningHours[];
+	paymentMethods: string[];
+	images?: {
+		logo: Logo;
+	};
+}
+
+export interface AppState<Currency = '€'> {
+	currency: Currency;
+	activeRoute?: string;
+	store: Restaurant<Currency>;
+}
 
 // enum HttpStatusCode {
 // 	/**

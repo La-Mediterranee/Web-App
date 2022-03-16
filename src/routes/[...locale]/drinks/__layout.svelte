@@ -17,7 +17,4 @@
 	const app = getContext('App');
 </script>
 
-<div>
-	{$app.activeRoute}
-</div>
 <slot />

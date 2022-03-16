@@ -13,16 +13,27 @@
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Button from 'svelty-material/components/Button/Button.svelte';
 	import Ripple from 'svelty-material/actions/Ripple';
+
 	import { cart } from '$lib/stores/cart';
+	import { getAppContext } from '$lib/utils';
 
 	export let routes: TabbarItem[];
 	export let paths: Record<string, () => LocalizedString>;
+
+	const app = getAppContext();
 </script>
 
 <nav itemscope itemtype="https://schema.org/SiteNavigationElement">
 	{#each routes as { pathLabel, icon, href, size, rel, isActive } (href)}
 		<!-- on:click={() => (activeRoute = href)} -->
-		<a {href} {rel} class="item" class:active={isActive} title={paths[pathLabel]()}>
+		<a
+			{href}
+			{rel}
+			class="item"
+			class:active={isActive}
+			title={paths[pathLabel]()}
+			on:click={$app.active}
+		>
 			<div class="item-container" use:Ripple>
 				<div class="bubble" />
 				<div class="mini-bubble" />

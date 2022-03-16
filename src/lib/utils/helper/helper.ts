@@ -53,3 +53,14 @@ export async function runAsync<T>(promise: Promise<T>): Promise<[T | null, any |
 		return [null, error];
 	}
 }
+
+function getDayNames(locale = 'de', format: Intl.DateTimeFormatOptions['weekday'] = 'long') {
+	const formatter = new Intl.DateTimeFormat(locale, {
+		weekday: format,
+		timeZone: 'UTC',
+	});
+
+	const days = [1, 2, 3, 4, 5, 6, 7].map(day => new Date(`2017-01-0${day}T00:00:00+00:00`));
+
+	return days.map(date => formatter.format(date));
+}

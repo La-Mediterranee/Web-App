@@ -1,9 +1,10 @@
-import * as path from 'path';
+import * as path from 'node:path';
 
 import sveltePreprocess from 'svelte-preprocess';
 import autoprefixer from 'autoprefixer';
 
-import { fstat, readFileSync } from 'fs';
+import { platform } from 'node:os';
+import { fstat, readFileSync } from 'node:fs';
 import { typesafeI18nPlugin } from 'typesafe-i18n/rollup/rollup-plugin-typesafe-i18n';
 
 import node from '@sveltejs/adapter-node';
@@ -63,8 +64,14 @@ function vite() {
 		},
 		server: {
 			https: {
-				cert: readFileSync('./example.com+5.pem'),
-				key: readFileSync('./example.com+5-key.pem'),
+				cert: readFileSync(
+					platform() === 'linux' ? './example.com+5.windows.pem' : './example.com+5.pem',
+				),
+				key: readFileSync(
+					platform() === 'linux'
+						? './example.com+5-key.windows.pem'
+						: './example.com+5-key.pem',
+				),
 			},
 			// proxy: {
 			// 	'/api': {

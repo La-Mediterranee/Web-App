@@ -63,7 +63,7 @@ interface Business {
 	/** Opening Hours can be one for all days or one for every day as a Array */
 	readonly openingHours?: OpeningHours | readonly OpeningHours[];
 	readonly acceptsReservations?: boolean;
-	readonly localName?: string;
+	readonly legalName?: string;
 	readonly slogan?: string;
 	readonly smokingAllowed?: boolean;
 	readonly photo?: Photograph;

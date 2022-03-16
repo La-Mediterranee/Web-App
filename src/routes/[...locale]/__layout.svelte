@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import { onMount, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import { browser, dev } from '$app/env';
 
 	import { baseLocale } from '$i18n/i18n-util';
@@ -74,6 +74,8 @@
 
 	import { page } from '$app/stores';
 	import { writable } from 'svelte/store';
+	import type { AppState } from 'types/index';
+	import { appStore } from '$lib/stores/app';
 
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
@@ -83,11 +85,16 @@
 
 	setLocale(lang);
 
-	const store = writable({
-		activeRoute: $page.stuff.activeRoute,
-	});
+	// const app = writable<AppState>({
+	// 	currency: '€',
+	// 	activeRoute: $page.stuff.activeRoute,
+	// });
 
-	setContext('App', store);
+	const app = appStore();
+
+	app.setActiveRoute($page.stuff.activeRoute);
+
+	setContext('App', app);
 
 	$: tabbarRoutes = <TabbarItem[]>mobileNavItems.map(({ href, icon, pathLabel, rel, size }) => {
 		return {
@@ -97,12 +104,12 @@
 			pathLabel,
 			size,
 			// isActive: href === $page.stuff.activeRoute,
-			isActive: href === $store.activeRoute,
+			isActive: href === $app.activeRoute,
 			// isActive: (href === $activeRoute()),
 		};
 	});
 
-	$: console.log($store.activeRoute);
+	$: console.log($app.activeRoute);
 
 	$: if (
 		browser &&

@@ -42,7 +42,7 @@
 
 			top: 20px;
 			right: 20px;
-			font-size: x-large;
+			font-size: 2em;
 			font-weight: bold;
 			text-transform: uppercase;
 		}

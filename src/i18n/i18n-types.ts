@@ -129,7 +129,7 @@ type RootTranslation = {
 		 */
 		addToCart: string
 		/**
-		 * Optionen Auswählen
+		 * Toppings Auswählen
 		 */
 		chooseOptions: string
 	}
@@ -261,7 +261,7 @@ export type TranslationFunctions = {
 		 */
 		addToCart: () => LocalizedString
 		/**
-		 * Optionen Auswählen
+		 * Toppings Auswählen
 		 */
 		chooseOptions: () => LocalizedString
 	}

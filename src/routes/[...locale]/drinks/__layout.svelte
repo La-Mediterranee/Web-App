@@ -1,9 +1,10 @@
 <script context="module" lang="ts">
 	import type { LoadOutput } from '@sveltejs/kit/types/internal';
+	import { getContext } from 'svelte';
 
 	const routeName = '/drinks';
 
-	export function load(): LoadOutput {
+	export async function load(): Promise<LoadOutput> {
 		return {
 			stuff: {
 				activeRoute: routeName,
@@ -12,4 +13,11 @@
 	}
 </script>
 
+<script lang="ts">
+	const app = getContext('App');
+</script>
+
+<div>
+	{$app.activeRoute}
+</div>
 <slot />

@@ -178,9 +178,9 @@
 	}
 
 	#cart {
-		--cart-item-product-width: min(25%, 8rem);
+		--cart-item-product-width: min(45%, 40em);
 		--cart-item-quantity-width: 5em;
-		--cart-item-price-width: min(20%, 7rem);
+		--cart-item-price-width: min(20%, 7em);
 		--cart-item-actions-width: 3em;
 
 		padding: 0 0.7em;
@@ -198,7 +198,7 @@
 
 		.cart {
 			&-product-header {
-				flex: 1 0 var(--cart-item-product-width);
+				flex: 1 1 var(--cart-item-product-width);
 			}
 
 			&-quantity-header {
@@ -233,6 +233,7 @@
 			position: relative;
 			justify-content: center;
 			align-items: center;
+			max-width: 100%;
 		}
 
 		thead,
@@ -283,12 +284,6 @@
 			position: var(--cart-action-position);
 		}
 
-		@media screen and (min-width: 340px) {
-			.item-product {
-				flex: initial;
-			}
-		}
-
 		@media screen and (min-width: 360px) {
 			.item-product {
 				flex: 1 0 var(--cart-item-product-width);
@@ -309,7 +304,7 @@
 		}
 
 		@media screen and (min-width: 960px) {
-			--cart-item-product-width: 11rem;
+			// --cart-item-product-width: 11rem;
 			--cart-action-position: sticky;
 
 			table {
@@ -336,8 +331,6 @@
 		}
 
 		@media screen and (min-width: 1060px) {
-			--cart-item-product-width: 11rem;
-
 			padding: 1em;
 
 			form {

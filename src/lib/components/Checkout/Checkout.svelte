@@ -9,6 +9,12 @@
 	} from '@stripe/stripe-js';
 	import type { User } from 'firebase/auth';
 	import type { CustomerInfo } from 'types/customer';
+
+	export function updateQueryinUrl(query: string, value: number) {
+		const url = new URL(window.location.origin + window.location.pathname);
+		url.searchParams.set(query, '' + value);
+		window.history.pushState({}, '', url);
+	}
 </script>
 
 <script lang="ts">

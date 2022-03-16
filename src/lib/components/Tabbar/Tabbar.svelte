@@ -105,20 +105,30 @@
 
 	.cart-badge {
 		position: absolute;
-		top: 5px;
-		color: black;
+		top: 3.5px;
+		left: 2px;
+		font-size: 1em;
+		font-weight: bold;
+		justify-content: center;
+		display: inline-flex;
+		width: 100%;
+		color: var(--accent-color);
+
+		.active & {
+			color: black;
+		}
 	}
 
 	.bubble {
-		height: 14px;
-		width: 14px;
+		height: 15px;
+		width: 15px;
 	}
 
 	.mini-bubble {
 		// width: 22px;
 		// height: 22px;
-		width: 28px;
-		height: 28px;
+		width: 30px;
+		height: 30px;
 	}
 
 	.title-container {
@@ -148,11 +158,15 @@
 		text-decoration: none;
 		position: relative;
 		background: var(--bar-color);
-		width: 50px;
-		height: 50px;
+		width: 54px;
+		height: 54px;
 
 		// height: 100%;
 		border-radius: 50%;
+
+		transition-property: transform;
+		transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
+		transition-duration: 0.2s;
 
 		&-container {
 			border-radius: inherit;
@@ -161,10 +175,7 @@
 		.bubble,
 		&.active {
 			transform: translateY(-50%);
-			transition-property: transform;
-			transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
-			transition-delay: 0.3s;
-			transition-duration: 0.2s;
+			transition-delay: 0.15s;
 
 			.mini-bubble {
 				animation-name: animatedMiniBubbleIn;
@@ -204,6 +215,27 @@
 		}
 		100% {
 			transform: scale(3);
+		}
+	}
+
+	@keyframes animatedBubbleOut {
+		0% {
+			transform: scale(3);
+		}
+		20% {
+			transform: scale(3.2);
+		}
+		40% {
+			transform: scale(1.65);
+		}
+		60% {
+			transform: scale(1.65);
+		}
+		80% {
+			transform: scale(3);
+		}
+		100% {
+			transform: scale(0.01);
 		}
 	}
 

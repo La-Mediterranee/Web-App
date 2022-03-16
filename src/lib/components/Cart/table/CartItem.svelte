@@ -2,24 +2,6 @@
 
 <script context="module" lang="ts">
 	export const animationDuration = 600;
-
-	const [send, receive] = crossfade({
-		duration: d => Math.sqrt(d * 200),
-
-		fallback(node, params) {
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
-
-			return {
-				duration: animationDuration,
-				easing: quintOut,
-				css: t => `
-					transform: ${transform} scale(${t});
-					opacity: ${t};
-				`,
-			};
-		},
-	});
 </script>
 
 <script lang="ts">
@@ -27,35 +9,25 @@
 	import Input from 'svelty-material/components/Input/Input.svelte';
 	import Button from 'svelty-material/components/Button/Button.svelte';
 
-	import { quintOut } from 'svelte/easing';
-	import { crossfade } from 'svelte/transition';
-
 	import { trash } from '$lib/Icons/filled';
+	import { formatPrice } from '$lib/stores/cart';
 
 	import type { CartItem } from 'types/product';
-	import { formatPrice } from '$lib/stores/cart';
 
 	export let item: CartItem;
 	export let updateQty: (e: number) => void;
 	export let deleteItem: () => void;
 
-	function update(e: Event) {
-		updateQty(+(<HTMLInputElement>e.currentTarget).value);
-	}
-
-	let qty = item.quantity;
-	// $: updateQty(qty);
-
 	const { image, name, price, ID } = item;
 </script>
 
 <th class="item-product" role="rowheader" scope="row">
-	<div>
+	<div class="img-container">
 		<img aria-hidden="true" src={image.src} alt={image.alt} />
-		<h3>{name}</h3>
-		<p class="desc" />
-		<input type="hidden" name="product" id={ID} value={ID} />
+		<h3 class="name">{name}</h3>
 	</div>
+	<p class="desc" />
+	<input type="hidden" name="product" id={ID} value={ID} />
 </th>
 <td role="cell" class="item-quantity">
 	<Input>
@@ -68,8 +40,8 @@
 			type="number"
 			inputmode="numeric"
 			required
-			on:change={e => update(e)}
-			bind:value={qty}
+			on:change={e => updateQty(+e.currentTarget.value)}
+			bind:value={item.quantity}
 		/>
 	</Input>
 </td>
@@ -87,26 +59,22 @@
 	td {
 		color: var(--cart-table-color);
 		padding: 0.3em;
-	}
-
-	div {
-		width: 100%;
+		font-size: 1em;
 		text-align: center;
-		margin: 0.4em 0 0.3em;
-		padding-inline-start: 0.5em;
 	}
 
 	img {
 		height: auto;
 		width: auto;
 		max-width: 100%;
-		max-height: 6rem;
+		max-height: 7.5rem;
 	}
 
 	.item {
 		&-product {
-			flex: 1 0 var(--cart-item-product-width);
+			--internal-img-width: var(--cart-img-width, 9rem);
 
+			flex: 0 1 var(--cart-item-product-width);
 			font-size: 0.85em;
 		}
 
@@ -143,13 +111,13 @@
 		}
 	}
 
-	// @media screen and (max-width: 459px) {
-	// 	td[title]:not(:first-child):before {
-	// 		content: attr(title) ': ';
-	// 		display: flex;
-	// 		align-items: center;
-	// 	}
-	// }
+	.img-container {
+		text-align: center;
+		margin: 0.4em 0 0.3em;
+		padding-inline-start: 0.5em;
+		width: min(100%, var(--internal-img-width));
+		margin: auto;
+	}
 
 	@media screen and (min-width: 320px) {
 		.item-quantity {
@@ -157,58 +125,18 @@
 		}
 	}
 
-	@media screen and (min-width: 340px) {
-		.item-product {
-			flex: initial;
-
-			img {
-				max-height: 7.5rem;
-			}
-		}
-	}
-
 	@media screen and (min-width: 460px) {
 		th,
 		td {
-			display: table-cell;
 			font-size: 1em;
 			text-align: center;
 
 			&:first-child {
-				padding-left: 0.5em;
-
-				@media screen and (min-width: 460px) {
-					// border-top-left-radius: 1em;
-					// border-bottom-left-radius: 1em;
-					border-start-start-radius: 1em;
-					border-end-start-radius: 1em;
-				}
+				padding-inline-start: 0.5em;
 			}
 
 			&:last-child {
-				padding-right: 0.5em;
-
-				@media screen and (min-width: 460px) {
-					border-start-end-radius: 1em;
-					border-end-end-radius: 1em;
-					// border-top-right-radius: 1em;
-					// border-bottom-right-radius: 1em;
-				}
-			}
-		}
-	}
-
-	@media screen and (min-width: 600px) {
-		.item-product {
-			div {
-				display: flex;
-				justify-items: flex-start;
-				align-items: flex-start;
-			}
-
-			// max-width: var(--cart-item-product-width);
-			img {
-				margin-inline-end: 0.6em;
+				padding-inline-end: 0.5em;
 			}
 		}
 	}

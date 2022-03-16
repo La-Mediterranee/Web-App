@@ -149,7 +149,7 @@
 			<fieldset id="payment-method" bind:this={selected}>
 				<legend class="visually-hidden">Zahlungmethode</legend>
 
-				<div class="payment-processor">
+				<PaymentPreProcessor>
 					<span>
 						<RadioButton
 							id="credit"
@@ -171,7 +171,7 @@
 							</ul>
 						</label>
 					</div>
-				</div>
+				</PaymentPreProcessor>
 
 				{#if paymentMethod === 'credit'}
 					<div transition:slide id="card-element" hidden={paymentMethod !== 'credit'}>
@@ -205,7 +205,7 @@
 					</div>
 				</PaymentPreProcessor>
 
-				<div class="payment-processor">
+				<PaymentPreProcessor>
 					<span>
 						<RadioButton
 							id="bar"
@@ -217,7 +217,7 @@
 					<div>
 						<label class="processorLabel" for="bar">Barzahlung</label>
 					</div>
-				</div>
+				</PaymentPreProcessor>
 			</fieldset>
 			<div class="actions">
 				<Button
@@ -307,60 +307,8 @@
 
 	.processorLabel {
 		word-break: normal;
+		align-items: center;
 	}
-
-	// .tip {
-	// 	position: relative;
-	// 	text-align: center;
-	// 	border: 2px solid;
-	// 	padding: 0.5em 0.4em;
-	// 	border-left-width: 0;
-
-	// 	input {
-	// 		cursor: pointer;
-
-	// 		&:checked {
-	// 			~ .checked {
-	// 				border: 3px solid #fb8c00;
-	// 			}
-	// 		}
-	// 	}
-
-	// 	&:first-child {
-	// 		border-left-width: 2px;
-	// 		border-top-left-radius: 0.45em;
-	// 		border-bottom-left-radius: 0.45em;
-
-	// 		.checked {
-	// 			border-top-left-radius: 0.3em;
-	// 			border-bottom-left-radius: 0.3em;
-	// 		}
-	// 	}
-
-	// 	&:last-child {
-	// 		border-top-right-radius: 0.45em;
-	// 		border-bottom-right-radius: 0.45em;
-
-	// 		.checked {
-	// 			border-top-right-radius: 0.3em;
-	// 			border-bottom-right-radius: 0.3em;
-	// 		}
-	// 	}
-	// }
-
-	// .visually-hidden-radio,
-	// .checked {
-	// 	position: absolute;
-	// 	top: 0;
-	// 	left: 0;
-	// 	width: 100%;
-	// 	height: 100%;
-	// }
-
-	// .visually-hidden-radio {
-	// 	opacity: 0;
-	// 	z-index: 1;
-	// }
 
 	:global(.payment-processor) {
 		display: flex;
@@ -409,25 +357,25 @@
 		}
 	}
 
-	#payment-method {
-		> div:first-of-type {
-			border-top: 0;
-		}
-
-		> div:last-of-type {
-			border-bottom: 0;
-		}
-
-		> div {
-			padding: 0.65em;
-			border-bottom: 2px solid;
-			transition: height 1s ease-out;
-		}
-
-		// > :global(*) {
-		// 	padding: 0.2em 0em;
-		// }
+	#card-element {
+		padding: 0.65em;
+		border-bottom: 2px solid;
+		transition: height 1s ease-out;
 	}
+
+	// #payment-method {
+	// 	> div:first-of-type {
+	// 		border-top: 0;
+	// 	}
+
+	// 	> div:last-of-type {
+	// 		border-bottom: 0;
+	// 	}
+
+	// 	// > :global(*) {
+	// 	// 	padding: 0.2em 0em;
+	// 	// }
+	// }
 
 	.actions {
 		width: 100%;
@@ -436,6 +384,7 @@
 		display: flex;
 		flex-direction: row-reverse;
 		flex-wrap: wrap;
+		align-items: center;
 
 		> :global(*) {
 			margin: 0.3em;

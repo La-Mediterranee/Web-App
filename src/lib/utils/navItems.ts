@@ -1,4 +1,6 @@
 import { home, person, fastfood, cart, drink, burger } from '../Icons';
+import cartOutlined from '../Icons/cart';
+
 import { mdiFoodForkDrink } from '@mdi/js';
 
 import type { NavItem } from 'types/index';
@@ -52,9 +54,13 @@ export const mobileNavItems: NavItem[] = [
 		rel: ['nofollow', 'ugc'],
 	},
 	{
-		icon: cart,
+		icon: cartOutlined,
 		pathLabel: 'cart',
 		href: '/cart',
+		// size: {
+		// 	width: 29,
+		// 	height: 29,
+		// },
 		rel: ['nofollow', 'ugc'],
 	},
 ];

@@ -19,8 +19,14 @@
 
 <script lang="ts">
 	import Homepage from '$pages/Homepage.svelte';
+	import { getContext } from 'svelte';
 
 	export let homePageData: HomepageProps | undefined;
+
+	const app = getContext('App');
 </script>
 
+<div style="padding: 20em;">
+	{$app.activeRoute}
+</div>
 <Homepage {homePageData} />

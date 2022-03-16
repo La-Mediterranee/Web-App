@@ -137,9 +137,9 @@
 			</div>
 
 			<div class="content">
-				<p aria-label={$LL.product.price()} class="price">
+				<span aria-label={$LL.product.price()} class="price">
 					<data class="price" value={`${price}`}>{_price}</data>
-				</p>
+				</span>
 
 				{#if rating}
 					<div class="ratings">

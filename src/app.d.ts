@@ -5,7 +5,7 @@ type DecodedIdToken = import('firebase-admin/auth').DecodedIdToken;
 type FirebaseUser = import('firebase/auth').User;
 
 interface Cookies {
-	'sessionId': string;
+	'sessionId': JwtToken;
 	'csrfToken': string;
 	'pref-locale': Locales;
 }

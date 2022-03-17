@@ -1,3 +1,4 @@
+import { dev } from '$app/env';
 import { SERVER_PORT } from '$lib/server/constants';
 import { setCookie } from '$lib/server/helper';
 
@@ -62,7 +63,7 @@ export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
 			maxAge: expiresIn / 1000,
 			httpOnly: true,
 			path: '/',
-			secure: true,
+			secure: true, //!dev
 			// domain: '127.0.0.1',
 			// sameSite: 'none',
 		});

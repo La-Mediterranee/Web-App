@@ -2,7 +2,7 @@
 	import type { LoadOutput } from '@sveltejs/kit/types/internal';
 	import { getContext } from 'svelte';
 
-	const routeName = '/drinks';
+	const routeName = 'drinks';
 
 	export async function load(): Promise<LoadOutput> {
 		return {

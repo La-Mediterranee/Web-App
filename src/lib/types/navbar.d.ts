@@ -19,6 +19,7 @@ export interface NavItem {
 	readonly icon: string;
 	readonly pathLabel: string;
 	readonly href: string;
+	readonly route?: string;
 	readonly rel?: AnchorLinkTypes | AnchorLinkTypes[];
 	readonly size?: {
 		readonly width: number;

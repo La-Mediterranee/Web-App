@@ -1,12 +1,6 @@
 <!-- <svelte:options immutable={true} /> -->
 <script context="module" lang="ts">
-	import type { NavItem } from 'types/index';
 	import type { LocalizedString } from 'typesafe-i18n';
-
-	export interface TabbarItem extends Omit<NavItem, 'rel'> {
-		isActive: boolean;
-		rel: string | undefined;
-	}
 </script>
 
 <script lang="ts">
@@ -17,6 +11,8 @@
 	import { cart } from '$lib/stores/cart';
 	import { getAppContext } from '$lib/utils';
 
+	import type { TabbarItem } from '.';
+
 	export let routes: TabbarItem[];
 	export let paths: Record<string, () => LocalizedString>;
 
@@ -24,7 +20,7 @@
 </script>
 
 <nav itemscope itemtype="https://schema.org/SiteNavigationElement">
-	{#each routes as { pathLabel, icon, href, size, rel, isActive } (href)}
+	{#each routes as { pathLabel, icon, href, size, rel, isActive, route } (href)}
 		<!-- on:click={() => (activeRoute = href)} -->
 		<a
 			{href}
@@ -32,7 +28,7 @@
 			class="item"
 			class:active={isActive}
 			title={paths[pathLabel]()}
-			on:click={$app.active}
+			on:click={() => app.setActiveRoute(route)}
 		>
 			<div class="item-container" use:Ripple>
 				<div class="bubble" />

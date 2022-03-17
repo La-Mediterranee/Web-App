@@ -3,7 +3,7 @@
 
 	import type { LoadOutput } from '@sveltejs/kit/types/internal';
 
-	const routeName = '/cart';
+	const routeName = 'cart';
 
 	export function load(): LoadOutput {
 		return {

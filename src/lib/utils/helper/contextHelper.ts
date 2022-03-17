@@ -3,6 +3,7 @@ import { MODAL, PRODUCT_MODAL } from '$lib/utils/constants';
 
 import type { Product } from 'types/product';
 import type { AppState, StripeContext } from 'types/index';
+import type { App } from '$lib/stores/app';
 
 export function getStripeContext() {
 	return getContext<StripeContext>('stripe');
@@ -21,6 +22,6 @@ export function getProductModalContext() {
 	return getContext<ModalContext>(PRODUCT_MODAL);
 }
 
-export function getAppContext(): AppState {
-	return getContext<AppState>('App');
+export function getAppContext(): App {
+	return getContext('App');
 }

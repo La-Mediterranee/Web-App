@@ -25,3 +25,5 @@ export function appStore() {
 		setActiveRoute,
 	};
 }
+
+export type App = ReturnType<typeof appStore>;

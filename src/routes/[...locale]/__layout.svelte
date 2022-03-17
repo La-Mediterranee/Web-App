@@ -10,7 +10,6 @@
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
 	import type { Locales } from '$i18n/i18n-types';
-	import type { TabbarItem } from '$lib/components/Tabbar/Tabbar.svelte';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
@@ -67,7 +66,7 @@
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
-	import Tabbar from '$lib/components/Tabbar';
+	import Tabbar, { type TabbarItem } from '$lib/components/Tabbar';
 	import Statusbar from '$lib/components/Statusbar';
 
 	import Modals from '../_Dialogs.svelte';
@@ -96,17 +95,14 @@
 
 	setContext('App', app);
 
-	$: tabbarRoutes = <TabbarItem[]>mobileNavItems.map(({ href, icon, pathLabel, rel, size }) => {
-		return {
+	$: tabbarRoutes = <TabbarItem[]>mobileNavItems.map(item => {
+		const { href, rel, route } = item;
+		return Object.assign({}, item, {
 			href: `${urlLocale}${href.replace(/\/$/, '')}`,
 			rel: rel instanceof Array ? rel.join(' ') : rel,
-			icon,
-			pathLabel,
-			size,
 			// isActive: href === $page.stuff.activeRoute,
-			isActive: href === $app.activeRoute,
-			// isActive: (href === $activeRoute()),
-		};
+			isActive: route === $app.activeRoute,
+		});
 	});
 
 	$: console.log($app.activeRoute);

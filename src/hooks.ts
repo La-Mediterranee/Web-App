@@ -16,6 +16,8 @@ import type { LocaleDetector } from 'typesafe-i18n/detectors';
 import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
 
 import type { BaseLocale } from '$i18n/i18n-types';
+import { dev } from '$app/env';
+import { SERVER_PORT } from '$lib/utils/constants';
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 
@@ -66,6 +68,7 @@ const cookieParser: Handle = async ({ event, resolve }) => {
 
 	return response;
 };
+
 const animation =
 	'linear-gradient(to right, rgb(244, 244, 244) 8%, rgb(204, 204, 204) 18%, rgb(244, 244, 244) 33%) 0% 0% / 1000px 104px rgb(244, 244, 244);';
 
@@ -110,12 +113,21 @@ const browserChecker: Handle = async ({ resolve, event }) => {
 	return response;
 };
 
+async function verifySessionCookie(token: JwtToken) {
+	return fetch(`http://localhost:${SERVER_PORT}/v1/auth/session/verify`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'text/plain' },
+		body: token,
+	}).then(res => res.json());
+}
+
 const parseUser: Handle = async ({ event, resolve }) => {
 	try {
 		const sessionId = event.locals.cookies.sessionId;
 		if (sessionId) {
 			// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
-			event.locals.user = await auth.verifySessionCookie(sessionId);
+			// event.locals.user = await auth.verifySessionCookie(sessionId);
+			event.locals.user = await verifySessionCookie(sessionId);
 		}
 	} catch (_e) {
 		const err = _e as AuthError;

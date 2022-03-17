@@ -9,6 +9,7 @@ type DeepReadonly<T> = { readonly [K in keyof T]: DeepReadonly<T[K]> };
 
 type USVString = string;
 type UrlString = `http${'s' | ''}://${string}`;
+type JwtToken = `${string}.${string}.${string}`;
 
 declare var opr: string;
 declare var chrome: string;

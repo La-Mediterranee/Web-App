@@ -43,17 +43,17 @@ interface Business {
 	readonly acceptedPayments?: readonly string[];
 	readonly address?: {
 		/** The country. For example, USA. You can also provide the two-letter {@link http://en.wikipedia.org/wiki/ISO_3166-1 ISO 3166-1 alpha-2 country code}. */
-		addressCountry?: string;
+		readonly addressCountry?: string;
 		/** The locality in which the street address is, and which is in the region. For example, Mountain View. */
-		addressLocality?: string;
+		readonly addressLocality?: string;
 		/** The region in which the locality is, and which is in the country. For example, California or another appropriate first-level {@link https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country Administrative division} */
-		addressRegion?: string;
+		readonly addressRegion?: string;
 		/** The postal code. For example, 94043. */
-		postalCode?: string;
+		readonly postalCode?: string;
 		/** The post office box number for PO box addresses. */
-		postOfficeBoxNumber?: string;
+		readonly postOfficeBoxNumber?: string;
 		/** The street address. For example, 1600 Amphitheatre Pkwy. */
-		streetAddress?: string;
+		readonly streetAddress?: string;
 	};
 	readonly geoLocation?: {
 		latitude: number;
@@ -70,7 +70,7 @@ interface Business {
 }
 
 interface Website {
-	url?: string;
-	link?: string;
-	description?: string;
+	readonly url?: string;
+	readonly link?: string;
+	readonly description?: string;
 }

@@ -5,7 +5,7 @@
 	export let locale: string;
 	export let currency: string;
 
-	const { image, name, price, description } = product;
+	const { image, name, price, desc } = product;
 
 	const _price = new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -27,9 +27,9 @@
 					<data value={`${price}`}>{_price}</data>
 				</span>
 			</div>
-			{#if description}
+			{#if desc}
 				<p class="description">
-					{description}
+					{desc}
 				</p>
 			{/if}
 		</header>

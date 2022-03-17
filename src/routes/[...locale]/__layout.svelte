@@ -72,9 +72,7 @@
 	import Modals from '../_Dialogs.svelte';
 
 	import { page } from '$app/stores';
-	import { writable } from 'svelte/store';
-	import type { AppState } from 'types/index';
-	import { appStore } from '$lib/stores/app';
+	import { appStore, setAppContext } from '$lib/stores/app';
 
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
@@ -93,7 +91,7 @@
 
 	app.setActiveRoute($page.stuff.activeRoute);
 
-	setContext('App', app);
+	setAppContext(app);
 
 	$: tabbarRoutes = <TabbarItem[]>mobileNavItems.map(item => {
 		const { href, rel, route } = item;
@@ -104,8 +102,6 @@
 			isActive: route === $app.activeRoute,
 		});
 	});
-
-	$: console.log($app.activeRoute);
 
 	$: if (
 		browser &&

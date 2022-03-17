@@ -2,44 +2,48 @@
 	// import type { HttpStatusCode } from 'types/index';
 	import type { ErrorLoadInput } from '@sveltejs/kit/types/internal';
 
-	type HttpStatusCode = number;
+	// type HttpStatusCode = number;
 
-	interface Props {
-		error: Error;
-		status: HttpStatusCode;
-	}
+	// interface Props {
+	// 	error: Error;
+	// 	status: HttpStatusCode;
+	// }
 
-	const errorMessages: {
-		[status: HttpStatusCode]: string;
-	} = {
-		404: 'Die gesuchte Seite existiert leider nicht',
-		500: 'Es gab einen Fehler auf unserem Server',
-	};
+	// const errorMessages: {
+	// 	[status: HttpStatusCode]: string;
+	// } = {
+	// 	404: 'Die gesuchte Seite existiert leider nicht',
+	// 	500: 'Es gab einen Fehler auf unserem Server',
+	// };
 
-	export function load({ error, status }: ErrorLoadInput) {
+	export async function load({ error, status, session }: ErrorLoadInput) {
+		await loadNamespaceAsync(session.locale, 'errors');
+
 		return {
 			props: {
 				status,
-				message: errorMessages[status || 404] || error?.message,
 				error,
-			},
-			stuff: {
-				error: true,
 			},
 		};
 	}
 </script>
 
 <script lang="ts">
-	import { dev } from '$app/env';
 	import Link from 'svelty-material/components/Button/Link.svelte';
-	import { page } from '$app/stores';
 
-	export let status: HttpStatusCode;
-	export let message: string;
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+
+	import type { NamespaceErrorsTranslation } from '$i18n/i18n-types';
+
+	import { dev } from '$app/env';
+
+	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
+	import { session } from '$app/stores';
+
+	export let status: keyof NamespaceErrorsTranslation;
 	export let error: Error;
 
-	console.log($page.stuff);
+	setLocale($session.locale);
 </script>
 
 <svelte:head>
@@ -50,7 +54,7 @@
 <div>
 	<h1>{status}</h1>
 	<p>
-		{message}
+		{$LL.errors[status]() || $LL.errors['404']()}
 	</p>
 	<Link href="/">back to La-Mediterrane</Link>
 

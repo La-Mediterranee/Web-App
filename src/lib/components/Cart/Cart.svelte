@@ -8,7 +8,7 @@
 
 	import { enhance } from './action';
 
-	import type { Cart, CartState, CartStore } from '$lib/stores/cart';
+	import { formatPrice, type Cart, type CartState, type CartStore } from '$lib/stores/cart';
 	import type { FormEnhance } from './action';
 
 	function fadeScale(
@@ -74,18 +74,32 @@
 </script>
 
 <script lang="ts">
+	import Card from 'svelty-material/components/Card/Card.svelte';
+
 	import CartItemComponent from './table/CartItem.svelte';
+	import CartItem from './table/CartItem/CartItem.svelte';
+
 	import CartFooter from './table/CartFooter.svelte';
 	import CartHeader from './table/CartHeader.svelte';
 
+	import CartItemPrice from './table/CartItem/Price.svelte';
+	import CartItemProduct from './table/CartItem/Product.svelte';
+	import CartItemQuantity from './table/CartItem/Quantity.svelte';
+	import CartItemActions from './table/CartItem/Actions.svelte';
+
 	import type { TableHeader } from './table/CartHeader.svelte';
-	import Card from 'svelty-material/components/Card/Card.svelte';
+	import type { ID } from 'types/product';
 
 	export let cart: Cart;
 	export let state: CartState;
 	export let store: CartStore;
 
+	function updateItem(e: Event, ID: ID) {
+		store.upadateItem(ID, +(<HTMLInputElement>e.currentTarget).value);
+	}
+
 	$: isEmpty = cart.totalQuantity === 0;
+	$: busy = state === 'Loading';
 </script>
 
 <h1 id="main-start">
@@ -93,82 +107,98 @@
 </h1>
 
 <div id="cart">
-	{#if state === 'Loading'}
-		<p
-			class="state"
-			in:fadeScale={{
-				delay: 100,
-				duration: 400,
-				easing: cubicInOut,
-				baseScale: 0.5,
-			}}
-		>
-			Loading
-		</p>
-	{:else}
-		<div
-			in:fade={{
-				delay: 200,
-				duration: 600,
-			}}
-		>
-			<form method="post" data-action="./cart" use:enhance={submitBuilder()}>
-				<!-- 
+	<form method="post" data-action="./cart" use:enhance={submitBuilder()}>
+		<!-- 
 			if the table's diplay property changes it loses it's role and that goes for any table element
 			https://css-tricks.com/position-sticky-and-table-headers/
 			-->
-				<!-- svelte-ignore a11y-no-redundant-roles -->
-				<table role="table">
-					<caption id="table-title" class="visually-hidden" colspan={tableHeaders.length}>
-						{$t.cart.cartItems()}
-					</caption>
-					<thead role="rowgroup">
-						<tr role="row">
-							<CartHeader headers={tableHeaders} />
+		<!-- svelte-ignore a11y-no-redundant-roles -->
+		<table role="table">
+			<caption id="table-title" class="visually-hidden" colspan={tableHeaders.length}>
+				{$t.cart.cartItems()}
+			</caption>
+			<thead role="rowgroup">
+				<tr role="row">
+					<CartHeader headers={tableHeaders} />
+				</tr>
+			</thead>
+			<tbody role="rowgroup" aria-live="polite" aria-busy={busy}>
+				{#if busy}
+					<tr
+						colspan={tableHeaders.length}
+						class="state"
+						in:fadeScale={{
+							delay: 100,
+							duration: 400,
+							easing: cubicInOut,
+							baseScale: 0.5,
+						}}
+					>
+						<CartItem>
+							<td class="cart-item" style="width: 100%;"> Loading </td>
+						</CartItem>
+					</tr>
+				{:else if !isEmpty}
+					{#each [...cart.items] as [ID, item] (ID)}
+						{@const { price, image, name, quantity } = item}
+						<tr
+							role="row"
+							class="item"
+							in:fade={{
+								delay: 200,
+								duration: 600,
+							}}
+							out:send|local={{ key: ID }}
+							animate:flip={{ duration: 600 }}
+						>
+							<CartItem>
+								<CartItemProduct {ID} {image}>
+									{name}
+								</CartItemProduct>
+								<CartItemQuantity
+									{ID}
+									{quantity}
+									on:change={e => updateItem(e, ID)}
+								/>
+								<CartItemPrice>
+									{formatPrice(price)}
+								</CartItemPrice>
+								<CartItemActions on:click={() => store.removeItem(item)} />
+							</CartItem>
 						</tr>
-					</thead>
-					<tbody role="rowgroup" aria-live="polite">
-						{#if !isEmpty}
-							{#each [...cart.items] as [ID, item] (ID)}
-								<tr
-									role="row"
-									class="item"
-									out:send|local={{ key: item.ID }}
-									animate:flip={{ duration: 600 }}
-								>
-									<CartItemComponent
-										{item}
-										updateQty={newQty => store.upadateItem(ID, newQty)}
-										deleteItem={() => store.removeItem(item)}
-									/>
-								</tr>
-							{/each}
-						{:else}
+					{/each}
+				{:else}
+					<tr
+						role="row"
+						class="item"
+						in:fadeScale={{
+							delay: 100,
+							duration: 400,
+							easing: cubicInOut,
+							baseScale: 0.5,
+						}}
+					>
+						<CartItem>
 							<!-- if cart.totalQuantity === 0 && state === 'Done' -->
-							<p
-								class="state"
-								in:fadeScale={{
-									delay: 100,
-									duration: 400,
-									easing: cubicInOut,
-									baseScale: 0.5,
-								}}
-							>
-								No items in cart yet.
-							</p>
-						{/if}
-					</tbody>
-				</table>
-				<Card class="cart-actions" role="group">
-					<CartFooter
-						disabled={isEmpty}
-						totalQuantity={cart.totalQuantity}
-						totalAmount={cart.displayTotalAmount}
-					/>
-				</Card>
-			</form>
-		</div>
-	{/if}
+							<p class="state">No items in cart yet.</p>
+						</CartItem>
+					</tr>
+				{/if}
+			</tbody>
+		</table>
+		<Card class="cart-actions" role="group">
+			<CartFooter disabled={isEmpty}>
+				<svelte:fragment slot="notes">Anmerkungen</svelte:fragment>
+
+				<svelte:fragment slot="quantity">
+					Summe ({cart.totalQuantity} Produkte):
+				</svelte:fragment>
+				{cart.displayTotalAmount}
+
+				<svelte:fragment slot="submit-text">Zur Kasse</svelte:fragment>
+			</CartFooter>
+		</Card>
+	</form>
 </div>
 
 <style lang="scss" global>

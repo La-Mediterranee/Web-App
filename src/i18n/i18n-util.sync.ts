@@ -9,10 +9,23 @@ import ar from './ar'
 import de from './de'
 import en from './en'
 
+import ar_errors from './ar/errors'
+import de_errors from './de/errors'
+import en_errors from './en/errors'
+
 const localeTranslations = {
-	ar,
-	de,
-	en,
+	ar: {
+		...ar,
+		errors: ar_errors
+	},
+	de: {
+		...de,
+		errors: de_errors
+	},
+	en: {
+		...en,
+		errors: en_errors
+	},
 }
 
 export const loadLocale = (locale: Locales) => {

@@ -79,7 +79,10 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 					ID: '1312',
 					name: 'Burger',
 					categories: ['burger'],
-					description: '',
+					isAvailable: true,
+					isVegetarian: false,
+					desc: '',
+					category: 'Burger',
 					image: {
 						src: '/burger.webp',
 					},
@@ -257,39 +260,39 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 // 	return createCartStore(items);
 // })();
 
-const dummyCart: CartItems = new Map([
-	[
-		'1312',
-		{
-			ID: '1312',
-			name: 'Burger',
-			categories: ['burger'],
-			description: '',
-			image: {
-				src: '/burger.webp',
-			},
-			toppings: [],
-			selectedToppings: [],
-			price: 830,
-			quantity: 1,
-		},
-	],
-	[
-		'1322',
-		{
-			ID: '1322',
-			name: 'Burger',
-			categories: ['burger'],
-			description: '',
-			image: {
-				src: '/burger.webp',
-			},
-			toppings: [],
-			selectedToppings: [],
-			price: 890,
-			quantity: 1,
-		},
-	],
-]);
+// const dummyCart: CartItems = new Map([
+// 	[
+// 		'1312',
+// 		{
+// 			ID: '1312',
+// 			name: 'Burger',
+// 			categories: ['burger'],
+// 			description: '',
+// 			image: {
+// 				src: '/burger.webp',
+// 			},
+// 			toppings: [],
+// 			selectedToppings: [],
+// 			price: 830,
+// 			quantity: 1,
+// 		},
+// 	],
+// 	[
+// 		'1322',
+// 		{
+// 			ID: '1322',
+// 			name: 'Burger',
+// 			categories: ['burger'],
+// 			description: '',
+// 			image: {
+// 				src: '/burger.webp',
+// 			},
+// 			toppings: [],
+// 			selectedToppings: [],
+// 			price: 890,
+// 			quantity: 1,
+// 		},
+// 	],
+// ]);
 
 export const cart = createCartStore();

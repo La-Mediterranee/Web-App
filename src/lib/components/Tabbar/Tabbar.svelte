@@ -9,7 +9,7 @@
 	import Ripple from 'svelty-material/actions/Ripple';
 
 	import { cart } from '$lib/stores/cart';
-	import { getAppContext } from '$lib/utils';
+	import { getAppContext } from '$lib/stores/app';
 
 	import type { TabbarItem } from '.';
 

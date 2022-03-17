@@ -20,10 +20,10 @@
 	export let product: Product;
 	export let jsonLd: WithContext<DTSProduct>;
 
-	const { image, name, description } = product;
+	const { image, name, desc } = product;
 
 	metatags.newTitle = name;
-	metatags.newDesc = description;
+	metatags.newDesc = desc || '';
 	metatags.newImage = image.src;
 	metatags.newAlt = image.alt || `Das leckere ${name}`;
 	metatags.newUrl = '';

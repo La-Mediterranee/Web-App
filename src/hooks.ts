@@ -9,6 +9,7 @@ import { parse } from '$lib/server/cookie';
 import { auth } from '$lib/server/firebase';
 import { refreshSessionCookie, setCookie } from '$lib/server/helper';
 import { attachCsrfToken } from '$lib/server/csrf';
+import { SERVER_PORT, SERVER_URL } from '$lib/utils/constants';
 
 import type { AuthError } from 'firebase/auth';
 import type { Locale } from 'typesafe-i18n/types/core';
@@ -16,8 +17,6 @@ import type { LocaleDetector } from 'typesafe-i18n/detectors';
 import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
 
 import type { BaseLocale } from '$i18n/i18n-types';
-import { dev } from '$app/env';
-import { SERVER_PORT } from '$lib/utils/constants';
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 
@@ -114,7 +113,8 @@ const browserChecker: Handle = async ({ resolve, event }) => {
 };
 
 async function verifySessionCookie(token: JwtToken) {
-	return fetch(`http://localhost:${SERVER_PORT}/v1/auth/session/verify`, {
+	// console.log(`${SERVER_URL}/v1/auth/session/verify`);
+	return fetch(`${SERVER_URL}/v1/auth/session/verify`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'text/plain' },
 		body: token,
@@ -124,11 +124,10 @@ async function verifySessionCookie(token: JwtToken) {
 const parseUser: Handle = async ({ event, resolve }) => {
 	try {
 		const sessionId = event.locals.cookies.sessionId;
-		if (sessionId) {
-			// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
-			// event.locals.user = await auth.verifySessionCookie(sessionId);
-			event.locals.user = await verifySessionCookie(sessionId);
-		}
+
+		event.locals.user = sessionId ? await verifySessionCookie(sessionId) : null;
+		// event.locals.user = sessionId ? await auth.verifySessionCookie(sessionId): null;
+		// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
 	} catch (_e) {
 		const err = _e as AuthError;
 		console.error(`parseUser() -> ${err.code}: ${err.message}`);

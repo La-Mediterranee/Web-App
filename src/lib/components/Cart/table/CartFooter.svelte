@@ -3,29 +3,25 @@
 	import Textarea from 'svelty-material/components/Textarea/Textarea.svelte';
 
 	export let disabled: boolean = false;
-	export let totalQuantity: number;
-	export let totalAmount: string;
 </script>
 
 <!-- svelte-ignore a11y-no-redundant-roles -->
 <div class="notes-container" class:disabled>
-	<div>
-		<Textarea name="notes" class="cart-notes" rows={3} {disabled} noResize filled solo>
-			Anmerkungen:
-		</Textarea>
-		<!-- <label>
-		</label> -->
-	</div>
+	<Textarea name="notes" class="cart-notes" rows={3} {disabled} noResize filled solo>
+		<slot name="notes" />
+	</Textarea>
 </div>
 <div class="actions">
 	<div class="sum">
-		Summe ({totalQuantity} Produkte):
+		<slot name="quantity" />
 		<span style="flex: 1; text-align: end;">
-			{totalAmount}
+			<slot />
 		</span>
 	</div>
 	<div id="cart-checkout">
-		<Button type="submit" class="form-elements-color" rounded {disabled}>Zur Kasse</Button>
+		<Button type="submit" class="form-elements-color" rounded {disabled}>
+			<slot name="submit-text" />
+		</Button>
 	</div>
 </div>
 
@@ -48,15 +44,15 @@
 		}
 	}
 
-	.cart-notes {
-		resize: none;
-		border: 2px solid var(--tint-color);
-		border-radius: 0.9em;
-		margin-top: 0.75em;
-		width: 100%;
-		min-height: 6em;
-		padding: 0.4em 0 0 0;
-	}
+	// .cart-notes {
+	// 	resize: none;
+	// 	border: 2px solid var(--tint-color);
+	// 	border-radius: 0.9em;
+	// 	margin-top: 0.75em;
+	// 	width: 100%;
+	// 	min-height: 6em;
+	// 	padding: 0.4em 0 0 0;
+	// }
 
 	.sum {
 		display: flex;

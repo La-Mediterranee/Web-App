@@ -2,7 +2,7 @@
 /* eslint-disable */
 import type { BaseTranslation as BaseTranslationType, LocalizedString, RequiredParams } from 'typesafe-i18n'
 
-export type BaseTranslation = BaseTranslationType
+export type BaseTranslation = BaseTranslationType & DisallowNamespaces
 export type BaseLocale = 'de'
 
 export type Locales =
@@ -10,9 +10,12 @@ export type Locales =
 	| 'de'
 	| 'en'
 
-export type Translation = RootTranslation
+export type Translation = RootTranslation & DisallowNamespaces
 
-export type Translations = RootTranslation
+export type Translations = RootTranslation &
+{
+	errors: NamespaceErrorsTranslation
+}
 
 type RootTranslation = {
 	/**
@@ -146,6 +149,28 @@ type RootTranslation = {
 	}
 }
 
+export type NamespaceErrorsTranslation = {
+	/**
+	 * Die gesuchte Seite existiert leider nicht
+	 */
+	'404': string
+	/**
+	 * Es gab einen Fehler auf unserem Server
+	 */
+	'500': string
+}
+
+export type Namespaces =
+	| 'errors'
+
+type DisallowNamespaces = {
+	/**
+	 * reserved for 'errors'-namespace\
+	 * you need to use the `./errors/index.ts` file instead
+	 */
+	errors?: "[typesafe-i18n] reserved for 'errors'-namespace. You need to use the `./errors/index.ts` file instead."
+}
+
 export type TranslationFunctions = {
 	/**
 	 * Sie sind derzeit Offline
@@ -274,6 +299,16 @@ export type TranslationFunctions = {
 		 * Lieferzeiten
 		 */
 		deliverytimes: () => LocalizedString
+	}
+	errors: {
+		/**
+		 * Die gesuchte Seite existiert leider nicht
+		 */
+		'404': () => LocalizedString
+		/**
+		 * Es gab einen Fehler auf unserem Server
+		 */
+		'500': () => LocalizedString
 	}
 }
 

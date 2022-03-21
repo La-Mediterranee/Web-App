@@ -3,6 +3,7 @@
 type Locales = import('$i18n/i18n-types').Locales;
 type DecodedIdToken = import('firebase-admin/auth').DecodedIdToken;
 type FirebaseUser = import('firebase/auth').User;
+type UrlLocale = `/${Exclude<Locales, import('./i18n/i18n-types').BaseLocale>}` | '';
 
 interface Cookies {
 	'sessionId': JwtToken;
@@ -22,7 +23,7 @@ declare namespace App {
 		user?: DecodedIdToken | null;
 		cookies: Cookies;
 		locale: Locales;
-		urlLocale: `/${Exclude<Locales, import('./i18n/i18n-types').BaseLocale>}` | '';
+		urlLocale: UrlLocale;
 	}
 
 	interface Platform {}
@@ -30,7 +31,7 @@ declare namespace App {
 	interface Session {
 		user?: User;
 		locale: Locales;
-		urlLocale: `/${Exclude<Locales, import('./i18n/i18n-types').BaseLocale>}` | '';
+		urlLocale: UrlLocale;
 		rtl: boolean;
 	}
 

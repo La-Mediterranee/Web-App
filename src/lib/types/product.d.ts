@@ -51,6 +51,7 @@ export interface Product {
 
 export interface MenuItem {
 	readonly ID: ID;
+	readonly type: 'drink' | 'food';
 	readonly name: string;
 	readonly desc?: string;
 	readonly price: number;
@@ -64,5 +65,5 @@ export interface MenuItem {
 
 export interface CartItem extends Product, MenuItem {
 	quantity: number;
-	selectedToppings: readonly ToppingOption[];
+	selectedToppings?: readonly ToppingOption[];
 }

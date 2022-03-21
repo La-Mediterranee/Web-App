@@ -16,7 +16,7 @@
 		// width: var(--carousel-item-width, 100%);
 		// min-width: var(--carousel-item-min-width);
 
-		scroll-snap-align: var(--carousel-scroll-snap-align, start);
+		// scroll-snap-align: var(--carousel-scroll-snap-align, start);
 
 		&:first-child {
 			padding-inline-start: 0;
@@ -26,7 +26,7 @@
 			padding-inline-end: 0;
 		}
 
-		$snap-margin: 0 0.4em;
+		$snap-margin: 0;
 		@supports (scroll-margin: 0) or (scroll-snap-margin: 0) {
 			scroll-margin: var(--carousel-item-scroll-margin, $snap-margin);
 			scroll-snap-margin: var(--carousel-item-scroll-margin, $snap-margin);

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Product } from 'types/product';
+	import type { MenuItem, Product } from 'types/product';
 
-	export let product: Product;
+	export let product: Product | MenuItem;
 	export let locale: string;
 	export let currency: string;
 

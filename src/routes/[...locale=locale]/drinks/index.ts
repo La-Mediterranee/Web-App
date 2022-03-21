@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import type { RequestEvent, JSONObject, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
+import type { MenuItem } from 'types/product';
+
 const cans = [
 	{
 		name: 'Red Bull 0.2L',
@@ -216,8 +218,17 @@ export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	//aluvera 0.5L/0.3L
 
 	return {
-		body: <JSONObject>{
-			drinks: drinks.map(drink => Object.assign(drink, { ID: randomUUID() })),
-		},
+		body: <JSONObject>(<unknown>{
+			drinks: drinks.map(
+				drink => <MenuItem>Object.assign(drink, {
+						ID: randomUUID(),
+						type: 'drink',
+						isAvailable: true,
+						isVegetarian: false,
+						category: 'drinks',
+						toppings: [],
+					}),
+			),
+		}),
 	};
 }

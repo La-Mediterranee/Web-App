@@ -78,6 +78,7 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 				cart.items.set('1312', {
 					ID: '1312',
 					name: 'Burger',
+					type: 'food',
 					categories: ['burger'],
 					isAvailable: true,
 					isVegetarian: false,

@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { debouncePromise, getFocusableChildren } from '$lib/utils';
 
 	const FOCUS_ATTRIBUTE = 'data-focus-visible';
@@ -136,42 +136,62 @@
 		btn.matches(':focus-visible') && btn.setAttribute(FOCUS_ATTRIBUTE, '');
 	}
 
+	const inlinePos: Record<'prev' | 'next', ScrollLogicalPosition> = {
+		next: 'start',
+		prev: 'end',
+	};
+
 	function scrollToElement(el: HTMLElement | null, offset = 0, dir: 'next' | 'prev' = 'next') {
 		if (!containerInner || !el) return;
 
-		const css = getComputedStyle(container);
+		const left = el.offsetLeft + offset;
 
-		containerInner.scroll({
-			left: el.offsetLeft + offset - parseInt(css.paddingInlineStart || css.paddingLeft),
-			behavior: 'smooth',
-		});
-
-		// el.scrollIntoView({
+		// containerInner.scroll({
+		// 	left: left,
 		// 	behavior: 'smooth',
-		// 	inline: dir === 'next' ? 'start' : 'end',
-		// 	block: 'nearest',
 		// });
+
+		el.scrollIntoView({
+			behavior: 'smooth',
+			inline: inlinePos[dir],
+			block: 'nearest',
+		});
 	}
 
-	function scroll(e: Event) {
+	async function scroll(e: Event) {
 		const btn = e.currentTarget as HTMLButtonElement;
 		const direction = (btn.value || btn.dataset.value) as 'prev' | 'next';
 		scrollDir = direction;
 
+		console.log(container.dataset.scrollDir);
+
+		await tick();
+
+		console.log(container.dataset.scrollDir);
+
 		const containerWidth = containerInner.getBoundingClientRect().width;
+		const css = getComputedStyle(container);
+
 		switch (direction) {
 			case 'prev': {
 				const offset = rtl
 					? 0
 					: -(containerWidth - (prevElement?.getBoundingClientRect().width || 0));
-				scrollToElement(prevElement, offset, 'prev');
+				scrollToElement(
+					prevElement,
+					offset - parseInt(css.paddingInlineStart || css.paddingLeft),
+					'prev',
+				);
 				break;
 			}
 			case 'next': {
 				const offset = rtl
 					? -(containerWidth - (nextElement?.getBoundingClientRect().width || 0))
 					: 0;
-				scrollToElement(nextElement, offset);
+				scrollToElement(
+					nextElement,
+					offset - parseInt(css.paddingInlineStart || css.paddingLeft),
+				);
 				break;
 			}
 		}
@@ -182,23 +202,22 @@
 </script>
 
 <div
-	class="container"
+	class="carousel-container"
 	bind:this={container}
-	style:--has-items-left={hasItemsOnLeft ? 'all' : 'hidden'}
-	style:--has-items-right={hasItemsOnRight ? 'all' : 'hidden'}
+	data-scroll-dir={scrollDir}
+	style:--_has-items-left={hasItemsOnLeft ? 'all' : 'hidden'}
+	style:--_has-items-right={hasItemsOnRight ? 'all' : 'hidden'}
 >
 	<slot name="left" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'next' : 'prev'}>
 		<LeftButton {scroll} {setKeyboardFocus} value={rtl ? 'next' : 'prev'} />
 	</slot>
 
-	<ul class="inner" bind:this={containerInner} use:position>
+	<ul class="carousel-inner" bind:this={containerInner} use:position>
 		{#each items as item, i}
 			<SiemaItem>
 				<slot {item} visible={itemsVisibility[i]} />
 			</SiemaItem>
 		{/each}
-		<!-- <div class="content">
-		</div> -->
 	</ul>
 
 	<slot name="right" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'prev' : 'next'}>
@@ -207,7 +226,7 @@
 </div>
 
 <style lang="scss">
-	.container {
+	.carousel-container {
 		display: flex;
 		align-items: center;
 		position: relative;
@@ -216,10 +235,10 @@
 		// if writing mode is set to something else
 		writing-mode: horizontal-tb;
 		touch-action: pan-y;
-		margin: var(--carousel-container-padding, 0 1em);
+		margin: var(--carousel-container-margin, 0 0.5em);
 	}
 
-	.inner {
+	.carousel-inner {
 		list-style: none;
 		display: inline-flex;
 		overflow-x: auto;
@@ -235,12 +254,5 @@
 		&::-webkit-scrollbar {
 			display: none;
 		}
-	}
-
-	.content {
-		display: inline-flex;
-		max-width: var(--carousel-content-max-width);
-		padding: var(--carousel-content-padding);
-		// margin-inline-start: -1rem;
 	}
 </style>

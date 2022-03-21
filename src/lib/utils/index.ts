@@ -20,8 +20,8 @@ export const getGlobal = function () {
 };
 
 export const replaceLocaleInUrl = (path: string, locale: string): string => {
-	const [, ...rest] = path.split('/');
-	return `/${[locale, ...rest].join('/')}`;
+	const [, , ...rest] = path.split('/');
+	return `${[locale, ...rest].join('/')}` || '/';
 };
 
 export const FOCUSABLE_ELEMENTS = [
@@ -98,6 +98,10 @@ export function getCookie(name: string): string | null {
 	return v ? v[2] : null;
 }
 
+export function setCookie(cookie: string) {
+	document.cookie = cookie;
+}
+
 /**
  * The flag emoji is a combination of the two unicode
  * The UTF-16 A is positioned at 65, and we have subtracted this
@@ -123,6 +127,46 @@ export async function promiseTimeout(ms: number): Promise<number | NodeJS.Timeou
 	return new Promise(resolve => {
 		const id: NodeJS.Timeout | number = setTimeout(() => resolve(id), ms);
 	});
+}
+
+export function convertHours() {
+	let day = 3; // Mon : 1, Tue: 2, Wed: 3 ...
+	let startHours = 18;
+	let endHours = 20;
+
+	const options1: Intl.DateTimeFormatOptions = {
+		weekday: 'long',
+		hour: 'numeric',
+		dayPeriod: 'long',
+	};
+	const dateTimeFormat3 = new Intl.DateTimeFormat('ar', options1);
+
+	// get the start of the period
+	let dateStart = new Date();
+	dateStart.setDate(
+		dateStart.getDate() + (day !== dateStart.getDay() ? (day + 7 - dateStart.getDay()) % 7 : 7),
+	);
+	dateStart.setHours(startHours, 0, 0, 0);
+	console.log(dateStart);
+	console.log(dateTimeFormat3.format(dateStart));
+
+	// get the end of the period
+	let dateEnd = new Date();
+	dateEnd.setDate(
+		dateEnd.getDate() + (day !== dateEnd.getDay() ? (day + 7 - dateEnd.getDay()) % 7 : 7),
+	);
+	dateEnd.setHours(endHours, 0, 0, 0);
+	console.log(dateEnd);
+	console.log(dateTimeFormat3.format(dateEnd));
+
+	/**
+	 * Wed Mar 23 2022 18:00:00 GMT+0100 (Central European Standard Time)
+	 * الأربعاء, 6 م
+	 * الأربعاء, 6 مساءً
+	 * Wed Mar 23 2022 20:00:00 GMT+0100 (Central European Standard Time)
+	 * الأربعاء, 8 م
+	 * الأربعاء, 8 مساءً
+	 */
 }
 
 export * from './helper';

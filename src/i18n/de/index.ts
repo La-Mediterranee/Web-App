@@ -41,6 +41,12 @@ const de: BaseTranslation = {
 		addToCart: 'In den Warenkorb',
 		chooseOptions: 'Toppings Auswählen',
 	},
+	menuItem: {
+		label: {
+			food: 'Speise',
+			drink: 'Getränk',
+		},
+	},
 	footer: {
 		about: 'Über {shopname: string}',
 		deliverytimes: 'Lieferzeiten',

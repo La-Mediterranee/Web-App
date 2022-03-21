@@ -41,6 +41,12 @@ const en: Translation = {
 		addToCart: 'Add to Cart',
 		chooseOptions: 'Choose Toppings',
 	},
+	menuItem: {
+		label: {
+			food: 'Dish',
+			drink: 'Drink',
+		},
+	},
 	footer: {
 		about: 'About {shopname}',
 		deliverytimes: 'Deliverytimes',

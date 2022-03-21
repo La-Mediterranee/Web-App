@@ -53,7 +53,7 @@ interface Business {
 		/** The post office box number for PO box addresses. */
 		readonly postOfficeBoxNumber?: string;
 		/** The street address. For example, 1600 Amphitheatre Pkwy. */
-		readonly streetAddress?: string;
+		readonly street?: string;
 	};
 	readonly geoLocation?: {
 		latitude: number;
@@ -61,12 +61,13 @@ interface Business {
 	};
 	readonly telephone?: string;
 	/** Opening Hours can be one for all days or one for every day as a Array */
-	readonly openingHours?: OpeningHours | readonly OpeningHours[];
+	readonly openingHours: OpeningHours | readonly OpeningHours[];
 	readonly acceptsReservations?: boolean;
 	readonly legalName?: string;
 	readonly slogan?: string;
 	readonly smokingAllowed?: boolean;
 	readonly photo?: Photograph;
+	readonly accptedCurrencies: string;
 }
 
 interface Website {

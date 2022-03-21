@@ -41,6 +41,12 @@ const ar: Translation = {
 		addToCart: 'أضف إلى العربة',
 		chooseOptions: 'اختر الطبقة',
 	},
+	menuItem: {
+		label: {
+			food: 'طعام',
+			drink: 'مشروب',
+		},
+	},
 	footer: {
 		about: '{shopname} عن',
 		deliverytimes: 'Deliverytimes',

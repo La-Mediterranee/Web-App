@@ -26,3 +26,13 @@ export interface NavItem {
 		readonly height: number;
 	};
 }
+
+export interface INavbarItem extends Omit<NavItem, 'rel'> {
+	readonly rel: string;
+}
+
+export interface ITabbarItem extends Omit<NavItem, 'rel'> {
+	readonly isActive: boolean;
+	readonly route?: string;
+	readonly rel: string | undefined;
+}

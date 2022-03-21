@@ -52,6 +52,7 @@
 
 @import 'svelty-material/components/MaterialApp/MaterialAppMin.scss';
 @import 'svelty-material/components/Button/Button';
+@import 'animations/tabbar-bubble';
 
 $mediaqueries: (
 	mobile-only: 'only screen and (max-width: 767px)',
@@ -99,6 +100,10 @@ $mediaqueries: (
 	--header-position: sticky;
 }
 
+:focus:not(:focus-visible) {
+	outline: none;
+}
+
 html {
 	// scroll-behavior: smooth;
 	text-rendering: optimizeLegibility;
@@ -123,6 +128,10 @@ main {
 	@media (any-hover: hover) {
 		--carousel-nav-btn-display: initial;
 		--carousel-scroll-snap-align: initial;
+
+		& .carousel-container[data-scroll-dir='prev'] {
+			--carousel-scroll-snap-align: end;
+		}
 	}
 }
 
@@ -318,4 +327,12 @@ main {
 		visibility: hidden;
 		pointer-events: none;
 	}
+}
+
+#main-start {
+	// position: relative;
+}
+
+[dir='rtl'] * {
+	letter-spacing: normal !important;
 }

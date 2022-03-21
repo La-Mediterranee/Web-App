@@ -1,3 +1,3 @@
-export function validate(param: string) {
+export function match(param: string) {
 	return /^[a-z]+$/.test(param);
 }

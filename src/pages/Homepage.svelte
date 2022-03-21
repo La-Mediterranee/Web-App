@@ -13,6 +13,7 @@
 
 	import { rtl } from '$stores/rtl';
 	import { session } from '$app/stores';
+	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
 
 	export let homePageData: HomepageProps | undefined;
 
@@ -37,7 +38,7 @@
 			<h2 id={section.title.toLocaleLowerCase()} class="row-header">{section.title}</h2>
 			{#if Array.isArray(section.body)}
 				<Siema rtl={$session.rtl} items={section.body} let:item={product} let:visible>
-					<ProductCard {product} isVisible={visible} />
+					<MenuItemCard {product} isVisible={visible} />
 				</Siema>
 			{/if}
 		</section>
@@ -66,13 +67,27 @@
 
 	.section-carousel {
 		max-width: 1200px;
-
-		--carousel-item-width: 50%;
-		--product-card-width: 270px;
+		--product-card-width: 250px;
 
 		--carousel-item-min-width: 235px;
 		--carousel-content-max-width: 1200px;
-		--carousel-item-scroll-margin: 40px;
+		--product-card-margin-start: auto;
+		--product-card-margin-end: auto;
+
+		--carousel-item-width: auto;
+		--carousel-item-padding: 0 0.5em;
+
+		// @media screen and (min-width: 600px) {
+		// 	--carousel-item-width: 50%;
+		// }
+
+		@media screen and (min-width: 820px) {
+			--carousel-item-width: 33.3%;
+		}
+
+		@media screen and (min-width: 1150px) {
+			--carousel-item-width: 25%;
+		}
 
 		:global(.item) {
 			// --carousel-content-padding: 0 14px;

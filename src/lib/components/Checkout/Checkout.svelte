@@ -28,9 +28,8 @@
 	import ExpressPayment from './checkout-sections/ExpressPayment.svelte';
 
 	import { cart } from '$lib/stores/cart';
-	import { getStripeContext } from '$lib/utils';
-	import { onMount } from 'svelte';
 	import { panels } from './panels';
+	import { getStripeContext } from '$lib/stores/stripe';
 
 	export let user: User | undefined;
 	export let value = [0];

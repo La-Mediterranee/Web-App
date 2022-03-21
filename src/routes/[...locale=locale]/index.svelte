@@ -11,7 +11,7 @@
 		return {
 			props: { homePageData },
 			stuff: {
-				activeRoute: 'homepage',
+				activeRoute: 'home',
 			},
 		};
 	}

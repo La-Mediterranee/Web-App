@@ -1,30 +1,24 @@
 <script context="module" lang="ts">
-	import { getContext, onMount, setContext } from 'svelte';
-	import { browser, dev } from '$app/env';
+	import { dev } from '$app/env';
+	import { onMount } from 'svelte';
 
 	import { baseLocale } from '$i18n/i18n-util';
-	import { setLocale } from '$i18n/i18n-svelte';
+	import LL, { setLocale } from '$i18n/i18n-svelte';
 	import { RTL_LANGS, locales } from '$i18n/utils';
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
-	import type { Locales } from '$i18n/i18n-types';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { Locales, Translations, TranslationFunctions, Formatters } from '$i18n/i18n-types';
 
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
-		const locale = params.locale as Locales;
-
-		if (params.locale?.split('/')?.length > 1) {
-			return {
-				status: 404,
-			};
-		}
+		const locale = params.locale as Locales | '';
 
 		// redirect to preferred language if user comes from page root
 		if (locale !== session.locale && session.locale !== baseLocale) {
-			const path = `${session.urlLocale}` + url.pathname; //replaceLocaleInUrl(, );
-			const redirect = new URL(path, url.origin);
+			const path = replaceLocaleInUrl(url.pathname, `${session.urlLocale}`); //+ url.pathname; replaceLocaleInUrl(, );
+			console.log('first');
 
 			return {
 				status: 302,
@@ -32,17 +26,24 @@
 			};
 		}
 
-		// redirect to base locale if language is not present
 		// (locale as string) !== '/' &&
-		if ((locale as string) !== '' && !locales.has(locale)) {
-			// const path = replaceLocaleInUrl(url.pathname, '');
-			const path = `${session.urlLocale}` + url.pathname;
-			const redirect = new URL(path, url.origin);
+		if (locale !== '' && !locales.has(locale as Locales)) {
+			const path = replaceLocaleInUrl(url.pathname, `${session.urlLocale}`);
+			console.log('second');
 
 			return {
 				status: 302,
 				redirect: path,
-				// redirect: '/',
+			};
+		}
+
+		if (session.locale === 'de' && locale !== '') {
+			const path = replaceLocaleInUrl(url.pathname, '');
+			console.log('third');
+
+			return {
+				status: 302,
+				redirect: path,
 			};
 		}
 
@@ -63,16 +64,22 @@
 	// import { metatags } from '$lib/stores/metatags';
 	import t from '$i18n/i18n-svelte';
 
+	import Modals from '../_Dialogs.svelte';
 	import LDTag from '$lib/components/LDTag';
 	import Navbar from '$lib/components/Navbar';
 	import Footer from '$lib/components/Footer';
-	import Tabbar, { type TabbarItem } from '$lib/components/Tabbar';
 	import Statusbar from '$lib/components/Statusbar';
+	import Tabbar from '$lib/components/Tabbar';
 
-	import Modals from '../_Dialogs.svelte';
+	// import { initI18nSvelte } from 'typesafe-i18n/adapters/adapter-svelte';
+	// import { loadedLocales, loadedFormatters } from '$i18n/i18n-util';
 
 	import { page } from '$app/stores';
-	import { appStore, setAppContext } from '$lib/stores/app';
+	import { setAppContext } from '$lib/stores/app';
+	import { replaceLocaleInUrl } from '$lib/utils';
+
+	import type { INavbarItem, ITabbarItem } from 'types/navbar';
+	import { serialize } from '$lib/server/cookie';
 
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
@@ -80,20 +87,30 @@
 
 	let online: boolean = true;
 
+	// const {
+	// 	locale,
+	// 	LL,
+	// 	setLocale: setLL,
+	// } = initI18nSvelte<Locales, Translations, TranslationFunctions, Formatters>(
+	// 	loadedLocales,
+	// 	loadedFormatters,
+	// );
+
 	setLocale(lang);
+	// setLL(lang);
 
-	// const app = writable<AppState>({
-	// 	currency: '€',
-	// 	activeRoute: $page.stuff.activeRoute,
-	// });
-
-	const app = appStore();
-
+	const app = setAppContext();
 	app.setActiveRoute($page.stuff.activeRoute);
 
-	setAppContext(app);
+	const navbarRoutes = <INavbarItem[]>desktopNavItems.map(item => {
+		const { href, rel } = item;
+		return Object.assign({}, item, {
+			href: `${urlLocale}${href}`,
+			rel: rel instanceof Array ? rel.join(' ') : rel,
+		});
+	});
 
-	$: tabbarRoutes = <TabbarItem[]>mobileNavItems.map(item => {
+	$: tabbarRoutes = <ITabbarItem[]>mobileNavItems.map(item => {
 		const { href, rel, route } = item;
 		return Object.assign({}, item, {
 			href: `${urlLocale}${href.replace(/\/$/, '')}`,
@@ -102,13 +119,6 @@
 			isActive: route === $app.activeRoute,
 		});
 	});
-
-	$: if (
-		browser &&
-		(document.defaultView || window).innerWidth > document.documentElement.clientWidth
-	) {
-		document.body.classList.add('has-scrollbar');
-	}
 
 	onMount(async () => {
 		if (dev) return;
@@ -152,15 +162,19 @@
 <Modals>
 	<div id="main-content">
 		<Statusbar message={$t.connectionStatus()} {online} />
-		<Navbar locale={urlLocale} routes={desktopNavItems} />
+		<Navbar routes={navbarRoutes} on:click={e => app.setActiveRoute(e.detail)} />
 		<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
 		<div class="inner-content">
-			<main class="margin-navbar">
+			<main id="main-start" class="margin-navbar">
 				<slot />
 			</main>
 			<Footer />
 		</div>
 		<!-- <UpdatePrompt /> -->
-		<Tabbar paths={$t.nav.routes} routes={tabbarRoutes} />
+		<Tabbar
+			paths={$t.nav.routes}
+			routes={tabbarRoutes}
+			on:click={e => app.setActiveRoute(e.detail)}
+		/>
 	</div>
 </Modals>

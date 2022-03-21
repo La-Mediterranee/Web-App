@@ -1,6 +1,7 @@
 import { dev } from '$app/env';
 import { SERVER_PORT } from '$lib/server/constants';
 import { setCookie } from '$lib/server/helper';
+import { SERVER_URL } from '$lib/utils/constants';
 
 import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
 
@@ -15,7 +16,7 @@ async function fetchWithJSON(init: RequestInit) {
 			'content-type': 'application/json',
 		},
 	});
-	return fetch(`http://localhost:${SERVER_PORT}/v1/auth/session`, init);
+	return fetch(`${SERVER_URL}/v1/auth/session`, init);
 }
 
 const days = 14;

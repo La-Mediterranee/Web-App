@@ -3,7 +3,7 @@
 <script context="module" lang="ts">
 	import { mdiInformation } from '@mdi/js';
 
-	import type { Product, Variations } from 'types/product';
+	import type { MenuItem, Product, Variations } from 'types/product';
 	import type { AddToCart } from './ProductModal.svelte';
 
 	const AmountLabel = 'Menge';
@@ -16,7 +16,7 @@
 	import RadioButton from '$lib/components/Forms/RadioButton.svelte';
 	import Checkbox from '$lib/components/Forms/Checkbox.svelte';
 
-	export let product: Product;
+	export let product: MenuItem;
 	export let valid: boolean;
 	export let quantitiy: number;
 	export let addToCart: AddToCart;

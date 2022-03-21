@@ -2,14 +2,9 @@
 	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
 
-	import { loadLocaleAsync } from '$i18n/i18n-util.async';
-	import { RTL_LANGS, locales } from '$i18n/utils';
+	import { RTL_LANGS } from '$i18n/utils';
 
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
-	import { replaceLocaleInUrl } from '$lib/utils';
-	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
-
-	import type { Locales } from '$i18n/i18n-types';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
 	export async function load({ session, params, url }: LoadInput): Promise<LoadOutput> {
@@ -23,29 +18,14 @@
 </script>
 
 <script>
-	import MaterialApp from 'svelty-material/components/MaterialApp/MaterialAppMin.svelte';
-
-	import Modals from './_Dialogs.svelte';
 	import Providers from './_layoutProviders.svelte';
 
-	// import t from '$i18n/i18n-svelte';
-	// import rtl from '$stores/rtl';
-	// import metatags from '$lib/stores/seo/metatags';
-
-	// import LDTag from '$lib/components/LDTag';
-	// import Navbar from '$lib/components/Navbar';
-	// import Footer from '$lib/components/Footer';
-	// import Tabbar from '$lib/components/Tabbar';
-	// import Statusbar from '$lib/components/Statusbar';
-	// import Installprompt from '$lib/pwa/components/Prompts/Installprompt/Installprompt.svelte';
-	// import UpdatePrompt from '$lib/pwa/components/Prompts/SericeWorker/UpdatePrompt.svelte';
-
-	// export let dir: 'rtl' | 'ltr' | 'auto';
-	// export let lang: Locales;
-
-	// setLocale(lang);
-
-	// $rtl = dir === 'rtl';
+	$: if (
+		browser &&
+		(document.defaultView || window).innerWidth > document.documentElement.clientWidth
+	) {
+		document.body.classList.add('has-scrollbar');
+	}
 
 	onMount(async () => {
 		if (dev) return;
@@ -61,9 +41,6 @@
 
 <Providers>
 	<slot />
-	<!-- <MaterialApp theme="custom">
-		<slot />
-	</MaterialApp> -->
 </Providers>
 
 <style lang="scss" global>
@@ -77,10 +54,8 @@
 	}
 
 	.inner-content {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		flex: 1;
+		display: grid;
+		grid-template-columns: 100%;
 	}
 
 	main {

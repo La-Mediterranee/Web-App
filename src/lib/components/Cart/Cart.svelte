@@ -102,11 +102,11 @@
 	$: busy = state === 'Loading';
 </script>
 
-<h1 id="main-start">
-	{$t.cart.cart()}
-</h1>
-
 <div id="cart">
+	<h1>
+		{$t.cart.cart()}
+	</h1>
+
 	<form method="post" data-action="./cart" use:enhance={submitBuilder()}>
 		<!-- 
 			if the table's diplay property changes it loses it's role and that goes for any table element
@@ -179,7 +179,6 @@
 						}}
 					>
 						<CartItem>
-							<!-- if cart.totalQuantity === 0 && state === 'Done' -->
 							<p class="state">No items in cart yet.</p>
 						</CartItem>
 					</tr>
@@ -202,11 +201,6 @@
 </div>
 
 <style lang="scss" global>
-	#main-start {
-		text-align: center;
-		margin: 0.2em 1.3em;
-	}
-
 	#cart {
 		--cart-item-product-width: min(45%, 40em);
 		--cart-item-quantity-width: 5em;
@@ -220,6 +214,11 @@
 
 		height: 100%;
 		margin-bottom: 1em;
+
+		h1 {
+			text-align: center;
+			margin: 0.2em 1.3em;
+		}
 
 		.state {
 			padding: 2em 0;
@@ -268,8 +267,8 @@
 
 		thead,
 		tbody,
-		.cart-actions,
-		tr {
+		tr,
+		.cart-actions {
 			display: flex;
 		}
 
@@ -355,7 +354,8 @@
 				flex: 1 0 30%;
 				align-self: flex-start;
 				top: calc(var(--top-bar-height) + 10px);
-				margin: 0 0 0 auto;
+				margin: 0;
+				margin-inline-start: auto;
 				max-width: 23.5rem;
 			}
 		}

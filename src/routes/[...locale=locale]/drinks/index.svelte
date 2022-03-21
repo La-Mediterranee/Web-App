@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ProductCard from '$lib/components/ProductCard/ProductCard.svelte';
+	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
 
 	export let drinks: any[];
 
@@ -9,7 +9,7 @@
 <h1>{header}</h1>
 <div>
 	{#each drinks as drink}
-		<ProductCard style="flex: 0 1 32%;" product={drink} />
+		<MenuItemCard style="flex: 0 1 32%;" product={drink} />
 	{/each}
 </div>
 

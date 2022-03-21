@@ -5,8 +5,9 @@ import type { AppState } from 'types/index';
 
 export function appStore() {
 	const store = writable<AppState>({
-		currency: '€',
+		displayCurrency: '€',
 		activeRoute: undefined,
+		currency: 'EUR',
 		store: {
 			priceRange: '€',
 			address: {
@@ -39,8 +40,10 @@ export type App = ReturnType<typeof appStore>;
 
 const STORE_KEY = Symbol('App');
 
-export function setAppContext(app: App) {
-	return setContext(STORE_KEY, app);
+export function setAppContext() {
+	const app = appStore();
+	setContext(STORE_KEY, app);
+	return app;
 }
 
 export function getAppContext(): App {

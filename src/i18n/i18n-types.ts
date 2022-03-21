@@ -136,6 +136,18 @@ type RootTranslation = {
 		 */
 		chooseOptions: string
 	}
+	menuItem: {
+		label: {
+			/**
+			 * Speise
+			 */
+			food: string
+			/**
+			 * Getränk
+			 */
+			drink: string
+		}
+	}
 	footer: {
 		/**
 		 * Über {shopname}
@@ -289,6 +301,18 @@ export type TranslationFunctions = {
 		 * Toppings Auswählen
 		 */
 		chooseOptions: () => LocalizedString
+	}
+	menuItem: {
+		label: {
+			/**
+			 * Speise
+			 */
+			food: () => LocalizedString
+			/**
+			 * Getränk
+			 */
+			drink: () => LocalizedString
+		}
 	}
 	footer: {
 		/**

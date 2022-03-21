@@ -46,12 +46,12 @@
 			transform: translate(0%, -50%);
 		}
 
-		:global(.container):hover & {
+		:global(.carousel-container):hover & {
 			transform: translate(0%, -50%);
 		}
 
 		&:focus-visible,
-		:global(.container):hover & {
+		:global(.carousel-container):hover & {
 			opacity: 1;
 		}
 	}
@@ -59,14 +59,14 @@
 	.left {
 		left: 0;
 		transform: translate(-150%, -50%);
-		visibility: var(--has-items-left, all);
+		visibility: var(--_has-items-left, all);
 		margin-left: 0.2em;
 	}
 
 	.right {
 		right: 0;
 		transform: translate(150%, -50%);
-		visibility: var(--has-items-right, all);
+		visibility: var(--_has-items-right, all);
 		margin-right: 0.2em;
 	}
 </style>

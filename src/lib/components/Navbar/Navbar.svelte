@@ -1,68 +1,53 @@
 <script context="module" lang="ts">
 	import { mdiCart } from '@mdi/js';
 	import { page, session } from '$app/stores';
+	import { createEventDispatcher } from 'svelte';
 
-	import type { NavItem } from 'types/index';
 	import type { LocalizedString } from 'typesafe-i18n';
 </script>
 
 <script lang="ts">
-	import t from '$i18n/i18n-svelte';
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Link from 'svelty-material/components/Button/Link.svelte';
 	import Badge from 'svelty-material/components/Badge/Badge.svelte';
+
+	import t from '$i18n/i18n-svelte';
+	import NavbarItem from './NavbarItem.svelte';
+	import SkipMain from './SkipMain.svelte';
+	import NavLogo from './NavLogo.svelte';
+
 	import { cart } from '$lib/stores/cart';
 
-	export let routes: NavItem[] = [];
-	export let locale: string = 'en';
+	import type { INavbarItem } from 'types/navbar';
 
-	const _routes = routes.map(({ href, icon, pathLabel, rel, size }) => {
-		return {
-			href: `${locale}${href}`, //.replace(/\/$/, '')
-			rel: rel instanceof Array ? rel.join(' ') : rel,
-			icon,
-			pathLabel,
-			size,
-		};
-	});
+	export let routes: INavbarItem[] = [];
 
 	$: paths = $t.nav.routes as Record<string, () => LocalizedString>;
+
+	const dispatch = createEventDispatcher();
 </script>
 
 <header id="top-bar" itemscope itemtype="https://schema.org/WPHeader">
-	<a href="#main-start" class="skip-main">Skip to main</a>
-	<div id="nav-logo">
-		<a href={`${$session.urlLocale || '/'}`}>
-			<img src="/Logos/V1_210.webp" aria-hidden="true" alt="" />
-			<span class="visually-hidden">Home</span>
-		</a>
-	</div>
+	<SkipMain>Skip to main</SkipMain>
+	<NavLogo href={`${$session.urlLocale || '/'}`} on:click={() => dispatch('click', 'home')}>
+		Home
+	</NavLogo>
 
 	<nav
-		aria-label={`${$t.nav.navbarAriaLabel()}`}
 		itemscope
 		itemtype="https://schema.org/SiteNavigationElement"
+		aria-label={`${$t.nav.navbarAriaLabel()}`}
 	>
 		<ul>
-			{#each _routes as { pathLabel, icon, href, rel, size } (href)}
-				<li class="nav-item">
-					<Link
-						text
-						{href}
-						{rel}
-						{...{
-							'aria-current': href === $page.url.pathname && 'page',
-						}}
-					>
-						<!-- <div>
-							<Icon path={icon} size={size?.width || 30} />
-						</div> -->
-						<!-- color={'var(--tint-color, #fff)'} -->
-						<span class="label">
-							{paths[pathLabel]()}
-						</span>
-					</Link>
-				</li>
+			{#each routes as { pathLabel, href, rel, route } (href)}
+				<NavbarItem
+					{href}
+					{rel}
+					current={href === $page.url.pathname && 'page'}
+					on:click={() => dispatch('click', route)}
+				>
+					{paths[pathLabel]()}
+				</NavbarItem>
 			{/each}
 		</ul>
 	</nav>
@@ -75,6 +60,7 @@
 				class="img-url"
 				aria-label="Account {$session.user.displayName}"
 				href={`${$session.urlLocale}/customer`}
+				on:click={() => dispatch('click', 'customer')}
 			>
 				<img
 					src={$session.user.photoURL ||
@@ -88,28 +74,26 @@
 				/>
 			</Link>
 		{:else}
-			<Link text href={`${$session.urlLocale}/customer/login`} sveltekit:prefetch>
-				<!-- <Icon path={mdiCart} /> -->
+			<Link
+				text
+				sveltekit:prefetch
+				href={`${$session.urlLocale}/customer/login`}
+				on:click={() => dispatch('click', 'customer')}
+			>
 				<span>{$t.customer.login()}</span>
 			</Link>
-			<!-- <a href={`${$session.urlLocale}/customer/login`}>{$t.customer.login()}</a> -->
 		{/if}
 	</div>
 	<div class="cart">
 		<Link
-			style="width: 3.7em; height:3.7em"
+			style="width: 3.5em; height:3.5em"
 			sveltekit:prefetch
 			href={`${$session.urlLocale}/cart`}
 			size="x-large"
 			icon
+			on:click={() => dispatch('click', 'cart')}
 		>
-			<Badge
-				class="primary-color"
-				bordered
-				offsetX={12}
-				offsetY={13}
-				active={$cart.state !== 'Loading'}
-			>
+			<Badge class="primary-color" bordered active={$cart.state !== 'Loading'}>
 				<Icon path={mdiCart} ariaHidden={true} />
 
 				<span class="visually-hidden">{$t.cart.cart()}</span>
@@ -125,22 +109,6 @@
 	// box-shadow: 0 2px 20px 0 var(--subtle);
 	@use 'variables' as *;
 
-	.skip-main {
-		padding: 8px;
-		position: absolute;
-		inset-block-start: 0;
-		inset-inline-start: 0;
-		transform: translateY(-100%);
-		background: var(--theme-app-bar);
-
-		z-index: 101;
-
-		&:focus {
-			transform: translateY(0);
-		}
-	}
-
-	// nav,
 	#top-bar {
 		// --text-color: var(--tint-color);
 		--text-color: #fff;
@@ -158,22 +126,6 @@
 
 		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {
 			padding: 0.3em 0.5em;
-		}
-	}
-
-	div {
-		display: flex;
-		justify-content: center;
-	}
-
-	#nav-logo {
-		display: flex;
-		width: 6.7em;
-		height: 3.8em;
-
-		img {
-			width: 6.7em;
-			height: 100%;
 		}
 	}
 
@@ -196,20 +148,6 @@
 
 		@media screen and (min-width: map-get($map: $breakpoints, $key: md)) {
 			display: flex;
-		}
-	}
-
-	.nav-item {
-		list-style: none;
-
-		div {
-			height: fit-content;
-			width: 27px;
-			height: 30px;
-		}
-
-		.label {
-			font-size: 1.3em;
 		}
 	}
 
@@ -240,23 +178,28 @@
 
 	.cart {
 		--theme-cards: transparent;
+		--s-badge-offset-x: 12px;
+		--s-badge-offset-y: 11px;
 
 		display: none;
+		align-items: center;
+		justify-content: center;
+		padding: 0 0.6em 0 0;
+
+		[dir='rtl'] & {
+		}
 	}
 
 	@media screen and (min-width: 960px) {
 		.cart {
 			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 0 0.6em 0 0;
 		}
 
 		:global([dir='rtl']) {
 			.cart :global(svg path) {
 				transform-origin: 50% 50%;
-				// transform: scale(1, -1) translate(0, -100%);
 				transform: scaleX(-1);
+				// transform: scale(1, -1) translate(0, -100%);
 			}
 		}
 	}

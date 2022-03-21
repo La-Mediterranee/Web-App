@@ -70,10 +70,28 @@ interface Restaurant<Currency extends string> {
 	};
 }
 
-export interface AppState<Currency = '€'> {
-	currency: Currency;
+// type StringOfLength<Min, Max> = string & {
+// 	__value__: never;
+// };
+
+// // Type guard function
+// const isStringOfLength = <Min extends number, Max extends number>(
+// 	str: string,
+// 	min: Min,
+// 	max: Max,
+// ): str is StringOfLength<Min, Max> => str.length >= min && str.length <= max;
+
+// type ISO_4217<T extends string> = T extends `${infer AA}${infer AB}${infer AC}${infer R}`
+// 	? T extends `${infer F}${R}`
+// 		? F
+// 		: never
+// 	: T;
+
+export interface AppState<Currency extends string = '€'> {
+	displayCurrency: Currency;
+	currency: ISO_4217_Code;
 	activeRoute?: string;
-	store: Restaurant<Currency>;
+	store: Partial<Restaurant<Currency>>;
 }
 
 // enum HttpStatusCode {

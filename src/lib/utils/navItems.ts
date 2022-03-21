@@ -10,11 +10,13 @@ export const desktopNavItems: NavItem[] = [
 		icon: home,
 		pathLabel: 'homepage',
 		href: '/',
+		route: 'home',
 	},
 	{
 		icon: burger,
 		pathLabel: 'food',
 		href: '/food',
+		route: 'food',
 		size: {
 			width: 27,
 			height: 27,
@@ -24,6 +26,7 @@ export const desktopNavItems: NavItem[] = [
 		icon: drink, //mdiFoodForkDrink
 		pathLabel: 'drinks',
 		href: '/drinks',
+		route: 'drinks',
 	},
 ];
 
@@ -48,7 +51,7 @@ export const mobileNavItems: NavItem[] = [
 		icon: home,
 		pathLabel: 'homepage',
 		href: '/',
-		route: 'homepage',
+		route: 'home',
 	},
 	{
 		icon: person,

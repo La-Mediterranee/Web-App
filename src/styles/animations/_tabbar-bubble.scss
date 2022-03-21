@@ -1,0 +1,64 @@
+@keyframes animatedBubbleIn {
+	0% {
+		transform: scale(0.01);
+	}
+	20% {
+		transform: scale(3);
+	}
+	40% {
+		transform: scale(1.65);
+	}
+	60% {
+		transform: scale(1.65);
+	}
+	80% {
+		transform: scale(3.2);
+	}
+	100% {
+		transform: scale(3);
+	}
+}
+
+@keyframes animatedBubbleOut {
+	0% {
+		transform: scale(3);
+	}
+	20% {
+		transform: scale(3.2);
+	}
+	40% {
+		transform: scale(1.65);
+	}
+	60% {
+		transform: scale(1.65);
+	}
+	80% {
+		transform: scale(3);
+	}
+	100% {
+		transform: scale(0.01);
+	}
+}
+
+@keyframes animatedMiniBubbleIn {
+	0% {
+		opacity: 0;
+		transform: translateY(13px);
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes animatedImageIn {
+	0% {
+		color: var(--bar-color);
+	}
+	100% {
+		color: var(--tint-color);
+	}
+}

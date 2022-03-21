@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { mdiClose } from '@mdi/js';
 
-	import type { Product, Variations } from 'types/product';
+	import type { MenuItem, Product, Variations } from 'types/product';
 
 	const AmountLabel = 'Menge';
 
@@ -24,7 +24,7 @@
 	import ModalAside from '$components/Modals/ProductModal/ModalAside.svelte';
 	import ModalForm from '$components/Modals/ProductModal/ModalForm.svelte';
 
-	export let product: Product;
+	export let product: MenuItem;
 	export let locale: string = 'de-DE';
 	export let currency: string = 'EUR';
 

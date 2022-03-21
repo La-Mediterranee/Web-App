@@ -5,32 +5,15 @@ import type {
 	WebPage,
 	BreadcrumbList,
 	Restaurant,
-	Product,
-	MenuItem,
+	Menu,
 } from 'schema-dts';
 
 import type { Business, MenuItemProduct, QueryAction, Website } from './schema-ld.types';
 
-const buis: Business = {
-	name: 'La Mediterranee',
-	url: 'https://www.willtrinken.at',
-	images: [],
-	// photo: {
-
-	// }
-	/** Cash, Credit Card, Cryptocurrency, Local Exchange Tradings System, etc. */
-	acceptedPayments: ['Cash', 'Credit Card', 'Debit Card'],
-	openingHours: {
-		days: 'Monday',
-		opens: '12:00',
-		closes: '24:00',
-	},
-};
-
 const web: Website = {
-	url: 'https://www.willtrinken.at',
-	link: 'willtrinken.at',
-	description: 'willtrinken',
+	url: 'https://www.la-mediterranee.at',
+	link: 'la-mediterranee.at',
+	description: '',
 };
 
 const e = {
@@ -52,6 +35,132 @@ const e = {
 	},
 };
 
+const restaurantExample: Restaurant = {
+	'@type': 'Restaurant',
+	'hasMenu': [
+		{
+			'@type': 'Menu',
+			'name': 'Breakfast',
+			'url': 'https://your-restaurant.com/breakfast-menu/',
+		},
+		{
+			'@type': 'Menu',
+			'name': 'Lunch',
+			'url': 'https://your-restaurant.com/lunch-menu/',
+		},
+		{
+			'@type': 'Menu',
+			'name': 'Dinner',
+			'url': 'https://your-restaurant.com/dinner-menu/',
+		},
+	],
+};
+
+const menuExample: Menu = {
+	'@type': 'Menu',
+	'name': 'Our Menu',
+	'mainEntityOfPage': 'https://your-restaurant.com/menu/',
+	'inLanguage': 'English',
+	// time limited menu
+	'offers': {
+		'@type': 'Offer',
+		'availabilityStarts': 'T17:00',
+		'availabilityEnds': 'T23:00',
+	},
+	'hasMenuSection': [
+		{
+			'@type': 'MenuSection',
+			'name': 'Appetizers',
+			'hasMenuItem': [
+				{
+					'@type': 'MenuItem',
+					'name': 'Fried Eggplant',
+					'description': 'Served with Italian red gravy.',
+					'offers': {
+						'@type': 'Offer',
+						'price': '7.95',
+						'priceCurrency': 'USD',
+					},
+				},
+				{
+					'@type': 'MenuItem',
+					'name': 'Fried Calamari',
+					'description': 'Served with Italian red gravy or honey mustard.',
+					'image': 'https://your-restaurant.com/images/fried-calamari.jpg',
+					'suitableForDiet': 'https://schema.org/GlutenFreeDiet',
+					'nutrition': {
+						'@type': 'NutritionInformation',
+						'calories': '573 calories',
+						'fatContent': '25 grams',
+						'carbohydrateContent': '26 grams',
+						'proteinContent': '61 grams',
+					},
+					'offers': {
+						'@type': 'Offer',
+						'price': '7.95',
+						'priceCurrency': 'USD',
+					},
+				},
+			],
+		},
+		{
+			'@type': 'MenuSection',
+			'name': 'Soups',
+			'hasMenuItem': [
+				{
+					'@type': 'MenuItem',
+					'name': 'Lobster Bisque',
+					'offers': [
+						{
+							'@type': 'Offer',
+							'price': '6.75',
+							'priceCurrency': 'USD',
+							'eligibleQuantity': {
+								'@type': 'QuantitativeValue',
+								'name': 'Cup',
+							},
+						},
+						{
+							'@type': 'Offer',
+							'price': '9.95',
+							'priceCurrency': 'USD',
+							'eligibleQuantity': {
+								'@type': 'QuantitativeValue',
+								'name': 'Bowl',
+							},
+						},
+					],
+				},
+				{
+					'@type': 'MenuItem',
+					'name': 'Creole Seafood Gumbo',
+					'offers': [
+						{
+							'@type': 'Offer',
+							'price': '6.75',
+							'priceCurrency': 'USD',
+							'eligibleQuantity': {
+								'@type': 'QuantitativeValue',
+								'name': 'Cup',
+							},
+						},
+						{
+							'@type': 'Offer',
+							'name': 'Bowl',
+							'price': '9.95',
+							'priceCurrency': 'USD',
+							'eligibleQuantity': {
+								'@type': 'QuantitativeValue',
+								'name': 'Bowl',
+							},
+						},
+					],
+				},
+			],
+		},
+	],
+};
+
 export function websiteSchema(website: Website, buisness: Business): Graph {
 	const restaurant: WithContext<Restaurant> = {
 		'@context': 'https://schema.org',
@@ -63,7 +172,7 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 		'address': {
 			'@type': 'PostalAddress',
 			'addressCountry': buisness.address?.addressCountry,
-			'streetAddress': buisness.address?.streetAddress,
+			'streetAddress': buisness.address?.street,
 			'addressLocality': buisness.address?.addressLocality,
 			'postalCode': buisness.address?.postalCode,
 		},
@@ -91,7 +200,7 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 		'menu': buisness.url,
 		'servesCuisine': buisness.cuisines || ['Italian', 'Breakfast', 'Turkish', 'Pizza'],
 		'paymentAccepted': buisness.acceptedPayments?.join(', '),
-		'currenciesAccepted': 'EUR',
+		'currenciesAccepted': buisness.accptedCurrencies,
 		'priceRange': '€€',
 		'legalName': '',
 		'aggregateRating': {
@@ -101,22 +210,24 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 			'bestRating': 5,
 			'worstRating': 1,
 		},
-		'openingHoursSpecification': [
-			{
-				'@type': 'OpeningHoursSpecification',
-				'dayOfWeek': [
-					'Monday',
-					'Tuesday',
-					'Wednesday',
-					'Thursday',
-					'Friday',
-					'Saturday',
-					'Sunday',
-				],
-				'opens': '11:00',
-				'closes': '22:00',
-			},
-		],
+		'openingHoursSpecification': !(buisness.openingHours instanceof Array)
+			? {
+					'@type': 'OpeningHoursSpecification',
+					'dayOfWeek': buisness.openingHours.days,
+					'opens': buisness.openingHours.opens,
+					'closes': buisness.openingHours.closes,
+					'validFrom': buisness.openingHours.validFrom,
+					'validThrough': buisness.openingHours.validThrough,
+			  }
+			: buisness.openingHours.map(openingHours => ({
+					'@type': 'OpeningHoursSpecification',
+					'dayOfWeek': openingHours.days,
+					'opens': openingHours.opens,
+					'closes': openingHours.closes,
+					'validFrom': openingHours.validFrom,
+					'validThrough': openingHours.validThrough,
+			  })),
+		'hasMenu': [],
 		'potentialAction': {
 			'@type': 'OrderAction',
 			'target': {
@@ -205,20 +316,34 @@ export function websiteSchema(website: Website, buisness: Business): Graph {
 	};
 }
 
-websiteSchema(
-	{},
-	{
-		name: 'La-Mediterranee',
-		acceptsReservations: true,
-		smokingAllowed: true,
-		address: {
-			streetAddress: '',
-			addressCountry: 'AT',
-			postalCode: '1210',
-			addressLocality: 'Wien',
-		},
+const buis: Business = {
+	name: 'La Mediterranee',
+	url: 'https://www.la-mediterranee.at',
+	images: [],
+	// photo: {
+
+	// }
+
+	/** Cash, Credit Card, Cryptocurrency, Local Exchange Tradings System, etc. */
+	address: {
+		street: 'Deublergasse 17',
+		addressCountry: 'AT',
+		postalCode: '1210',
+		addressLocality: 'Wien',
 	},
-);
+	acceptsReservations: true,
+	smokingAllowed: true,
+	acceptedPayments: ['Cash', 'Credit Card', 'Debit Card'],
+	accptedCurrencies: 'EUR',
+	openingHours: {
+		days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+		opens: '11:00',
+		closes: '22:00',
+	},
+	cuisines: ['Middle Eastern', 'Mediterranean', 'Italian'],
+};
+
+websiteSchema({}, buis);
 
 // const localBusiness: LocalBusiness | Organization | FoodEstablishment | Restaurant = {
 // 	'@type': 'LocalBusiness',
@@ -247,3 +372,152 @@ websiteSchema(
 // 	paymentAccepted: buisness.acceptedPayments?.join(', '),
 // 	image: buisness.images,
 // };
+
+const example2 = {
+	'@context': 'http://schema.org/',
+	'@type': 'Restaurant',
+	'name': "Acme's Bar and Grill",
+	'description':
+		'serves wood-fired meats and road runner served in an open kitchen featuring American Food.',
+	'url': 'http://www.example.com',
+	'telephone': '555-123-4567',
+	'menu': [
+		{
+			'@type': 'Menu',
+			'name': 'Dinner menu',
+			'temporalCoverage': 'Tu-Sa 16:00-22:00',
+			'hasMenuSection': {
+				'@type': 'MenuSection',
+				'name': 'Starters',
+				'hasMenuItem': [
+					{
+						'@type': 'MenuItem',
+						'name': 'Spears of Romaine',
+						'description': 'Spicy caesar salad with chili croutons and parmesan',
+						'nutrition': {
+							'@type': 'NutritionInformation',
+							'name': '*',
+							'description':
+								'These items fall under the consumer advisory for raw or undercooked meats or seafood. consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of food borne illness',
+							'calories': '350',
+						},
+						'suitableForDiet': [
+							{
+								'@type': 'RestrictedDiet',
+								'name': 'Vgetarian',
+							},
+							{
+								'@type': 'RestrictedDiet',
+								'name': 'Gluten-free',
+							},
+						],
+						'offers': {
+							'@type': 'Offer',
+							'priceCurrency': 'USD',
+							'price': '10',
+							'addOn': [
+								{
+									'@type': 'Offer',
+									'priceCurrency': 'USD',
+									'price': '10',
+									'itemOffered': {
+										'@type': ['MenuItem', 'Product'], // The 'itemOffered' has to be an MTE because the expected value for 'itemOffered' is either schema.org/Product or schema.org/Service.
+										'name': 'Poached salmon',
+										'nutrition': {
+											'@type': 'NutritionInformation',
+											'name': '*',
+											'description':
+												'This item falls under the consumer advisory for raw or undercooked meats or seafood. consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of food borne illness',
+											'calories': '350',
+										},
+									},
+								},
+								{
+									'@type': 'Offer',
+									'priceCurrency': 'USD',
+									'price': '6',
+									'itemOffered': {
+										'@type': ['MenuItem', 'Product'],
+										'name': 'Grilled chicken',
+									},
+								},
+							],
+						},
+						'menuAddOn': {
+							'@id': '#extras',
+							'@type': 'MenuSection',
+							'name': "Extra's",
+							'hasMenuItem': [
+								{
+									'@type': 'MenuItem',
+									'name': 'French fries',
+									'offers': {
+										'@type': 'Offer',
+										'priceCurrency': 'USD',
+										'price': '1',
+									},
+								},
+								{
+									'@type': 'MenuItem',
+									'name': 'Hot vegatables',
+									'offers': {
+										'@type': 'Offer',
+										'priceCurrency': 'USD',
+										'price': '5',
+									},
+								},
+							],
+						},
+					},
+					{
+						'@type': 'MenuItem',
+						'name': 'Little Necks',
+						'description': 'jalepeno clams in a bacon broth',
+						'nutrition': {
+							'@type': 'NutritionInformation',
+							'name': '*',
+							'description':
+								'these items fall under the consumer advisory for raw or undercooked meats or seafood. consuming raw or undercooked meats, poultry, seafood, shellfish, or eggs may increase your risk of food borne illness',
+							'calories': '450',
+						},
+						'offers': {
+							'@type': 'Offer',
+							'priceCurrency': 'USD',
+							'price': '12',
+						},
+						'menuAddOn': {
+							'@id': '#extras',
+						},
+					},
+				],
+			},
+		},
+		{
+			'@type': 'Menu',
+			'name': 'Brunch menu',
+			'temporalCoverage': 'Sa-Su 09:00-14:00',
+			'hasMenuItem': [
+				{
+					'@type': 'MenuItem',
+					'name': 'Salmon Chips',
+					'description': 'Too good to be true!',
+					'offers': {
+						'@type': 'Offer',
+						'priceCurrency': 'USD',
+						'price': '10',
+					},
+				},
+				{
+					'@type': 'MenuItem',
+					'name': 'Brioche Beignets',
+					'description': 'These should be illegal!',
+					'offers': {
+						'@type': 'Offer',
+						'priceCurrency': 'USD',
+						'price': '6',
+					},
+				},
+			],
+		},
+	],
+};

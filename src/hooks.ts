@@ -1,15 +1,12 @@
-import jwt_decode from 'jwt-decode';
-
 import { sequence } from '@sveltejs/kit/hooks';
 
 import { RTL_LANGS } from '$i18n/utils';
 import { baseLocale, detectLocale } from '$i18n/i18n-util';
 
 import { parse } from '$lib/server/cookie';
-import { auth } from '$lib/server/firebase';
-import { refreshSessionCookie, setCookie } from '$lib/server/helper';
+import { refreshSessionCookie } from '$lib/server/helper';
 import { attachCsrfToken } from '$lib/server/csrf';
-import { SERVER_PORT, SERVER_URL } from '$lib/utils/constants';
+import { SERVER_URL } from '$lib/utils/constants';
 
 import type { AuthError } from 'firebase/auth';
 import type { Locale } from 'typesafe-i18n/types/core';
@@ -50,18 +47,15 @@ const parseLocale: Handle = async ({ event, resolve }) => {
 		event.locals.locale = detectLocale(customClaims, requestCookies, acceptLanguageDetector);
 	}
 
-	//@ts-ignore
 	event.locals.urlLocale =
 		event.locals.locale !== baseLocale
-			? '/' + (event.locals.locale as Exclude<Locales, BaseLocale>)
+			? <UrlLocale>('/' + (event.locals.locale as Exclude<Locales, BaseLocale>))
 			: '';
 	return resolve(event);
 };
 
 const cookieParser: Handle = async ({ event, resolve }) => {
-	const cookies = parse<Cookies>(event.request.headers.get('cookie') || '');
-
-	event.locals.cookies = cookies;
+	event.locals.cookies = parse<Cookies>(event.request.headers.get('cookie') || '');
 
 	const response = await resolve(event);
 
@@ -113,7 +107,6 @@ const browserChecker: Handle = async ({ resolve, event }) => {
 };
 
 async function verifySessionCookie(token: JwtToken) {
-	// console.log(`${SERVER_URL}/v1/auth/session/verify`);
 	return fetch(`${SERVER_URL}/v1/auth/session/verify`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'text/plain' },

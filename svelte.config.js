@@ -66,7 +66,6 @@ function browserslistToEsbuild(browserslistConfig) {
 			.filter(b => SUPPORTED_ESBUILD_TARGETS.includes(b[0]))
 			// only get the oldest version
 			.reduce((/** @type string[][] */ acc, b) => {
-				console.log(acc, b);
 				const existingIndex = acc.findIndex(br => br[0] === b[0]);
 
 				if (existingIndex !== -1) {
@@ -74,6 +73,7 @@ function browserslistToEsbuild(browserslistConfig) {
 				} else {
 					acc.push(b);
 				}
+
 				return acc;
 			}, [])
 			// remove separator
@@ -244,7 +244,7 @@ const preprocess = sveltePreprocess({
 		],
 	},
 	sourceMap: process.env.NODE_ENV === 'development' ? true : false,
-	preserve: ['ld+json'],
+	preserve: ['ld+json', 'application/ld+json'],
 });
 
 /** @type {import('@sveltejs/kit').Config} */

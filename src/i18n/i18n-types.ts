@@ -139,6 +139,10 @@ type RootTranslation = {
 		 * Toppings Auswählen
 		 */
 		chooseOptions: string
+		/**
+		 * Gratis
+		 */
+		free: string
 	}
 	menuItem: {
 		label: {
@@ -309,6 +313,10 @@ export type TranslationFunctions = {
 		 * Toppings Auswählen
 		 */
 		chooseOptions: () => LocalizedString
+		/**
+		 * Gratis
+		 */
+		free: () => LocalizedString
 	}
 	menuItem: {
 		label: {

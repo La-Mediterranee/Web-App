@@ -17,7 +17,8 @@ import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
 import type { BaseLocale } from '$i18n/i18n-types';
 import type * as nodeFetch from 'node-fetch';
 
-if (dev) {
+// if (dev) {
+(async function () {
 	const [{ default: https }, { default: fetch }] = await Promise.all([
 		import('node:https'),
 		import('node-fetch'),
@@ -37,7 +38,8 @@ if (dev) {
 			value: myFetch,
 		},
 	});
-}
+})();
+// }
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 export const initAcceptLanguageHeaderDetector =

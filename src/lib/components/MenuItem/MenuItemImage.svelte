@@ -1,10 +1,13 @@
 <script lang="ts">
 	import Image from '$lib/components/Image/Image.next.svelte';
 
+	type CrossOrigin = 'anonymous' | 'use-credentials' | '';
+
 	export let src: string;
 	export let alt: string;
 	export let width: number = 640;
 	export let height: number = 480;
+	export let crossorigin: CrossOrigin | undefined = undefined;
 </script>
 
 <div class="img">
@@ -14,7 +17,7 @@
 		{alt}
 		{width}
 		{height}
-		crossorigin=""
+		{crossorigin}
 		layout="responsive"
 		objectFit="scale-down"
 		objectPosition="center"

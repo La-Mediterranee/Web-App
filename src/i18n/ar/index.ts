@@ -16,6 +16,7 @@ const ar: Translation = {
 	cart: {
 		cart: 'عربة التسوق',
 		cartItems: 'Cart items',
+		empty: 'Ihr Warenkorb ist leer',
 		header: {
 			product: 'Product',
 			price: 'Price',
@@ -40,6 +41,7 @@ const ar: Translation = {
 		price: 'السعر',
 		addToCart: 'أضف إلى العربة',
 		chooseOptions: 'اختر الطبقة',
+		free: 'Gratis',
 	},
 	menuItem: {
 		label: {

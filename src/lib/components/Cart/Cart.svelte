@@ -189,16 +189,17 @@
 						</CartItem>
 					</tr>
 				{:else if !isEmpty}
-					{#each [...cart.items] as item, i (item.ID + i)}
-						{@const { ID, price, image, name, quantity } = item}
+					{#each cart.items as item, i (item.cartId)}
+						{@const { ID, price, image, name, quantity, cartId } = item}
 						<tr
 							role="row"
 							class="item"
+							data-cartId={cartId}
 							in:fade={{
 								delay: 200,
 								duration: 600,
 							}}
-							out:send|local={{ key: ID + i }}
+							out:send|local={{ key: cartId }}
 							animate:flip={{ duration: 600 }}
 						>
 							<CartItem>

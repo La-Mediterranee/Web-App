@@ -1,10 +1,15 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
 
+	import LDTag from '$lib/components/LDTag';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
+
+	import type { Schema } from 'types/utils/json-ld';
 	import type { CartItem, MenuItem } from 'types/product';
 
-	export let drinks: any[];
+	export let drinks: MenuItem[];
+	export let schema: Schema;
+
 	export let locale: string = 'de-DE';
 	export let currency: string = 'EUR';
 
@@ -19,6 +24,8 @@
 		);
 	}
 </script>
+
+<LDTag {schema} />
 
 <h1>{header}</h1>
 <div>

@@ -4,8 +4,7 @@ import { writable } from 'svelte/store';
 import { set as keyvalSet, get as keyvalGet } from 'idb-keyval';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
-import type { CartItem, ID } from 'types/product';
-import type { Invalidator } from 'types/index';
+import type { CartItem, ID, SelectedTopping } from 'types/product';
 
 export type CartItems = CartItem[];
 export type CartItemIndecies = Map<ID, number[]>;
@@ -97,6 +96,18 @@ export function formatPrice(amount: number, locale = 'de-DE') {
 	}).format(amount / 100);
 }
 
+export async function digestMessage(message: string) {
+	// encode as (utf-8) Uint8Array
+	const msgUint8 = new TextEncoder().encode(message);
+	// hash the message
+	const hashBuffer = await crypto.subtle.digest('SHA-1', msgUint8);
+	// convert buffer to byte array
+	const hashArray = Array.from(new Uint8Array(hashBuffer));
+	// convert bytes to hex string
+	const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+	return hashHex;
+}
+
 function createCartStore(startItems: CartItems = []) {
 	const sound = browser ? new Audio('') : null;
 
@@ -112,12 +123,27 @@ function createCartStore(startItems: CartItems = []) {
 		storage.set(items);
 	}
 
+	const _items = new Map();
+
 	const store = writable<CartWithState>(start, set => {
 		let cart: ClientCart;
 		onMount(async () => {
 			try {
 				cart = new ClientCart((await storage.get<CartItems>()) || startItems);
-				cart.setItem({
+				const selectedToppings: SelectedTopping[] = [];
+				const cartId = await digestMessage(
+					'1312' +
+						selectedToppings.reduce(
+							(prev, s) =>
+								prev +
+								s.toppingID +
+								s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
+							'',
+						),
+				);
+
+				const item: CartItem = {
+					cartId,
 					ID: '1312',
 					type: 'food',
 					category: 'burger',
@@ -132,8 +158,11 @@ function createCartStore(startItems: CartItems = []) {
 					toppings: [],
 					price: 830,
 					quantity: 1,
-					selectedToppings: [],
-				});
+					selectedToppings,
+				};
+
+				_items.set(cartId, item);
+				cart.setItem(item);
 			} catch (error) {
 				console.error(error);
 			}
@@ -155,10 +184,31 @@ function createCartStore(startItems: CartItems = []) {
 
 	const { subscribe, update } = store;
 
-	function addItem(item: CartItem) {
+	async function addItem(item: Omit<CartItem, 'cartId'>) {
 		try {
+			const cartId = await digestMessage(
+				item.ID +
+					//@ts-ignore
+					item.selectedToppings?.reduce(
+						//@ts-ignore
+						(prev, s) =>
+							prev +
+							s.toppingID +
+							//@ts-ignore
+							s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
+						'',
+					),
+			);
+
+			//@ts-ignore
+			item.cartId = cartId;
+
+			if (_items.has(cartId)) return;
 			// sound?.play();
 			update(store => {
+				//@ts-ignore
+				_items.set(cartId);
+				//@ts-ignore
 				store.cart.setItem(item);
 				calculateTotal(store.cart);
 				saveCart(store.cart.items);
@@ -172,6 +222,7 @@ function createCartStore(startItems: CartItems = []) {
 	async function removeItem(index: number) {
 		try {
 			// sound?.play();
+
 			update(store => {
 				// store.state = 'Animating';
 				store.cart.deleteItem(index);

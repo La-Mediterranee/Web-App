@@ -27,7 +27,6 @@
 	const sections = homePageData?.sections || [];
 
 	function openPopUp(e: Event, product: MenuItem) {
-		// e.preventDefault();
 		if (product.toppings?.length > 0) return modal.open(product);
 
 		cart.addItem(

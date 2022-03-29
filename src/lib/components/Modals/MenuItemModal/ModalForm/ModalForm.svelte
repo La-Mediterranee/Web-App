@@ -80,7 +80,13 @@
 									{option.name}
 								</span>
 								<ToppingOptionPrice ariaLabel={$LL.product.price()}>
-									{option.price ? formatPrice(option.price) : ''}
+									{#if option.price}
+										{formatPrice(option.price)}
+									{:else}
+										<span class="visually-hidden">
+											{$LL.product.free()}
+										</span>
+									{/if}
 								</ToppingOptionPrice>
 							</ToppingOptionLabel>
 							<!-- style="color: var(--accent-color, orange); background-color: white;" -->

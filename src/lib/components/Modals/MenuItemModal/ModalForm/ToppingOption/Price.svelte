@@ -8,6 +8,7 @@
 
 <style>
 	.price {
+		position: relative;
 		margin-inline-start: auto;
 		margin-inline-end: 0.3em;
 	}

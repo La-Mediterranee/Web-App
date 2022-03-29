@@ -66,6 +66,7 @@ export interface MenuItem extends IProduct {
 }
 
 interface ICartItem {
+	cartId: string;
 	quantity: number;
 }
 
@@ -73,11 +74,13 @@ export interface GroceryCartItem extends ICartItem, Product {
 	readonly selectedVariations: Variations[];
 }
 
+export interface SelectedTopping {
+	readonly toppingID: ID;
+	readonly toppingOptionsIds: ToppingOption[];
+}
+
 export interface MenuCartItem extends ICartItem, MenuItem {
-	readonly selectedToppings: {
-		readonly toppingID: ID;
-		readonly toppingOptionsIds: ToppingOption[];
-	}[];
+	readonly selectedToppings: SelectedTopping[];
 	// readonly selectedToppings?: {
 	// 	readonly [toppingID: ID]: ToppingOption | ToppingOption[];
 	// }

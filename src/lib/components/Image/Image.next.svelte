@@ -22,6 +22,8 @@
 		sizes: Attributes<HTMLImageElement>['sizes'];
 	}
 
+	type CrossOrigin = 'anonymous' | 'use-credentials' | '';
+
 	type Unobserver = (node: HTMLImageElement) => void;
 	type MountFn = (options: {
 		image: HTMLImageElement;
@@ -134,6 +136,7 @@
 	export let objectPosition: ObjectPositionStyle = '0% 0%';
 	export let layout: LayoutValue = 'intrinsic';
 	export let lazyBoundary = '200px';
+	export let crossorigin: CrossOrigin | undefined = undefined;
 
 	export let placeholder: PlaceholderValue = 'empty';
 	export let errorPlaceholder: string | undefined = undefined;
@@ -373,11 +376,12 @@
 	</span>
 	<img
 		bind:this={image}
-		{loading}
-		{decoding}
 		{alt}
 		{height}
 		{width}
+		{loading}
+		{decoding}
+		{crossorigin}
 		{...imgAttributes}
 		{...$$restProps}
 		class={`img ${klass}`}
@@ -416,6 +420,7 @@
 			{sizes}
 			{alt}
 			{decoding}
+			{crossorigin}
 			class={`img ${klass}`}
 			data-kimg={layout}
 			{...$$restProps}

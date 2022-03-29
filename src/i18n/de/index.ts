@@ -41,6 +41,7 @@ const de: BaseTranslation = {
 		price: 'Preis',
 		addToCart: 'In den Warenkorb',
 		chooseOptions: 'Toppings Auswählen',
+		free: 'Gratis',
 	},
 	menuItem: {
 		label: {

@@ -41,6 +41,7 @@ const en: Translation = {
 		price: 'Price',
 		addToCart: 'Add to Cart',
 		chooseOptions: 'Choose Toppings',
+		free: 'Free',
 	},
 	menuItem: {
 		label: {

@@ -1,25 +1,24 @@
-const API = 'http://localhost:3333';
+import { SERVER_URL } from '$lib/utils/constants';
 
-export async function fetchFromAPI(endpointURL: string, opt?: Object) {
-	const { method, body, ...rest } = {
-		method: 'POST',
-		body: null as Object | null,
-		...opt,
-	};
+export async function fetchFromAPI(endpointURL: string, opt: RequestInit = {}) {
+	const {
+		method = 'POST',
+		headers = {
+			'Content-Type': 'application/json',
+		},
+		...rest
+	} = opt;
 
 	// const customer = auth.currentUser;
 	// const token = customer && (await customer.getIdToken());
 
-	const res = await fetch(`${API}/${endpointURL}`, {
+	const res = await fetch(`${SERVER_URL}/v1${endpointURL}`, {
 		method,
-		...(body && { body: JSON.stringify(body) }),
-		headers: {
-			'Content-Type': 'application/json',
-			// Authorization: `Bearer ${token}`,
-		},
+		headers,
+		...rest,
 	});
 
-	return res.json();
+	return res;
 }
 
 export function promiseEvent<T>(

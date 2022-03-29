@@ -16,6 +16,7 @@ const de: BaseTranslation = {
 	cart: {
 		cart: 'Warenkorb',
 		cartItems: 'Warenkorb Artikel',
+		empty: 'Ihr Warenkorb ist leer',
 		header: {
 			product: 'Produkt',
 			price: 'Preis',

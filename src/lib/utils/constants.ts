@@ -10,7 +10,7 @@ export const {
 	VITE_STRIPE_PUBLIC_KEY: STRIPE_PUBLIC_KEY,
 } = import.meta.env;
 
-export const SERVER_URL = `http://localhost:${SERVER_PORT}`;
+export const SERVER_URL = `https://localhost:${SERVER_PORT}`;
 
 // export const SHOP_OWNER = VITE_SHOP_OWNER;
 // export const SHOP_NAME = VITE_SHOP_NAME;

@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
-
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
 	import { RTL_LANGS } from '$i18n/utils';
 
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
@@ -17,7 +17,7 @@
 	}
 </script>
 
-<script>
+<script lang="ts">
 	import Providers from './_layoutProviders.svelte';
 
 	$: if (
@@ -27,7 +27,7 @@
 		document.body.classList.add('has-scrollbar');
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		if (dev) return;
 
 		// const sw = await registerServiceWorker();
@@ -49,16 +49,11 @@
 	#main-content {
 		scroll-behavior: smooth;
 		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
 	}
 
 	.inner-content {
 		display: grid;
 		grid-template-columns: 100%;
-	}
-
-	main {
-		flex: 1;
+		min-height: calc(100vh - var(--top-bar-height, 72.5px));
 	}
 </style>

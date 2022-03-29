@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	export let ctaEl: HTMLDivElement;
+	export let ctaEl: HTMLDivElement | undefined = undefined;
 </script>
 
 <footer class="actionsContainer" aria-hidden="true">
@@ -25,7 +25,7 @@
 <style lang="scss">
 	.actionsContainer {
 		width: 100%;
-		padding-top: 2em;
+		padding-top: var(--menuitem-actions-pb-start, 2.2em);
 		position: relative;
 		overflow: hidden;
 		border-bottom-left-radius: var(--theme-card-border-radius);
@@ -62,18 +62,17 @@
 			left: 0;
 			bottom: 0;
 			position: absolute;
-			will-change: transform;
 
-			transform: translateY(110%);
+			transform: translateZ(0) translateY(110%);
 			transition: transform var(--actions-transition-duration) ease;
 			// padding-top: 4.2em;
 		}
 
-		:global(.menuitem-card-container:focus-within) .cta::before {
-			opacity: var(--s-btn-focus-opacity, 0.14);
-			transition-property: opacity;
-			transition-delay: calc(var(--actions-transition-duration) * 0.7);
-		}
+		// :global(.menuitem-card-container:focus-within) .cta:not(.click)::before {
+		// 	opacity: var(--s-btn-focus-opacity, 0.14);
+		// 	transition-property: opacity;
+		// 	transition-delay: calc(var(--actions-transition-duration) * 0.7);
+		// }
 
 		:global(.menuitem-card-container:focus-within) .actionsContainer,
 		:global(.menuitem-card-container:hover) .actionsContainer {

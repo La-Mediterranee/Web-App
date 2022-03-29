@@ -1,5 +1,4 @@
 <script context="module" lang="ts">
-	import { onMount } from 'svelte';
 	import { Wave } from '$lib/Icons';
 	import { SHOP_LOGO } from '$utils/constants';
 
@@ -7,17 +6,34 @@
 </script>
 
 <script lang="ts">
-	import t from '$i18n/i18n-svelte';
-	import Siema from '$lib/components/Carousel';
-	import ProductCard from '$components/ProductCard';
-
-	import { rtl } from '$stores/rtl';
-	import { session } from '$app/stores';
+	import LL from '$i18n/i18n-svelte';
+	import Carousel from '$lib/components/Carousel';
+	import ProductCard from '$lib/components/ProductCard';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
+	import CarouselItem from '$lib/components/Carousel/CarouselItem.svelte';
+
+	import { session } from '$app/stores';
+
+	import { cart, formatPrice } from '$lib/stores/cart';
+	import { getProductModalContext } from '$lib/utils';
+
+	import type { CartItem, MenuItem } from 'types/product';
+	import Image from '$lib/components/Image/Image.next.svelte';
 
 	export let homePageData: HomepageProps | undefined;
 
+	const modal = getProductModalContext();
+
 	const sections = homePageData?.sections || [];
+
+	function openPopUp(e: Event, product: MenuItem) {
+		// e.preventDefault();
+		if (product.toppings?.length > 0) return modal.open(product);
+
+		cart.addItem(
+			<CartItem>(<unknown>Object.assign({ quantity: 1, selectedToppings: [] }, product)),
+		);
+	}
 </script>
 
 <svelte:head>
@@ -26,7 +42,17 @@
 
 <div class="banner">
 	<div class="head">
-		<img decoding="async" src={SHOP_LOGO} alt="" height="512" width="918" />
+		<div class="hompage-logo">
+			<Image
+				src={SHOP_LOGO}
+				alt=""
+				loading="eager"
+				height={512}
+				width={918}
+				layout="intrinsic"
+				priority
+			/>
+		</div>
 		<h1>Herzlich Willkomen!</h1>
 	</div>
 	<Wave />
@@ -37,9 +63,36 @@
 		<section aria-labelledby={section.title.toLocaleLowerCase()} class="section-carousel">
 			<h2 id={section.title.toLocaleLowerCase()} class="row-header">{section.title}</h2>
 			{#if Array.isArray(section.body)}
-				<Siema rtl={$session.rtl} items={section.body} let:item={product} let:visible>
-					<MenuItemCard {product} isVisible={visible} />
-				</Siema>
+				<Carousel rtl={$session.rtl} itemsLength={section.body.length} let:itemsVisibility>
+					{#each section.body as menuItem, i}
+						<CarouselItem ariaHidden={!itemsVisibility[i]}>
+							<MenuItemCard
+								href="{$session.urlLocale}/product/{menuItem.ID}"
+								product={menuItem}
+								isVisible={itemsVisibility[i]}
+								label={{
+									item: $LL.menuItem.label[menuItem.type || 'food'](),
+									price: $LL.product.price(),
+								}}
+								on:click={e => openPopUp(e, menuItem)}
+							>
+								<svelte:fragment>
+									{menuItem.name}
+								</svelte:fragment>
+
+								<data slot="price" itemprop="price" value={`${menuItem.price}`}>
+									{formatPrice(menuItem.price)}
+								</data>
+
+								<svelte:fragment slot="cta">
+									{menuItem.toppings?.length > 0
+										? $LL.product.chooseOptions()
+										: $LL.product.addToCart()}
+								</svelte:fragment>
+							</MenuItemCard>
+						</CarouselItem>
+					{/each}
+				</Carousel>
 			{/if}
 		</section>
 	{/each}
@@ -77,11 +130,11 @@
 		--carousel-item-width: auto;
 		--carousel-item-padding: 0 0.5em;
 
-		// @media screen and (min-width: 600px) {
-		// 	--carousel-item-width: 50%;
-		// }
+		--carousel-item-first-pi-start: 10px;
+		--carousel-item-first-pi-end: 10px;
 
 		@media screen and (min-width: 820px) {
+			--product-card-width: 100%;
 			--carousel-item-width: 33.3%;
 		}
 
@@ -89,35 +142,25 @@
 			--carousel-item-width: 25%;
 		}
 
-		:global(.item) {
-			// --carousel-content-padding: 0 14px;
-
-			&:first-child {
-				padding-inline-start: 10px;
-			}
-
-			&:last-child {
-				padding-inline-end: 10px;
-			}
-		}
-
 		@media screen and (min-width: 1220px) {
 			align-self: center;
-			// margin: 0 auto;
 		}
 	}
 
 	.head {
 		// background: linear-gradient(to right, var(--top1), var(--top2));
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		background: var(--theme-app-bar);
 		padding-bottom: 3.5em;
-		text-align: center;
 
-		img {
-			margin: 2em 0 0;
+		:global(.hompage-logo) {
+			position: relative;
+			margin-block-start: 2em;
+			text-align: center;
 			width: 100%;
 			max-width: 490px;
-			height: 83%;
 			max-height: 280px;
 		}
 	}

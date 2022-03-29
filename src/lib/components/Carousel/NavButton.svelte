@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Ripple from 'svelty-material/actions/Ripple';
+
 	let klass: string = '';
 	export { klass as class };
 	export let side: 'right' | 'left';
@@ -13,6 +15,7 @@
 	class="s-btn carousel-nav-btn {klass}"
 	class:left={side === 'left'}
 	class:right={side === 'right'}
+	use:Ripple
 	on:focus={setKeyboardFocus}
 	on:click={scroll}
 >

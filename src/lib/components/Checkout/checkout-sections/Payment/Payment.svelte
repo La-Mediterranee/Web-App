@@ -1,12 +1,7 @@
 <script context="module" lang="ts">
-	import type {
-		PaymentRequestShippingOption,
-		Stripe,
-		StripeCardElement,
-		StripeElements,
-	} from '@stripe/stripe-js';
+	import type { StripeElements } from '@stripe/stripe-js';
 
-	export type PaymentMethods = 'credit' | 'sofort' | 'bar';
+	export type PaymentMethods = 'credit' | 'sofort' | 'cash';
 
 	const logos = {
 		amex: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/american-express.svg',
@@ -38,11 +33,12 @@
 	import TextField from 'svelty-material/components/TextField/TextField.svelte';
 
 	// import Image from '$lib/components/Image/Image.svelte';
-	import CreditCard from '$lib/components/CreditCard/CreditCard.svelte';
 
 	import TipButton from './TipButton.svelte';
 	import PaymentPreProcessor from './PaymentPreProcessor.svelte';
 	import RadioButton from '$lib/components/Forms/RadioButton.svelte';
+	import CreditCard from '$lib/components/CreditCard/CreditCard.svelte';
+
 	import { slide } from 'svelte/transition';
 	import { browser } from '$app/env';
 

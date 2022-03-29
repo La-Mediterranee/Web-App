@@ -8,8 +8,6 @@
 	setStripeContext();
 </script>
 
-<svelte:head>
-	{@html STRIPE_SCRIPT}
-</svelte:head>
+{@html STRIPE_SCRIPT}
 
 <slot />

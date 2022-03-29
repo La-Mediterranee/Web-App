@@ -1,19 +1,81 @@
+import { serialize } from '$lib/server/cookie';
+import { fetchFromAPI } from '$lib/utils';
+
 import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
 export async function get() {
 	return {};
 }
 
-export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
-	const form = await event.request.formData();
+const checkoutCookie = 'check';
 
-	for (const entry of form.entries()) {
-		console.log(entry);
+type ID = string;
+
+interface ICartItem {
+	readonly ID: ID;
+	readonly categoryType: 'menuitem' | 'grocery';
+	readonly quantity: number;
+}
+
+interface CartMenuItem extends ICartItem {
+	readonly categoryType: 'menuitem';
+	readonly selectedToppings: {
+		readonly toppingID: ID;
+		readonly toppingOptionID: ID | ID[];
+	}[];
+}
+
+export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
+	// const items = await event.request.text();
+
+	const items: CartMenuItem[] = [
+		{
+			ID: 'rQTnF1yWUkWR8En6q2RA',
+			categoryType: 'menuitem',
+			quantity: 1,
+			selectedToppings: [
+				{
+					toppingID: 'jqNrLNUjqmyoRbBrG2K7',
+					toppingOptionID: 'greek-salad',
+				},
+				{
+					toppingID: 'kiHoetrndsBM3ceKu8Q1',
+					toppingOptionID: ['taratar', 'chilli'],
+				},
+			],
+		},
+		{
+			ID: 'rQTnF1yWUkWR8En6q2RA',
+			categoryType: 'menuitem',
+			quantity: 1,
+			selectedToppings: [],
+		},
+		{
+			ID: '6fCGyZA1bC6TnVIyBQiW',
+			categoryType: 'menuitem',
+			quantity: 1,
+			selectedToppings: [],
+		},
+	];
+
+	// console.debug(new Map(items.value));
+
+	const res = await fetchFromAPI('/buy/create-payment-intent', {
+		body: JSON.stringify(items),
+	});
+
+	if (!res.ok) {
+		return {
+			status: 400,
+		};
 	}
+
+	const intent = await res.text();
 
 	return {
 		status: 303,
 		headers: {
+			// "set-cookie": serialize(),
 			location: `./checkout`,
 		},
 	};

@@ -153,8 +153,7 @@
 		--cart-summary-width: 37%;
 		--radio-color: #aa9b9b;
 
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
 		max-width: 40em;
 		padding: min(2%, 1em);
 		margin: 0 auto;
@@ -166,30 +165,23 @@
 			padding: 0 0.7em 1em;
 		}
 
-		> div {
-			margin-top: 1em;
-		}
-
 		:global(div[class~='s-input__slot']) {
 			color: #ddd;
 		}
 
 		.checkout-sections {
+			margin-top: 1em;
 			order: 1;
-			flex: 1 0 calc(100% - var(--cart-summary-width));
 		}
 
 		:global(.cart-summary) {
 			order: 0;
 		}
 
-		// @include respond-to(md) {
-		// }
-
 		@media screen and (min-width: (map-get($map: $breakpoints, $key: md) + 100px)) {
 			padding: 1em;
 			max-width: 78em;
-			flex-wrap: nowrap;
+			grid-template-columns: 1fr var(--cart-summary-width);
 
 			.checkout-sections {
 				order: 0;

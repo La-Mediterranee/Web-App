@@ -1,4 +1,5 @@
-<script></script>
+<script>
+</script>
 
 <footer id="page-footer" itemscope itemtype="https://schema.org/WPFooter">
 	<svg
@@ -60,9 +61,10 @@
 		display: flex;
 		position: relative;
 		text-align: center;
+		align-self: end;
 
 		width: 100%;
-		height: 100%;
+		// height: fit-content;
 		margin-top: 5.3em;
 
 		#footer-wave {

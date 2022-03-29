@@ -83,7 +83,7 @@
 
 	const ratingAriaLabel = `Bewertung: ${rating?.value}/5`;
 
-	const hasToppings = product.toppings?.length > 0;
+	const hasToppings = product.variations.length > 0;
 
 	let cta = hasToppings ? $LL.product.chooseOptions() : $LL.product.addToCart();
 

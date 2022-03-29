@@ -2,9 +2,10 @@
 
 <!-- tag="product-component" -->
 <script context="module" lang="ts">
-	import { getProductModalContext } from '$lib/utils';
+	import type * as schemaDts from 'schema-dts';
 
-	import type { CartItem, MenuItem, Topping, ToppingOption } from 'types/product';
+	import type { MenuItem } from 'types/product';
+	import type { LocalizedString } from 'typesafe-i18n';
 
 	function captureRipple(node: HTMLElement, rippleNode?: HTMLElement) {
 		function handleKeyboard(e: KeyboardEvent) {
@@ -16,10 +17,18 @@
 		}
 
 		function handleClicks(e: PointerEvent) {
+			if (e.type === 'pointerleave') {
+				node?.blur();
+				rippleNode?.classList.remove('click');
+			} else {
+				rippleNode?.classList.add('click');
+			}
+
 			const event = new PointerEvent(e.type, {
 				clientX: e.clientX,
 				clientY: e.clientY,
 			});
+
 			rippleNode?.dispatchEvent(event);
 		}
 
@@ -49,83 +58,75 @@
 <script lang="ts">
 	import Card from 'svelty-material/components/Card/Card.svelte';
 
-	import LL from '$i18n/i18n-svelte';
-
-	import { cart } from '$lib/stores/cart';
-
-	import MenuItemPrice from './MenuItemPrice.svelte';
 	import MenuItemName from './MenuItemName.svelte';
-
+	import MenuItemPrice from './MenuItemPrice.svelte';
 	import MenuItemImage from './MenuItemImage.svelte';
-	import SmallWave from '$lib/Icons/SmallWave.svelte';
 	import MenuItemActions from './MenuItemActions.svelte';
+	import SmallWave from '$lib/Icons/SmallWave.svelte';
 
-	import type * as schemaDts from 'schema-dts';
 	import LdTag from '../LDTag/LDTag.svelte';
+	import { getAnimationsContext } from '$lib/stores/animations';
+	import { onMount } from 'svelte';
 
 	export let product: MenuItem;
-	export let locale: string = 'de-DE';
-	export let currency: string = 'EUR';
+	export let href: string;
+	export let label: {
+		item: string | LocalizedString;
+		price: string | LocalizedString;
+	};
 	export let style: string | undefined = undefined;
 	export let isVisible = true;
 
-	const modal = getProductModalContext();
+	const { image, name, price, category, desc, toppings } = product;
 
 	let ctaEl: HTMLDivElement;
+	let waveEl: SVGSVGElement;
 
-	const { image, name, price, category, desc, toppings, type = 'food' } = product;
+	const animations = getAnimationsContext();
 
-	const _price = new Intl.NumberFormat(locale, {
-		style: 'currency',
-		currency,
-	}).format(price / 100);
+	onMount(() => {
+		const unsub = animations.subscribe(() => {});
+		const pop = animations.push(waveEl);
 
-	const hasToppings = product.toppings?.length > 0;
+		return () => {
+			pop();
+			unsub();
+		};
+	});
 
-	let cta = hasToppings ? $LL.product.chooseOptions() : $LL.product.addToCart();
-
-	const ldJson: schemaDts.WithContext<schemaDts.MenuItem> = {
-		'@context': 'https://schema.org',
-		'@type': 'MenuItem',
-		'name': name,
-		'description': desc,
-		'image': {
-			'@type': 'ImageObject',
-		},
-		'offers': {
-			'@type': 'Offer',
-			'price': price,
-		},
-		'menuAddOn': toppings?.map<schemaDts.MenuSection>(topping => ({
-			'@type': 'MenuSection',
-			'name': topping.name,
-			'description': topping.desc,
-			'hasMenuItem': topping.options.map<schemaDts.MenuItem>(option => ({
-				'@type': 'MenuItem',
-				'name': option.name,
-				'description': option.desc,
-				'priceCurrency': 'EUR',
-				'offers': {
-					'@type': 'Offer',
-					'price': option.price,
-				},
-				'suitableForDiet': 'https://schema.org/HalalDiet',
-			})),
-			'suitableForDiet': 'https://schema.org/HalalDiet',
-		})),
-	};
-
-	function openPopUp(e: Event) {
-		e.preventDefault();
-		if (hasToppings) return modal.open(product);
-
-		cart.addItem(
-			<CartItem>(<unknown>Object.assign({ quantity: 1, selectedToppings: [] }, product)),
-		);
-	}
+	// const ldJson: schemaDts.WithContext<schemaDts.MenuItem> = {
+	// 	'@context': 'https://schema.org',
+	// 	'@type': 'MenuItem',
+	// 	'name': name,
+	// 	'description': desc,
+	// 	'image': {
+	// 		'@type': 'ImageObject',
+	// 	},
+	// 	'offers': {
+	// 		'@type': 'Offer',
+	// 		'price': price,
+	// 	},
+	// 	'menuAddOn': toppings?.map<schemaDts.MenuSection>(topping => ({
+	// 		'@type': 'MenuSection',
+	// 		'name': topping.name,
+	// 		'description': topping.desc,
+	// 		'hasMenuItem': topping.options.map<schemaDts.MenuItem>(option => ({
+	// 			'@type': 'MenuItem',
+	// 			'name': option.name,
+	// 			'description': option.desc,
+	// 			'priceCurrency': 'EUR',
+	// 			'offers': {
+	// 				'@type': 'Offer',
+	// 				'price': option.price,
+	// 			},
+	// 			'suitableForDiet': 'https://schema.org/HalalDiet',
+	// 		})),
+	// 		'suitableForDiet': 'https://schema.org/HalalDiet',
+	// 	})),
+	// };
 </script>
 
-<LdTag schema={ldJson} />
+<!-- <LdTag schema={ldJson} /> -->
 
 <!--
 	An article is better for semantic because a product card
@@ -140,7 +141,7 @@
 <article
 	itemscope
 	itemtype="http://schema.org/MenuItem"
-	aria-label={$LL.menuItem.label[type]()}
+	aria-label={label?.item}
 	class="menuitem-card-container"
 	{style}
 >
@@ -154,22 +155,26 @@
 			/>
 
 			<MenuItemName
-				href="./product/{product.ID}"
+				{href}
+				{captureRipple}
+				captureRippleNode={ctaEl}
 				tabindex={isVisible ? undefined : -1}
-				captureRipple={node => captureRipple(node, ctaEl)}
-				on:click={openPopUp}
+				on:click
 			>
-				{name}
-				<span slot="cta" class="visually-hidden"> - {cta}</span>
+				<slot />
+				<span slot="cta" class="visually-hidden">
+					-
+					<slot name="cta" />
+				</span>
 			</MenuItemName>
 
-			<MenuItemPrice ariaLabel={$LL.product.price()}>
-				<data itemprop="price" value={`${price}`}>{_price}</data>
+			<MenuItemPrice ariaLabel={label?.price}>
+				<slot name="price" />
 			</MenuItemPrice>
 
-			<MenuItemActions {ctaEl}>
-				<SmallWave slot="prepend" class="wave" />
-				{cta}
+			<MenuItemActions bind:ctaEl>
+				<SmallWave bind:el={waveEl} slot="prepend" class="wave" />
+				<slot name="cta" />
 			</MenuItemActions>
 		</div>
 	</Card>
@@ -184,26 +189,23 @@
 	}
 
 	.menuitem-card-container {
-		display: flex;
-		flex-wrap: wrap;
-		flex-direction: column;
+		// display: flex;
+		// flex-wrap: wrap;
+		// flex-direction: column;
 		// flex: 0 0 auto;
-		outline: none;
 		position: relative;
+
 		width: var(--product-card-width, 100%);
 		height: var(--product-card-height, 100%);
+
 		margin-inline-start: var(--product-card-margin-start, 0);
 		margin-inline-end: var(--product-card-margin-end, 0);
 
 		.inner-card {
 			position: relative;
 			overflow: hidden;
+			height: 100%;
 			z-index: 1;
-			height: 100%;
-		}
-
-		.s-card {
-			height: 100%;
 		}
 
 		.wave {
@@ -212,6 +214,8 @@
 			left: 0;
 			width: 200%;
 			animation: wave linear 3s infinite;
+			transform: translateZ(0);
+			will-change: transform;
 
 			@media (prefers-reduced-motion: no-preference) {
 				animation-play-state: running;

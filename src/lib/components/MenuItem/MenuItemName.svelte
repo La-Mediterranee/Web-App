@@ -1,11 +1,21 @@
 <script lang="ts">
 	export let href: string;
 	export let tabindex: number | undefined = undefined;
-	export let captureRipple: (node: HTMLAnchorElement) => void;
+	export let captureRipple: (node: HTMLAnchorElement, rippleNode?: HTMLElement) => void;
+	export let captureRippleNode: HTMLElement | undefined = undefined;
+	export let ariaHidden: boolean | undefined = undefined;
 </script>
 
 <div class="title">
-	<a {href} {tabindex} role="button" aria-haspopup="dialog" use:captureRipple on:click>
+	<a
+		{href}
+		{tabindex}
+		aria-hidden={ariaHidden}
+		role="button"
+		aria-haspopup="dialog"
+		use:captureRipple={captureRippleNode}
+		on:click|preventDefault
+	>
 		<span itemprop="name">
 			<slot />
 		</span>

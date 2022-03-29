@@ -1,25 +1,8 @@
 <script lang="ts">
-	import ExpansionPanel from 'svelty-material/components/ExpansionPanels/ExpansionPanel.svelte';
-	import ExpansionPanels from 'svelty-material/components/ExpansionPanels/ExpansionPanels.svelte';
-
-	import CartItem from '../Cart/table/CartItem.svelte';
-
 	import type { SKU, CartItem as ICartItem } from 'types/product';
 	import type { Cart } from '$lib/stores/cart';
 
 	export let cart: Cart;
-	// new Map([SKU,
-	// 	{
-	// 		name: 'Burger',
-	// 		image: {
-	// 			src: '/burger.webp',
-	// 		},
-	// 		price: 3,
-	// 		quantity: 4,
-	// 		categories: [''],
-	// 	},
-	// ]);
-
 	export let total: string;
 	export let quantity: number;
 

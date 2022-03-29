@@ -11,6 +11,75 @@ import node from '@sveltejs/adapter-node';
 import netlify from '@sveltejs/adapter-netlify';
 import cvWorker from '@sveltejs/adapter-cloudflare-workers';
 import adapterStatic from '@sveltejs/adapter-static';
+import browserslist from 'browserslist';
+
+/**
+ * @param {string | readonly string[]} browserslistConfig
+ */
+function browserslistToEsbuild(browserslistConfig) {
+	if (!browserslistConfig) {
+		// the path from where the script is run
+		const path = process.cwd();
+
+		// read config if none is passed
+		browserslistConfig = browserslist.loadConfig({ path });
+	}
+
+	const SUPPORTED_ESBUILD_TARGETS = ['es', 'chrome', 'edge', 'firefox', 'ios', 'node', 'safari'];
+
+	const replaces = {
+		ios_saf: 'ios',
+		android: 'chrome',
+	};
+
+	const separator = ' ';
+
+	return (
+		browserslist(browserslistConfig)
+			// transform into ['chrome', '88']
+			.map(b => b.split(separator))
+			// replace the similar browser
+			.map(b => {
+				if (replaces[b[0]]) {
+					b[0] = replaces[b[0]];
+				}
+
+				return b;
+			})
+			// 11.0-12.0 --> 11.0
+			.map(b => {
+				if (b[1].includes('-')) {
+					b[1] = b[1].slice(0, b[1].indexOf('-'));
+				}
+
+				return b;
+			})
+			// 11.0 --> 11
+			.map(b => {
+				if (b[1].endsWith('.0')) {
+					b[1] = b[1].slice(0, -2);
+				}
+
+				return b;
+			})
+			// only get the ones supported by esbuild
+			.filter(b => SUPPORTED_ESBUILD_TARGETS.includes(b[0]))
+			// only get the oldest version
+			.reduce((/** @type string[][] */ acc, b) => {
+				console.log(acc, b);
+				const existingIndex = acc.findIndex(br => br[0] === b[0]);
+
+				if (existingIndex !== -1) {
+					acc[existingIndex][1] = b[1];
+				} else {
+					acc.push(b);
+				}
+				return acc;
+			}, [])
+			// remove separator
+			.map(b => b.join(''))
+	);
+}
 
 const pkg = JSON.parse(
 	readFileSync('./package.json', {
@@ -22,14 +91,20 @@ const pkg = JSON.parse(
  * @returns {import("./src/lib/types/index").ViteConfig}}
  */
 function vite() {
-	const external =
-		process.env.NODE_ENV === 'development'
-			? ['whatwg-url', 'node-fetch']
-			: ['firebase/messaging'];
+	// const external =
+	// 	process.env.NODE_ENV === 'development'
+	// 		? ['whatwg-url', 'node-fetch']
+	// 		: ['firebase/messaging'];
+
+	const browserslist = browserslistToEsbuild(
+		'last 5 major versions and >= 0.1% and supports es6-module and supports es6-module-dynamic-import',
+	);
+
+	console.debug(browserslist);
 
 	return {
 		build: {
-			target: 'es2015',
+			target: browserslist,
 			minify: 'terser',
 			terserOptions: {
 				ecma: 2015,
@@ -57,7 +132,7 @@ function vite() {
 			// exclude: Object.keys(pkg.dependencies),
 		},
 		ssr: {
-			external: external,
+			// external: external,
 		},
 		esbuild: {
 			legalComments: 'none',
@@ -65,12 +140,14 @@ function vite() {
 		server: {
 			https: {
 				cert: readFileSync(
-					platform() === 'linux' ? './example.com+5.windows.pem' : './example.com+5.pem',
+					platform() === 'linux'
+						? './config/example.com+5.windows.pem'
+						: './config/example.com+5.pem',
 				),
 				key: readFileSync(
 					platform() === 'linux'
-						? './example.com+5-key.windows.pem'
-						: './example.com+5-key.pem',
+						? './config/example.com+5-key.windows.pem'
+						: './config/example.com+5-key.pem',
 				),
 			},
 			// proxy: {

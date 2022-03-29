@@ -63,6 +63,10 @@ type RootTranslation = {
 		 * Warenkorb Artikel
 		 */
 		cartItems: string
+		/**
+		 * Ihr Warenkorb ist leer
+		 */
+		empty: string
 		header: {
 			/**
 			 * Produkt
@@ -229,6 +233,10 @@ export type TranslationFunctions = {
 		 * Warenkorb Artikel
 		 */
 		cartItems: () => LocalizedString
+		/**
+		 * Ihr Warenkorb ist leer
+		 */
+		empty: () => LocalizedString
 		header: {
 			/**
 			 * Produkt

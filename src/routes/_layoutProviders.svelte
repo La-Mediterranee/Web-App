@@ -29,8 +29,11 @@
 <script lang="ts">
 	import Firebase from '$lib/firebase/Firebase.svelte';
 	import Stripe from '$lib/components/Stripe/Stripe.svelte';
+	import { setAnimationsContext } from '$lib/stores/animations';
 
 	const firebase: FirebaseApp = !getApps()?.length ? initializeApp(firebaseConfig) : getApp();
+
+	setAnimationsContext();
 
 	onMount(async () => {
 		window.dataLayer = window.dataLayer || [];

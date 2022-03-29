@@ -16,6 +16,7 @@ const en: Translation = {
 	cart: {
 		cart: 'Cart',
 		cartItems: 'Cart items',
+		empty: 'No items in the cart yet',
 		header: {
 			product: 'Product',
 			price: 'Price',

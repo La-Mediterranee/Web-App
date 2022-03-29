@@ -18,16 +18,17 @@
 </script>
 
 <script lang="ts">
-	import SiemaItem from './CarouselItem.svelte';
+	import CarouselItem from './CarouselItem.svelte';
 	import LeftButton from './LeftButton.svelte';
 	import RightButton from './RightButton.svelte';
 
-	type T = $$Generic;
+	type Item = $$Generic;
 
 	interface $$Slots {
 		default: {
-			item: any;
-			visible: boolean;
+			// item: any;
+			// visible: boolean;
+			itemsVisibility: boolean[];
 		};
 		right: {
 			value: 'prev' | 'next';
@@ -41,8 +42,11 @@
 		};
 	}
 
-	export let items: T[];
+	// export let items: Item[];
+	export let itemsLength: number;
 	export let rtl: boolean = false;
+	export let nextInlinePos: ScrollLogicalPosition = 'start';
+	export let prevInlinePos: ScrollLogicalPosition = 'end';
 
 	let container: HTMLDivElement;
 	let containerInner: HTMLUListElement;
@@ -50,7 +54,8 @@
 	let nextElement: HTMLElement | null = null;
 	let scrollDir: 'prev' | 'next';
 
-	const itemsVisibility: boolean[] = Array(items.length).fill(true);
+	// const itemsVisibility: boolean[] = Array(items.length).fill(true);
+	const itemsVisibility: boolean[] = Array(itemsLength).fill(true);
 
 	onMount(() => {
 		rtl = document.documentElement.dir === 'rtl' ? true : false;
@@ -82,7 +87,7 @@
 
 		const debounced = debouncePromise(() => {}, 100);
 
-		async function handler(_: Event) {
+		async function handler() {
 			const visibleElements = updateCalc();
 
 			await debounced();
@@ -137,15 +142,14 @@
 	}
 
 	const inlinePos: Record<'prev' | 'next', ScrollLogicalPosition> = {
-		next: 'start',
-		prev: 'end',
+		next: nextInlinePos,
+		prev: prevInlinePos,
 	};
 
 	function scrollToElement(el: HTMLElement | null, offset = 0, dir: 'next' | 'prev' = 'next') {
 		if (!containerInner || !el) return;
 
-		const left = el.offsetLeft + offset;
-
+		// const left = el.offsetLeft + offset;
 		// containerInner.scroll({
 		// 	left: left,
 		// 	behavior: 'smooth',
@@ -163,11 +167,7 @@
 		const direction = (btn.value || btn.dataset.value) as 'prev' | 'next';
 		scrollDir = direction;
 
-		console.log(container.dataset.scrollDir);
-
 		await tick();
-
-		console.log(container.dataset.scrollDir);
 
 		const containerWidth = containerInner.getBoundingClientRect().width;
 		const css = getComputedStyle(container);
@@ -213,11 +213,13 @@
 	</slot>
 
 	<ul class="carousel-inner" bind:this={containerInner} use:position>
-		{#each items as item, i}
+		<!-- {#each items as item, i}
 			<SiemaItem>
 				<slot {item} visible={itemsVisibility[i]} />
 			</SiemaItem>
-		{/each}
+		{/each} -->
+
+		<slot {itemsVisibility} />
 	</ul>
 
 	<slot name="right" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'prev' : 'next'}>

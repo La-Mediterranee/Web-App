@@ -1,6 +1,8 @@
 # Browsers that we support
 
-[default]
+[js]
+last 5 major versions and >= 0.1% and supports es6-module and supports es6-module-dynamic-import
+
 
 [production]
 > .1% in AT
@@ -14,3 +16,4 @@ not samsung <= 7.4
 last 2 chrome version
 last 2 firefox version
 last 2 safari major version
+

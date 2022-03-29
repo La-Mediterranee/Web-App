@@ -1,18 +1,15 @@
+import { createEventDispatcher } from 'svelte';
+
 interface LazyLoadOptions {
 	once?: boolean;
 	observerOptions?: IntersectionObserverInit;
 	onIntersection?(target: HTMLElement): void;
 }
 
-export default function intersection(
-	node: HTMLElement,
-	options: LazyLoadOptions = {}
-) {
-	const {
-		observerOptions,
-		once = true,
-		onIntersection = () => {},
-	} = options || {};
+export default function intersection(node: HTMLElement, options: LazyLoadOptions = {}) {
+	const dispatch = createEventDispatcher();
+
+	const { observerOptions, once = true, onIntersection = () => {} } = options || {};
 
 	const observer = new IntersectionObserver(intersactionHandler, {
 		root: observerOptions?.root,
@@ -24,10 +21,11 @@ export default function intersection(
 
 	function intersactionHandler(
 		entries: IntersectionObserverEntry[],
-		observer: IntersectionObserver
+		observer: IntersectionObserver,
 	) {
 		entries.forEach(entry => {
 			if (!entry.isIntersecting) return;
+			dispatch('intersection', entry.target as HTMLElement);
 			onIntersection(entry.target as HTMLElement);
 			once && observer.unobserve(node);
 		});

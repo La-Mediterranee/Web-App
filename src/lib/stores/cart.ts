@@ -1,15 +1,14 @@
 import { onMount } from 'svelte';
 import { browser } from '$app/env';
 import { writable } from 'svelte/store';
-// import { openDB } from 'idb';
-import { get, set as keyvalSet } from 'idb-keyval';
+import { set as keyvalSet, get as keyvalGet } from 'idb-keyval';
 
 import type { Subscriber, Unsubscriber } from 'svelte/store';
 import type { CartItem, ID } from 'types/product';
 import type { Invalidator } from 'types/index';
-import type { IDBPDatabase } from 'idb';
 
-type CartItems = Map<ID, CartItem>;
+export type CartItems = CartItem[];
+export type CartItemIndecies = Map<ID, number[]>;
 
 export interface Cart {
 	readonly totalAmount: number;
@@ -18,33 +17,72 @@ export interface Cart {
 	readonly items: CartItems;
 }
 
-export interface CartStore {
-	subscribe: (
-		this: void,
-		run: Subscriber<CartWithState>,
-		invalidate?: Invalidator<CartWithState> | undefined,
-	) => Unsubscriber;
-	addItem: (item: CartItem) => void;
-	removeItem: (oldItem: CartItem) => void;
-	removeAll: () => void;
-	upadateItem: (id: ID, quantity: number) => void;
-	setState(newState: CartState): void;
-}
-
 class ClientCart implements Cart {
 	totalAmount = 0;
 	totalQuantity = 0;
 	displayTotalAmount = '0';
 
-	private _totalAmount = 0;
+	constructor(readonly items: CartItems = []) {}
 
-	constructor(public readonly items: CartItems) {}
+	setItem(value: CartItem) {
+		return this.items.push(value);
+	}
+
+	getItem(index: number) {
+		return this.items[index];
+	}
+
+	deleteItem(index: number) {
+		return this.items.splice(index, 1);
+	}
+
+	clear() {
+		//@ts-ignore
+		this.items = [];
+	}
 }
 
 const SHOP_DB = 'shop-db';
 const CART_STORE_KEY = 'cart';
 
-const storage = typeof localStorage !== 'undefined' ? localStorage : null;
+function createKeyVal(): IStorage {
+	return browser
+		? {
+				set: function <T>(key: string, value: T): void {
+					keyvalSet(key, value);
+				},
+				get: function <T>(key: string): Promise<T | undefined> {
+					return keyvalGet(key);
+				},
+		  }
+		: {
+				set: () => {},
+				get: async () => undefined,
+		  };
+}
+
+const keyval: IStorage = createKeyVal();
+
+interface IStorage {
+	set<T>(key: string, value: T): void;
+	get<T>(key: string): Promise<T | undefined>;
+}
+
+class Storage {
+	private _storage: IStorage;
+
+	constructor(private readonly _storageKey: string = CART_STORE_KEY) {
+		this._storage = keyval;
+	}
+
+	set<T>(value: T) {
+		this._storage.set(this._storageKey, value);
+	}
+
+	async get<T>(): Promise<T | undefined> {
+		return this._storage.get(this._storageKey);
+	}
+}
 
 export type CartState = 'Loading' | 'Done'; //| 'Animating';
 export interface CartWithState {
@@ -52,45 +90,49 @@ export interface CartWithState {
 	cart: ClientCart;
 }
 
-export function formatPrice(amount: number) {
-	return new Intl.NumberFormat('de-DE', {
+export function formatPrice(amount: number, locale = 'de-DE') {
+	return new Intl.NumberFormat(locale, {
 		style: 'currency',
 		currency: 'EUR',
 	}).format(amount / 100);
 }
 
-function createCartStore(startItems: CartItems = new Map()): CartStore {
+function createCartStore(startItems: CartItems = []) {
 	const sound = browser ? new Audio('') : null;
 
+	const storage = new Storage();
 	const startCart = new ClientCart(startItems);
-	// calculateTotal(start);
 
 	const start: CartWithState = {
 		cart: startCart,
 		state: 'Loading',
 	};
 
+	function saveCart(items: CartItems) {
+		storage.set(items);
+	}
+
 	const store = writable<CartWithState>(start, set => {
+		let cart: ClientCart;
 		onMount(async () => {
-			let cart: ClientCart;
 			try {
-				cart = (await get(CART_STORE_KEY)) || startCart;
-				cart.items.set('1312', {
+				cart = new ClientCart((await storage.get<CartItems>()) || startItems);
+				cart.setItem({
 					ID: '1312',
-					name: 'Burger',
 					type: 'food',
-					categories: ['burger'],
+					category: 'burger',
+					categoryType: 'Menuitem',
+					name: 'Burger',
+					desc: '',
 					isAvailable: true,
 					isVegetarian: false,
-					desc: '',
-					category: 'Burger',
 					image: {
 						src: '/burger.webp',
 					},
 					toppings: [],
-					selectedToppings: [],
 					price: 830,
 					quantity: 1,
+					selectedToppings: [],
 				});
 			} catch (error) {
 				console.error(error);
@@ -103,40 +145,23 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 				cart: cart,
 				state: 'Done',
 			});
-		});
 
-		return () => {
-			sound?.pause();
-			storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
-			db?.close();
-		};
+			return () => {
+				sound?.pause();
+				saveCart(cart.items);
+			};
+		});
 	});
 
 	const { subscribe, update } = store;
 
-	let db: IDBPDatabase<Cart>;
-
-	/*
-	 	TODO: Add localstorage for persistent
-	 	Optional: sync with firestore
-	*/
-
 	function addItem(item: CartItem) {
 		try {
 			// sound?.play();
-
-			// update(cart => {
-			// 	cart.items.set(item.ID, item);
-			// 	calculateTotal(cart);
-			// 	db.put(SHOP_DB, cart, CART_STORE_KEY);
-			// 	return cart;
-			// });
-
 			update(store => {
-				store.cart.items.set(item.ID, item);
+				store.cart.setItem(item);
 				calculateTotal(store.cart);
-				// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
-				keyvalSet(CART_STORE_KEY, store.cart);
+				saveCart(store.cart.items);
 				return store;
 			});
 		} catch (error) {
@@ -144,23 +169,14 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 		}
 	}
 
-	async function removeItem(oldItem: CartItem) {
+	async function removeItem(index: number) {
 		try {
 			// sound?.play();
-
-			// update(cart => {
-			// 	store.cart.items.delete(oldItem.ID || oldItem.name);
-			// 	calculateTotal(cart);
-			// 	db.put(SHOP_DB, cart, CART_STORE_KEY);
-			// 	return cart;
-			// });
-
 			update(store => {
 				// store.state = 'Animating';
-				store.cart.items.delete(oldItem.ID);
+				store.cart.deleteItem(index);
 				calculateTotal(store.cart);
-				// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
-				keyvalSet(CART_STORE_KEY, store.cart);
+				saveCart(store.cart.items);
 				return store;
 			});
 		} catch (_e) {
@@ -168,31 +184,18 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 		}
 	}
 
-	function upadateItem(id: ID, quantity: number) {
+	function upadateItem(index: number, quantity: number) {
 		// sound?.play();
-
-		// update(cart => {
-		// 	const item = cart.items.get(id);
-		// 	if (item) {
-		// 		cart.items.set(id, {
-		// 			...item,
-		// 			quantity,
-		// 		});
-		// 		calculateTotal(cart);
-		// 		db.put(SHOP_DB, cart, CART_STORE_KEY);
-		// 	}
-		// 	return cart;
-		// });
 		update(store => {
-			const item = store.cart.items.get(id);
+			const item = store.cart.getItem(index);
 			if (item) {
-				store.cart.items.set(id, {
-					...item,
-					quantity,
-				});
+				store.cart.setItem(
+					Object.assign(item, {
+						quantity,
+					}),
+				);
 				calculateTotal(store.cart);
-				// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
-				keyvalSet(CART_STORE_KEY, store.cart);
+				saveCart(store.cart.items);
 			}
 			return store;
 		});
@@ -200,31 +203,21 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 
 	function removeAll() {
 		sound?.play();
-		// update(cart => {
-		// 	cart.totalQuantity = 0;
-		// 	cart.totalAmount = 0;
-		// 	cart.items.clear();
-		// 	db.add(SHOP_DB, cart, CART_STORE_KEY);
-		// 	return cart;
-		// });
 		update(store => {
 			store.cart.totalQuantity = 0;
 			store.cart.totalAmount = 0;
 			store.cart.displayTotalAmount = formatPrice(0);
-			store.cart.items.clear();
-			// db.put(SHOP_DB, store.cart, CART_STORE_KEY);
-			keyvalSet(CART_STORE_KEY, store.cart);
+			store.cart.clear();
+			saveCart(store.cart.items);
 			return store;
 		});
-		// or
-		// store.set(new Map<SKU, CartItem>())
 	}
 
 	function calculateTotal(cart: ClientCart) {
 		let amount = 0;
 		let quantity = 0;
 
-		for (const [id, item] of cart.items) {
+		for (const item of cart.items) {
 			amount += item.price * item.quantity;
 			quantity += item.quantity;
 		}
@@ -232,8 +225,6 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 		cart.totalQuantity = quantity;
 		cart.totalAmount = amount;
 		cart.displayTotalAmount = formatPrice(cart.totalAmount);
-
-		// storage?.setItem(CART_STORE_KEY, JSON.stringify(cart));
 	}
 
 	function setState(newState: CartState) {
@@ -253,47 +244,6 @@ function createCartStore(startItems: CartItems = new Map()): CartStore {
 	};
 }
 
-// export const cart = (() => {
-// 	const items =
-// 		storage?.getItem(CART_STORE_KEY) != null
-// 			? (JSON.parse(storage.getItem(CART_STORE_KEY)!) as Cart)
-// 			: undefined;
-// 	return createCartStore(items);
-// })();
-
-// const dummyCart: CartItems = new Map([
-// 	[
-// 		'1312',
-// 		{
-// 			ID: '1312',
-// 			name: 'Burger',
-// 			categories: ['burger'],
-// 			description: '',
-// 			image: {
-// 				src: '/burger.webp',
-// 			},
-// 			toppings: [],
-// 			selectedToppings: [],
-// 			price: 830,
-// 			quantity: 1,
-// 		},
-// 	],
-// 	[
-// 		'1322',
-// 		{
-// 			ID: '1322',
-// 			name: 'Burger',
-// 			categories: ['burger'],
-// 			description: '',
-// 			image: {
-// 				src: '/burger.webp',
-// 			},
-// 			toppings: [],
-// 			selectedToppings: [],
-// 			price: 890,
-// 			quantity: 1,
-// 		},
-// 	],
-// ]);
+export type CartStore = ReturnType<typeof createCartStore>;
 
 export const cart = createCartStore();

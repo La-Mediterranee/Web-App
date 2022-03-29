@@ -9,7 +9,7 @@ export const desktopNavItems: NavItem[] = [
 	{
 		icon: home,
 		pathLabel: 'homepage',
-		href: '/',
+		href: '',
 		route: 'home',
 	},
 	{
@@ -50,7 +50,7 @@ export const mobileNavItems: NavItem[] = [
 	{
 		icon: home,
 		pathLabel: 'homepage',
-		href: '/',
+		href: '',
 		route: 'home',
 	},
 	{

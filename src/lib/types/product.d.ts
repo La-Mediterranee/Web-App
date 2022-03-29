@@ -1,9 +1,7 @@
 type SKU = string;
 type ID = string;
 
-export type Variations = DeepReadonly<{
-	toppings?: Topping[];
-}>;
+export interface Variations {}
 
 interface Allergen {
 	readonly ID: ID;
@@ -34,27 +32,31 @@ export interface Image {
 	readonly height?: number;
 }
 
-export interface Product {
+type CategoryType = 'grocery' | 'menuitem';
+
+interface IProduct {
 	readonly ID: ID;
-	readonly sku?: SKU;
+	readonly categoryType: CategoryType;
 	readonly name: string;
 	readonly desc?: string;
 	readonly price: number;
 	readonly image: Image;
+}
+
+export interface Product extends IProduct {
+	readonly categoryType: 'Grocery';
+	readonly sku?: SKU;
 	readonly categories: readonly string[];
-	// readonly variations?: Variations;
+	readonly variations: readonly Variations[];
 	readonly rating?: {
 		readonly value: number;
 		readonly count: number;
 	};
 }
 
-export interface MenuItem {
-	readonly ID: ID;
+export interface MenuItem extends IProduct {
+	readonly categoryType: 'Menuitem';
 	readonly type: 'drink' | 'food';
-	readonly name: string;
-	readonly desc?: string;
-	readonly price: number;
 	readonly salesPrice?: number;
 	readonly isAvailable: boolean;
 	readonly isVegetarian: boolean;
@@ -63,7 +65,22 @@ export interface MenuItem {
 	readonly toppings: readonly Topping[];
 }
 
-export interface CartItem extends Product, MenuItem {
+interface ICartItem {
 	quantity: number;
-	selectedToppings?: readonly ToppingOption[];
 }
+
+export interface GroceryCartItem extends ICartItem, Product {
+	readonly selectedVariations: Variations[];
+}
+
+export interface MenuCartItem extends ICartItem, MenuItem {
+	readonly selectedToppings: {
+		readonly toppingID: ID;
+		readonly toppingOptionsIds: ToppingOption[];
+	}[];
+	// readonly selectedToppings?: {
+	// 	readonly [toppingID: ID]: ToppingOption | ToppingOption[];
+	// }
+}
+
+export type CartItem = GroceryCartItem | MenuCartItem;

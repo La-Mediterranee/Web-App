@@ -3,7 +3,7 @@
 	import { page, session } from '$app/stores';
 	import { createEventDispatcher } from 'svelte';
 
-	import type { LocalizedString } from 'typesafe-i18n';
+	import type { INavbarItem } from 'types/navbar';
 </script>
 
 <script lang="ts">
@@ -11,18 +11,14 @@
 	import Link from 'svelty-material/components/Button/Link.svelte';
 	import Badge from 'svelty-material/components/Badge/Badge.svelte';
 
-	import t from '$i18n/i18n-svelte';
-	import NavbarItem from './NavbarItem.svelte';
-	import SkipMain from './SkipMain.svelte';
+	import LL from '$i18n/i18n-svelte';
 	import NavLogo from './NavLogo.svelte';
+	import SkipMain from './SkipMain.svelte';
+	import NavbarItem from './NavbarItem.svelte';
 
 	import { cart } from '$lib/stores/cart';
 
-	import type { INavbarItem } from 'types/navbar';
-
 	export let routes: INavbarItem[] = [];
-
-	$: paths = $t.nav.routes as Record<string, () => LocalizedString>;
 
 	const dispatch = createEventDispatcher();
 </script>
@@ -36,7 +32,7 @@
 	<nav
 		itemscope
 		itemtype="https://schema.org/SiteNavigationElement"
-		aria-label={`${$t.nav.navbarAriaLabel()}`}
+		aria-label={`${$LL.nav.navbarAriaLabel()}`}
 	>
 		<ul>
 			{#each routes as { pathLabel, href, rel, route } (href)}
@@ -46,7 +42,7 @@
 					current={href === $page.url.pathname && 'page'}
 					on:click={() => dispatch('click', route)}
 				>
-					{paths[pathLabel]()}
+					{$LL.nav.routes[pathLabel]()}
 				</NavbarItem>
 			{/each}
 		</ul>
@@ -80,7 +76,7 @@
 				href={`${$session.urlLocale}/customer/login`}
 				on:click={() => dispatch('click', 'customer')}
 			>
-				<span>{$t.customer.login()}</span>
+				<span>{$LL.customer.login()}</span>
 			</Link>
 		{/if}
 	</div>
@@ -96,7 +92,7 @@
 			<Badge class="primary-color" bordered active={$cart.state !== 'Loading'}>
 				<Icon path={mdiCart} ariaHidden={true} />
 
-				<span class="visually-hidden">{$t.cart.cart()}</span>
+				<span class="visually-hidden">{$LL.cart.cart()}</span>
 				<span slot="badge">
 					{$cart.cart.totalQuantity}
 				</span>

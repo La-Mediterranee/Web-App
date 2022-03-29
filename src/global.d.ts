@@ -6,6 +6,7 @@
 /// <reference types="./lib/types" />
 
 type DeepReadonly<T> = { readonly [K in keyof T]: DeepReadonly<T[K]> };
+type Attributes<T extends EventTarget> = svelte.JSX.HTMLAttributes<T>;
 
 type USVString = string;
 type UrlString = `http${'s' | ''}://${string}`;
@@ -70,3 +71,9 @@ declare var PasswordCredential: {
 	new (htmlFormElement: HTMLFormElement): PasswordCredential;
 	new (passwordCredentialData: PasswordCredentialData): PasswordCredential;
 };
+
+declare namespace svelte.JSX {
+	interface HTMLAttributes<T> {
+		onintersection?: (event: CustomEvent<HTMLElement>) => void;
+	}
+}

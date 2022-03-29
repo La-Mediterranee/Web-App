@@ -1,3 +1,4 @@
+import { dev } from '$app/env';
 import { sequence } from '@sveltejs/kit/hooks';
 
 import { RTL_LANGS } from '$i18n/utils';
@@ -14,9 +15,31 @@ import type { LocaleDetector } from 'typesafe-i18n/detectors';
 import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
 
 import type { BaseLocale } from '$i18n/i18n-types';
+import type * as nodeFetch from 'node-fetch';
+
+if (dev) {
+	const [{ default: https }, { default: fetch }] = await Promise.all([
+		import('node:https'),
+		import('node-fetch'),
+	]);
+
+	const agent = new https.Agent({
+		rejectUnauthorized: false,
+	});
+
+	const myFetch = (input: RequestInfo, init: RequestInit = {}) =>
+		fetch(<nodeFetch.RequestInfo>input, <nodeFetch.RequestInit>Object.assign(init, { agent }));
+
+	Object.defineProperties(globalThis, {
+		fetch: {
+			enumerable: true,
+			configurable: true,
+			value: myFetch,
+		},
+	});
+}
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
-
 export const initAcceptLanguageHeaderDetector =
 	(request: Request, headerKey = 'accept-language'): LocaleDetector =>
 	(): Locale[] =>

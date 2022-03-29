@@ -1,10 +1,12 @@
-import { getContext, onMount, setContext } from 'svelte';
+import { onMount, getContext, setContext } from 'svelte';
 
-import { loadStripe, type Stripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { type Readable, readable } from 'svelte/store';
 import { STRIPE_PUBLIC_KEY } from '$lib/utils/constants';
 
-const STRIPE_CONTEXT = Symbol('stripe');
+import type { Stripe } from '@stripe/stripe-js';
+
+const STRIPE_CONTEXT = Symbol('Stripe');
 
 export function setStripeContext() {
 	if (typeof STRIPE_PUBLIC_KEY !== 'string' || typeof STRIPE_PUBLIC_KEY === 'undefined') {
@@ -13,10 +15,8 @@ export function setStripeContext() {
 
 	const stripe = readable<Stripe | null>(null, set => {
 		onMount(async () => {
-			console.log('stripe mounted');
 			try {
 				set(await loadStripe(STRIPE_PUBLIC_KEY));
-				console.log('stripe loaded');
 			} catch (error) {
 				console.error(error);
 			}
@@ -25,7 +25,7 @@ export function setStripeContext() {
 
 	setContext(STRIPE_CONTEXT, stripe);
 
-	// return stripe;
+	return stripe;
 }
 
 export type StripeStore = Readable<Stripe | null>;

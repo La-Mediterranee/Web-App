@@ -1,6 +1,6 @@
 import { SERVER_PORT, SERVER_URL } from '$lib/server/constants';
 
-import type { Product } from 'types/product';
+import type { MenuItem, Product } from 'types/product';
 import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
 
 interface GetBody {
@@ -19,7 +19,7 @@ interface HomepageSection<T> {
 }
 
 export interface HomepageProps {
-	sections: HomepageSection<unknown>[];
+	sections: HomepageSection<MenuItem[]>[];
 	bestseller: Product[];
 }
 

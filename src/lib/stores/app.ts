@@ -36,7 +36,7 @@ export function appStore() {
 	};
 }
 
-export type App = ReturnType<typeof appStore>;
+export type AppStore = ReturnType<typeof appStore>;
 
 const STORE_KEY = Symbol('App');
 
@@ -46,6 +46,6 @@ export function setAppContext() {
 	return app;
 }
 
-export function getAppContext(): App {
+export function getAppContext(): AppStore {
 	return getContext(STORE_KEY);
 }

@@ -19,7 +19,6 @@
 
 <script lang="ts">
 	import Homepage from '$pages/Homepage.svelte';
-	import { getContext } from 'svelte';
 
 	export let homePageData: HomepageProps | undefined;
 </script>

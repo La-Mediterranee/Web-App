@@ -10,4 +10,4 @@ export const {
 	SERVER_PORT,
 } = process.env;
 
-export const SERVER_URL = `http://localhost:${SERVER_PORT}`;
+export const SERVER_URL = `https://localhost:${SERVER_PORT}`;

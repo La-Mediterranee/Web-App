@@ -74,6 +74,7 @@
 		position: absolute;
 		align-self: center;
 		background: var(--bar-color);
+		transform: translateZ(0);
 	}
 
 	.cart-badge {

@@ -17,7 +17,7 @@ export type AnchorLinkTypes =
 
 export interface NavItem {
 	readonly icon: string;
-	readonly pathLabel: string;
+	readonly pathLabel: keyof import('$i18n/i18n-types').Translations['nav']['routes'];
 	readonly href: string;
 	readonly route?: string;
 	readonly rel?: AnchorLinkTypes | AnchorLinkTypes[];

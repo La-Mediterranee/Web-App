@@ -28,36 +28,27 @@
 		--wrapper-padding: 0.7em 0.5em;
 		padding: var(--wrapper-padding);
 
-		.product {
-			&:not(:last-child) {
-				margin-bottom: 1em;
-			}
-		}
+		display: grid;
+		gap: 1em;
+		justify-content: center;
+		margin-block-end: 1em;
 
-		@media screen and (min-width: 570px) {
-			.product {
-				height: 300px;
-				// max-width: calc(50% - var(--wrapper-padding));
-
-				flex: 1 0 45%;
-				margin: 1.2em;
-
-				:global(.card) {
-					height: inherit;
-				}
-			}
-		}
-
-		@media screen and (min-width: 1000px) {
+		@media screen and (min-width: 870px) {
 			position: relative;
-			min-height: 100vh; //calc(100vh - var(--top-bar-height));
+			grid-template-columns: repeat(2, 1fr);
+		}
 
-			display: flex;
-			flex-wrap: wrap;
+		@media screen and (min-width: 1220px) {
+			position: relative;
+			grid-template-columns: repeat(3, 1fr);
+		}
 
-			.product {
-				margin: 0.7em 0.5em;
-			}
+		@media screen and (min-width: 1600px) {
+			position: relative;
+			grid-template-columns: repeat(4, 1fr);
+			max-width: 2000px;
+			margin-inline-start: auto;
+			margin-inline-end: auto;
 		}
 	}
 </style>

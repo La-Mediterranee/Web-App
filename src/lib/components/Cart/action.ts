@@ -1,23 +1,29 @@
 import { goto } from '$app/navigation';
 
 export interface FormEnhance {
+	readonly extra?: FormData;
 	pending?: (data: FormData, form: HTMLFormElement) => void;
 	error?: (res: Response | null, error: Error | null, form: HTMLFormElement) => void;
 	result: (res: Response, form: HTMLFormElement) => void;
 }
 
-export function enhance(form: HTMLFormElement, { pending, error, result }: FormEnhance) {
+export function enhance<K extends string, V>(
+	form: HTMLFormElement,
+	{ pending, error, result, extra = new FormData() }: FormEnhance,
+) {
 	let current_token: {};
 
 	async function handle_submit(e: Event) {
-		const token = (current_token = {});
-
 		e.preventDefault();
 
+		const token = (current_token = {});
 		const elements = Array.from(form.elements) as HTMLInputElement[];
 
 		const body = new FormData(form);
-		console.log(body);
+
+		for await (const [key, value] of extra) {
+			body.append(key, value);
+		}
 
 		if (pending) pending(body, form);
 
@@ -26,9 +32,6 @@ export function enhance(form: HTMLFormElement, { pending, error, result }: FormE
 		try {
 			const res = await fetch(form.action, {
 				method: form.method,
-				// headers: {
-				// 	accept: 'application/json',
-				// },
 				body,
 			});
 

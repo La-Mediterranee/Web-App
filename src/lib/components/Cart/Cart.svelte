@@ -1,14 +1,18 @@
 <script context="module" lang="ts">
-	import t from '$i18n/i18n-svelte';
+	import LL from '$i18n/i18n-svelte';
 
 	import { goto } from '$app/navigation';
 	import { flip } from 'svelte/animate';
 	import { scale, fade, crossfade } from 'svelte/transition';
 	import { cubicInOut, quintOut } from 'svelte/easing';
 
-	import { enhance } from './action';
-
-	import { formatPrice, type Cart, type CartState, type CartStore } from '$lib/stores/cart';
+	import {
+		formatPrice,
+		type Cart,
+		type CartItems,
+		type CartState,
+		type CartStore,
+	} from '$lib/stores/cart';
 	import type { FormEnhance } from './action';
 
 	function fadeScale(
@@ -50,8 +54,17 @@
 		},
 	});
 
-	function submitBuilder(): FormEnhance {
+	function createFormDataFromCart(cart: CartItems) {
+		const form = new FormData();
+		for (const item of cart) {
+			form.append(item.ID, JSON.stringify(item));
+		}
+		return form;
+	}
+
+	function submitBuilder(cart: CartItems): FormEnhance {
 		return {
+			extra: createFormDataFromCart(cart),
 			result: res => {
 				//
 				console.debug(res);
@@ -65,6 +78,43 @@
 		};
 	}
 
+	function replacer(key: string, value: any) {
+		if (value instanceof Map) {
+			return {
+				dataType: 'Map',
+				value: Array.from(value.entries()),
+			};
+		} else {
+			return value;
+		}
+	}
+
+	async function submitCart(e: SubmitEvent, items: CartItems) {
+		const form = <HTMLFormElement>e.currentTarget;
+
+		const body = new Map();
+		for (const item of items) {
+			body.set(item.ID, {
+				categoryType: 'menuitem',
+				selectedToppings: (<MenuCartItem>item).selectedToppings,
+				quantity: item.quantity,
+			});
+		}
+
+		const res = await fetch(form.action, {
+			method: form.method,
+			headers: {
+				'method': 'POST',
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify(body, replacer),
+		});
+
+		console.log(res);
+
+		if (res.redirected) goto(res.url);
+	}
+
 	const tableHeaders: TableHeader[] = [
 		{ header: 'product', headerClass: 'cart-product-header', className: undefined },
 		{ header: 'quantity', headerClass: 'cart-quantity-header', className: undefined },
@@ -76,26 +126,25 @@
 <script lang="ts">
 	import Card from 'svelty-material/components/Card/Card.svelte';
 
-	import CartItemComponent from './table/CartItem.svelte';
-	import CartItem from './table/CartItem/CartItem.svelte';
-
+	import CartTable from './table/CartTable.svelte';
 	import CartFooter from './table/CartFooter.svelte';
-	import CartHeader from './table/CartHeader.svelte';
+	import CartHeaders from './table/CartHeaders.svelte';
 
+	import CartItem from './table/CartItem/CartItem.svelte';
 	import CartItemPrice from './table/CartItem/Price.svelte';
 	import CartItemProduct from './table/CartItem/Product.svelte';
 	import CartItemQuantity from './table/CartItem/Quantity.svelte';
 	import CartItemActions from './table/CartItem/Actions.svelte';
 
-	import type { TableHeader } from './table/CartHeader.svelte';
-	import type { ID } from 'types/product';
+	import type { TableHeader } from './table/CartHeaders.svelte';
+	import type { ID, MenuCartItem } from 'types/product';
 
 	export let cart: Cart;
 	export let state: CartState;
 	export let store: CartStore;
 
-	function updateItem(e: Event, ID: ID) {
-		store.upadateItem(ID, +(<HTMLInputElement>e.currentTarget).value);
+	function updateItem(e: Event, index: number) {
+		store.upadateItem(index, +(<HTMLInputElement>e.currentTarget).value);
 	}
 
 	$: isEmpty = cart.totalQuantity === 0;
@@ -104,24 +153,25 @@
 
 <div id="cart">
 	<h1>
-		{$t.cart.cart()}
+		{$LL.cart.cart()}
 	</h1>
 
-	<form method="post" data-action="./cart" use:enhance={submitBuilder()}>
+	<form
+		method="post"
+		data-action="./cart"
+		on:submit|preventDefault={e => submitCart(e, cart.items)}
+	>
+		<!-- use:enhance={submitBuilder(cart.items)} -->
 		<!-- 
 			if the table's diplay property changes it loses it's role and that goes for any table element
 			https://css-tricks.com/position-sticky-and-table-headers/
 			-->
 		<!-- svelte-ignore a11y-no-redundant-roles -->
-		<table role="table">
+		<CartTable>
 			<caption id="table-title" class="visually-hidden" colspan={tableHeaders.length}>
-				{$t.cart.cartItems()}
+				{$LL.cart.cartItems()}
 			</caption>
-			<thead role="rowgroup">
-				<tr role="row">
-					<CartHeader headers={tableHeaders} />
-				</tr>
-			</thead>
+			<CartHeaders headers={tableHeaders} />
 			<tbody role="rowgroup" aria-live="polite" aria-busy={busy}>
 				{#if busy}
 					<tr
@@ -139,8 +189,8 @@
 						</CartItem>
 					</tr>
 				{:else if !isEmpty}
-					{#each [...cart.items] as [ID, item] (ID)}
-						{@const { price, image, name, quantity } = item}
+					{#each [...cart.items] as item, i (item.ID + i)}
+						{@const { ID, price, image, name, quantity } = item}
 						<tr
 							role="row"
 							class="item"
@@ -148,7 +198,7 @@
 								delay: 200,
 								duration: 600,
 							}}
-							out:send|local={{ key: ID }}
+							out:send|local={{ key: ID + i }}
 							animate:flip={{ duration: 600 }}
 						>
 							<CartItem>
@@ -158,12 +208,12 @@
 								<CartItemQuantity
 									{ID}
 									{quantity}
-									on:change={e => updateItem(e, ID)}
+									on:change={e => updateItem(e, i)}
 								/>
 								<CartItemPrice>
 									{formatPrice(price)}
 								</CartItemPrice>
-								<CartItemActions on:click={() => store.removeItem(item)} />
+								<CartItemActions on:click={() => store.removeItem(i)} />
 							</CartItem>
 						</tr>
 					{/each}
@@ -179,12 +229,14 @@
 						}}
 					>
 						<CartItem>
-							<p class="state">No items in cart yet.</p>
+							<p class="state">
+								{$LL.cart.empty()}
+							</p>
 						</CartItem>
 					</tr>
 				{/if}
 			</tbody>
-		</table>
+		</CartTable>
 		<Card class="cart-actions" role="group">
 			<CartFooter disabled={isEmpty}>
 				<svelte:fragment slot="notes">Anmerkungen</svelte:fragment>
@@ -251,41 +303,15 @@
 			margin: 0 auto;
 		}
 
-		table {
-			display: grid;
-			gap: 1em;
-			grid-template-columns: 1fr;
-			border-radius: 1rem;
-			border-spacing: 0 1em;
-			width: 100%;
-
-			position: relative;
-			justify-content: center;
-			align-items: center;
-			max-width: 100%;
-		}
-
-		thead,
 		tbody,
 		tr,
 		.cart-actions {
 			display: flex;
 		}
 
-		thead,
 		tbody,
 		.cart-actions {
 			flex-direction: column;
-		}
-
-		thead {
-			display: flex;
-			position: sticky;
-			width: 100%;
-			z-index: 1;
-			border-radius: 1em;
-			top: calc(var(--top-bar-height) + 10px);
-			background-color: var(--theme-primary-color);
 		}
 
 		.item {
@@ -336,20 +362,6 @@
 			// --cart-item-product-width: 11rem;
 			--cart-action-position: sticky;
 
-			table {
-				flex: 1 0 58%;
-				max-width: 58%;
-				align-self: flex-start;
-			}
-
-			thead {
-				display: flex;
-				position: sticky;
-				width: 100%;
-				top: calc(var(--top-bar-height) + 10px);
-				left: 0;
-			}
-
 			.cart-actions {
 				flex: 1 0 30%;
 				align-self: flex-start;
@@ -365,11 +377,6 @@
 
 			form {
 				max-width: 93%;
-			}
-
-			table {
-				flex: 1 0 60%;
-				max-width: 60%;
 			}
 		}
 	}

@@ -4,6 +4,8 @@
 	import LDTag from '$lib/components/LDTag';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
 
+	import { fade } from 'svelte/transition';
+
 	import type { Schema } from 'types/utils/json-ld';
 	import type { CartItem, MenuItem } from 'types/product';
 
@@ -28,7 +30,7 @@
 <LDTag {schema} />
 
 <h1>{header}</h1>
-<div>
+<div in:fade={{ delay: 0, duration: 700 }}>
 	{#each drinks as drink}
 		<MenuItemCard
 			style="flex: 0 1 32%;"

@@ -26,6 +26,13 @@ interface CartMenuItem extends ICartItem {
 }
 
 export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
+	if (event.locals.cookies.intentSecret)
+		return {
+			status: 303,
+			headers: {
+				location: `./checkout`,
+			},
+		};
 	// const items = await event.request.text();
 
 	const items: CartMenuItem[] = [
@@ -36,7 +43,8 @@ export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
 			selectedToppings: [
 				{
 					toppingID: 'jqNrLNUjqmyoRbBrG2K7',
-					toppingOptionID: 'greek-salad',
+					// toppingOptionID: 'greek-salad',
+					toppingOptionID: ['greek-salad'],
 				},
 				{
 					toppingID: 'kiHoetrndsBM3ceKu8Q1',
@@ -58,7 +66,7 @@ export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
 		},
 	];
 
-	// console.debug(new Map(items.value));
+	console.log(await event.request.json());
 
 	const res = await fetchFromAPI('/buy/create-payment-intent', {
 		body: JSON.stringify(items),
@@ -70,13 +78,15 @@ export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
 		};
 	}
 
-	const intent = await res.text();
+	const intent = await res.json();
 
 	return {
 		status: 303,
 		headers: {
-			// "set-cookie": serialize(),
-			location: `./checkout`,
+			'set-cookie': serialize('intentSecret', intent.clientSecret, {
+				secure: true,
+			}),
+			'location': `./checkout`,
 		},
 	};
 }

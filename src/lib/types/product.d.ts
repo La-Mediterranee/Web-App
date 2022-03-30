@@ -66,7 +66,7 @@ export interface MenuItem extends IProduct {
 }
 
 interface ICartItem {
-	cartId: string;
+	// cartId: string;
 	quantity: number;
 }
 

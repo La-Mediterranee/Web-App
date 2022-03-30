@@ -1,4 +1,4 @@
-import { panels } from '$lib/components/Checkout/panels';
+import { dev } from '$app/env';
 
 import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
@@ -21,6 +21,14 @@ function getSection(searchParams: URLSearchParams) {
 }
 
 export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
+	if (!dev && typeof event.locals.cookies.intentSecret === 'undefined')
+		return {
+			status: 302,
+			headers: {
+				location: '/',
+			},
+		};
+
 	const section = getSection(event.url.searchParams);
 
 	return {

@@ -19,12 +19,28 @@
 
 	import type { CartItem, MenuItem } from 'types/product';
 	import Image from '$lib/components/Image/Image.next.svelte';
+	import { derived } from 'svelte/store';
 
 	export let homePageData: HomepageProps | undefined;
 
 	const modal = getProductModalContext();
 
 	const sections = homePageData?.sections || [];
+
+	// $: cardActionText = {
+	// 	true: $LL.product.addToCart,
+	// 	false: $LL.product.chooseOptions,
+	// };
+
+	new Map([
+		[true, $LL.product.addToCart],
+		[false, $LL.product.chooseOptions],
+	]);
+
+	const cardActionText = derived(LL, $LL => ({
+		true: $LL.product.addToCart,
+		false: $LL.product.chooseOptions,
+	}));
 
 	function openPopUp(e: Event, product: MenuItem) {
 		if (product.toppings?.length > 0) return modal.open(product);
@@ -84,9 +100,7 @@
 								</data>
 
 								<svelte:fragment slot="cta">
-									{menuItem.toppings?.length > 0
-										? $LL.product.chooseOptions()
-										: $LL.product.addToCart()}
+									{$cardActionText[`${menuItem.toppings?.length === 0}`]()}
 								</svelte:fragment>
 							</MenuItemCard>
 						</CarouselItem>

@@ -1,21 +1,16 @@
-import type { RequestEvent, JSONObject, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+import { SERVER_URL } from '$lib/server/constants';
 
 import type { MenuItem } from 'types/product';
-import { SERVER_URL } from '$lib/server/constants';
 import type { BreadcrumbList, WithContext } from 'schema-dts';
-import { i18nObject } from '$i18n/i18n-util';
-
-//mineralwasser mit/ohne 1.5L 280
-//eistee pfirsich/zitrone 1.5L 330
-//aluvera 0.5L/0.3L
+import type { RequestEvent, JSONObject, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
 
 export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	const res = await fetch(`${SERVER_URL}/v1/products/drinks`);
-	if (!res.ok) return {};
+	if (!res.ok) return { status: 500 };
 
 	const drinks: MenuItem[] = await res.json();
 
-	const LL = i18nObject(event.locals.locale);
+	const LL = event.locals.LL;
 
 	const urlLocale = event.locals.urlLocale;
 	const breadcrumb: WithContext<BreadcrumbList> = {

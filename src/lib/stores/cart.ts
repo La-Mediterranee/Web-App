@@ -3,11 +3,11 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 import { set as keyvalSet, get as keyvalGet } from 'idb-keyval';
 
-import type { Subscriber, Unsubscriber } from 'svelte/store';
 import type { CartItem, ID, SelectedTopping } from 'types/product';
 
-export type CartItems = CartItem[];
+// export type CartItems = CartItem[];
 export type CartItemIndecies = Map<ID, number[]>;
+export type CartItems = Map<ID, CartItem>;
 
 export interface Cart {
 	readonly totalAmount: number;
@@ -21,24 +21,40 @@ class ClientCart implements Cart {
 	totalQuantity = 0;
 	displayTotalAmount = '0';
 
-	constructor(readonly items: CartItems = []) {}
+	constructor(readonly items: CartItems) {}
 
-	setItem(value: CartItem) {
-		return this.items.push(value);
+	setItem(key: ID, item: CartItem) {
+		return this.items.set(key, item);
 	}
 
-	getItem(index: number) {
-		return this.items[index];
+	getItem(id: ID) {
+		return this.items.get(id);
 	}
 
-	deleteItem(index: number) {
-		return this.items.splice(index, 1);
+	deleteItem(id: ID) {
+		return this.items.delete(id);
 	}
 
 	clear() {
-		//@ts-ignore
-		this.items = [];
+		this.items.clear();
 	}
+
+	// setItem(value: CartItem) {
+	// 	return this.items.push(value);
+	// }
+
+	// getItem(index: number) {
+	// 	return this.items[index];
+	// }
+
+	// deleteItem(index: number) {
+	// 	return this.items.splice(index, 1);
+	// }
+
+	// clear() {
+	// 	//@ts-ignore
+	// 	this.items = [];
+	// }
 }
 
 const SHOP_DB = 'shop-db';
@@ -108,7 +124,7 @@ export async function digestMessage(message: string) {
 	return hashHex;
 }
 
-function createCartStore(startItems: CartItems = []) {
+function createCartStore(startItems: CartItems = new Map()) {
 	const sound = browser ? new Audio('') : null;
 
 	const storage = new Storage();
@@ -130,20 +146,7 @@ function createCartStore(startItems: CartItems = []) {
 		onMount(async () => {
 			try {
 				cart = new ClientCart((await storage.get<CartItems>()) || startItems);
-				const selectedToppings: SelectedTopping[] = [];
-				const cartId = await digestMessage(
-					'1312' +
-						selectedToppings.reduce(
-							(prev, s) =>
-								prev +
-								s.toppingID +
-								s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
-							'',
-						),
-				);
-
 				const item: CartItem = {
-					cartId,
 					ID: '1312',
 					type: 'food',
 					category: 'burger',
@@ -158,14 +161,15 @@ function createCartStore(startItems: CartItems = []) {
 					toppings: [],
 					price: 830,
 					quantity: 1,
-					selectedToppings,
+					selectedToppings: [],
 				};
 
-				_items.set(cartId, item);
-				cart.setItem(item);
+				addItem(item);
 			} catch (error) {
 				console.error(error);
 			}
+
+			console.debug(cart);
 
 			cart ||= startCart;
 			calculateTotal(cart);
@@ -184,32 +188,26 @@ function createCartStore(startItems: CartItems = []) {
 
 	const { subscribe, update } = store;
 
-	async function addItem(item: Omit<CartItem, 'cartId'>) {
+	async function addItem(item: CartItem) {
 		try {
-			const cartId = await digestMessage(
-				item.ID +
+			//@ts-ignore
+			const toppingIds = item.selectedToppings.reduce(
+				//@ts-ignore
+				(prev, s) =>
+					prev +
+					s.toppingID +
 					//@ts-ignore
-					item.selectedToppings?.reduce(
-						//@ts-ignore
-						(prev, s) =>
-							prev +
-							s.toppingID +
-							//@ts-ignore
-							s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
-						'',
-					),
+					s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
+				'',
 			);
 
-			//@ts-ignore
-			item.cartId = cartId;
+			const key = await digestMessage(item.ID + toppingIds);
 
-			if (_items.has(cartId)) return;
+			if (_items.has(key)) return;
+
 			// sound?.play();
 			update(store => {
-				//@ts-ignore
-				_items.set(cartId);
-				//@ts-ignore
-				store.cart.setItem(item);
+				store.cart.setItem(key, item);
 				calculateTotal(store.cart);
 				saveCart(store.cart.items);
 				return store;
@@ -219,13 +217,13 @@ function createCartStore(startItems: CartItems = []) {
 		}
 	}
 
-	async function removeItem(index: number) {
+	async function removeItem(key: ID, index: number) {
 		try {
 			// sound?.play();
 
 			update(store => {
 				// store.state = 'Animating';
-				store.cart.deleteItem(index);
+				store.cart.deleteItem(key);
 				calculateTotal(store.cart);
 				saveCart(store.cart.items);
 				return store;
@@ -235,12 +233,13 @@ function createCartStore(startItems: CartItems = []) {
 		}
 	}
 
-	function upadateItem(index: number, quantity: number) {
+	function upadateItem(key: ID, index: number, quantity: number) {
 		// sound?.play();
 		update(store => {
-			const item = store.cart.getItem(index);
+			const item = store.cart.getItem(key);
 			if (item) {
 				store.cart.setItem(
+					key,
 					Object.assign(item, {
 						quantity,
 					}),
@@ -268,7 +267,7 @@ function createCartStore(startItems: CartItems = []) {
 		let amount = 0;
 		let quantity = 0;
 
-		for (const item of cart.items) {
+		for (const [_, item] of cart.items) {
 			amount += item.price * item.quantity;
 			quantity += item.quantity;
 		}

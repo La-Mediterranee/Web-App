@@ -56,7 +56,7 @@
 
 	function createFormDataFromCart(cart: CartItems) {
 		const form = new FormData();
-		for (const item of cart) {
+		for (const [ID, item] of cart) {
 			form.append(item.ID, JSON.stringify(item));
 		}
 		return form;
@@ -80,21 +80,35 @@
 
 	function replacer(key: string, value: any) {
 		if (value instanceof Map) {
+			const object = {};
+
 			return {
 				dataType: 'Map',
-				value: Array.from(value.entries()),
+				value: Array.from(value.values()),
 			};
-		} else {
-			return value;
 		}
+
+		return value;
 	}
 
 	async function submitCart(e: SubmitEvent, items: CartItems) {
 		const form = <HTMLFormElement>e.currentTarget;
 
-		const body = new Map();
-		for (const item of items) {
-			body.set(item.ID, {
+		// const body = new Map();
+		// for (const [ID, item] of items) {
+		// 	body.set(item.ID, {
+		// 		ID: item.ID,
+		// 		categoryType: 'menuitem',
+		// 		selectedToppings: (<MenuCartItem>item).selectedToppings,
+		// 		quantity: item.quantity,
+		// 	});
+		// }
+
+		const body = [];
+
+		for (const [ID, item] of items) {
+			body.push({
+				ID: item.ID,
 				categoryType: 'menuitem',
 				selectedToppings: (<MenuCartItem>item).selectedToppings,
 				quantity: item.quantity,
@@ -107,10 +121,8 @@
 				'method': 'POST',
 				'content-type': 'application/json',
 			},
-			body: JSON.stringify(body, replacer),
+			body: JSON.stringify(body),
 		});
-
-		console.log(res);
 
 		if (res.redirected) goto(res.url);
 	}
@@ -143,8 +155,8 @@
 	export let state: CartState;
 	export let store: CartStore;
 
-	function updateItem(e: Event, index: number) {
-		store.upadateItem(index, +(<HTMLInputElement>e.currentTarget).value);
+	function updateItem(e: Event, key: ID, index: number) {
+		store.upadateItem(key, index, +(<HTMLInputElement>e.currentTarget).value);
 	}
 
 	$: isEmpty = cart.totalQuantity === 0;
@@ -189,17 +201,17 @@
 						</CartItem>
 					</tr>
 				{:else if !isEmpty}
-					{#each cart.items as item, i (item.cartId)}
-						{@const { ID, price, image, name, quantity, cartId } = item}
+					{#each [...cart.items] as [cartID, item], i (cartID)}
+						{@const { ID, price, image, name, quantity } = item}
 						<tr
 							role="row"
 							class="item"
-							data-cartId={cartId}
+							data-cartId={cartID}
 							in:fade={{
 								delay: 200,
 								duration: 600,
 							}}
-							out:send|local={{ key: cartId }}
+							out:send|local={{ key: cartID }}
 							animate:flip={{ duration: 600 }}
 						>
 							<CartItem>
@@ -209,12 +221,12 @@
 								<CartItemQuantity
 									{ID}
 									{quantity}
-									on:change={e => updateItem(e, i)}
+									on:change={e => updateItem(e, cartID, i)}
 								/>
 								<CartItemPrice>
 									{formatPrice(price)}
 								</CartItemPrice>
-								<CartItemActions on:click={() => store.removeItem(i)} />
+								<CartItemActions on:click={() => store.removeItem(cartID, i)} />
 							</CartItem>
 						</tr>
 					{/each}

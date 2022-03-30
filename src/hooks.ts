@@ -2,7 +2,7 @@ import { dev } from '$app/env';
 import { sequence } from '@sveltejs/kit/hooks';
 
 import { RTL_LANGS } from '$i18n/utils';
-import { baseLocale, detectLocale } from '$i18n/i18n-util';
+import { baseLocale, detectLocale, i18n } from '$i18n/i18n-util';
 
 import { parse } from '$lib/server/cookie';
 import { refreshSessionCookie } from '$lib/server/helper';
@@ -16,6 +16,7 @@ import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
 
 import type { BaseLocale } from '$i18n/i18n-types';
 import type * as nodeFetch from 'node-fetch';
+import { loadAllLocales } from '$i18n/i18n-util.sync';
 
 // if (dev) {
 (async function () {
@@ -40,6 +41,14 @@ import type * as nodeFetch from 'node-fetch';
 	});
 })();
 // }
+
+loadAllLocales();
+const LL = i18n();
+
+const attachTranslations: Handle = async ({ event, resolve }) => {
+	event.locals.LL = LL[event.locals.locale];
+	return resolve(event);
+};
 
 const REGEX_ACCEPT_LANGUAGE_SPLIT = /;|,/;
 export const initAcceptLanguageHeaderDetector =
@@ -144,8 +153,6 @@ const parseUser: Handle = async ({ event, resolve }) => {
 		const sessionId = event.locals.cookies.sessionId;
 
 		event.locals.user = sessionId ? await verifySessionCookie(sessionId) : null;
-		// event.locals.user = sessionId ? await auth.verifySessionCookie(sessionId): null;
-		// console.log('JWT:', jwt_decode(cookies.session, { header: true }));
 	} catch (_e) {
 		const err = _e as AuthError;
 		console.error(`parseUser() -> ${err.code}: ${err.message}`);
@@ -178,6 +185,7 @@ export const handle = sequence(
 	cookieParser,
 	parseUser,
 	parseLocale,
+	attachTranslations,
 	attachCsrfToken('/', 'csrfToken'),
 );
 

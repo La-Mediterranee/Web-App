@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
+
 	import CatergoryCard from './_CategoryCard.svelte';
 
 	export let categories: string[];
@@ -6,7 +8,14 @@
 
 <div class="wrapper">
 	{#each categories as category, i (category)}
-		<CatergoryCard {category} />
+		<CatergoryCard
+			inTransition={node =>
+				fade(node, {
+					delay: i * 50,
+					duration: 250,
+				})}
+			{category}
+		/>
 	{/each}
 
 	<!-- <ul class="hexagon-grid">

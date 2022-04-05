@@ -20,6 +20,7 @@ const de: BaseTranslation = {
 		header: {
 			product: 'Produkt',
 			price: 'Preis',
+			subtotal: 'Teilsumme',
 			quantity: 'Anzahl',
 		},
 		remarks: 'Anmerkungen',

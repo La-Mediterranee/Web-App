@@ -1,17 +1,19 @@
 <script lang="ts">
 	export let online = true;
-	export let message: string;
 </script>
 
 <div role="status" aria-hidden={online} class:offline={online === false}>
-	<em>{message}</em>
+	<em>
+		<slot />
+	</em>
 </div>
 
 <style>
 	div {
 		height: 2.5em;
 		width: 100%;
-		z-index: 100;
+		z-index: 10000;
+
 		background-color: #007676;
 		position: fixed;
 		display: flex;

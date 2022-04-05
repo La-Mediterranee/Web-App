@@ -26,6 +26,10 @@
 			title={paths[pathLabel]()}
 			on:click={() => dispatch('click', route)}
 		>
+			<svelte:fragment slot="cart-badge">
+				<slot />
+			</svelte:fragment>
+
 			{paths[pathLabel]()}
 		</TabbarItemComponent>
 	{/each}

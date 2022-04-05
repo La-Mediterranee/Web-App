@@ -10,6 +10,11 @@
 		const ev = e as SubmitEvent;
 		const form = ev.target as HTMLFormElement;
 		const formData = new FormData(form);
+
+		for (const topping of toppings) {
+			const set = new Set(formData.getAll(topping.ID));
+			console.debug(topping.ID, set, formData.getAll(topping.ID));
+		}
 	}
 </script>
 
@@ -41,7 +46,7 @@
 
 		for (const topping of toppings) {
 			const set = new Set(formData.getAll(topping.ID));
-			console.debug(set);
+			// console.debug(set);
 			if (set.size < topping.qtyMin || set.size > topping.qtyMax) {
 				return (valid = false);
 			}
@@ -95,6 +100,9 @@
 		--container-padding: 1.5em 0.8em 1.2em;
 		display: block;
 		position: relative;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
 
 		.actions {
 			left: 10px;
@@ -119,7 +127,7 @@
 		.product-modal-container {
 			--modal-actions-bottom: 10px;
 
-			display: flex;
+			flex-direction: row;
 
 			form {
 				min-height: 100vh;

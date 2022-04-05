@@ -2,7 +2,6 @@
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Ripple from 'svelty-material/actions/Ripple';
 
-	import { cart } from '$lib/stores/cart';
 	import type { ITabbarItem } from 'types/navbar';
 
 	export let title: string;
@@ -26,7 +25,9 @@
 				height={size ? size.height : 30}
 			/>
 			{#if href.includes('cart')}
-				<span class="cart-badge">{$cart.cart.totalQuantity}</span>
+				<span class="cart-badge">
+					<slot name="cart-badge" />
+				</span>
 			{/if}
 			<!-- color={activeRoute !== href
 		? 'var(--tint-color)'
@@ -45,7 +46,6 @@
 <style lang="scss">
 	@use 'variables' as *;
 
-	a,
 	div {
 		display: flex;
 	}
@@ -60,12 +60,79 @@
 	// 	top: 0;
 	// }
 
+	.item {
+		display: block;
+		text-decoration: none;
+		position: relative;
+		background: var(--bar-color);
+		width: 54px;
+		height: 54px;
+
+		border-radius: 50%;
+
+		transition-property: transform;
+		transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
+		transition-duration: 0.2s;
+
+		&-container {
+			border-radius: inherit;
+		}
+
+		&:focus-visible {
+			outline: none;
+		}
+
+		.bubble,
+		&.active {
+			transform: translateY(-50%);
+			transition-delay: 0.15s;
+
+			.mini-bubble {
+				animation-name: animatedMiniBubbleIn;
+				animation-duration: 0.7s;
+				animation-delay: 0.3s;
+				animation-iteration-count: 1;
+				animation-fill-mode: forwards;
+				background: var(--tint-color);
+			}
+
+			.bubble {
+				animation-name: animatedBubbleIn;
+				animation-duration: 0.8s;
+				animation-iteration-count: 1;
+				animation-timing-function: ease-in-out;
+				animation-fill-mode: forwards;
+				background: var(--tint-color);
+			}
+		}
+	}
+
 	.item-container {
 		height: 100%;
 		width: 100%;
 		position: relative;
 		justify-content: center;
 		align-items: center;
+
+		&::before {
+			border-radius: inherit;
+			bottom: 0;
+			color: inherit;
+			content: '';
+			left: 0;
+			opacity: 0;
+			pointer-events: none;
+			position: absolute;
+			right: 0;
+			top: 0;
+			transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+			background-color: currentColor;
+			z-index: 1;
+
+			.item:focus-visible & {
+				opacity: var(--s-btn-focus-visible-opacity, 0.24);
+			}
+		}
 	}
 
 	.bubble,
@@ -123,48 +190,5 @@
 		align-items: center;
 		height: 100%;
 		width: 100%;
-	}
-
-	.item {
-		display: block;
-		text-decoration: none;
-		position: relative;
-		background: var(--bar-color);
-		width: 54px;
-		height: 54px;
-
-		border-radius: 50%;
-
-		transition-property: transform;
-		transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
-		transition-duration: 0.2s;
-
-		&-container {
-			border-radius: inherit;
-		}
-
-		.bubble,
-		&.active {
-			transform: translateY(-50%);
-			transition-delay: 0.15s;
-
-			.mini-bubble {
-				animation-name: animatedMiniBubbleIn;
-				animation-duration: 0.7s;
-				animation-delay: 0.3s;
-				animation-iteration-count: 1;
-				animation-fill-mode: forwards;
-				background: var(--tint-color);
-			}
-
-			.bubble {
-				animation-name: animatedBubbleIn;
-				animation-duration: 0.8s;
-				animation-iteration-count: 1;
-				animation-timing-function: ease-in-out;
-				animation-fill-mode: forwards;
-				background: var(--tint-color);
-			}
-		}
 	}
 </style>

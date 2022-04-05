@@ -1,5 +1,5 @@
-<svelte:head>
+<!-- <svelte:head>
 	<meta name="robots" content="noindex, nofollow" />
-</svelte:head>
+</svelte:head> -->
 
 <slot />

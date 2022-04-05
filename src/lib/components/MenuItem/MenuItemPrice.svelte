@@ -14,7 +14,7 @@
 	span {
 		display: flex;
 		font-size: 1.4rem;
-		padding: 0 0 0.3em 0;
+		padding: 0.3em 0;
 		justify-content: center;
 	}
 </style>

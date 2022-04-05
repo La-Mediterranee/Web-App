@@ -1,6 +1,4 @@
 <script context="module" lang="ts">
-	import LL from '$i18n/i18n-svelte';
-
 	import { goto } from '$app/navigation';
 	import { flip } from 'svelte/animate';
 	import { scale, fade, crossfade } from 'svelte/transition';
@@ -138,29 +136,30 @@
 <script lang="ts">
 	import Card from 'svelty-material/components/Card/Card.svelte';
 
-	import CartTable from './table/CartTable.svelte';
-	import CartFooter from './table/CartFooter.svelte';
-	import CartHeaders from './table/CartHeaders.svelte';
+	import CartTable from './CartTable.svelte';
+	import CartFooter from './CartFooter.svelte';
+	import CartHeaders from './CartHeaders.svelte';
 
-	import CartItem from './table/CartItem/CartItem.svelte';
-	import CartItemPrice from './table/CartItem/Price.svelte';
-	import CartItemProduct from './table/CartItem/Product.svelte';
-	import CartItemQuantity from './table/CartItem/Quantity.svelte';
-	import CartItemActions from './table/CartItem/Actions.svelte';
+	import CartItem from './CartItem/CartItem.svelte';
+	import CartItemPrice from './CartItem/Price.svelte';
+	import CartItemProduct from './CartItem/Product.svelte';
+	import CartItemQuantity from './CartItem/Quantity.svelte';
+	import CartItemActions from './CartItem/Actions.svelte';
 
-	import type { TableHeader } from './table/CartHeaders.svelte';
+	import type { TableHeader } from './CartHeaders.svelte';
 	import type { ID, MenuCartItem } from 'types/product';
+
+	import { geti18nContext } from '$i18n/utils';
 
 	export let cart: Cart;
 	export let state: CartState;
 	export let store: CartStore;
 
+	const { LL } = geti18nContext();
+
 	function updateItem(e: Event, key: ID, index: number) {
 		store.upadateItem(key, index, +(<HTMLInputElement>e.currentTarget).value);
 	}
-
-	$: isEmpty = cart.totalQuantity === 0;
-	$: busy = state === 'Loading';
 </script>
 
 <div id="cart">
@@ -184,8 +183,8 @@
 				{$LL.cart.cartItems()}
 			</caption>
 			<CartHeaders headers={tableHeaders} />
-			<tbody role="rowgroup" aria-live="polite" aria-busy={busy}>
-				{#if busy}
+			<tbody role="rowgroup" aria-live="polite" aria-busy={state === 'Loading'}>
+				{#if state === 'Loading'}
 					<tr
 						colspan={tableHeaders.length}
 						class="state"
@@ -200,7 +199,7 @@
 							<td class="cart-item" style="width: 100%;"> Loading </td>
 						</CartItem>
 					</tr>
-				{:else if !isEmpty}
+				{:else if state === 'Filled'}
 					{#each [...cart.items] as [cartID, item], i (cartID)}
 						{@const { ID, price, image, name, quantity } = item}
 						<tr
@@ -251,13 +250,13 @@
 			</tbody>
 		</CartTable>
 		<Card class="cart-actions" role="group">
-			<CartFooter disabled={isEmpty}>
+			<CartFooter disabled={state === 'Empty'}>
 				<svelte:fragment slot="notes">Anmerkungen</svelte:fragment>
 
 				<svelte:fragment slot="quantity">
-					Summe ({cart.totalQuantity} Produkte):
+					Summe ({cart?.totalQuantity || 0} Produkte):
 				</svelte:fragment>
-				{cart.displayTotalAmount}
+				{cart?.displayTotalAmount || 0}
 
 				<svelte:fragment slot="submit-text">Zur Kasse</svelte:fragment>
 			</CartFooter>

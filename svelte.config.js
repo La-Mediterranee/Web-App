@@ -150,6 +150,7 @@ function vite() {
 						: './config/example.com+5-key.pem',
 				),
 			},
+			host: true,
 			// proxy: {
 			// 	'/api': {
 			// 		target: 'http://localhost:5000',

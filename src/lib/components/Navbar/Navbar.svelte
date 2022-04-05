@@ -1,6 +1,5 @@
 <script context="module" lang="ts">
 	import { mdiCart } from '@mdi/js';
-	import { page, session } from '$app/stores';
 	import { createEventDispatcher } from 'svelte';
 
 	import type { INavbarItem } from 'types/navbar';
@@ -11,55 +10,57 @@
 	import Link from 'svelty-material/components/Button/Link.svelte';
 	import Badge from 'svelty-material/components/Badge/Badge.svelte';
 
-	import LL from '$i18n/i18n-svelte';
 	import NavLogo from './NavLogo.svelte';
 	import SkipMain from './SkipMain.svelte';
 	import NavbarItem from './NavbarItem.svelte';
 
-	import { cart } from '$lib/stores/cart';
+	import type { CartState } from '$lib/stores/cart';
 
 	export let routes: INavbarItem[] = [];
+	export let pathname: string;
+	export let urlLocale: string;
+	export let cartState: CartState;
+	export let LL: TranslationFunctions;
+	export let user: App.Session['user'];
 
 	const dispatch = createEventDispatcher();
 </script>
 
 <header id="top-bar" itemscope itemtype="https://schema.org/WPHeader">
 	<SkipMain>Skip to main</SkipMain>
-	<NavLogo href={`${$session.urlLocale || '/'}`} on:click={() => dispatch('click', 'home')}>
-		Home
-	</NavLogo>
+	<NavLogo href={urlLocale} on:click={() => dispatch('click', 'home')}>Home</NavLogo>
 
 	<nav
 		itemscope
 		itemtype="https://schema.org/SiteNavigationElement"
-		aria-label={`${$LL.nav.navbarAriaLabel()}`}
+		aria-label={LL.nav.navbarAriaLabel()}
 	>
 		<ul>
 			{#each routes as { pathLabel, href, rel, route } (href)}
 				<NavbarItem
 					{href}
 					{rel}
-					current={href === $page.url.pathname && 'page'}
+					current={href === pathname && 'page'}
 					on:click={() => dispatch('click', route)}
 				>
-					{$LL.nav.routes[pathLabel]()}
+					{LL.nav.routes[pathLabel]()}
 				</NavbarItem>
 			{/each}
 		</ul>
 	</nav>
 
 	<div id="avatar">
-		{#if $session.user}
+		{#if user}
 			<Link
 				text
 				size="x-large"
 				class="img-url"
-				aria-label="Account {$session.user.displayName}"
-				href={`${$session.urlLocale}/customer`}
+				aria-label="Account {user.displayName}"
+				href={`${urlLocale}/customer`}
 				on:click={() => dispatch('click', 'customer')}
 			>
 				<img
-					src={$session.user.photoURL ||
+					src={user.photoURL ||
 						`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' /%3E`}
 					alt="Your Avatar"
 					aria-hidden="true"
@@ -73,10 +74,10 @@
 			<Link
 				text
 				sveltekit:prefetch
-				href={`${$session.urlLocale}/customer/login`}
+				href={`${urlLocale}/customer/login`}
 				on:click={() => dispatch('click', 'customer')}
 			>
-				<span>{$LL.customer.login()}</span>
+				<span>{LL.customer.login()}</span>
 			</Link>
 		{/if}
 	</div>
@@ -84,17 +85,17 @@
 		<Link
 			style="width: 3.5em; height:3.5em"
 			sveltekit:prefetch
-			href={`${$session.urlLocale}/cart`}
+			href={`${urlLocale}/cart`}
 			size="x-large"
 			icon
 			on:click={() => dispatch('click', 'cart')}
 		>
-			<Badge class="primary-color" bordered active={$cart.state !== 'Loading'}>
+			<Badge class="primary-color" bordered active={cartState !== 'Loading'}>
 				<Icon path={mdiCart} ariaHidden={true} />
 
-				<span class="visually-hidden">{$LL.cart.cart()}</span>
+				<span class="visually-hidden">{LL.cart.cart()}</span>
 				<span slot="badge">
-					{$cart.cart.totalQuantity}
+					<slot name="cartTotalQuantity" />
 				</span>
 			</Badge>
 		</Link>
@@ -180,10 +181,7 @@
 		display: none;
 		align-items: center;
 		justify-content: center;
-		padding: 0 0.6em 0 0;
-
-		[dir='rtl'] & {
-		}
+		padding-inline-end: 0.6em;
 	}
 
 	@media screen and (min-width: 960px) {

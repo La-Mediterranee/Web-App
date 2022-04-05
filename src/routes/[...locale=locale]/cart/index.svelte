@@ -10,4 +10,4 @@
 	import { cart } from '$lib/stores/cart';
 </script>
 
-<CartPage store={cart} cart={$cart.cart} state={$cart.state} />
+<CartPage store={cart} cart={$cart} state={$cart.state} />

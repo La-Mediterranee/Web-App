@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { mdiAlert } from '@mdi/js';
 	import { goto } from '$app/navigation';
-	import { slide } from 'svelte/transition';
+	import { slide, fade } from 'svelte/transition';
 
 	import { getCookie, getFocusableChildren } from '$lib/utils';
 	import { getAuthContext } from '$lib/firebase/helpers';
@@ -188,7 +188,7 @@
 	});
 </script>
 
-<div id="login-view" bind:this={loginView}>
+<div id="login-view" in:fade bind:this={loginView}>
 	<div class="login-error" on:click={() => (error = !error)}>
 		<Alert
 			class="error-color"

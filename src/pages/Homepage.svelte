@@ -8,29 +8,23 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
 	import Carousel from '$lib/components/Carousel';
-	import ProductCard from '$lib/components/ProductCard';
+	import Image from '$lib/components/Image/Image.next.svelte';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
 	import CarouselItem from '$lib/components/Carousel/CarouselItem.svelte';
 
 	import { session } from '$app/stores';
+	import { derived } from 'svelte/store';
 
 	import { cart, formatPrice } from '$lib/stores/cart';
 	import { getProductModalContext } from '$lib/utils';
 
 	import type { CartItem, MenuItem } from 'types/product';
-	import Image from '$lib/components/Image/Image.next.svelte';
-	import { derived } from 'svelte/store';
 
 	export let homePageData: HomepageProps | undefined;
 
 	const modal = getProductModalContext();
 
 	const sections = homePageData?.sections || [];
-
-	// $: cardActionText = {
-	// 	true: $LL.product.addToCart,
-	// 	false: $LL.product.chooseOptions,
-	// };
 
 	new Map([
 		[true, $LL.product.addToCart],
@@ -83,7 +77,7 @@
 						<CarouselItem ariaHidden={!itemsVisibility[i]}>
 							<MenuItemCard
 								href="{$session.urlLocale}/product/{menuItem.ID}"
-								product={menuItem}
+								item={menuItem}
 								isVisible={itemsVisibility[i]}
 								label={{
 									item: $LL.menuItem.label[menuItem.type || 'food'](),
@@ -100,7 +94,7 @@
 								</data>
 
 								<svelte:fragment slot="cta">
-									{$cardActionText[`${menuItem.toppings?.length === 0}`]()}
+									{$cardActionText[`${menuItem.toppings.length === 0}`]()}
 								</svelte:fragment>
 							</MenuItemCard>
 						</CarouselItem>

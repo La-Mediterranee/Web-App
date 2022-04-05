@@ -27,7 +27,7 @@
 		width: 100%;
 		padding-top: var(--menuitem-actions-pb-start, 2.2em);
 		position: relative;
-		overflow: hidden;
+		// overflow: hidden;
 		border-bottom-left-radius: var(--theme-card-border-radius);
 		border-bottom-right-radius: var(--theme-card-border-radius);
 		color: #278cc5;

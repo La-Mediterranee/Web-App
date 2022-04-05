@@ -35,7 +35,7 @@
 		<MenuItemCard
 			style="flex: 0 1 32%;"
 			href="{$session.urlLocale}/product/{drink.ID}"
-			product={drink}
+			item={drink}
 			label={{
 				item: $LL.menuItem.label.drink(),
 				price: $LL.product.price(),

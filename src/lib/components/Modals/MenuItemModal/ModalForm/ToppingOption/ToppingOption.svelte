@@ -22,8 +22,8 @@
 			border-radius: 0.5em;
 		}
 
-		@media screen and (min-width: $modalBP) {
-			flex: 1 1 50%;
-		}
+		// @media screen and (min-width: $modalBP) {
+		// 	flex: 1 1 50%;
+		// }
 	}
 </style>

@@ -13,6 +13,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-wrap: wrap;
+		z-index: 3;
 
 		padding: 0.4em;
 		// margin: 0.6em 0.2em 0;

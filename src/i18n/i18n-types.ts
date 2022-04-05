@@ -77,6 +77,10 @@ type RootTranslation = {
 			 */
 			price: string
 			/**
+			 * Teilsumme
+			 */
+			subtotal: string
+			/**
 			 * Anzahl
 			 */
 			quantity: string
@@ -250,6 +254,10 @@ export type TranslationFunctions = {
 			 * Preis
 			 */
 			price: () => LocalizedString
+			/**
+			 * Teilsumme
+			 */
+			subtotal: () => LocalizedString
 			/**
 			 * Anzahl
 			 */

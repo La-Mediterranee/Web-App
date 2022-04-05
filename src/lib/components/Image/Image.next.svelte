@@ -213,15 +213,12 @@
 			);
 		}
 
-		if (!width || !height) {
+		if (
+			(typeof widthInt !== 'undefined' && isNaN(widthInt)) ||
+			(typeof heightInt !== 'undefined' && isNaN(heightInt))
+		) {
 			throw new Error(
-				`${TAG} Image with src "${src}" width and height must be defined to get a correct aspectratio`,
-			);
-		}
-
-		if (typeof width !== 'number' || typeof height !== 'number') {
-			throw new Error(
-				`${TAG} Image with src "${src}" has invalid width and height. They must be of type "number"`,
+				`Image with src "${src}" has invalid "width" or "height" property. These should be numeric values.`,
 			);
 		}
 

@@ -35,7 +35,7 @@
 			:global(textarea.cart-notes) {
 				width: 100%;
 				min-height: 6em;
-				padding: 0.4em 0 0 0;
+				padding: 1em 0 0 0;
 			}
 		}
 

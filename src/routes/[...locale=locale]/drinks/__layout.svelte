@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
 	import type { LoadOutput } from '@sveltejs/kit/types/internal';
+	import { onMount } from 'svelte';
 
 	const routeName = 'drinks';
 
@@ -45,6 +46,7 @@
 </script>
 
 <script lang="ts">
+	onMount(() => console.debug('drinks mounted'));
 </script>
 
 <slot />

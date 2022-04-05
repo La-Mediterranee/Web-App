@@ -3,25 +3,52 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 import { set as keyvalSet, get as keyvalGet } from 'idb-keyval';
 
-import type { CartItem, ID, SelectedTopping } from 'types/product';
+import type { CartItem, ID, MenuItem, SelectedTopping } from 'types/product';
 
 // export type CartItems = CartItem[];
 export type CartItemIndecies = Map<ID, number[]>;
 export type CartItems = Map<ID, CartItem>;
 
 export interface Cart {
+	readonly state: CartState;
+	readonly items: CartItems;
 	readonly totalAmount: number;
 	readonly totalQuantity: number;
 	readonly displayTotalAmount: string;
-	readonly items: CartItems;
 }
+
+export type CartState = 'Loading' | 'Empty' | 'Filled' | 'Done'; //| 'Animating';
+
+interface LoadedCart {
+	state: CartState;
+	cart: ClientCart;
+}
+
+interface LoadingCart {
+	state: 'Loading';
+	cart: undefined;
+}
+
+export type CartWithState = LoadingCart | LoadedCart;
 
 class ClientCart implements Cart {
 	totalAmount = 0;
 	totalQuantity = 0;
 	displayTotalAmount = '0';
 
-	constructor(readonly items: CartItems) {}
+	constructor(public items: CartItems, public state: CartState = 'Loading') {}
+
+	setItems(items: CartItems) {
+		this.items = items;
+	}
+
+	setState(newState: CartState) {
+		this.state = newState;
+	}
+
+	has(key: ID) {
+		return this.items.has(key);
+	}
 
 	setItem(key: ID, item: CartItem) {
 		return this.items.set(key, item);
@@ -37,24 +64,11 @@ class ClientCart implements Cart {
 
 	clear() {
 		this.items.clear();
+		this.totalAmount = 0;
+		this.totalQuantity = 0;
+		this.displayTotalAmount = formatPrice(0);
+		this.setState('Empty');
 	}
-
-	// setItem(value: CartItem) {
-	// 	return this.items.push(value);
-	// }
-
-	// getItem(index: number) {
-	// 	return this.items[index];
-	// }
-
-	// deleteItem(index: number) {
-	// 	return this.items.splice(index, 1);
-	// }
-
-	// clear() {
-	// 	//@ts-ignore
-	// 	this.items = [];
-	// }
 }
 
 const SHOP_DB = 'shop-db';
@@ -99,12 +113,6 @@ class Storage {
 	}
 }
 
-export type CartState = 'Loading' | 'Done'; //| 'Animating';
-export interface CartWithState {
-	state: CartState;
-	cart: ClientCart;
-}
-
 export function formatPrice(amount: number, locale = 'de-DE') {
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
@@ -124,60 +132,75 @@ export async function digestMessage(message: string) {
 	return hashHex;
 }
 
-function createCartStore(startItems: CartItems = new Map()) {
+function createMenuItemString(item: CartItem) {
+	//@ts-ignore
+	const toppingIds = item.selectedToppings.reduce(
+		//@ts-ignore
+		(prev, s) =>
+			prev +
+			s.toppingID +
+			//@ts-ignore
+			s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
+		'',
+	);
+
+	return item.ID + toppingIds;
+}
+
+function createCartStore(
+	startItems: CartItems = new Map([
+		[
+			'1312',
+			{
+				ID: '1312',
+				type: 'food',
+				category: 'burger',
+				categoryType: 'Menuitem',
+				name: 'Burger',
+				desc: '',
+				isAvailable: true,
+				isVegetarian: false,
+				image: {
+					src: '/burger.webp',
+				},
+				toppings: [],
+				price: 830,
+				quantity: 1,
+				selectedToppings: [],
+			},
+		],
+	]),
+) {
 	const sound = browser ? new Audio('') : null;
 
 	const storage = new Storage();
-	const startCart = new ClientCart(startItems);
 
 	const start: CartWithState = {
-		cart: startCart,
 		state: 'Loading',
+		cart: undefined,
 	};
 
 	function saveCart(items: CartItems) {
 		storage.set(items);
 	}
 
-	const _items = new Map();
+	const cart = new ClientCart(startItems);
 
-	const store = writable<CartWithState>(start, set => {
-		let cart: ClientCart;
-		onMount(async () => {
-			try {
-				cart = new ClientCart((await storage.get<CartItems>()) || startItems);
-				const item: CartItem = {
-					ID: '1312',
-					type: 'food',
-					category: 'burger',
-					categoryType: 'Menuitem',
-					name: 'Burger',
-					desc: '',
-					isAvailable: true,
-					isVegetarian: false,
-					image: {
-						src: '/burger.webp',
-					},
-					toppings: [],
-					price: 830,
-					quantity: 1,
-					selectedToppings: [],
-				};
+	const store = writable<Cart>(cart, set => {
+		// let cart: Promise<ClientCart>; // = new Promise((resolve)=> {});
 
-				addItem(item);
-			} catch (error) {
-				console.error(error);
-			}
-
-			console.debug(cart);
-
-			cart ||= startCart;
-			calculateTotal(cart);
-
-			set({
-				cart: cart,
-				state: 'Done',
-			});
+		onMount(() => {
+			(async function () {
+				try {
+					// cart = new ClientCart((await storage.get<CartItems>()) || startItems);
+					cart.setItems((await storage.get<CartItems>()) || startItems);
+					cart.setState(cart.items.size > 0 ? 'Filled' : 'Empty');
+					calculateTotal(cart);
+					set(cart);
+				} catch (error) {
+					console.error(error);
+				}
+			})();
 
 			return () => {
 				sound?.pause();
@@ -188,29 +211,31 @@ function createCartStore(startItems: CartItems = new Map()) {
 
 	const { subscribe, update } = store;
 
+	function onChange(store: ClientCart) {
+		if (store.items.size === 0) {
+			return store.setState('Empty');
+		}
+
+		store.setState('Filled');
+	}
+
 	async function addItem(item: CartItem) {
 		try {
-			//@ts-ignore
-			const toppingIds = item.selectedToppings.reduce(
-				//@ts-ignore
-				(prev, s) =>
-					prev +
-					s.toppingID +
-					//@ts-ignore
-					s.toppingOptionsIds.reduce((prev, s) => prev + s.ID, ''),
-				'',
-			);
-
-			const key = await digestMessage(item.ID + toppingIds);
-
-			if (_items.has(key)) return;
-
+			const key = await digestMessage(createMenuItemString(item));
 			// sound?.play();
-			update(store => {
-				store.cart.setItem(key, item);
-				calculateTotal(store.cart);
-				saveCart(store.cart.items);
-				return store;
+			update(cart => {
+				const loadedCart = <ClientCart>cart;
+				let value = item;
+				if (loadedCart.has(key)) {
+					const item = loadedCart.getItem(key)!;
+					item.quantity += 1;
+					value = item;
+				}
+				loadedCart.setItem(key, value);
+				calculateTotal(loadedCart);
+				saveCart(loadedCart.items);
+				onChange(loadedCart);
+				return cart;
 			});
 		} catch (error) {
 			console.error(error);
@@ -219,14 +244,15 @@ function createCartStore(startItems: CartItems = new Map()) {
 
 	async function removeItem(key: ID, index: number) {
 		try {
-			// sound?.play();
-
-			update(store => {
+			// sound?.play(); d
+			update(cart => {
+				const loadedCart = <ClientCart>cart;
 				// store.state = 'Animating';
-				store.cart.deleteItem(key);
-				calculateTotal(store.cart);
-				saveCart(store.cart.items);
-				return store;
+				loadedCart.deleteItem(key);
+				calculateTotal(loadedCart);
+				saveCart(loadedCart.items);
+				onChange(loadedCart);
+				return cart;
 			});
 		} catch (_e) {
 			console.error(_e);
@@ -235,31 +261,31 @@ function createCartStore(startItems: CartItems = new Map()) {
 
 	function upadateItem(key: ID, index: number, quantity: number) {
 		// sound?.play();
-		update(store => {
-			const item = store.cart.getItem(key);
-			if (item) {
-				store.cart.setItem(
-					key,
-					Object.assign(item, {
-						quantity,
-					}),
-				);
-				calculateTotal(store.cart);
-				saveCart(store.cart.items);
-			}
-			return store;
+		update(cart => {
+			const loadedCart = <ClientCart>cart;
+			const item = loadedCart.getItem(key);
+			if (item === undefined) return cart;
+
+			loadedCart.setItem(
+				key,
+				Object.assign(item, {
+					quantity,
+				}),
+			);
+			calculateTotal(loadedCart);
+			saveCart(loadedCart.items);
+			onChange(loadedCart);
+			return cart;
 		});
 	}
 
 	function removeAll() {
 		sound?.play();
-		update(store => {
-			store.cart.totalQuantity = 0;
-			store.cart.totalAmount = 0;
-			store.cart.displayTotalAmount = formatPrice(0);
-			store.cart.clear();
-			saveCart(store.cart.items);
-			return store;
+		update(cart => {
+			const loadedCart = <ClientCart>cart;
+			loadedCart.clear();
+			saveCart(loadedCart.items);
+			return cart;
 		});
 	}
 
@@ -277,20 +303,12 @@ function createCartStore(startItems: CartItems = new Map()) {
 		cart.displayTotalAmount = formatPrice(cart.totalAmount);
 	}
 
-	function setState(newState: CartState) {
-		update(store => {
-			store.state = newState;
-			return store;
-		});
-	}
-
 	return {
 		subscribe,
 		removeItem,
 		addItem,
 		removeAll,
 		upadateItem,
-		setState,
 	};
 }
 

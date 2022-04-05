@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
-	import { dev } from '$app/env';
-	import { onMount } from 'svelte';
+	import { browser, dev } from '$app/env';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	import { baseLocale } from '$i18n/i18n-util';
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	import { RTL_LANGS, locales } from '$i18n/utils';
+	import { setLocale } from '$i18n/i18n-svelte';
+	import { RTL_LANGS, locales, seti18nContext } from '$i18n/utils';
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
 	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
@@ -73,14 +73,13 @@
 
 	// import { initI18nSvelte } from 'typesafe-i18n/adapters/adapter-svelte';
 	// import { loadedLocales, loadedFormatters } from '$i18n/i18n-util';
+	import { navigating, page, session } from '$app/stores';
 
-	import { navigating, page } from '$app/stores';
+	import { cart } from '$lib/stores/cart';
 	import { setAppContext } from '$lib/stores/app';
 	import { replaceLocaleInUrl } from '$lib/utils';
 
 	import type { INavbarItem, ITabbarItem } from 'types/navbar';
-	import { serialize } from '$lib/server/cookie';
-	import PreloadingIndicator from '$lib/components/PreloadingIndicator/PreloadingIndicator.svelte';
 
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
@@ -88,17 +87,10 @@
 
 	let online: boolean = true;
 
-	// const {
-	// 	locale,
-	// 	LL,
-	// 	setLocale: setLL,
-	// } = initI18nSvelte<Locales, Translations, TranslationFunctions, Formatters>(
-	// 	loadedLocales,
-	// 	loadedFormatters,
-	// );
+	const { LL, setLocale: setLL } = seti18nContext();
 
 	setLocale(lang);
-	// setLL(lang);
+	setLL(lang);
 
 	const app = setAppContext();
 	app.setActiveRoute($page.stuff.activeRoute);
@@ -116,20 +108,20 @@
 		return Object.assign({}, item, {
 			href: `${urlLocale}${href}`,
 			rel: rel instanceof Array ? rel.join(' ') : rel,
-			// isActive: href === $page.stuff.activeRoute,
 			isActive: route === $app.activeRoute,
 		});
 	});
 
-	onMount(async () => {
+	onMount(() => {
 		if (dev) return;
-
 		// const sw = await registerServiceWorker();
 		// Notification.requestPermission(permission => {
 		// 	if (permission === 'granted') {
 		// 		sw?.showNotification($LL.addToCart());
 		// 	}
 		// });
+
+		return () => {};
 	});
 </script>
 
@@ -162,12 +154,35 @@
 
 <Modals>
 	<div id="main-content">
-		<Statusbar message={$t.connectionStatus()} {online} />
+		<Statusbar {online}>
+			{$LL.connectionStatus()}
+		</Statusbar>
 		<!-- {#if $navigating}
 			<PreloadingIndicator />
 		{/if} -->
-		<Navbar routes={navbarRoutes} on:click={e => app.setActiveRoute(e.detail)} />
 		<!-- <Installprompt installSource={'LayoutInstallButton'} /> -->
+		<Navbar
+			routes={navbarRoutes}
+			LL={$LL}
+			user={$session.user}
+			urlLocale={$session.urlLocale}
+			pathname={$page.url.pathname}
+			cartState={$cart.state}
+			on:click={e => app.setActiveRoute(e.detail)}
+		>
+			<svelte:fragment slot="cartTotalQuantity">
+				{$cart.totalQuantity}
+			</svelte:fragment>
+		</Navbar>
+
+		<!-- It's important to have the tabbar at the beginning for better a11y -->
+		<Tabbar
+			paths={$LL.nav.routes}
+			routes={tabbarRoutes}
+			on:click={e => app.setActiveRoute(e.detail)}
+		>
+			{$cart.totalQuantity}
+		</Tabbar>
 		<div class="inner-content">
 			<main id="main-start" class="margin-navbar">
 				<slot />
@@ -175,10 +190,5 @@
 			<Footer />
 		</div>
 		<!-- <UpdatePrompt /> -->
-		<Tabbar
-			paths={$t.nav.routes}
-			routes={tabbarRoutes}
-			on:click={e => app.setActiveRoute(e.detail)}
-		/>
 	</div>
 </Modals>

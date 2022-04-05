@@ -31,6 +31,7 @@ async function homepage(): Promise<HomepageProps> {
 
 	const sections = await Promise.all(responses.map(res => res.json()));
 	const titles = ['Bestseller', 'Recommendation'];
+
 	return {
 		sections: sections.map((v, i) => ({
 			title: titles[i],

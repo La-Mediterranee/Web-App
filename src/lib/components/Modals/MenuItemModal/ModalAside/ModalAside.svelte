@@ -19,9 +19,9 @@
 				<h1 {id} class="title">
 					<slot />
 				</h1>
-				<span class="price">
+				<div class="price">
 					<slot name="price" />
-				</span>
+				</div>
 			</div>
 			<slot name="description" />
 		</header>
@@ -49,15 +49,31 @@
 		}
 	}
 
+	.info {
+	}
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.6em 0 0.4em;
+	}
+
 	.title {
 		font-size: 2em;
-		margin: 0.6em 0 0.4em;
+		flex: 0 1 auto;
+		overflow-wrap: break-word;
+		// span {
+		// 	margin-inline-end: 0.5em;
+		// }
 	}
 
 	.price {
 		font-size: 1.5em;
 		font-weight: 500;
-		padding-inline-start: 0.2em;
+		text-align: end;
+		flex: 0 0 3.6em;
+		margin-inline-start: auto;
 	}
 
 	.sidebar-container {
@@ -79,7 +95,7 @@
 		}
 
 		aside {
-			flex: 0 0 var(--aside-width);
+			flex: 1 0 var(--aside-width);
 			max-width: var(--aside-width);
 			height: 100vh;
 			position: sticky;
@@ -91,7 +107,6 @@
 		}
 
 		.title {
-			font-size: 2.5em;
 			text-align: center;
 		}
 	}

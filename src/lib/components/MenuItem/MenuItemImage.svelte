@@ -48,6 +48,10 @@
 		margin-block-start: var(--menu-item-img-mbs);
 		margin-block-end: 0.6em;
 
+		:global(img) {
+			border-radius: var(--theme-card-border-radius);
+		}
+
 		transition: transform 500ms ease;
 	}
 

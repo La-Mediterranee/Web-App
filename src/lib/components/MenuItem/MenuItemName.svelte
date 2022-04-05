@@ -38,8 +38,8 @@
 			text-decoration: none;
 			outline: none;
 
-			word-break: break-word;
 			display: -webkit-box;
+			word-break: break-word;
 			text-overflow: ellipsis;
 			hyphens: auto;
 

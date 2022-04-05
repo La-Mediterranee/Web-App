@@ -11,7 +11,7 @@ const ioCreater = !browser
 			console.debug('creating IO');
 			return new IntersectionObserver(entries => {
 				entries.forEach(entry => {
-					const state = entry.isIntersecting ? 'running' : 'paused';
+					const state = entry.isIntersecting ? '' : 'paused';
 					(<HTMLElement>entry.target).style.animationPlayState = state;
 					// (<HTMLElement>entry.target).style.setProperty('--animps', state);
 				});
@@ -21,7 +21,7 @@ const ioCreater = !browser
 function createAnimationStore() {
 	let IO: IntersectionObserver;
 
-	const store = writable(new WeakSet<Element>(), set => {
+	const store = writable(new WeakMap<Element>(), set => {
 		IO = ioCreater();
 
 		return () => {
@@ -39,9 +39,9 @@ function createAnimationStore() {
 	 * when the element gets destoyed can cause a memory leak because not all browser use weak references for the
 	 * observed elements.
 	 */
-	function push(el: Element) {
+	function push(el: Element, options = {}) {
 		// if (dev) console.debug('pushing', el);
-		update(old => old.add(el));
+		update(old => old.set(el, options));
 		IO.observe(el);
 
 		return function pop() {

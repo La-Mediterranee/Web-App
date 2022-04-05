@@ -20,6 +20,7 @@ const en: Translation = {
 		header: {
 			product: 'Product',
 			price: 'Price',
+			subtotal: 'Subtotal',
 			quantity: 'Quantity',
 		},
 		remarks: 'Remarks',

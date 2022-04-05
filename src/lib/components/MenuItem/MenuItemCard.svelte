@@ -67,8 +67,9 @@
 	import LdTag from '../LDTag/LDTag.svelte';
 	import { getAnimationsContext } from '$lib/stores/animations';
 	import { onMount } from 'svelte';
+	import MenuItemDesc from './MenuItemDesc.svelte';
 
-	export let product: MenuItem;
+	export let item: MenuItem;
 	export let href: string;
 	export let label: {
 		item: string | LocalizedString;
@@ -77,7 +78,7 @@
 	export let style: string | undefined = undefined;
 	export let isVisible = true;
 
-	const { image, name, price, category, desc, toppings } = product;
+	const { image, name, price, category, desc, toppings } = item;
 
 	let ctaEl: HTMLDivElement;
 	let waveEl: SVGSVGElement;
@@ -172,12 +173,19 @@
 				<slot name="price" />
 			</MenuItemPrice>
 
+			{#if desc}
+				<MenuItemDesc>
+					{desc}
+				</MenuItemDesc>
+			{/if}
+
 			<MenuItemActions bind:ctaEl>
 				<SmallWave bind:el={waveEl} slot="prepend" class="wave" />
 				<slot name="cta" />
 			</MenuItemActions>
 		</div>
 	</Card>
+	<meta itemprop="suitableForDiet" content="https://schema.org/HalalDiet" />
 </article>
 
 <style lang="scss" global>
@@ -201,6 +209,10 @@
 		margin-inline-start: var(--product-card-margin-start, 0);
 		margin-inline-end: var(--product-card-margin-end, 0);
 
+		:global(.s-card) {
+			height: 100%;
+		}
+
 		.inner-card {
 			position: relative;
 			overflow: hidden;
@@ -216,24 +228,34 @@
 			animation: wave linear 3s infinite;
 			transform: translateZ(0);
 			will-change: transform;
+			animation-play-state: var(--animps, paused);
 
 			@media (prefers-reduced-motion: no-preference) {
-				animation-play-state: running;
+				--animps: running;
 			}
+
+			@media screen and (min-width: 450px) and (any-hover: none) and (pointer: coarse) {
+				--animps: paused;
+				// animation: wave linear 4s infinite;
+			}
+
+			// @media (prefers-reduced-motion: no-preference) {
+			// 	animation-play-state: running;
+			// }
 		}
 
-		@media (any-hover: hover) and (pointer: fine) {
+		@media screen and (any-hover: hover) and (pointer: fine) {
 			--actions-transition-duration: 750ms;
 
 			.wave {
-				animation-play-state: paused;
+				--animps: paused;
 			}
 
 			&:focus-within,
 			&:hover {
 				@media (prefers-reduced-motion: no-preference) {
 					.wave {
-						animation-play-state: running;
+						--animps: running;
 					}
 				}
 			}

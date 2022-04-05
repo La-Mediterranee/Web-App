@@ -1,16 +1,27 @@
 <script lang="ts">
+	import Image from '$lib/components/Image/Image.next.svelte';
+
 	import Card from 'svelty-material/components/Card/Card.svelte';
-	import CardText from 'svelty-material/components/Card/CardText.svelte';
-	import CardTitle from 'svelty-material/components/Card/CardTitle.svelte';
-	import Link from 'svelty-material/components/Button/Link.svelte';
 
 	export let category: string;
+	export let inTransition: (
+		node: HTMLElement,
+		options: Record<string, unknown>,
+	) => SvelteTransitionReturnType = () => ({});
 </script>
 
-<div class="category">
+<div in:inTransition class="category">
 	<Card>
 		<a href="./food/{category.toLowerCase()}">
-			<img src="/burger.png" alt="" />
+			<Image
+				layout="responsive"
+				objectFit="scale-down"
+				objectPosition="center"
+				height={294}
+				width={437}
+				src="/burger.png"
+				alt=""
+			/>
 			<span>
 				{category}
 			</span>
@@ -24,16 +35,11 @@
 	.category {
 		text-align: end;
 		position: relative;
-		flex: 0 1 100%;
+		flex: 0 1 var(--category-card-width, 100%);
 
 		:global(.s-card) {
 			height: inherit;
 			margin: 0.7em 0.4em;
-		}
-
-		img {
-			height: auto;
-			width: 100%;
 		}
 
 		span {
@@ -48,7 +54,7 @@
 		}
 
 		@media screen and (min-width: 540px) {
-			flex: 0 1 50%;
+			--category-card-width: 50%;
 
 			&:nth-child(2n) {
 				text-align: start;
@@ -63,9 +69,9 @@
 		}
 	}
 
-	@media screen and (min-width: 1200px) {
+	@media screen and (min-width: 850px) {
 		.category {
-			flex: 0 1 33%;
+			--category-card-width: 33%;
 
 			&:nth-child(4n + 3),
 			&:nth-child(4n + 4) {
@@ -73,6 +79,12 @@
 					flex-direction: row-reverse;
 				}
 			}
+		}
+	}
+
+	@media screen and (min-width: 1200px) {
+		.category {
+			--category-card-width: 25%;
 		}
 	}
 </style>

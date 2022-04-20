@@ -1,6 +1,4 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
-
 	import LDTag from '$lib/components/LDTag';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
 
@@ -17,6 +15,7 @@
 
 	import { cart, formatPrice } from '$lib/stores/cart';
 	import { session } from '$app/stores';
+	import { LL } from '$i18n/utils';
 
 	const header = 'Drinks';
 
@@ -28,33 +27,35 @@
 </script>
 
 <LDTag {schema} />
+<div style="display: contents;" itemscope itemtype="https://schema.org/MenuSection">
+	<h1 itemprop="name">{header}</h1>
+	<div in:fade={{ delay: 0, duration: 700 }}>
+		{#each drinks as drink}
+			<MenuItemCard
+				style="flex: 0 1 32%;"
+				href="{$session.urlLocale}/product/{drink.ID}"
+				itemprop="hasMenuItem"
+				item={drink}
+				label={{
+					item: $LL.menuItem.label.drink(),
+					price: $LL.product.price(),
+				}}
+				on:click={() => addToCart(drink)}
+			>
+				<svelte:fragment slot="name">
+					{drink.name}
+				</svelte:fragment>
 
-<h1>{header}</h1>
-<div in:fade={{ delay: 0, duration: 700 }}>
-	{#each drinks as drink}
-		<MenuItemCard
-			style="flex: 0 1 32%;"
-			href="{$session.urlLocale}/product/{drink.ID}"
-			item={drink}
-			label={{
-				item: $LL.menuItem.label.drink(),
-				price: $LL.product.price(),
-			}}
-			on:click={() => addToCart(drink)}
-		>
-			<svelte:fragment>
-				{drink.name}
-			</svelte:fragment>
+				<data slot="price" itemprop="price" value={`${drink.price}`}>
+					{formatPrice(drink.price, locale)}
+				</data>
 
-			<data slot="price" itemprop="price" value={`${drink.price}`}>
-				{formatPrice(drink.price, locale)}
-			</data>
-
-			<svelte:fragment slot="cta">
-				{$LL.product.addToCart()}
-			</svelte:fragment>
-		</MenuItemCard>
-	{/each}
+				<svelte:fragment slot="cta">
+					{$LL.product.addToCart()}
+				</svelte:fragment>
+			</MenuItemCard>
+		{/each}
+	</div>
 </div>
 
 <style lang="scss">
@@ -68,7 +69,7 @@
 		--repeat: auto-fill;
 		--menu-item-img-height: 200px;
 		--menu-item-img-width: 5.2em;
-		--menu-item-img-mbs: 0.7em;
+		// --menu-item-img-mbs: 0.7em;
 
 		$drink-cars-size: 15.3125em;
 		$grid-gap: 1.2em;

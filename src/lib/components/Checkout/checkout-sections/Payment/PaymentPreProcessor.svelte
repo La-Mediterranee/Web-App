@@ -1,17 +1,17 @@
-<div class="payment-processor">
+<div class="payment-preprocessor">
 	<slot />
 </div>
 
 <style lang="scss">
-	.payment-processor {
+	.payment-preprocessor {
 		display: flex;
-		padding: 0.65em;
 		cursor: pointer;
 		align-items: center;
 		justify-content: center;
 		min-height: 3.2em;
 
 		padding: 0.65em;
+		padding-inline-start: 0.8em;
 		border-bottom: 2px solid;
 		transition: height 1s ease-out;
 

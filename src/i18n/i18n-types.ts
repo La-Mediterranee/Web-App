@@ -14,6 +14,7 @@ export type Translation = RootTranslation & DisallowNamespaces
 
 export type Translations = RootTranslation &
 {
+	checkout: NamespaceCheckoutTranslation,
 	errors: NamespaceErrorsTranslation
 }
 
@@ -147,6 +148,18 @@ type RootTranslation = {
 		 * Gratis
 		 */
 		free: string
+		/**
+		 * Allergene
+		 */
+		allergens: string
+		/**
+		 * Weitere Information
+		 */
+		moreInfo: string
+		/**
+		 * Schließen
+		 */
+		close: string
 	}
 	menuItem: {
 		label: {
@@ -173,6 +186,129 @@ type RootTranslation = {
 	}
 }
 
+export type NamespaceCheckoutTranslation = {
+	deliveryDetails: {
+		/**
+		 * Lieferdetails
+		 */
+		title: string
+		userInfo: {
+			/**
+			 * Kontaktinformation
+			 */
+			title: string
+			/**
+			 * E-Mail
+			 */
+			email: string
+			/**
+			 * Telefonnummer
+			 */
+			phone: string
+			/**
+			 * Vorname
+			 */
+			name: string
+			/**
+			 * Familienname
+			 */
+			surname: string
+		}
+		deliveryInfo: {
+			/**
+			 * Lieferadresse
+			 */
+			title: string
+			/**
+			 * Adresse
+			 */
+			street: string
+			/**
+			 * Stadt
+			 */
+			city: string
+			/**
+			 * PLZ
+			 */
+			postalCode: string
+		}
+		/**
+		 * Zur Zahlung
+		 */
+		next: string
+	}
+	paymentDetails: {
+		/**
+		 * Zahlungsdetails
+		 */
+		title: string
+		tip: {
+			/**
+			 * Trinkgeld
+			 */
+			title: string
+			/**
+			 * Benutzerdefiniertes Trinkgeld
+			 */
+			customTip: string
+		}
+		payment: {
+			/**
+			 * Zahlungsmethode
+			 */
+			title: string
+			creditCard: {
+				/**
+				 * Kreditkarte
+				 */
+				title: string
+				/**
+				 * Kartennummer
+				 */
+				cardNumber: string
+				/**
+				 * Gültig bis
+				 */
+				expiration: string
+				/**
+				 * Prüfzahl/CVC
+				 */
+				cvc: string
+			}
+			/**
+			 * Sofort Überweisung
+			 */
+			sofort: string
+			/**
+			 * Barzahlung
+			 */
+			cash: string
+		}
+		/**
+		 * Zurück zu Lieferdetails
+		 */
+		prev: string
+		/**
+		 * Zur Zusammenfassung
+		 */
+		next: string
+	}
+	summary: {
+		/**
+		 * Zusammenfassung
+		 */
+		title: string
+		/**
+		 * Zurück zu Zahlungsdetails
+		 */
+		prev: string
+		/**
+		 * Bestellung bestätigen
+		 */
+		next: string
+	}
+}
+
 export type NamespaceErrorsTranslation = {
 	/**
 	 * Die gesuchte Seite existiert leider nicht
@@ -185,9 +321,16 @@ export type NamespaceErrorsTranslation = {
 }
 
 export type Namespaces =
+	| 'checkout'
 	| 'errors'
 
 type DisallowNamespaces = {
+	/**
+	 * reserved for 'checkout'-namespace\
+	 * you need to use the `./checkout/index.ts` file instead
+	 */
+	checkout?: "[typesafe-i18n] reserved for 'checkout'-namespace. You need to use the `./checkout/index.ts` file instead."
+
 	/**
 	 * reserved for 'errors'-namespace\
 	 * you need to use the `./errors/index.ts` file instead
@@ -325,6 +468,18 @@ export type TranslationFunctions = {
 		 * Gratis
 		 */
 		free: () => LocalizedString
+		/**
+		 * Allergene
+		 */
+		allergens: () => LocalizedString
+		/**
+		 * Weitere Information
+		 */
+		moreInfo: () => LocalizedString
+		/**
+		 * Schließen
+		 */
+		close: () => LocalizedString
 	}
 	menuItem: {
 		label: {
@@ -347,6 +502,128 @@ export type TranslationFunctions = {
 		 * Lieferzeiten
 		 */
 		deliverytimes: () => LocalizedString
+	}
+	checkout: {
+		deliveryDetails: {
+			/**
+			 * Lieferdetails
+			 */
+			title: () => LocalizedString
+			userInfo: {
+				/**
+				 * Kontaktinformation
+				 */
+				title: () => LocalizedString
+				/**
+				 * E-Mail
+				 */
+				email: () => LocalizedString
+				/**
+				 * Telefonnummer
+				 */
+				phone: () => LocalizedString
+				/**
+				 * Vorname
+				 */
+				name: () => LocalizedString
+				/**
+				 * Familienname
+				 */
+				surname: () => LocalizedString
+			}
+			deliveryInfo: {
+				/**
+				 * Lieferadresse
+				 */
+				title: () => LocalizedString
+				/**
+				 * Adresse
+				 */
+				street: () => LocalizedString
+				/**
+				 * Stadt
+				 */
+				city: () => LocalizedString
+				/**
+				 * PLZ
+				 */
+				postalCode: () => LocalizedString
+			}
+			/**
+			 * Zur Zahlung
+			 */
+			next: () => LocalizedString
+		}
+		paymentDetails: {
+			/**
+			 * Zahlungsdetails
+			 */
+			title: () => LocalizedString
+			tip: {
+				/**
+				 * Trinkgeld
+				 */
+				title: () => LocalizedString
+				/**
+				 * Benutzerdefiniertes Trinkgeld
+				 */
+				customTip: () => LocalizedString
+			}
+			payment: {
+				/**
+				 * Zahlungsmethode
+				 */
+				title: () => LocalizedString
+				creditCard: {
+					/**
+					 * Kreditkarte
+					 */
+					title: () => LocalizedString
+					/**
+					 * Kartennummer
+					 */
+					cardNumber: () => LocalizedString
+					/**
+					 * Gültig bis
+					 */
+					expiration: () => LocalizedString
+					/**
+					 * Prüfzahl/CVC
+					 */
+					cvc: () => LocalizedString
+				}
+				/**
+				 * Sofort Überweisung
+				 */
+				sofort: () => LocalizedString
+				/**
+				 * Barzahlung
+				 */
+				cash: () => LocalizedString
+			}
+			/**
+			 * Zurück zu Lieferdetails
+			 */
+			prev: () => LocalizedString
+			/**
+			 * Zur Zusammenfassung
+			 */
+			next: () => LocalizedString
+		}
+		summary: {
+			/**
+			 * Zusammenfassung
+			 */
+			title: () => LocalizedString
+			/**
+			 * Zurück zu Zahlungsdetails
+			 */
+			prev: () => LocalizedString
+			/**
+			 * Bestellung bestätigen
+			 */
+			next: () => LocalizedString
+		}
 	}
 	errors: {
 		/**

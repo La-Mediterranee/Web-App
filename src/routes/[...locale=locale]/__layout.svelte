@@ -1,16 +1,32 @@
 <script context="module" lang="ts">
+	import Footer from '$lib/components/Footer';
+	import LDTag from '$lib/components/LDTag';
+	import Modals from '$lib/components/Modals';
+	import Navbar from '$lib/components/Navbar';
+	import Tabbar from '$lib/components/Tabbar';
+	import Statusbar from '$lib/components/Statusbar';
+
+	import { onMount } from 'svelte';
+	import { derived } from 'svelte/store';
 	import { browser, dev } from '$app/env';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { page, session } from '$app/stores';
+	// import { initI18nSvelte } from 'typesafe-i18n/adapters/adapter-svelte';
+	// import { loadedLocales, loadedFormatters } from '$i18n/i18n-util';
 
+	import { cart } from '$lib/stores/cart';
+	import { setAppContext } from '$lib/stores/app';
+	import { replaceLocaleInUrl } from '$lib/utils';
+	import { setAllergensContext } from '$lib/stores/allergens';
 	import { baseLocale } from '$i18n/i18n-util';
-	import { setLocale } from '$i18n/i18n-svelte';
-	import { RTL_LANGS, locales, seti18nContext } from '$i18n/utils';
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
+	import { LL, locales, RTL_LANGS, seti18nContext, setLocale } from '$i18n/utils';
+	import { desktopNavItems, mobileNavItems } from '$utils/navItems';
+	// import { metatags } from '$lib/stores/metatags';
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
-	import { mobileNavItems, desktopNavItems } from '$utils/navItems';
 
+	import type { Locales } from '$i18n/i18n-types';
+	import type { INavbarItem, ITabbarItem } from 'types/navbar';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
-	import type { Locales, Translations, TranslationFunctions, Formatters } from '$i18n/i18n-types';
 
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
 		const locale = params.locale as Locales | '';
@@ -18,7 +34,6 @@
 		// redirect to preferred language if user comes from page root
 		if (locale !== session.locale && session.locale !== baseLocale) {
 			const path = replaceLocaleInUrl(url.pathname, `${session.urlLocale}`); //+ url.pathname; replaceLocaleInUrl(, );
-			console.log('first');
 
 			return {
 				status: 302,
@@ -29,7 +44,6 @@
 		// (locale as string) !== '/' &&
 		if (locale !== '' && !locales.has(locale as Locales)) {
 			const path = replaceLocaleInUrl(url.pathname, `${session.urlLocale}`);
-			console.log('second');
 
 			return {
 				status: 302,
@@ -54,44 +68,22 @@
 			props: {
 				lang: session.locale,
 				urlLocale: session.urlLocale,
-				dir: RTL_LANGS.has(locale) ? 'rtl' : 'ltr',
+				dir: RTL_LANGS.has(session.locale) ? 'rtl' : 'ltr',
 			},
 		};
 	}
 </script>
 
 <script lang="ts">
-	// import { metatags } from '$lib/stores/metatags';
-	import t from '$i18n/i18n-svelte';
-
-	import Modals from '../_Dialogs.svelte';
-	import LDTag from '$lib/components/LDTag';
-	import Navbar from '$lib/components/Navbar';
-	import Footer from '$lib/components/Footer';
-	import Statusbar from '$lib/components/Statusbar';
-	import Tabbar from '$lib/components/Tabbar';
-
-	// import { initI18nSvelte } from 'typesafe-i18n/adapters/adapter-svelte';
-	// import { loadedLocales, loadedFormatters } from '$i18n/i18n-util';
-	import { navigating, page, session } from '$app/stores';
-
-	import { cart } from '$lib/stores/cart';
-	import { setAppContext } from '$lib/stores/app';
-	import { replaceLocaleInUrl } from '$lib/utils';
-
-	import type { INavbarItem, ITabbarItem } from 'types/navbar';
-
 	export let lang: Locales;
 	export let urlLocale: Locales | '';
 	export let dir: 'rtl' | 'ltr' | 'auto';
 
 	let online: boolean = true;
 
-	const { LL, setLocale: setLL } = seti18nContext();
-
+	setAllergensContext();
+	// const { setLocale } = seti18nContext();
 	setLocale(lang);
-	setLL(lang);
-
 	const app = setAppContext();
 	app.setActiveRoute($page.stuff.activeRoute);
 
@@ -102,6 +94,8 @@
 			rel: rel instanceof Array ? rel.join(' ') : rel,
 		});
 	});
+
+	let numberFormatter = derived(session, $session => new Intl.NumberFormat($session.locale));
 
 	$: tabbarRoutes = <ITabbarItem[]>mobileNavItems.map(item => {
 		const { href, rel, route } = item;
@@ -153,7 +147,7 @@
 <!-- <slot /> -->
 
 <Modals>
-	<div id="main-content">
+	<div id="main-content" style="isolation: isolate;">
 		<Statusbar {online}>
 			{$LL.connectionStatus()}
 		</Statusbar>
@@ -171,7 +165,7 @@
 			on:click={e => app.setActiveRoute(e.detail)}
 		>
 			<svelte:fragment slot="cartTotalQuantity">
-				{$cart.totalQuantity}
+				{$numberFormatter.format($cart.totalQuantity)}
 			</svelte:fragment>
 		</Navbar>
 
@@ -181,7 +175,7 @@
 			routes={tabbarRoutes}
 			on:click={e => app.setActiveRoute(e.detail)}
 		>
-			{$cart.totalQuantity}
+			{$numberFormatter.format($cart.totalQuantity)}
 		</Tabbar>
 		<div class="inner-content">
 			<main id="main-start" class="margin-navbar">

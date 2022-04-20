@@ -58,7 +58,7 @@
 	import Ripple from 'svelty-material/actions/Ripple';
 
 	import { cart } from '$lib/stores/cart';
-	import LL from '$i18n/i18n-svelte';
+	import { LL } from '$i18n/utils';
 
 	export let product: Product;
 	export let locale: string = 'de-DE';

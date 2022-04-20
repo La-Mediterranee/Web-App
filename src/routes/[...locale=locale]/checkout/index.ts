@@ -4,7 +4,7 @@ import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/int
 
 function getSection(searchParams: URLSearchParams) {
 	const section = searchParams.get('section');
-	const prev = searchParams.get('prev');
+	const prev = +(searchParams.get('prev') || 0);
 	const next = +(searchParams.get('next') || 0);
 
 	if (prev !== null) {

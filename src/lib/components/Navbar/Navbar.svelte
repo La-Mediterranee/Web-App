@@ -120,6 +120,7 @@
 		position: var(--header-position, sticky);
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
+		content-visibility: visible;
 
 		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {
 			padding: 0.3em 0.5em;
@@ -182,6 +183,12 @@
 		align-items: center;
 		justify-content: center;
 		padding-inline-end: 0.6em;
+
+		:global(.s-badge__badge) {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 
 	@media screen and (min-width: 960px) {

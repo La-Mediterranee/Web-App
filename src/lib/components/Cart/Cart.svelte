@@ -146,16 +146,16 @@
 	import CartItemQuantity from './CartItem/Quantity.svelte';
 	import CartItemActions from './CartItem/Actions.svelte';
 
+	import { LL } from '$i18n/utils';
+
 	import type { TableHeader } from './CartHeaders.svelte';
 	import type { ID, MenuCartItem } from 'types/product';
-
-	import { geti18nContext } from '$i18n/utils';
 
 	export let cart: Cart;
 	export let state: CartState;
 	export let store: CartStore;
 
-	const { LL } = geti18nContext();
+	// const { LL } = geti18nContext();
 
 	function updateItem(e: Event, key: ID, index: number) {
 		store.upadateItem(key, index, +(<HTMLInputElement>e.currentTarget).value);
@@ -331,12 +331,13 @@
 			align-items: center;
 			background-color: var(--theme-secondary-color);
 			border-radius: 1em;
-			margin-bottom: 0.625em;
 			height: 13rem;
+			content-visibility: auto;
+			contain-intrinsic-size: auto 13rem;
 			// flex-wrap: wrap;
 
-			&:last-child {
-				margin-bottom: 0;
+			&:not(:last-child) {
+				margin-bottom: 0.625em;
 			}
 		}
 

@@ -5,7 +5,6 @@
 
 	import type { LoadOutput } from '@sveltejs/kit/types/internal';
 	import type { BreadcrumbList, WithContext } from 'schema-dts';
-	import LL from '$i18n/i18n-svelte';
 
 	const routeName = 'food';
 
@@ -19,6 +18,8 @@
 </script>
 
 <script lang="ts">
+	import { LL } from '$i18n/utils';
+
 	let breadcrumb: WithContext<BreadcrumbList>;
 	$: breadcrumb = {
 		'@context': 'https://schema.org',

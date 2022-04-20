@@ -1,8 +1,9 @@
 import { getContext, setContext } from 'svelte';
 import { initI18nSvelte, type SvelteStoreInit } from 'typesafe-i18n/adapters/adapter-svelte';
-import { loadedFormatters, loadedLocales, locales as l } from './i18n-util';
+import { loadedFormatters, loadedLocales, locales as utilLocales } from './i18n-util';
 
 import type { Formatters } from './i18n-types';
+import type { Readable } from 'svelte/store';
 
 export const RTL_LANGS = new Set([
 	'ae' /* Avestan */,
@@ -26,7 +27,23 @@ export const RTL_LANGS = new Set([
 	'yi' /* 'ייִדיש', Yiddish */,
 ]);
 
-export const locales = new Set(l);
+export const locales = new Set(utilLocales);
+
+interface LocaleConfig {
+	numberingSystem: Intl.LocaleOptions['numberingSystem'];
+}
+
+export const intlConfig: Record<Locales, LocaleConfig> = Object.freeze({
+	ar: {
+		numberingSystem: 'arab',
+	},
+	de: {
+		numberingSystem: undefined,
+	},
+	en: {
+		numberingSystem: undefined,
+	},
+});
 
 const LL_KEY = Symbol('i18n');
 
@@ -37,12 +54,20 @@ export function seti18nContext(): i18nStore {
 		loadedLocales,
 		loadedFormatters,
 	);
-
 	setContext(LL_KEY, i18n);
-
 	return i18n;
 }
 
 export function geti18nContext(): i18nStore {
 	return getContext(LL_KEY);
+}
+
+export const LL: Readable<TranslationFunctions> = {
+	subscribe(fn) {
+		return geti18nContext().LL.subscribe(fn);
+	},
+};
+
+export function setLocale(locale: Locales) {
+	geti18nContext().setLocale(locale);
 }

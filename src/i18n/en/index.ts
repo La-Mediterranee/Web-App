@@ -43,6 +43,7 @@ const en: Translation = {
 		addToCart: 'Add to Cart',
 		chooseOptions: 'Choose Toppings',
 		free: 'Free',
+		allergens: 'Allergens',
 	},
 	menuItem: {
 		label: {

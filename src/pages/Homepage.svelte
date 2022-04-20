@@ -3,10 +3,16 @@
 	import { SHOP_LOGO } from '$utils/constants';
 
 	import type { HomepageProps } from '../routes/api/homepage';
+
+	function createTable(translations: TranslationFunctions['product']) {
+		return {
+			true: translations.addToCart,
+			false: translations.chooseOptions,
+		};
+	}
 </script>
 
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import Carousel from '$lib/components/Carousel';
 	import Image from '$lib/components/Image/Image.next.svelte';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
@@ -15,34 +21,59 @@
 	import { session } from '$app/stores';
 	import { derived } from 'svelte/store';
 
+	import { LL } from '$i18n/utils';
 	import { cart, formatPrice } from '$lib/stores/cart';
-	import { getProductModalContext } from '$lib/utils';
+	import { getModalContext } from '$lib/components/Modals';
 
 	import type { CartItem, MenuItem } from 'types/product';
+	import type { LocalizedString } from 'typesafe-i18n';
+	import { browser } from '$app/env';
+	import { onMount } from 'svelte';
 
 	export let homePageData: HomepageProps | undefined;
 
-	const modal = getProductModalContext();
+	const modal = getModalContext();
 
 	const sections = homePageData?.sections || [];
 
-	new Map([
-		[true, $LL.product.addToCart],
-		[false, $LL.product.chooseOptions],
-	]);
+	// new Map([
+	// 	[true, $LL.product.addToCart],
+	// 	[false, $LL.product.chooseOptions],
+	// ]);
 
-	const cardActionText = derived(LL, $LL => ({
-		true: $LL.product.addToCart,
-		false: $LL.product.chooseOptions,
-	}));
+	const cardActionText = derived(LL, $LL => {
+		const table = createTable($LL.product);
+		return (key: boolean) => table[`${key}`]();
+	});
+
+	const cardActionTextMap = derived(LL, $LL => {
+		const table = new Map([
+			[true, $LL.product.addToCart],
+			[false, $LL.product.chooseOptions],
+		]);
+
+		return (key: boolean) => table.get(key)!()!;
+	});
 
 	function openPopUp(e: Event, product: MenuItem) {
-		if (product.toppings?.length > 0) return modal.open(product);
+		if (product.toppings?.length > 0) return modal.openMenuItemModal(product);
 
 		cart.addItem(
 			<CartItem>(<unknown>Object.assign({ quantity: 1, selectedToppings: [] }, product)),
 		);
 	}
+
+	async function measure() {
+		//@ts-ignore
+		const result = await performance.measureUserAgentSpecificMemory();
+		console.debug(result);
+	}
+
+	onMount(() => {
+		console.debug(performance);
+	});
+
+	if (browser && 'measureUserAgentSpecificMemory' in performance) measure();
 </script>
 
 <svelte:head>
@@ -73,28 +104,43 @@
 			<h2 id={section.title.toLocaleLowerCase()} class="row-header">{section.title}</h2>
 			{#if Array.isArray(section.body)}
 				<Carousel rtl={$session.rtl} itemsLength={section.body.length} let:itemsVisibility>
+					<meta slot="list-name" itemprop="name" content={section.title} />
+
 					{#each section.body as menuItem, i}
-						<CarouselItem ariaHidden={!itemsVisibility[i]}>
+						{@const href = `${$session.urlLocale}/product/${menuItem.ID}`}
+						{@const isVisible = itemsVisibility[i]}
+
+						<CarouselItem
+							data-visible={isVisible}
+							position={i + 1}
+							ariaHidden={!isVisible}
+						>
 							<MenuItemCard
-								href="{$session.urlLocale}/product/{menuItem.ID}"
+								{href}
+								{isVisible}
+								itemprop="item"
 								item={menuItem}
-								isVisible={itemsVisibility[i]}
 								label={{
 									item: $LL.menuItem.label[menuItem.type || 'food'](),
 									price: $LL.product.price(),
 								}}
 								on:click={e => openPopUp(e, menuItem)}
+								on:info={e => modal.openInfoModal(e.detail)}
 							>
-								<svelte:fragment>
+								<svelte:fragment slot="name">
 									{menuItem.name}
 								</svelte:fragment>
 
-								<data slot="price" itemprop="price" value={`${menuItem.price}`}>
-									{formatPrice(menuItem.price)}
-								</data>
+								<span slot="price">
+									<data itemprop="price" value={`${menuItem.price}`}>
+										{formatPrice(menuItem.price)}
+									</data>
+									<meta itemprop="priceCurrency" content="EUR" />
+								</span>
 
 								<svelte:fragment slot="cta">
-									{$cardActionText[`${menuItem.toppings.length === 0}`]()}
+									{$cardActionText(menuItem.toppings.length === 0)}
+									{$cardActionTextMap(menuItem.toppings.length === 0)}
 								</svelte:fragment>
 							</MenuItemCard>
 						</CarouselItem>
@@ -113,6 +159,8 @@
 
 	section {
 		margin-bottom: 1em;
+		content-visibility: auto;
+		contain-intrinsic-size: auto 450px;
 	}
 
 	.banner {
@@ -127,18 +175,20 @@
 
 	.section-carousel {
 		max-width: 1200px;
-		--product-card-width: 250px;
 
+		// --carousel-inner-padding: 0 0.3em;
 		--carousel-item-min-width: 235px;
 		--carousel-content-max-width: 1200px;
-		--product-card-margin-start: auto;
-		--product-card-margin-end: auto;
 
 		--carousel-item-width: auto;
 		--carousel-item-padding: 0 0.5em;
 
 		--carousel-item-first-pi-start: 10px;
 		--carousel-item-first-pi-end: 10px;
+
+		--product-card-width: 250px;
+		--product-card-margin-start: auto;
+		--product-card-margin-end: auto;
 
 		@media screen and (min-width: 820px) {
 			--product-card-width: 100%;

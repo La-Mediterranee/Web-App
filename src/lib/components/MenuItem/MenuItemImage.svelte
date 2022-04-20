@@ -1,22 +1,20 @@
 <script lang="ts">
 	import Image from '$lib/components/Image/Image.next.svelte';
+	import type { MenuItem } from 'types/product';
 
 	type CrossOrigin = 'anonymous' | 'use-credentials' | '';
 
-	export let src: string;
-	export let alt: string;
-	export let width: number = 640;
-	export let height: number = 480;
+	export let image: MenuItem['image'];
 	export let crossorigin: CrossOrigin | undefined = undefined;
 </script>
 
 <div class="img">
 	<Image
 		itemprop="image"
-		{src}
-		{alt}
-		{width}
-		{height}
+		src={image.src}
+		alt={image.alt}
+		width={image.width || 640}
+		height={image.height || 480}
 		{crossorigin}
 		layout="responsive"
 		objectFit="scale-down"
@@ -43,14 +41,12 @@
 		position: relative;
 		height: var(--menu-item-img-height);
 		width: var(--menu-item-img-width, var(--product-card-width, 100%));
+		overflow: hidden;
 
 		margin: 0 auto;
 		margin-block-start: var(--menu-item-img-mbs);
 		margin-block-end: 0.6em;
-
-		:global(img) {
-			border-radius: var(--theme-card-border-radius);
-		}
+		border-radius: var(--theme-card-border-radius);
 
 		transition: transform 500ms ease;
 	}

@@ -1,16 +1,11 @@
 import { getContext } from 'svelte';
-import { MODAL, PRODUCT_MODAL } from '$lib/utils/constants';
+import { PRODUCT_MODAL } from '$lib/utils/constants';
 
-import type { MenuItem, Product } from 'types/product';
+import type { MenuItem } from 'types/product';
 
 interface ModalContext {
-	// open: (product: Product) => void;
-	open: (product: MenuItem) => void;
+	open(menuitem: MenuItem): void;
 	close: () => void;
-}
-
-export function getModalContext() {
-	return getContext<ModalContext>(MODAL);
 }
 
 export function getProductModalContext() {

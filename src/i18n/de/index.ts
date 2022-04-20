@@ -43,6 +43,9 @@ const de: BaseTranslation = {
 		addToCart: 'In den Warenkorb',
 		chooseOptions: 'Toppings Auswählen',
 		free: 'Gratis',
+		allergens: 'Allergene',
+		moreInfo: 'Weitere Information',
+		close: 'Schließen',
 	},
 	menuItem: {
 		label: {

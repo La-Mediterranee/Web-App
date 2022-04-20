@@ -1,8 +1,7 @@
 <script context="module" lang="ts">
 	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
-	import { beforeNavigate, afterNavigate } from '$app/navigation';
-	import { RTL_LANGS } from '$i18n/utils';
+	import { RTL_LANGS, seti18nContext } from '$i18n/utils';
 
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
@@ -19,6 +18,8 @@
 
 <script lang="ts">
 	import Providers from './_layoutProviders.svelte';
+
+	seti18nContext();
 
 	$: if (
 		browser &&

@@ -25,21 +25,22 @@
 	type Item = $$Generic;
 
 	interface $$Slots {
-		default: {
+		'default': {
 			// item: any;
 			// visible: boolean;
 			itemsVisibility: boolean[];
 		};
-		right: {
+		'right': {
 			value: 'prev' | 'next';
 			scroll: typeof scroll;
 			setKeyboardFocus: typeof setKeyboardFocus;
 		};
-		left: {
+		'left': {
 			value: 'prev' | 'next';
 			scroll: typeof scroll;
 			setKeyboardFocus: typeof setKeyboardFocus;
 		};
+		'list-name': {};
 	}
 
 	// export let items: Item[];
@@ -57,15 +58,10 @@
 	// const itemsVisibility: boolean[] = Array(items.length).fill(true);
 	const itemsVisibility: boolean[] = Array(itemsLength).fill(true);
 
-	onMount(() => {
-		rtl = document.documentElement.dir === 'rtl' ? true : false;
-	});
-
 	function position(node: HTMLElement) {
 		function updateCalc() {
 			const rect = node.getBoundingClientRect();
 
-			// const children = Array.from(node.children[0]?.children);
 			const children = Array.from(node.children);
 			const visibleElements = (children as HTMLElement[]).filter((child, i) => {
 				const childRect = child.getBoundingClientRect();
@@ -115,7 +111,7 @@
 
 		updateCalc();
 
-		const resizeObserver = new ResizeObserver(() => updateCalc());
+		const resizeObserver = new ResizeObserver(updateCalc);
 		resizeObserver.observe(node);
 
 		const options = { passive: true };
@@ -207,10 +203,14 @@
 	data-scroll-dir={scrollDir}
 	style:--_has-items-left={hasItemsOnLeft ? 'all' : 'hidden'}
 	style:--_has-items-right={hasItemsOnRight ? 'all' : 'hidden'}
+	itemscope
+	itemtype="https://schema.org/ItemList"
 >
 	<slot name="left" scroll setKeyboardFocus removeKeyboradFocus value={rtl ? 'next' : 'prev'}>
 		<LeftButton {scroll} {setKeyboardFocus} value={rtl ? 'next' : 'prev'} />
 	</slot>
+
+	<slot name="list-name" />
 
 	<ul class="carousel-inner" bind:this={containerInner} use:position>
 		<!-- {#each items as item, i}

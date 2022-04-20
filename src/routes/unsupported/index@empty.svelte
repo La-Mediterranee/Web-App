@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
+	import { LL, setLocale } from '$i18n/utils';
 
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
@@ -15,8 +16,6 @@
 </script>
 
 <script lang="ts">
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-
 	export let lang: Locales;
 
 	setLocale(lang);

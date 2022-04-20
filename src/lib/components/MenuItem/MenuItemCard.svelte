@@ -2,8 +2,25 @@
 
 <!-- tag="product-component" -->
 <script context="module" lang="ts">
-	import type * as schemaDts from 'schema-dts';
+	import Card from 'svelty-material/components/Card/Card.svelte';
 
+	import SmallWave from '$lib/Icons/SmallWave.svelte';
+	import LdTag from '../LDTag/LDTag.svelte';
+	import ItemInfoBtnContainer from './ItemInfoBtnContainer.svelte';
+	import MenuItemActions from './MenuItemActions.svelte';
+	import MenuItemDesc from './MenuItemDesc.svelte';
+	import MenuItemImage from './MenuItemImage.svelte';
+	import MenuItemInfoBtn from './MenuItemInfoBtn.svelte';
+	import MenuItemInnerCard from './MenuItemInnerCard.svelte';
+	import MenuItemName from './MenuItemName.svelte';
+	import MenuItemPrice from './MenuItemPrice.svelte';
+
+	import { createEventDispatcher, onMount } from 'svelte';
+
+	import { getAnimationsContext } from '$lib/stores/animations';
+	import { menuitem } from '$lib/utils/seo/schema/menuitem';
+
+	import type * as schemaDts from 'schema-dts';
 	import type { MenuItem } from 'types/product';
 	import type { LocalizedString } from 'typesafe-i18n';
 
@@ -56,19 +73,6 @@
 </script>
 
 <script lang="ts">
-	import Card from 'svelty-material/components/Card/Card.svelte';
-
-	import MenuItemName from './MenuItemName.svelte';
-	import MenuItemPrice from './MenuItemPrice.svelte';
-	import MenuItemImage from './MenuItemImage.svelte';
-	import MenuItemActions from './MenuItemActions.svelte';
-	import SmallWave from '$lib/Icons/SmallWave.svelte';
-
-	import LdTag from '../LDTag/LDTag.svelte';
-	import { getAnimationsContext } from '$lib/stores/animations';
-	import { onMount } from 'svelte';
-	import MenuItemDesc from './MenuItemDesc.svelte';
-
 	export let item: MenuItem;
 	export let href: string;
 	export let label: {
@@ -77,6 +81,9 @@
 	};
 	export let style: string | undefined = undefined;
 	export let isVisible = true;
+	export let itemprop: string | undefined = undefined;
+
+	$: tabindex = isVisible ? 0 : -1;
 
 	const { image, name, price, category, desc, toppings } = item;
 
@@ -84,6 +91,7 @@
 	let waveEl: SVGSVGElement;
 
 	const animations = getAnimationsContext();
+	const dispatch = createEventDispatcher();
 
 	onMount(() => {
 		const unsub = animations.subscribe(() => {});
@@ -95,36 +103,7 @@
 		};
 	});
 
-	// const ldJson: schemaDts.WithContext<schemaDts.MenuItem> = {
-	// 	'@context': 'https://schema.org',
-	// 	'@type': 'MenuItem',
-	// 	'name': name,
-	// 	'description': desc,
-	// 	'image': {
-	// 		'@type': 'ImageObject',
-	// 	},
-	// 	'offers': {
-	// 		'@type': 'Offer',
-	// 		'price': price,
-	// 	},
-	// 	'menuAddOn': toppings?.map<schemaDts.MenuSection>(topping => ({
-	// 		'@type': 'MenuSection',
-	// 		'name': topping.name,
-	// 		'description': topping.desc,
-	// 		'hasMenuItem': topping.options.map<schemaDts.MenuItem>(option => ({
-	// 			'@type': 'MenuItem',
-	// 			'name': option.name,
-	// 			'description': option.desc,
-	// 			'priceCurrency': 'EUR',
-	// 			'offers': {
-	// 				'@type': 'Offer',
-	// 				'price': option.price,
-	// 			},
-	// 			'suitableForDiet': 'https://schema.org/HalalDiet',
-	// 		})),
-	// 		'suitableForDiet': 'https://schema.org/HalalDiet',
-	// 	})),
-	// };
+	// const ldJson = menuitem(item);
 </script>
 
 <!-- <LdTag schema={ldJson} /> -->
@@ -141,49 +120,47 @@
  -->
 <article
 	itemscope
+	{itemprop}
 	itemtype="http://schema.org/MenuItem"
 	aria-label={label?.item}
 	class="menuitem-card-container"
 	{style}
 >
 	<Card raised>
-		<div class="inner-card">
-			<MenuItemImage
-				src={image.src}
-				alt={image.alt || name}
-				height={image.height}
-				width={image.width}
-			/>
+		<link itemprop="url" content={href} />
+		<MenuItemInnerCard>
+			<main>
+				<MenuItemImage {image} />
+				<MenuItemName {href} {captureRipple} {tabindex} captureRippleNode={ctaEl} on:click>
+					<slot name="name" />
+					<span slot="cta" class="visually-hidden">
+						-
+						<slot name="cta" />
+					</span>
+				</MenuItemName>
 
-			<MenuItemName
-				{href}
-				{captureRipple}
-				captureRippleNode={ctaEl}
-				tabindex={isVisible ? undefined : -1}
-				on:click
-			>
-				<slot />
-				<span slot="cta" class="visually-hidden">
-					-
-					<slot name="cta" />
-				</span>
-			</MenuItemName>
+				<MenuItemPrice ariaLabel={label?.price}>
+					<slot name="price" />
+				</MenuItemPrice>
 
-			<MenuItemPrice ariaLabel={label?.price}>
-				<slot name="price" />
-			</MenuItemPrice>
-
-			{#if desc}
-				<MenuItemDesc>
-					{desc}
-				</MenuItemDesc>
-			{/if}
+				{#if desc}
+					<MenuItemDesc>
+						{desc}
+					</MenuItemDesc>
+				{/if}
+			</main>
 
 			<MenuItemActions bind:ctaEl>
 				<SmallWave bind:el={waveEl} slot="prepend" class="wave" />
 				<slot name="cta" />
 			</MenuItemActions>
-		</div>
+
+			<ItemInfoBtnContainer>
+				<MenuItemInfoBtn {tabindex} on:click={() => dispatch('info', item)}>
+					More Info
+				</MenuItemInfoBtn>
+			</ItemInfoBtnContainer>
+		</MenuItemInnerCard>
 	</Card>
 	<meta itemprop="suitableForDiet" content="https://schema.org/HalalDiet" />
 </article>
@@ -201,6 +178,8 @@
 		// flex-wrap: wrap;
 		// flex-direction: column;
 		// flex: 0 0 auto;
+
+		--wave-color: #278cc5;
 		position: relative;
 
 		width: var(--product-card-width, 100%);
@@ -213,11 +192,9 @@
 			height: 100%;
 		}
 
-		.inner-card {
+		main {
 			position: relative;
-			overflow: hidden;
-			height: 100%;
-			z-index: 1;
+			width: 100%;
 		}
 
 		.wave {
@@ -246,6 +223,10 @@
 
 		@media screen and (any-hover: hover) and (pointer: fine) {
 			--actions-transition-duration: 750ms;
+
+			main {
+				height: var(--product-card-height, 100%);
+			}
 
 			.wave {
 				--animps: paused;

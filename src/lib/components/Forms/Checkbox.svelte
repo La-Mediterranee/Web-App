@@ -1,5 +1,4 @@
-<svelte:options immutable />
-
+<!-- <svelte:options immutable /> -->
 <script lang="ts">
 	import Ripple from './Ripple.svelte';
 
@@ -10,10 +9,30 @@
 	export let name: string | undefined = undefined;
 	export let id: string | undefined = undefined;
 	export let style: string | undefined = undefined;
+	export let group: Array<any> = [];
+
+	type ChangeEvent = Event & {
+		currentTarget: EventTarget & HTMLInputElement;
+	};
+
+	function onChange(e: ChangeEvent) {
+		const { value, checked } = e.currentTarget;
+		checked ? group.push(value) : group.splice(group.indexOf(value), 1);
+		group = group;
+	}
 </script>
 
 <span class="checkbox-container" {style}>
-	<input type="checkbox" class="theme-checkbox" {id} {name} {value} {checked} {required} />
+	<input
+		type="checkbox"
+		class="theme-checkbox"
+		{id}
+		{name}
+		{value}
+		{checked}
+		{required}
+		on:change={onChange}
+	/>
 	<Ripple />
 </span>
 

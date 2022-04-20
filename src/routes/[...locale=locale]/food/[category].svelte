@@ -9,7 +9,7 @@
 </script>
 
 <div class="wrapper">
-	{#each res as recipe, i (recipe.label)}
+	{#each res as recipe, i}
 		<div class="product">
 			<ProductTile product={recipe} />
 		</div>

@@ -5,11 +5,27 @@
 		StripeElements,
 		StripeElementType,
 	} from '@stripe/stripe-js';
+
 	import uid from 'svelty-material/internal/uid';
+
+	const baseStyle = {
+		'fontFamily': 'Fira Sans, sans-serif',
+		'fontWeight': '600',
+		'fontSize': '16px',
+		'fontSmoothing': 'antialiased',
+		'color': '#ddd',
+		'letterSpacing': '1.2px',
+		'::placeholder': {
+			color: '#ddd',
+		},
+		':-webkit-autofill': {
+			color: '#ddd',
+		},
+	};
 </script>
 
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, onMount, tick } from 'svelte';
 
 	import Input from 'svelty-material/components/Input/Input.svelte';
 
@@ -39,30 +55,21 @@
 	export let id = `s-input-${uid(5)}`;
 	export let style: string = '';
 	export let elements: StripeElements;
-	export let stripeElement: StripeElementType = 'card';
+	export let stripeElement: 'card' | 'cardNumber' | 'cardExpiry' | 'cardCvc' = 'card';
 	export let iconStyle: 'default' | 'solid' | undefined = undefined;
 
 	let focused = false;
 	let errorMessages: string[] = [];
 	let notEmpty = false;
-
+	let el: StripeElement;
 	$: labelActive = !!placeholder || value || notEmpty || focused;
 
 	onMount(() => {
-		const el = elements.create(stripeElement as any, {
+		el = elements.create(stripeElement as any, {
 			placeholder: placeholder === false ? '' : (placeholder as string),
 			iconStyle,
 			style: {
-				base: {
-					'fontFamily': 'Fira Sans, sans-serif',
-					'fontWeight': '530',
-					'fontSize': '16px',
-					'fontSmoothing': 'antialiased',
-					'color': '#ddd',
-					'::placeholder': {
-						color: '#ddd',
-					},
-				},
+				base: baseStyle,
 			},
 		});
 
@@ -89,7 +96,7 @@
 		return error;
 	}
 
-	function onFocus() {
+	async function onFocus() {
 		focused = true;
 	}
 
@@ -104,7 +111,16 @@
 	}
 </script>
 
-<Input class="s-text-field {klass}" {color} {dense} {readonly} {disabled} {error} {success} {style}>
+<Input
+	class="s-text-field stripe-element {klass}"
+	{color}
+	{dense}
+	{readonly}
+	{disabled}
+	{error}
+	{success}
+	{style}
+>
 	<!-- Slot for prepend outside the input. -->
 	<slot slot="prepend-outer" name="prepend-outer" />
 	<div
@@ -119,12 +135,12 @@
 		<slot name="prepend" />
 
 		<div class="s-text-field__input">
-			<label for={id} class:active={labelActive}>
-				<slot />
-			</label>
 			<slot name="content" />
 			<!-- keypress Event is deprecated. Use keydown or keyup instead -->
 			<div {id} class="input" />
+			<label for={id} class:active={labelActive}>
+				<slot />
+			</label>
 
 			<!-- Slot for append inside the input. -->
 			<slot name="append" />
@@ -148,12 +164,35 @@
 	<slot slot="append-outer" name="append-outer" />
 </Input>
 
-<style>
-	.s-text-field__input {
-		flex-direction: column;
-	}
+<style lang="scss">
+	:global(.stripe-element) {
+		.outlined .s-text-field__input {
+			flex-direction: column;
+		}
 
-	.input {
-		padding: 1em;
+		.s-text-field__input {
+			align-items: center;
+		}
+
+		label.active {
+			color: var(--theme-primary-text-color, var(--primary-text-color, #6200ee));
+		}
+
+		.input {
+			padding-block-start: 10px;
+			height: 46px;
+			display: flex;
+			align-items: center;
+			background-color: transparent;
+
+			&:global(.StripeElement--webkit-autofill) {
+				background-color: transparent !important;
+			}
+
+			&::-webkit-autofill {
+				background-color: white;
+			}
+			/* padding: 1em; */
+		}
 	}
 </style>

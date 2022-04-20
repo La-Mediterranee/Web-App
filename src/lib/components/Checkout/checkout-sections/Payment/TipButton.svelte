@@ -47,6 +47,7 @@
 			padding: 0.5em 0.4em;
 			display: flex;
 			align-items: center;
+			cursor: pointer;
 		}
 
 		:global(label) {

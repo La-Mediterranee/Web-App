@@ -4,9 +4,10 @@
 	export let captureRipple: (node: HTMLAnchorElement, rippleNode?: HTMLElement) => void;
 	export let captureRippleNode: HTMLElement | undefined = undefined;
 	export let ariaHidden: boolean | undefined = undefined;
+	export let style: string | undefined = undefined;
 </script>
 
-<div class="title">
+<div {style} class="title">
 	<a
 		{href}
 		{tabindex}
@@ -16,9 +17,9 @@
 		use:captureRipple={captureRippleNode}
 		on:click|preventDefault
 	>
-		<span itemprop="name">
+		<h1 itemprop="name">
 			<slot />
-		</span>
+		</h1>
 		<slot name="cta" />
 	</a>
 </div>
@@ -29,6 +30,7 @@
 		padding: 0 0.3em;
 		height: 2.4em;
 		font-size: 1.8rem;
+
 		justify-content: center;
 		align-items: center;
 		text-align: center;
@@ -56,6 +58,13 @@
 				bottom: 0;
 				z-index: 2;
 			}
+		}
+
+		h1 {
+			position: relative;
+			z-index: 6;
+			font-weight: bold;
+			font-size: 1em;
 		}
 	}
 </style>

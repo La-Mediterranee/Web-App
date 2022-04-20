@@ -72,6 +72,8 @@ export interface Options {
 	 * providing some protection against cross-site request forgery attacks (CSRF).
 	 */
 	sameSite?: boolean | SameSite;
+
+	priority?: 'low' | 'medium' | 'high';
 	decode?: typeof decodeURIComponent;
 	encode?: typeof decodeURIComponent;
 }
@@ -229,6 +231,27 @@ function serialize(name: string, val: string, options: Options = {}): string {
 				break;
 			default:
 				throw new TypeError('option sameSite is invalid');
+		}
+	}
+
+	if (options.priority) {
+		const priority =
+			typeof options.priority === 'string'
+				? options.priority.toLowerCase()
+				: options.priority;
+
+		switch (priority) {
+			case 'low':
+				str += '; Priority=Low';
+				break;
+			case 'medium':
+				str += '; Priority=Medium';
+				break;
+			case 'high':
+				str += '; Priority=High';
+				break;
+			default:
+				throw new TypeError('option priority is invalid');
 		}
 	}
 

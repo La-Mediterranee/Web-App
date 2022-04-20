@@ -20,6 +20,7 @@ const ar: Translation = {
 		header: {
 			product: 'Product',
 			price: 'Price',
+			subtotal: 'Subtotal',
 			quantity: 'Quantity',
 		},
 		remarks: 'ملاحظات',
@@ -42,6 +43,7 @@ const ar: Translation = {
 		addToCart: 'أضف إلى العربة',
 		chooseOptions: 'اختر الطبقة',
 		free: 'Gratis',
+		allergens: 'Allergens',
 	},
 	menuItem: {
 		label: {

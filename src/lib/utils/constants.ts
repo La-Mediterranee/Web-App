@@ -8,6 +8,7 @@ export const {
 	// VITE_SERVER_URL: SERVER_URL,
 	VITE_GA_MEASUREMENT_ID: GA_MEASUREMENT_ID,
 	VITE_STRIPE_PUBLIC_KEY: STRIPE_PUBLIC_KEY,
+	VITE_SENTRY_DNS: SENTRY_DNS,
 } = import.meta.env;
 
 export const SERVER_URL = `https://localhost:${SERVER_PORT}`;
@@ -36,7 +37,8 @@ export const firebaseConfig = {
 } as const;
 
 export const MODAL = 'MODAL';
-export const PRODUCT_MODAL = 'PRODUCT_MODAL';
+export const PRODUCT_MODAL = Symbol('PRODUCT_MODAL');
+export const INFO_MODAL = Symbol('INFO_MODAL');
 
 export const mediQueries = {
 	xs: '0px',

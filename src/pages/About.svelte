@@ -1,22 +1,15 @@
-<script context="module" lang="ts">
-	import { browser, dev } from '$app/env';
 
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
-	// we don't need any JS on this page, though we'll load
-	// it in dev so that we get hot module replacement...
-	export const hydrate = dev;
-	// ...but if the client-side router is already loaded
-	// (i.e. we came here from elsewhere in the app), use it
-	export const router = browser;
-	export const prerender = true;
+<script lang="ts">
+	import LDTag from '$lib/components/LDTag';
 
-	async function load({ fetch }: LoadInput): Promise<LoadOutput> {
-		const data = await fetch('/api/about').then(res => res.json());
+	import type { WithContext, AboutPage } from 'schema-dts';
+	
+	export let aboutData: any;
 
-		return {
-			props: data,
-		};
-	}
+	const ldJSON: WithContext<AboutPage> = {
+		'@context': 'https://schema.org',
+		'@type': 'AboutPage',
+	};
 
 	const metaData = {
 		title: 'About | Sveltekit',
@@ -26,6 +19,8 @@
 		searchUrl: '/about',
 	};
 </script>
+
+<LDTag schema={ldJSON} />
 
 <h2>LA-Mediterranee</h2>
 

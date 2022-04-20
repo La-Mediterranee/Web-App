@@ -1,12 +1,16 @@
 <script context="module" lang="ts">
-	import { dev } from '$app/env';
+	import { browser, dev } from '$app/env';
 	import { onMount } from 'svelte';
 	import { initializeApp, getApps, getApp } from 'firebase/app';
 
+	import { init } from '@sentry/browser';
+	import { BrowserTracing } from '@sentry/tracing';
+
 	import { getGlobal } from '$lib/utils';
-	import { firebaseConfig, GA_MEASUREMENT_ID } from '$utils/constants';
+	import { firebaseConfig, GA_MEASUREMENT_ID, SENTRY_DNS } from '$utils/constants';
 
 	import type { FirebaseApp } from 'firebase/app';
+	import type { BrowserOptions } from '@sentry/browser';
 
 	/**
 	 * To enable optional chaining for window properties
@@ -19,6 +23,28 @@
 	if (typeof window === 'undefined') {
 		//@ts-ignore
 		globals.window = undefined;
+	}
+
+	if (!dev && browser) {
+		const sentryConfig: BrowserOptions = dev
+			? {
+					dsn: SENTRY_DNS,
+					integrations: [new BrowserTracing()],
+					// Set tracesSampleRate to 1.0 to capture 100%
+					// of transactions for performance monitoring.
+					// We recommend adjusting this value in production
+					tracesSampleRate: 1.0,
+					debug: true,
+					environment: 'dev',
+					attachStacktrace: true,
+			  }
+			: {
+					dsn: SENTRY_DNS,
+					integrations: [new BrowserTracing()],
+					environment: 'prod',
+			  };
+
+		init(sentryConfig);
 	}
 
 	function loaded() {
@@ -39,7 +65,7 @@
 		window.dataLayer = window.dataLayer || [];
 
 		function gtag(...args: unknown[]) {
-			window.dataLayer.push(args as never);
+			window.dataLayer.push(args);
 		}
 
 		gtag('js', new Date());

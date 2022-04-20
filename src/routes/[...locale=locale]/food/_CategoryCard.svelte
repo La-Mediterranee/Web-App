@@ -12,7 +12,7 @@
 
 <div in:inTransition class="category">
 	<Card>
-		<a href="./food/{category.toLowerCase()}">
+		<a sveltekit:prefetch href="./food/{category.toLowerCase()}">
 			<Image
 				layout="responsive"
 				objectFit="scale-down"

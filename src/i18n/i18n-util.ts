@@ -15,6 +15,7 @@ export const locales: Locales[] = [
 ]
 
 export const namespaces: Namespaces[] = [
+	'checkout',
 	'errors'
 ]
 

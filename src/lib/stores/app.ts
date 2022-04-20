@@ -49,3 +49,10 @@ export function setAppContext() {
 export function getAppContext(): AppStore {
 	return getContext(STORE_KEY);
 }
+
+export const app = {
+	subscribe(fn: () => void) {
+		const app = getAppContext();
+		return app.subscribe(fn);
+	},
+};

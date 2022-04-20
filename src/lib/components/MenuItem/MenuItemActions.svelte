@@ -1,5 +1,6 @@
 <script context="module">
 	import Ripple from 'svelty-material/actions/Ripple';
+	import Button from 'svelty-material/components/Button/Button.svelte';
 </script>
 
 <script lang="ts">
@@ -19,7 +20,13 @@
 				<slot />
 			</span>
 		</div>
+
+		<!-- <Button class="form-elements-color" style="position: absolute; z-index: 6;">
+			<slot />
+		</Button> -->
 	</div>
+
+	<slot name="append" />
 </footer>
 
 <style lang="scss">
@@ -30,7 +37,7 @@
 		// overflow: hidden;
 		border-bottom-left-radius: var(--theme-card-border-radius);
 		border-bottom-right-radius: var(--theme-card-border-radius);
-		color: #278cc5;
+		color: var(--wave-color);
 
 		:global(.s-btn__content) {
 			height: 100%;
@@ -43,11 +50,16 @@
 		opacity: 1;
 		z-index: 5;
 		max-width: 100%;
+		position: relative;
+		align-items: center;
+		justify-content: center;
+		height: 4em;
+		width: 100%;
 	}
 
 	.cta {
 		cursor: pointer;
-		margin: 0 auto;
+		// margin: 0 auto;
 	}
 
 	.s-btn .add-to-cart-text {
@@ -63,6 +75,7 @@
 			bottom: 0;
 			position: absolute;
 
+			will-change: transform;
 			transform: translateZ(0) translateY(110%);
 			transition: transform var(--actions-transition-duration) ease;
 			// padding-top: 4.2em;

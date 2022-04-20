@@ -1,8 +1,17 @@
 <script lang="ts">
+	export let position: number;
 	export let ariaHidden: boolean | undefined = undefined;
 </script>
 
-<li class="item" aria-hidden={ariaHidden}>
+<li
+	itemscope
+	itemprop="itemListElement"
+	itemtype="https://schema.org/ListItem"
+	class="item"
+	aria-hidden={ariaHidden}
+	{...$$restProps}
+>
+	<meta itemprop="position" content={'' + position} />
 	<slot />
 </li>
 
@@ -43,6 +52,10 @@
 		@supports (scroll-margin: 0) or (scroll-snap-margin: 0) {
 			scroll-margin: var(--carousel-item-scroll-margin, $snap-margin);
 			scroll-snap-margin: var(--carousel-item-scroll-margin, $snap-margin);
+		}
+
+		div {
+			display: contents;
 		}
 	}
 </style>

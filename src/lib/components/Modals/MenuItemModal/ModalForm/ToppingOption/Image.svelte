@@ -2,7 +2,7 @@
 	import Image from '$lib/components/Image/Image.next.svelte';
 
 	export let src: string;
-	export let alt: string;
+	export let alt: string = '';
 </script>
 
 <div>

@@ -1,10 +1,20 @@
 <svelte:options immutable />
 
 <script context="module" lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { mdiClose } from '@mdi/js';
+	import CloseBtn from '$lib/components/Buttons/CloseBtn.svelte';
+
+	import ModalForm from './ModalForm/ModalForm.svelte';
+	import ModalAside from './ModalAside/ModalAside.svelte';
+	import ItemDesc from './ModalAside/ItemDesc.svelte';
+
+	import { createEventDispatcher, onMount } from 'svelte';
+
+	import { formatPrice } from '$lib/stores/cart';
 
 	import type { MenuItem, Topping } from 'types/product';
+	import { getModalContext } from '..';
+
+	export type AddToCart = typeof addToCart;
 
 	function addToCart(e: Event, toppings: readonly Topping[]) {
 		const ev = e as SubmitEvent;
@@ -19,25 +29,17 @@
 </script>
 
 <script lang="ts">
-	import Icon from 'svelty-material/components/Icon/Icon.svelte';
-	import Button from 'svelty-material/components/Button/Button.svelte';
-
-	import ModalForm from './ModalForm/ModalForm.svelte';
-	import ModalAside from './ModalAside/ModalAside.svelte';
-	import ItemDesc from './ModalAside/ItemDesc.svelte';
-
-	import { formatPrice } from '$lib/stores/cart';
-
 	export let menuitem: MenuItem;
 	export let locale: string = 'de-DE';
 
-	let active = true;
 	let quantitiy = 1;
 	let valid = false;
 
 	const { toppings, price } = menuitem;
 
 	const dispatch = createEventDispatcher();
+
+	const modal = getModalContext();
 
 	function checkIfValid(e: Event) {
 		const formData = new FormData(<HTMLFormElement>e.currentTarget);
@@ -55,15 +57,11 @@
 		return (valid = true);
 	}
 
-	function close() {
-		dispatch('close');
-	}
+	const close = () => dispatch('close');
 </script>
 
 <div class="product-modal-container">
-	<Button fab depressed size="small" class="dialog-close-btn" on:click={close}>
-		<Icon path={mdiClose} />
-	</Button>
+	<CloseBtn class="form-elements-color" on:click={close} />
 	<ModalAside image={menuitem.image}>
 		{menuitem.name}
 
@@ -83,18 +81,16 @@
 		{menuitem}
 		{quantitiy}
 		{valid}
+		on:info={() => modal.openInfoModal(menuitem)}
 		on:change={checkIfValid}
 		on:submit={e => addToCart(e, menuitem.toppings)}
-		on:close={() => (active = false)}
-	/>
+		on:close={close}
+	>
+		<h1 slot="title">Customization</h1>
+	</ModalForm>
 </div>
 
 <style lang="scss" global>
-	.s-dialog__content {
-		--s-dialog-content-overflow: visible;
-		--s-dialog-justify-content: flex-start;
-	}
-
 	.product-modal-container {
 		--aside-width: 33.33%;
 		--container-padding: 1.5em 0.8em 1.2em;
@@ -103,6 +99,7 @@
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
+		// background-color: var(--theme-surface);
 
 		.actions {
 			left: 10px;

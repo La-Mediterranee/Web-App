@@ -14,6 +14,7 @@ export interface ToppingOption {
 	readonly desc: string;
 	readonly price: number;
 	readonly allergens: Allergen[];
+	readonly image: Image;
 }
 
 export interface Topping {
@@ -54,6 +55,28 @@ export interface Product extends IProduct {
 	};
 }
 
+interface MenuItemSale {
+	readonly price: number;
+	readonly start: Date;
+	readonly end: Date;
+}
+
+export type AllgenKeys =
+	| 'A'
+	| 'B'
+	| 'C'
+	| 'D'
+	| 'E'
+	| 'F'
+	| 'G'
+	| 'H'
+	| 'L'
+	| 'M'
+	| 'N'
+	| 'O'
+	| 'P'
+	| 'R';
+
 export interface MenuItem extends IProduct {
 	readonly categoryType: 'Menuitem';
 	readonly type: 'drink' | 'food';
@@ -63,6 +86,8 @@ export interface MenuItem extends IProduct {
 	readonly image: Image;
 	readonly category: string;
 	readonly toppings: readonly Topping[];
+	readonly allergens: readonly AllgenKeys[];
+	readonly sale?: MenuItemSale;
 }
 
 interface ICartItem {

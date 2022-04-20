@@ -1,19 +1,10 @@
 <script context="module" lang="ts">
-	import type {
-		Stripe,
-		StripeCardCvcElement,
-		StripeCardExpiryElement,
-		StripeCardNumberElement,
-		StripeElements,
-	} from '@stripe/stripe-js';
+	import type { StripeElements } from '@stripe/stripe-js';
 </script>
 
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import CreditCvc from './CreditCVC.svelte';
-	import CreditExpiry from './CreditExpiry.svelte';
-	import CreditNumber from './CreditNumber.svelte';
 	import StripeTextField from './StripeTextField.svelte';
 
 	// export let stripe: Stripe;
@@ -33,10 +24,10 @@
 	bind:error={cardNumberError}
 	iconStyle="solid"
 	placeholder={false}
+	filled
 	rounded
-	outlined
 >
-	Kartennummer
+	<slot name="number" />
 </StripeTextField>
 
 <div>
@@ -44,24 +35,24 @@
 		id="card-expiry"
 		{elements}
 		stripeElement={'cardExpiry'}
-		bind:error={cardNumberError}
+		bind:error={cardExpiryError}
 		placeholder={false}
-		outlined
+		filled
 		rounded
 	>
-		MM/JJ
+		<slot name="expiration" />
 	</StripeTextField>
 
 	<StripeTextField
 		id="card-cvc"
 		{elements}
 		stripeElement={'cardCvc'}
-		bind:error={cardNumberError}
+		bind:error={cardCvcError}
 		placeholder={false}
-		outlined
+		filled
 		rounded
 	>
-		Prüfzahl
+		<slot name="cvc" />
 	</StripeTextField>
 </div>
 
@@ -69,15 +60,15 @@
 	{brand} **** **** **** {last4} expires {exp_month}/{exp_year}
 </option> -->
 <style lang="scss">
-	@use "variables" as *;
+	@use 'variables' as *;
 
 	div {
 		display: block;
 	}
 
-	:global(.s-input):not(:last-child) {
-		margin-bottom: 0.3em;
-	}
+	// :global(.s-input):not(:last-child) {
+	// 	margin-bottom: 0.3em;
+	// }
 
 	@media (min-width: map-get($map: $breakpoints, $key: sm)) {
 		div {

@@ -9,21 +9,27 @@ import ar from './ar'
 import de from './de'
 import en from './en'
 
+import ar_checkout from './ar/checkout'
 import ar_errors from './ar/errors'
+import de_checkout from './de/checkout'
 import de_errors from './de/errors'
+import en_checkout from './en/checkout'
 import en_errors from './en/errors'
 
 const localeTranslations = {
 	ar: {
 		...ar,
+		checkout: ar_checkout,
 		errors: ar_errors
 	},
 	de: {
 		...de,
+		checkout: de_checkout,
 		errors: de_errors
 	},
 	en: {
 		...en,
+		checkout: en_checkout,
 		errors: en_errors
 	},
 }

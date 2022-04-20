@@ -31,14 +31,13 @@
 <script lang="ts">
 	import Link from 'svelty-material/components/Button/Link.svelte';
 
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-
 	import type { NamespaceErrorsTranslation } from '$i18n/i18n-types';
 
 	import { dev } from '$app/env';
 
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
 	import { session } from '$app/stores';
+	import { LL, setLocale } from '$i18n/utils';
 
 	export let status: keyof NamespaceErrorsTranslation;
 	export let error: Error;

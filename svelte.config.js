@@ -13,6 +13,8 @@ import cvWorker from '@sveltejs/adapter-cloudflare-workers';
 import adapterStatic from '@sveltejs/adapter-static';
 import browserslist from 'browserslist';
 
+const dev = process.env.NODE_ENV === 'development';
+
 /**
  * @param {string | readonly string[]} browserslistConfig
  */
@@ -92,7 +94,7 @@ const pkg = JSON.parse(
  */
 function vite() {
 	// const external =
-	// 	process.env.NODE_ENV === 'development'
+	// 	dev
 	// 		? ['whatwg-url', 'node-fetch']
 	// 		: ['firebase/messaging'];
 
@@ -244,13 +246,15 @@ const preprocess = sveltePreprocess({
 			}),
 		],
 	},
-	sourceMap: process.env.NODE_ENV === 'development' ? true : false,
+	sourceMap: dev,
 	preserve: ['ld+json', 'application/ld+json'],
 });
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// compilerOptions,
+	compilerOptions: {
+		dev,
+	},
 	preprocess: preprocess,
 	kit: kitConfig,
 };

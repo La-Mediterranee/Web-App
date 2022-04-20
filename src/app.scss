@@ -107,6 +107,10 @@ $mediaqueries: (
 }
 
 h1 {
+	font-size: var(--h1-font-size);
+}
+
+h2 {
 	font-size: var(--h2-font-size);
 }
 
@@ -205,6 +209,8 @@ main {
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
 
+	--s-text-field-wrapper-padding-inline-start: 16px;
+
 	/* --tint-color: rgb(76, 83, 221); */
 	background-color: var(--theme-surface);
 	color: var(--theme-text-primary);
@@ -236,6 +242,8 @@ main {
 
 a {
 	color: var(--theme-text-primary);
+	background-color: transparent;
+	text-decoration: none;
 }
 
 .h2 {
@@ -317,6 +325,7 @@ a {
 	white-space: nowrap;
 	width: 1px;
 	text-indent: -9999px;
+	// color: black;
 }
 
 // .noscroll{

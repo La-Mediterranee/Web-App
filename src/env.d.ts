@@ -6,6 +6,8 @@ interface ImportMetaEnv {
 	readonly VITE_SHOP_LOGO: string;
 	readonly VITE_SHOP_URL: string;
 	readonly VITE_SERVER_URL: string;
+	// Sentry
+	readonly VITE_SENTRY_DNS: string;
 	// Google Analytics
 	readonly VITE_GA_MEASUREMENT_ID: string;
 	// Stripe

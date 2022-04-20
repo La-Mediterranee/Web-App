@@ -13,12 +13,15 @@ const localeTranslationLoaders = {
 
 const localeNamespaceLoaders = {
 	ar: {
+		checkout: () => import('./ar/checkout'),
 		errors: () => import('./ar/errors')
 	},
 	de: {
+		checkout: () => import('./de/checkout'),
 		errors: () => import('./de/errors')
 	},
 	en: {
+		checkout: () => import('./en/checkout'),
 		errors: () => import('./en/errors')
 	}
 }

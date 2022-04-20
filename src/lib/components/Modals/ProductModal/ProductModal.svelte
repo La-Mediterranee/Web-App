@@ -55,10 +55,10 @@
 </div>
 
 <style lang="scss" global>
-	.s-dialog__content {
-		--s-dialog-content-overflow: visible;
-		--s-dialog-justify-content: flex-start;
-	}
+	// .s-dialog__content {
+	// 	--s-dialog-content-overflow: visible;
+	// 	--s-dialog-justify-content: flex-start;
+	// }
 
 	.product-modal-container {
 		--aside-width: 33.33%;

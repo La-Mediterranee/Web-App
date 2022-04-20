@@ -11,8 +11,9 @@ const ioCreater = !browser
 			console.debug('creating IO');
 			return new IntersectionObserver(entries => {
 				entries.forEach(entry => {
+					const element = <HTMLElement>entry.target;
 					const state = entry.isIntersecting ? '' : 'paused';
-					(<HTMLElement>entry.target).style.animationPlayState = state;
+					element.style.animationPlayState = state;
 					// (<HTMLElement>entry.target).style.setProperty('--animps', state);
 				});
 			});

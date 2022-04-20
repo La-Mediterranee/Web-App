@@ -1,0 +1,42 @@
+.delivery-section {
+	display: block;
+	width: 100%;
+	margin-block-start: 0.5em;
+	// color: rgb(55, 243, 180);
+
+	div {
+		display: block;
+		width: 100%;
+
+		:global(div[class~='s-input']) {
+			padding: 0.1em 0.3em;
+		}
+	}
+
+	fieldset {
+		// padding: 0.75em;
+		margin-bottom: 1.2em;
+		border: 0;
+
+		legend {
+			font-size: 1.2rem;
+		}
+
+		div {
+			&:first-of-type {
+				margin-top: 0.3em;
+			}
+		}
+
+		@media screen and (min-width: 960px) {
+			div {
+				display: flex;
+				flex: 1 0 50%;
+			}
+		}
+	}
+
+	.actions {
+		text-align: end;
+	}
+}

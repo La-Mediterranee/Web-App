@@ -3,27 +3,58 @@
 
 	export type PaymentMethods = 'credit' | 'sofort' | 'cash';
 
-	const logos = {
-		amex: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/american-express.svg',
-		gPay: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/google-pay.svg',
-		eps: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/eps.svg',
-		applePay:
-			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/apple-pay.svg',
-		klarna: 'https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg?locale=de_at',
-		maestro:
-			'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/maestro.svg',
-		maestroAlt:
-			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/maestro-alt.svg',
-		visa: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/visa.svg',
-		visaFlatRounded:
-			'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/visa.svg',
-		mastercard:
-			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard.svg',
-		mastercardAlt:
-			'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard-alt.svg',
-		mastercardFlatRounded:
-			'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/mastercard.svg',
-	} as const;
+	type PaymentProcessor =
+		| 'amex'
+		| 'gPay'
+		| 'eps'
+		| 'applePay'
+		| 'klarna'
+		| 'maestro'
+		| 'maestroAlt'
+		| 'visa'
+		| 'visaFlatRounded'
+		| 'mastercard'
+		| 'mastercardAlt'
+		| 'mastercardFlatRounded';
+
+	const logos: Record<PaymentProcessor, string> = Object.create(null, {
+		amex: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/american-express.svg',
+		},
+		gPay: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/google-pay.svg',
+		},
+		eps: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/eps.svg',
+		},
+		applePay: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/apple-pay.svg',
+		},
+		klarna: {
+			value: 'https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg?locale=de_at',
+		},
+		maestro: {
+			value: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/maestro.svg',
+		},
+		maestroAlt: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/maestro-alt.svg',
+		},
+		visa: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/visa.svg',
+		},
+		visaFlatRounded: {
+			value: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/visa.svg',
+		},
+		mastercard: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard.svg',
+		},
+		mastercardAlt: {
+			value: 'https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/mastercard-alt.svg',
+		},
+		mastercardFlatRounded: {
+			value: 'https://raw.githubusercontent.com/aaronfagan/svg-credit-card-payment-icons/master/flat-rounded/mastercard.svg',
+		},
+	});
 
 	const TAG = 'CHECKOUT';
 </script>
@@ -36,15 +67,21 @@
 
 	import TipButton from './TipButton.svelte';
 	import PaymentPreProcessor from './PaymentPreProcessor.svelte';
+	import PaymentPreProcessorLabel from './PaymentPreProcessorLabel.svelte';
+
 	import RadioButton from '$lib/components/Forms/RadioButton.svelte';
 	import CreditCard from '$lib/components/CreditCard/CreditCard.svelte';
 
 	import { slide } from 'svelte/transition';
 	import { browser } from '$app/env';
 
+	import type { NamespaceCheckoutTranslation } from '$i18n/i18n-types';
+	import { createEventDispatcher } from 'svelte';
+
 	export let elements: StripeElements;
 	export let value: number[] = [1];
 	export let currentValue = 1;
+	export let translations: TranslationFunctions['checkout']['paymentDetails'];
 
 	let form: HTMLFormElement;
 	let sum = 0;
@@ -55,48 +92,9 @@
 
 	$: console.debug(TAG, paymentMethod);
 
-	const paymentName = 'Zahlungsmethode';
+	const dispatch = createEventDispatcher();
 
-	function backToOrderDetails() {
-		console.debug(TAG, 'checkOrderDetails');
-
-		value = [0];
-		currentValue = 0;
-	}
-
-	function goToSummary(e: SubmitEvent) {
-		console.debug(TAG, 'goToSummary');
-
-		const event = e as SubmitEvent;
-		const formData = new FormData(form);
-		for (const value of formData.values()) {
-			console.log(value);
-		}
-
-		value = [1];
-		currentValue = 1;
-	}
-
-	/**
-	 * Because only about 70% of Browser implement
-	 * the submitter property we have to add click handlers
-	 * to each button to distinguish between them
-	 *
-	 * @param e - the SubmitEvent (svelte tools has Event on `on:submit` instead of SubmitEvent)
-	 */
-
-	function checkNextStep(e: Event) {
-		console.debug(TAG, 'checkNextStep');
-
-		if (checked === 'summary') {
-			goToSummary(e as SubmitEvent);
-		} else {
-			backToOrderDetails();
-		}
-
-		// const submitter: HTMLButtonElement = (event.submitter as HTMLButtonElement)
-		// submitter?.value;
-	}
+	const paymentName = 'PaymentMethod';
 
 	const tips = [
 		{ value: '5', text: '5%', money: sum * 0.05 },
@@ -108,17 +106,15 @@
 </script>
 
 <!-- action="./checkout?next=details" -->
-
-<form
-	bind:this={form}
-	action="./checkout?next=2"
-	method="POST"
-	on:submit|preventDefault={checkNextStep}
->
+<!-- ={e => dispatch('submit', { e, checked })} -->
+<form bind:this={form} class="payment-section" method="POST" on:submit|preventDefault>
 	<section>
-		<h3>Trinkgeld hinzufügen</h3>
+		<!-- <slot name="tip-title" /> -->
+		<h3 class="tip-title">
+			{translations.tip.title()}
+		</h3>
 		<fieldset id="tips">
-			<legend class="visually-hidden"> Trinkgeld Prozent Optionen </legend>
+			<legend class="visually-hidden"> <slot name="tip-title" /> </legend>
 			<div class="tip-container">
 				{#each tips as { value, money, text } (value)}
 					<TipButton bind:group={tip} name={'tips'} {value}>
@@ -132,18 +128,23 @@
 				{/each}
 			</div>
 			<div class="custom-tip-container">
-				<TextField disabled={browser && tip !== 'custom'} outlined rounded>
-					Benutzerdefiniertes Trinkgeld
+				<TextField disabled={browser && tip !== 'custom'} filled rounded>
+					{translations.tip.customTip()}
 				</TextField>
 			</div>
 		</fieldset>
 	</section>
 
 	<section>
-		<h3>Zahlung</h3>
+		<!-- <slot name="payment-title" /> -->
+		<h3 class="payment-title">
+			{translations.payment.title()}
+		</h3>
 		<div>
 			<fieldset id="payment-method" bind:this={selected}>
-				<legend class="visually-hidden">Zahlungmethode</legend>
+				<legend class="visually-hidden">
+					<slot name="payment-title" />
+				</legend>
 
 				<PaymentPreProcessor>
 					<span>
@@ -155,8 +156,8 @@
 						/>
 					</span>
 					<div>
-						<label class="processorLabel" for="credit">
-							Kreditkarte
+						<PaymentPreProcessorLabel for="credit">
+							{translations.payment.creditCard.title()}
 							<ul aria-hidden="true">
 								{#each Array.from( [logos.visa, logos.mastercard, logos.maestroAlt, logos.amex], ) as logo}
 									<li>
@@ -165,14 +166,22 @@
 									</li>
 								{/each}
 							</ul>
-						</label>
+						</PaymentPreProcessorLabel>
 					</div>
 				</PaymentPreProcessor>
 
 				{#if paymentMethod === 'credit'}
 					<div transition:slide id="card-element" hidden={paymentMethod !== 'credit'}>
 						{#if elements}
-							<CreditCard {elements} />
+							<CreditCard {elements}>
+								<svelte:fragment slot="number">
+									{translations.payment.creditCard.cardNumber()}
+								</svelte:fragment><svelte:fragment slot="expiration">
+									{translations.payment.creditCard.expiration()}
+								</svelte:fragment><svelte:fragment slot="cvc">
+									{translations.payment.creditCard.cvc()}
+								</svelte:fragment>
+							</CreditCard>
 						{:else}
 							<p>Lädt ...</p>
 						{/if}
@@ -189,238 +198,203 @@
 						/>
 					</span>
 					<div>
-						<label class="processorLabel" for="sofort">
-							Sofort Überweisung
+						<PaymentPreProcessorLabel for="sofort">
+							<!-- <slot name="sofort" /> -->
+							{translations.payment.sofort()}
 							<img
 								src="https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/logos/klarna.svg"
 								alt="Klarna Logo"
 								width={38}
 								height={24}
 							/>
-						</label>
+						</PaymentPreProcessorLabel>
 					</div>
 				</PaymentPreProcessor>
 
 				<PaymentPreProcessor>
 					<span>
 						<RadioButton
-							id="bar"
-							value="bar"
+							id="cash"
+							value="cash"
 							name={paymentName}
 							bind:group={paymentMethod}
 						/>
 					</span>
 					<div>
-						<label class="processorLabel" for="bar">Barzahlung</label>
+						<PaymentPreProcessorLabel for="cash">
+							<!-- <slot name="cash" /> -->
+							{translations.payment.cash()}
+						</PaymentPreProcessorLabel>
 					</div>
 				</PaymentPreProcessor>
 			</fieldset>
+
 			<div class="actions">
 				<Button
 					type="submit"
 					name="summary"
 					class="form-elements-color"
-					style="font-weight: bold; font-size: 0.95em"
 					size="large"
+					formaction="./checkout?next=2"
 					rounded
-					on:click={() => {
-						checked = 'summary';
-					}}
+					on:click={() => ((value = [(currentValue = 2)]), (checked = 'summary'))}
 				>
-					Zur Zusammenfassung
+					<!-- <slot name="next" /> -->
+					<span style="font-weight: bold; font-size: 1.1em">
+						{translations.next()}
+					</span>
 				</Button>
 				<Button
 					type="submit"
 					name="details"
 					formaction="./checkout?prev=0"
 					rounded
-					on:click={() => {
-						checked = 'details';
-					}}
+					on:click={() => ((value = [(currentValue = 0)]), (checked = 'details'))}
 				>
-					Zurück zu Lieferdetails
+					<!-- <slot name="prev" /> -->
+					{translations.prev()}
 				</Button>
-				<!-- formaction="./checkout?prev=summary" -->
 			</div>
 		</div>
 	</section>
 </form>
 
-<style lang="scss">
+<style lang="scss" global>
 	@use 'variables' as *;
 
-	form {
+	.payment-section {
 		--radio-size: 20px;
-	}
-
-	form,
-	div {
 		width: 100%;
-	}
 
-	h3 {
-		padding: 0.4em 0;
-	}
-
-	section {
-		width: 100%;
-		margin-bottom: 0.8em;
-
-		&:last-of-type {
-			margin: 0;
-		}
-	}
-
-	#tips,
-	fieldset {
-		border-radius: 0.5em;
-		border: 2px solid;
-	}
-
-	#tips {
-		padding: 0.6em;
-	}
-
-	.tip-container {
-		display: flex;
-		width: 100%;
-		flex-flow: wrap;
-	}
-
-	.custom-tip-container {
-		position: relative;
-		padding-top: 0.6em;
-		width: 100%;
-	}
-
-	.none {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100%;
-		width: 100%;
-	}
-
-	.processorLabel {
-		word-break: normal;
-		align-items: center;
-	}
-
-	:global(.payment-processor) {
-		display: flex;
-		padding: 0.65em;
-		cursor: pointer;
-		align-items: center;
-		justify-content: center;
-
-		div,
-		span {
-			white-space: nowrap;
-			align-items: center;
-			display: flex;
-		}
-
-		label,
 		div {
 			width: 100%;
 		}
 
-		label {
-			cursor: pointer;
-			display: inline-flex;
-			justify-content: space-between;
-			padding-inline-start: 0.75em;
+		[slot*='title'],
+		[class*='title'] {
+			padding: 0.4em 0;
+		}
+
+		section {
+			width: 100%;
+			margin-bottom: 0.8em;
+
+			&:last-of-type {
+				margin: 0;
+			}
+		}
+
+		#tips,
+		fieldset {
+			border-radius: 0.5em;
+			border: 2px solid;
+		}
+
+		#tips {
+			padding: 0.6em;
+		}
+
+		.tip-container {
+			display: flex;
+			width: 100%;
 			flex-flow: wrap;
 		}
 
-		ul {
+		.custom-tip-container {
+			position: relative;
+			padding-top: 0.6em;
+			width: 100%;
+		}
+
+		.none {
 			display: flex;
-			list-style: none;
-
-			li {
-				padding: 0 0.2em;
-			}
-		}
-	}
-
-	#card-element {
-		div {
-			display: block;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			width: 100%;
 		}
 
-		:global(.s-input):not(:last-child) {
-			margin-bottom: 0.3em;
-		}
-	}
-
-	#card-element {
-		padding: 0.65em;
-		border-bottom: 2px solid;
-		transition: height 1s ease-out;
-	}
-
-	// #payment-method {
-	// 	> div:first-of-type {
-	// 		border-top: 0;
-	// 	}
-
-	// 	> div:last-of-type {
-	// 		border-bottom: 0;
-	// 	}
-
-	// 	// > :global(*) {
-	// 	// 	padding: 0.2em 0em;
-	// 	// }
-	// }
-
-	.actions {
-		width: 100%;
-		margin-top: 0.8em;
-		text-align: center;
-		display: flex;
-		flex-direction: row-reverse;
-		flex-wrap: wrap;
-		align-items: center;
-
-		> :global(*) {
-			margin: 0.3em;
-		}
-	}
-
-	@media (min-width: (map-get($map: $breakpoints, $key: md) + 100px)) {
-		#card-element {
-			div {
+		:global(.payment-preprocessor) {
+			div,
+			span {
+				white-space: nowrap;
+				align-items: center;
 				display: flex;
-				flex: 1 0 50%;
+			}
 
-				> :global(*) {
-					&:first-child {
-						padding-right: 0.3em;
-					}
+			ul {
+				display: flex;
+				list-style: none;
 
-					&:last-child {
-						padding-left: 0.3em;
-					}
+				li {
+					padding: 0 0.2em;
 				}
 			}
+		}
+
+		#card-element {
+			display: block;
+
+			// :global(.s-input):not(:last-child) {
+			// 	margin-bottom: 0.3em;
+			// }
+		}
+
+		#card-element {
+			padding: 0.65em;
+			border-bottom: 2px solid;
+			transition: height 1s ease-out;
 		}
 
 		.actions {
 			width: 100%;
 			margin-top: 0.8em;
+			text-align: center;
 			display: flex;
 			flex-direction: row-reverse;
-
-			> :global(:first-child) {
-				justify-self: flex-end;
-			}
-
-			> :global(:last-child) {
-				justify-self: flex-start;
-			}
+			flex-wrap: wrap;
+			align-items: center;
 
 			> :global(*) {
-				margin: 0 0.5em;
+				margin: 0.3em;
+			}
+		}
+
+		@media (min-width: (map-get($map: $breakpoints, $key: md) + 100px)) {
+			#card-element {
+				div {
+					display: flex;
+					flex: 1 0 50%;
+
+					> :global(*) {
+						&:first-child {
+							padding-right: 0.3em;
+						}
+
+						&:last-child {
+							padding-left: 0.3em;
+						}
+					}
+				}
+			}
+
+			.actions {
+				width: 100%;
+				margin-top: 0.8em;
+				display: flex;
+				flex-direction: row-reverse;
+
+				> :global(:first-child) {
+					justify-self: flex-end;
+				}
+
+				> :global(:last-child) {
+					justify-self: flex-start;
+				}
+
+				> :global(*) {
+					margin: 0 0.5em;
+				}
 			}
 		}
 	}

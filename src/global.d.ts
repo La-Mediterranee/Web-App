@@ -15,7 +15,7 @@ type JwtToken = `${string}.${string}.${string}`;
 declare var opr: string;
 declare var chrome: string;
 
-declare var dataLayer = [];
+declare var dataLayer: unknown[] = [];
 
 // var Stripe: Stripe;
 /**

@@ -16,23 +16,25 @@
 </script>
 
 <nav itemscope itemtype="https://schema.org/SiteNavigationElement">
-	{#each routes as { pathLabel, icon, href, size, rel, isActive, route } (href)}
-		<TabbarItemComponent
-			{icon}
-			{href}
-			{size}
-			{rel}
-			{isActive}
-			title={paths[pathLabel]()}
-			on:click={() => dispatch('click', route)}
-		>
-			<svelte:fragment slot="cart-badge">
-				<slot />
-			</svelte:fragment>
+	<div class="nav-container">
+		{#each routes as { pathLabel, icon, href, size, rel, isActive, route } (href)}
+			<TabbarItemComponent
+				{icon}
+				{href}
+				{size}
+				{rel}
+				{isActive}
+				title={paths[pathLabel]()}
+				on:click={() => dispatch('click', route)}
+			>
+				<svelte:fragment slot="cart-badge">
+					<slot />
+				</svelte:fragment>
 
-			{paths[pathLabel]()}
-		</TabbarItemComponent>
-	{/each}
+				{paths[pathLabel]()}
+			</TabbarItemComponent>
+		{/each}
+	</div>
 </nav>
 
 <style lang="scss">
@@ -42,14 +44,22 @@
 		--bar-color: var(--body-bg2);
 
 		display: flex;
+		position: fixed;
+		justify-content: center;
 		height: 60px;
 		width: 100%;
-		bottom: 0;
+		bottom: 4px;
 		z-index: 10;
-		background: var(--bar-color);
-		position: fixed;
-		align-items: center;
-		justify-content: space-around;
+
+		.nav-container {
+			width: 98%;
+			border-radius: 1em;
+			background: var(--bar-color);
+
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+		}
 
 		@media (min-width: map-get($map: $breakpoints, $key: md)) {
 			display: none;

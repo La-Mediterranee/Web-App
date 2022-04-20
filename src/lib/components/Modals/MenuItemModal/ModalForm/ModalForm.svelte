@@ -1,14 +1,5 @@
-<svelte:options immutable />
-
+<!-- <svelte:options immutable /> -->
 <script context="module" lang="ts">
-	import { mdiInformation } from '@mdi/js';
-
-	import type { MenuItem, Product, Variations } from 'types/product';
-
-	const AmountLabel = 'Menge';
-</script>
-
-<script lang="ts">
 	import Icon from 'svelty-material/components/Icon/Icon.svelte';
 	import Button from 'svelty-material/components/Button/Button.svelte';
 	import Chip from 'svelty-material/components/Chip/Chip.svelte';
@@ -16,29 +7,41 @@
 	import RadioButton from '$lib/components/Forms/RadioButton.svelte';
 	import Checkbox from '$lib/components/Forms/Checkbox.svelte';
 	import FormActions from './FormActions.svelte';
-	import LL from '$i18n/i18n-svelte';
 
 	import ToppingOptionPrice from './ToppingOption/Price.svelte';
 	import ToppingOptionLabel from './ToppingOption/Label.svelte';
 	import ToppingOptionImage from './ToppingOption/Image.svelte';
 	import ToppingOption from './ToppingOption/ToppingOption.svelte';
 
-	import { formatPrice } from '$lib/stores/cart';
+	import { mdiInformation } from '@mdi/js';
+	import { createEventDispatcher } from 'svelte';
 
+	import { formatPrice } from '$lib/stores/cart';
+	import { LL } from '$i18n/utils';
+
+	import type { MenuItem, Product, Variations } from 'types/product';
+
+	const AmountLabel = 'Menge';
+	const addToCartBtnText = 'Zum Warenkorb hinzufügen';
+</script>
+
+<script lang="ts">
 	export let menuitem: MenuItem;
 	export let valid: boolean;
 	export let quantitiy: number;
+	export let group: any[] = [];
 
-	const addToCartBtnText = 'Zum Warenkorb hinzufügen';
+	const dispatch = createEventDispatcher();
 </script>
 
 <div class="modal-form-container">
 	<form id="product-modal" action="/add-to-cart" on:change on:submit|preventDefault>
 		<div class="selection">
-			<h1 class="title">Customization</h1>
+			<slot name="title" />
 
 			<div class="toppings">
 				{#each menuitem?.toppings || [] as topping}
+					{@const required = topping.qtyMin > 0}
 					<fieldset id={topping.ID} class="topping">
 						<div
 							style="display: flex; width: 100%; align-items: center; margin-bottom: .3em;"
@@ -46,16 +49,14 @@
 							<legend style="flex: 1 1 auto">
 								{topping.name}
 							</legend>
-							{#if topping.qtyMin > 0}
-								<!-- <span
+							<!-- <span
 								style="padding: 0.3em 0.5em; background: var(--top2); border-radius: 0.4em; flex: 0 0 auto"
 							>
 								min: {topping.qtyMin}
 							</span> -->
-								<Chip label>
-									min: {topping.qtyMin}
-								</Chip>
-							{/if}
+							<Chip class={required ? 'form-elements-color' : 'optional'} label>
+								{required ? `min: ${topping.qtyMin}` : 'Optional'}
+							</Chip>
 						</div>
 
 						{#each topping.options as option}
@@ -64,9 +65,9 @@
 									{#if topping.qtyMin === 1 && topping.qtyMax === 1}
 										<RadioButton name={topping.ID} value={option.ID} required />
 									{:else}
-										<Checkbox name={topping.ID} value={option.ID} />
+										<Checkbox bind:group name={topping.ID} value={option.ID} />
 									{/if}
-									<ToppingOptionImage src={'/burger.png'} alt="" />
+									<ToppingOptionImage src={'/burger.png'} />
 									<span class="input-label">
 										{option.name}
 									</span>
@@ -81,7 +82,7 @@
 									</ToppingOptionPrice>
 								</ToppingOptionLabel>
 								<!-- style="color: var(--accent-color, orange); background-color: white;" -->
-								<Button icon type="button" on:click={() => console.log('Hi')}>
+								<Button icon type="button" on:click={() => dispatch('info')}>
 									<Icon path={mdiInformation} />
 								</Button>
 							</ToppingOption>
@@ -124,17 +125,16 @@
 </div>
 
 <style lang="scss">
-	.title {
-		font-size: 2em;
-		margin: 0.6em 0 0.4em;
-	}
-
 	.amount-container {
 		font-weight: bold;
 		color: #fff;
 		// margin-bottom: 0.8rem;
 		display: flex;
 		margin-block-end: 0.4em;
+	}
+
+	:global(.s-chip.optional) {
+		background-color: var(--top2);
 	}
 
 	:global(.topping-item) {
@@ -173,7 +173,10 @@
 			margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 		}
 
-		.info {
+		:global([slot='title']),
+		.title {
+			font-size: 2em;
+			margin: 0.6em 0 0.4em;
 		}
 
 		.header {
@@ -252,6 +255,7 @@
 			padding-bottom: 0;
 			padding: var(--container-padding);
 
+			:global([slot='title']),
 			.title {
 				font-size: 2.5em;
 				text-align: center;

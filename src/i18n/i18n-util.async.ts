@@ -14,15 +14,18 @@ const localeTranslationLoaders = {
 const localeNamespaceLoaders = {
 	ar: {
 		checkout: () => import('./ar/checkout'),
-		errors: () => import('./ar/errors')
+		errors: () => import('./ar/errors'),
+		user: () => import('./ar/user')
 	},
 	de: {
 		checkout: () => import('./de/checkout'),
-		errors: () => import('./de/errors')
+		errors: () => import('./de/errors'),
+		user: () => import('./de/user')
 	},
 	en: {
 		checkout: () => import('./en/checkout'),
-		errors: () => import('./en/errors')
+		errors: () => import('./en/errors'),
+		user: () => import('./en/user')
 	}
 }
 

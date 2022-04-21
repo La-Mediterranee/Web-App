@@ -3,7 +3,7 @@ import { RTL_LANGS, locales, seti18nContext } from '$i18n/utils';
 import { replaceLocaleInUrl } from '$lib/utils';
 
 import type { ShadowEndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
-import type { RequestHandler } from '../../.svelte-kit/types/src/routes/[...locale=locale]';
+// import type { RequestHandler } from '../../.svelte-kit/types/src/routes/[...locale=locale]';
 
 export async function get({
 	locals,

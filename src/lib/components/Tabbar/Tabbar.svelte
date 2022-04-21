@@ -51,6 +51,10 @@
 		bottom: 4px;
 		z-index: 10;
 
+		:global(.no-scroll) & {
+			padding-right: var(--s-scroll-padding);
+		}
+
 		.nav-container {
 			width: 98%;
 			border-radius: 1em;

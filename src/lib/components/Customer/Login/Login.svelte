@@ -84,11 +84,10 @@
 	import Alert from 'svelty-material/components/Alert/Alert.svelte';
 	import TextField from 'svelty-material/components/TextField/TextField.svelte';
 
-	import t from '$i18n/i18n-svelte';
-
 	import { session } from '$app/stores';
 	import Button from 'svelty-material/components/Button/Button.svelte';
 	import Link from 'svelty-material/components/Button/Link.svelte';
+	import { LL } from '$i18n/utils';
 
 	const auth = getAuthContext();
 
@@ -203,7 +202,7 @@
 		</Alert>
 	</div>
 
-	<h1>{$t.customer.login()}</h1>
+	<h1>{$LL.customer.login()}</h1>
 
 	<section id="emailPassword">
 		<form
@@ -270,7 +269,7 @@
 				rounded
 				{disabled}
 			>
-				{$t.customer.login()}
+				{$LL.user.login()}
 			</Button>
 
 			<!-- <button value="login" {disabled}>{$t.customer.login()}</button> -->
@@ -284,7 +283,7 @@
 			{disabled}
 			rounded
 		>
-			{$t.customer.signUp()}
+			{$LL.user.signUp()}
 		</Link>
 	</section>
 
@@ -302,7 +301,7 @@
 				on:click={login}
 			>
 				<img src="/svg/{provider}.svg" alt="{provider} Logo" />
-				<span class="buttonText"> {'Anmelden mit'} {text}</span>
+				<span class="buttonText"> {$LL.user.loginWith(text)}</span>
 			</button>
 		{/each}
 	</section>
@@ -318,7 +317,7 @@
 			on:click={login}
 		>
 			<img src="/svg/github.svg" alt="Github Logo" />
-			<span class="buttonText"> Anmelden mit Github</span>
+			<span class="buttonText"> {$LL.user.loginWith('Github')} </span>
 		</button>
 	</section>
 
@@ -333,7 +332,7 @@
 			on:click={login}
 		>
 			<img src="/svg/discord.svg" alt="Discord Logo" />
-			<span class="buttonText"> Anmelden mit Discord</span>
+			<span class="buttonText"> {$LL.user.loginWith('Discord')} </span>
 		</button>
 	</section>
 </div>

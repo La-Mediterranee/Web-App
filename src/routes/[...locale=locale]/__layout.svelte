@@ -28,12 +28,17 @@
 	import type { INavbarItem, ITabbarItem } from 'types/navbar';
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
+	const numberFormatter = derived(session, $session => new Intl.NumberFormat($session.locale));
+
 	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
 		const locale = params.locale as Locales | '';
 
 		// redirect to preferred language if user comes from page root
 		if (locale !== session.locale && session.locale !== baseLocale) {
-			const path = replaceLocaleInUrl(url.pathname, `${session.urlLocale}`); //+ url.pathname; replaceLocaleInUrl(, );
+			const path =
+				locale === ''
+					? session.urlLocale + '/' + url.pathname.split('/').slice(1).join('/')
+					: replaceLocaleInUrl(url.pathname, session.urlLocale);
 
 			return {
 				status: 302,
@@ -43,7 +48,7 @@
 
 		// (locale as string) !== '/' &&
 		if (locale !== '' && !locales.has(locale as Locales)) {
-			const path = replaceLocaleInUrl(url.pathname, `${session.urlLocale}`);
+			const path = replaceLocaleInUrl(url.pathname, session.urlLocale);
 
 			return {
 				status: 302,
@@ -51,9 +56,10 @@
 			};
 		}
 
-		if (session.locale === 'de' && locale !== '') {
-			const path = replaceLocaleInUrl(url.pathname, '');
-			console.log('third');
+		if (session.locale === baseLocale && locale !== '') {
+			const pathname = url.pathname;
+			const pathWithoutLocale = pathname.split('/').slice(2);
+			const path = `/${pathWithoutLocale.join('/')}`;
 
 			return {
 				status: 302,
@@ -94,8 +100,6 @@
 			rel: rel instanceof Array ? rel.join(' ') : rel,
 		});
 	});
-
-	let numberFormatter = derived(session, $session => new Intl.NumberFormat($session.locale));
 
 	$: tabbarRoutes = <ITabbarItem[]>mobileNavItems.map(item => {
 		const { href, rel, route } = item;

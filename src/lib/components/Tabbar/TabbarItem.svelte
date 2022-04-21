@@ -72,7 +72,7 @@
 
 		transition-property: transform;
 		transition-timing-function: ease-in-out, cubic-bezier(0.64, 0.57, 0.67, 1.53);
-		transition-duration: 0.2s;
+		transition-duration: 0.3s;
 
 		&-container {
 			border-radius: inherit;
@@ -172,12 +172,18 @@
 
 	.title-container {
 		flex: 1;
+		opacity: 0;
 		position: relative;
 		justify-content: center;
 		align-items: center;
 		text-align: center;
 		white-space: nowrap;
 		font-size: 0.75rem;
+
+		:global(.active) & {
+			opacity: 1;
+			transition: opacity 0.05s ease 0.3s;
+		}
 
 		@media screen and (min-width: 350px) {
 			font-size: 0.95rem;

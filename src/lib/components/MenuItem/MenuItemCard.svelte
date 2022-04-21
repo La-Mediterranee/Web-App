@@ -70,6 +70,25 @@
 			destroy,
 		};
 	}
+
+	type EventDispatcher<
+		EventType extends Extract<keyof EventMap, string>,
+		EventMap extends {} = any,
+	> = (type: EventType, detail?: EventMap[EventType]) => void;
+
+	function clickHandler(card: HTMLElement, dispatch: EventDispatcher<string>, details: any = {}) {
+		const box = card.getBoundingClientRect();
+		const bodyRect = document.body.getBoundingClientRect();
+		const _details = Object.assign(
+			{
+				top: box.top + window.pageYOffset,
+				left: box.left - window.innerWidth / 2,
+			},
+			details,
+		);
+
+		dispatch('click', _details);
+	}
 </script>
 
 <script lang="ts">
@@ -82,6 +101,8 @@
 	export let style: string | undefined = undefined;
 	export let isVisible = true;
 	export let itemprop: string | undefined = undefined;
+
+	export let card: HTMLElement | undefined = undefined;
 
 	$: tabindex = isVisible ? 0 : -1;
 
@@ -103,6 +124,8 @@
 		};
 	});
 
+	const handler = () => clickHandler(card!, dispatch, { item });
+
 	// const ldJson = menuitem(item);
 </script>
 
@@ -119,6 +142,7 @@
 
  -->
 <article
+	bind:this={card}
 	itemscope
 	{itemprop}
 	itemtype="http://schema.org/MenuItem"
@@ -131,7 +155,13 @@
 		<MenuItemInnerCard>
 			<main>
 				<MenuItemImage {image} />
-				<MenuItemName {href} {captureRipple} {tabindex} captureRippleNode={ctaEl} on:click>
+				<MenuItemName
+					{href}
+					{captureRipple}
+					{tabindex}
+					captureRippleNode={ctaEl}
+					on:click={handler}
+				>
 					<slot name="name" />
 					<span slot="cta" class="visually-hidden">
 						-
@@ -156,7 +186,7 @@
 			</MenuItemActions>
 
 			<ItemInfoBtnContainer>
-				<MenuItemInfoBtn {tabindex} on:click={() => dispatch('info', item)}>
+				<MenuItemInfoBtn {tabindex} on:click={() => dispatch('info', { item })}>
 					More Info
 				</MenuItemInfoBtn>
 			</ItemInfoBtnContainer>

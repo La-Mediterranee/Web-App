@@ -28,7 +28,6 @@
 	import type { MenuItem, Product } from 'types/product';
 	import type { DialogOptions, ModalContext } from './types';
 	import type { TransitionFn } from 'svelty-material/@types';
-	import { browser } from '$app/env';
 </script>
 
 <script lang="ts">
@@ -51,7 +50,7 @@
 		props: {},
 	};
 
-	let reducedAnimation: typeof fade | undefined = undefined;
+	let menuitemAnimation: typeof fade | undefined = undefined;
 
 	let infoAnimation: TransitionFn | undefined = undefined;
 
@@ -89,8 +88,14 @@
 
 	function openMenuItemModal(menuitem: MenuItem, push: boolean = true) {
 		if (menuitemModalOpt.active) return;
+		// if (menuitem.top) menuitemModalOpt.top = menuitem.top;
+		// if (menuitem.left) menuitemModalOpt.left = menuitem.left;
+
+		// console.debug(menuitemModalOpt.top, menuitem.top);
+		// console.debug(menuitemModalOpt.left, menuitem.left);
+
 		menuitemModalOpt.active = true;
-		menuitemModalOpt.props = { menuitem };
+		menuitemModalOpt.props = { menuitem: menuitem };
 		push && openWithPush(MENU_ITEM_SEARCH_KEY, menuitem.ID);
 	}
 
@@ -142,16 +147,16 @@
 		openMenuItemModal,
 	});
 
-	let infoAnimationDuration = 500;
+	let infoAnimationDuration = 2000;
 
 	function infoMqHandler(e: MediaQueryListEvent) {
-		infoAnimationDuration = e.matches ? 300 : 500;
+		infoAnimationDuration = e.matches ? 2000 : 2000;
 	}
 
 	function initInfoMq(reducedMotionMq: MediaQueryList) {
 		const infoMq = window.matchMedia('screen and (min-width: 961px)');
 		infoMq.addEventListener('change', infoMqHandler);
-		infoAnimationDuration = infoMq.matches ? 300 : 500;
+		infoAnimationDuration = infoMq.matches ? 2000 : 2000;
 
 		return () => {
 			infoMq.removeEventListener('change', infoMqHandler);
@@ -163,11 +168,12 @@
 		const infoMqDestroy = initInfoMq(reducedMotionMq);
 
 		if (reducedMotionMq.matches) {
-			reducedAnimation = undefined;
+			// menuitemAnimation = node => ({ duration: 1000 });
+			menuitemAnimation = undefined;
 			infoAnimation = () => ({ duration: infoAnimationDuration });
 		} else {
 			infoAnimation = fade;
-			reducedAnimation = fade;
+			menuitemAnimation = fade;
 		}
 		window.addEventListener('popstate', handleModalPop);
 
@@ -205,29 +211,6 @@
 		};
 	});
 
-	let translateY: string | undefined = undefined;
-
-	function touchmoveHandler(e: TouchEvent) {
-		console.debug(e);
-		translateY = `${e.touches[0].clientY}px`;
-		if ((<HTMLElement>e.currentTarget).clientHeight < e.touches[0].clientY) {
-			infoModalOpt.active = false;
-			translateY = undefined;
-		}
-	}
-
-	let dia: HTMLElement;
-
-	async function attach(active: boolean) {
-		if (active) {
-			await tick();
-			dia = document.getElementById('info-dialog')!;
-			dia?.addEventListener('touchmove', touchmoveHandler);
-		} else {
-			dia?.removeEventListener('touchmove', touchmoveHandler);
-		}
-	}
-
 	// $: if (browser) attach(infoModalOpt.active);
 </script>
 
@@ -238,8 +221,8 @@
 		id="menuitem-dialog"
 		role="dialog"
 		width="fit-content"
-		inTransition={reducedAnimation}
-		outTransition={reducedAnimation}
+		inTransition={menuitemAnimation}
+		outTransition={menuitemAnimation}
 		active={menuitemModalOpt.active}
 		fullscreen
 		on:escape={closeMenuItemModal}
@@ -255,7 +238,7 @@
 
 <div
 	id="info-container"
-	style="--overlay-z-index: 2; --animation-duration:{infoAnimationDuration}ms; --translate:{translateY}"
+	style="--overlay-z-index: 2; --animation-duration:{infoAnimationDuration}ms;"
 >
 	<Dialog
 		id="info-dialog"
@@ -316,9 +299,28 @@
 
 	#menu-item-dialog-container {
 		--s-dialog-content-overflow: visible;
+		// --s-dialog-overflow: visible;
+
+		// #menuitem-dialog {
+		// 	position: absolute;
+		// 	top: 0;
+		// 	left: var(--left);
+		// 	transform-origin: center top;
+		// 	width: 100%;
+		// 	height: 100%;
+		// 	transform: scale(0.2) translateZ(0) translateX(0) translateY(var(--top));
+		// 	transition: transform var(--animation-duration);
+		// }
+
+		// & .active #menuitem-dialog {
+		// 	transform: scale(1) translateZ(0) translateX(calc(var(--left) * -1)) translateY(0);
+		// 	transition: transform var(--animation-duration);
+		// }
 	}
 
 	#info-container {
+		--s-dialog-overflow: visible;
+
 		height: 100%;
 
 		@media screen and (max-width: 960px) {

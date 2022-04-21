@@ -11,26 +11,32 @@ import en from './en'
 
 import ar_checkout from './ar/checkout'
 import ar_errors from './ar/errors'
+import ar_user from './ar/user'
 import de_checkout from './de/checkout'
 import de_errors from './de/errors'
+import de_user from './de/user'
 import en_checkout from './en/checkout'
 import en_errors from './en/errors'
+import en_user from './en/user'
 
 const localeTranslations = {
 	ar: {
 		...ar,
 		checkout: ar_checkout,
-		errors: ar_errors
+		errors: ar_errors,
+		user: ar_user
 	},
 	de: {
 		...de,
 		checkout: de_checkout,
-		errors: de_errors
+		errors: de_errors,
+		user: de_user
 	},
 	en: {
 		...en,
 		checkout: en_checkout,
-		errors: en_errors
+		errors: en_errors,
+		user: en_user
 	},
 }
 

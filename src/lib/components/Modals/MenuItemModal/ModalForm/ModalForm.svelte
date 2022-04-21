@@ -87,6 +87,62 @@
 								</Button>
 							</ToppingOption>
 						{/each}
+						{#each topping.options as option}
+							<ToppingOption>
+								<ToppingOptionLabel>
+									{#if topping.qtyMin === 1 && topping.qtyMax === 1}
+										<RadioButton name={topping.ID} value={option.ID} required />
+									{:else}
+										<Checkbox bind:group name={topping.ID} value={option.ID} />
+									{/if}
+									<ToppingOptionImage src={'/burger.png'} />
+									<span class="input-label">
+										{option.name}
+									</span>
+									<ToppingOptionPrice ariaLabel={$LL.product.price()}>
+										{#if option.price}
+											{formatPrice(option.price)}
+										{:else}
+											<span class="visually-hidden">
+												{$LL.product.free()}
+											</span>
+										{/if}
+									</ToppingOptionPrice>
+								</ToppingOptionLabel>
+								<!-- style="color: var(--accent-color, orange); background-color: white;" -->
+								<Button icon type="button" on:click={() => dispatch('info')}>
+									<Icon path={mdiInformation} />
+								</Button>
+							</ToppingOption>
+						{/each}
+						{#each topping.options as option}
+							<ToppingOption>
+								<ToppingOptionLabel>
+									{#if topping.qtyMin === 1 && topping.qtyMax === 1}
+										<RadioButton name={topping.ID} value={option.ID} required />
+									{:else}
+										<Checkbox bind:group name={topping.ID} value={option.ID} />
+									{/if}
+									<ToppingOptionImage src={'/burger.png'} />
+									<span class="input-label">
+										{option.name}
+									</span>
+									<ToppingOptionPrice ariaLabel={$LL.product.price()}>
+										{#if option.price}
+											{formatPrice(option.price)}
+										{:else}
+											<span class="visually-hidden">
+												{$LL.product.free()}
+											</span>
+										{/if}
+									</ToppingOptionPrice>
+								</ToppingOptionLabel>
+								<!-- style="color: var(--accent-color, orange); background-color: white;" -->
+								<Button icon type="button" on:click={() => dispatch('info')}>
+									<Icon path={mdiInformation} />
+								</Button>
+							</ToppingOption>
+						{/each}
 					</fieldset>
 				{/each}
 			</div>

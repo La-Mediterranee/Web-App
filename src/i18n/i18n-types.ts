@@ -15,7 +15,8 @@ export type Translation = RootTranslation & DisallowNamespaces
 export type Translations = RootTranslation &
 {
 	checkout: NamespaceCheckoutTranslation,
-	errors: NamespaceErrorsTranslation
+	errors: NamespaceErrorsTranslation,
+	user: NamespaceUserTranslation
 }
 
 type RootTranslation = {
@@ -320,9 +321,30 @@ export type NamespaceErrorsTranslation = {
 	'500': string
 }
 
+export type NamespaceUserTranslation = {
+	/**
+	 * Anmelden
+	 */
+	login: string
+	/**
+	 * Registrieren
+	 */
+	signUp: string
+	/**
+	 * Weiter Optionen
+	 */
+	otherOptions: string
+	/**
+	 * Anmelden mit {0}
+	 * @param {string} 0
+	 */
+	loginWith: RequiredParams<'0'>
+}
+
 export type Namespaces =
 	| 'checkout'
 	| 'errors'
+	| 'user'
 
 type DisallowNamespaces = {
 	/**
@@ -336,6 +358,12 @@ type DisallowNamespaces = {
 	 * you need to use the `./errors/index.ts` file instead
 	 */
 	errors?: "[typesafe-i18n] reserved for 'errors'-namespace. You need to use the `./errors/index.ts` file instead."
+
+	/**
+	 * reserved for 'user'-namespace\
+	 * you need to use the `./user/index.ts` file instead
+	 */
+	user?: "[typesafe-i18n] reserved for 'user'-namespace. You need to use the `./user/index.ts` file instead."
 }
 
 export type TranslationFunctions = {
@@ -634,6 +662,24 @@ export type TranslationFunctions = {
 		 * Es gab einen Fehler auf unserem Server
 		 */
 		'500': () => LocalizedString
+	}
+	user: {
+		/**
+		 * Anmelden
+		 */
+		login: () => LocalizedString
+		/**
+		 * Registrieren
+		 */
+		signUp: () => LocalizedString
+		/**
+		 * Weiter Optionen
+		 */
+		otherOptions: () => LocalizedString
+		/**
+		 * Anmelden mit {0}
+		 */
+		loginWith: (arg0: string) => LocalizedString
 	}
 }
 

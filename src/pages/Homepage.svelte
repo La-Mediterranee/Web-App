@@ -1,62 +1,57 @@
 <script context="module" lang="ts">
-	import { Wave } from '$lib/Icons';
-	import { SHOP_LOGO } from '$utils/constants';
-
-	import type { HomepageProps } from '../routes/api/homepage';
-
-	function createTable(translations: TranslationFunctions['product']) {
-		return {
-			true: translations.addToCart,
-			false: translations.chooseOptions,
-		};
-	}
-</script>
-
-<script lang="ts">
 	import Carousel from '$lib/components/Carousel';
 	import Image from '$lib/components/Image/Image.next.svelte';
 	import MenuItemCard from '$lib/components/MenuItem/MenuItemCard.svelte';
 	import CarouselItem from '$lib/components/Carousel/CarouselItem.svelte';
 
-	import { session } from '$app/stores';
+	import { onMount } from 'svelte';
 	import { derived } from 'svelte/store';
+	import { browser } from '$app/env';
+	import { session } from '$app/stores';
 
 	import { LL } from '$i18n/utils';
+	import { Wave } from '$lib/Icons';
+	import { SHOP_LOGO } from '$utils/constants';
 	import { cart, formatPrice } from '$lib/stores/cart';
 	import { getModalContext } from '$lib/components/Modals';
 
 	import type { CartItem, MenuItem } from 'types/product';
-	import type { LocalizedString } from 'typesafe-i18n';
-	import { browser } from '$app/env';
-	import { onMount } from 'svelte';
 
+	import type { HomepageProps } from '../routes/api/homepage';
+
+	const cardActionText = derived(LL, $LL => {
+		const table = Object.create(null, {
+			true: {
+				value: $LL.product.addToCart,
+			},
+			false: {
+				value: $LL.product.chooseOptions,
+			},
+		});
+
+		return (key: boolean) => table[`${key}`]();
+	});
+
+	// const cardActionTextMap = derived(LL, $LL => {
+	// 	const table = new Map([
+	// 		[true, $LL.product.addToCart],
+	// 		[false, $LL.product.chooseOptions],
+	// 	]);
+
+	// 	return (key: boolean) => table.get(key)!()!;
+	// });
+</script>
+
+<script lang="ts">
 	export let homePageData: HomepageProps | undefined;
 
 	const modal = getModalContext();
 
 	const sections = homePageData?.sections || [];
 
-	// new Map([
-	// 	[true, $LL.product.addToCart],
-	// 	[false, $LL.product.chooseOptions],
-	// ]);
-
-	const cardActionText = derived(LL, $LL => {
-		const table = createTable($LL.product);
-		return (key: boolean) => table[`${key}`]();
-	});
-
-	const cardActionTextMap = derived(LL, $LL => {
-		const table = new Map([
-			[true, $LL.product.addToCart],
-			[false, $LL.product.chooseOptions],
-		]);
-
-		return (key: boolean) => table.get(key)!()!;
-	});
-
 	function openPopUp(e: Event, product: MenuItem) {
-		if (product.toppings?.length > 0) return modal.openMenuItemModal(product);
+		console.debug(e.detail);
+		if (product.toppings?.length > 0) return modal.openMenuItemModal(e.detail.item);
 
 		cart.addItem(
 			<CartItem>(<unknown>Object.assign({ quantity: 1, selectedToppings: [] }, product)),
@@ -125,7 +120,7 @@
 									price: $LL.product.price(),
 								}}
 								on:click={e => openPopUp(e, menuItem)}
-								on:info={e => modal.openInfoModal(e.detail)}
+								on:info={e => modal.openInfoModal(menuItem)}
 							>
 								<svelte:fragment slot="name">
 									{menuItem.name}
@@ -140,7 +135,6 @@
 
 								<svelte:fragment slot="cta">
 									{$cardActionText(menuItem.toppings.length === 0)}
-									{$cardActionTextMap(menuItem.toppings.length === 0)}
 								</svelte:fragment>
 							</MenuItemCard>
 						</CarouselItem>

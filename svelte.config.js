@@ -102,8 +102,6 @@ function vite() {
 		'last 5 major versions and >= 0.1% and supports es6-module and supports es6-module-dynamic-import',
 	);
 
-	console.debug(browserslist);
-
 	return {
 		build: {
 			target: browserslist,
@@ -143,12 +141,12 @@ function vite() {
 			https: {
 				cert: readFileSync(
 					platform() === 'linux'
-						? './config/example.com+5.windows.pem'
+						? './config/app-cert.windows.pem'
 						: './config/example.com+5.pem',
 				),
 				key: readFileSync(
 					platform() === 'linux'
-						? './config/example.com+5-key.windows.pem'
+						? './config/app-key.windows.pem'
 						: './config/example.com+5-key.pem',
 				),
 			},

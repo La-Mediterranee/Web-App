@@ -89,16 +89,15 @@ span {
 	justify-content: flex-start;
 
 	img {
-		margin-left: 1em;
+		margin-inline-start: 1em;
 		width: 30px;
 		height: 30px;
-		margin-right: 1.2em;
 	}
 
 	span {
 		font-weight: bold;
-		// margin: auto;
-		text-align: left;
+		text-align: center;
+		width: 100%;
 	}
 }
 

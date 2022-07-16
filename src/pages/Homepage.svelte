@@ -50,7 +50,6 @@
 	const sections = homePageData?.sections || [];
 
 	function openPopUp(e: Event, product: MenuItem) {
-		console.debug(e.detail);
 		if (product.toppings?.length > 0) return modal.openMenuItemModal(e.detail.item);
 
 		cart.addItem(

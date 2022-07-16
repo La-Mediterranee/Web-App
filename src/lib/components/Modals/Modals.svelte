@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	import Dialog from 'svelty-material/components/Dialog/Dialog.svelte';
 
+	import { page } from '$app/stores';
 	import { fade, scale, type EasingFunction, type TransitionConfig } from 'svelte/transition';
 	import { afterUpdate, beforeUpdate, onMount, setContext, tick } from 'svelte';
 
@@ -28,6 +29,7 @@
 	import type { MenuItem, Product } from 'types/product';
 	import type { DialogOptions, ModalContext } from './types';
 	import type { TransitionFn } from 'svelty-material/@types';
+	import { browser } from '$app/env';
 </script>
 
 <script lang="ts">
@@ -107,15 +109,14 @@
 	}
 
 	function open<T>(component: SvelteComp<T>, props?: T, options: DialogOptions = {}) {
-		options.alignItems = options?.alignItems || 'flex-start';
-		options.fullscreen = options?.fullscreen ?? true;
-
-		dialogs.set(component, {
-			props,
-			active: true,
-			dialogOptions: options,
-		});
-		dialogs = dialogs;
+		// options.alignItems = options?.alignItems || 'flex-start';
+		// options.fullscreen = options?.fullscreen ?? true;
+		// dialogs.set(component, {
+		// 	props,
+		// 	active: true,
+		// 	dialogOptions: options,
+		// });
+		// dialogs = dialogs;
 	}
 
 	function pushOnClose(key: string) {
@@ -147,21 +148,33 @@
 		openMenuItemModal,
 	});
 
-	let infoAnimationDuration = 2000;
+	let infoAnimationDuration = 500;
 
 	function infoMqHandler(e: MediaQueryListEvent) {
-		infoAnimationDuration = e.matches ? 2000 : 2000;
+		infoAnimationDuration = e.matches ? 500 : 500;
 	}
 
 	function initInfoMq(reducedMotionMq: MediaQueryList) {
 		const infoMq = window.matchMedia('screen and (min-width: 961px)');
 		infoMq.addEventListener('change', infoMqHandler);
-		infoAnimationDuration = infoMq.matches ? 2000 : 2000;
+		infoAnimationDuration = infoMq.matches ? 500 : 500;
 
 		return () => {
 			infoMq.removeEventListener('change', infoMqHandler);
 		};
 	}
+
+	const searchParams = $page.url.searchParams;
+	checkForMenuItem(searchParams).then(async menuitem => {
+		if (!menuitem) return;
+		menuItemModal = await loadMenuItemModal();
+		openMenuItemModal(menuitem, false);
+	});
+	checkForInfo(searchParams).then(async menuitem => {
+		if (!menuitem) return;
+		infoModal = await loadInfoModal();
+		openInfoModal(menuitem, false);
+	});
 
 	onMount(() => {
 		const reducedMotionMq = window.matchMedia('(prefers-reduced-motion: no-preference)');
@@ -194,14 +207,6 @@
 		checkForProduct(searchParams).then(async product => {
 			productModal = await loadProductModal();
 			if (product) open(productModal, { product });
-		});
-		checkForMenuItem(searchParams).then(async menuitem => {
-			menuItemModal = await loadMenuItemModal();
-			if (menuitem) openMenuItemModal(menuitem, false);
-		});
-		checkForInfo(searchParams).then(async menuitem => {
-			infoModal = await loadInfoModal();
-			if (menuitem) openInfoModal(menuitem, false);
 		});
 
 		return () => {
@@ -243,7 +248,6 @@
 	<Dialog
 		id="info-dialog"
 		role="dialog"
-		width="100%"
 		inTransition={infoAnimation}
 		outTransition={infoAnimation}
 		active={infoModalOpt.active}
@@ -299,6 +303,8 @@
 
 	#menu-item-dialog-container {
 		--s-dialog-content-overflow: visible;
+		--s-dialog-height: 100%;
+		--s-dialog-width: 100%;
 		// --s-dialog-overflow: visible;
 
 		// #menuitem-dialog {
@@ -344,6 +350,10 @@
 				transform: translateY(var(--translate, 0));
 				transition: transform var(--animation-duration) ease-in;
 			}
+
+			// & .active:not(.is-opening) #info-dialog {
+			// 	transform: translateY(var(--translate, 0));
+			// }
 		}
 
 		@media screen and (min-width: 961px) {

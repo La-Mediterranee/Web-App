@@ -207,6 +207,7 @@ main {
 	--theme-chips: #555555;
 	/* --theme-cards: #1e1e1e; */
 	--theme-cards: #263dd1;
+	// --theme-cards: rgba(38, 61, 209, 0.55);
 	--theme-app-bar: linear-gradient(to right, var(--top1), var(--top2));
 	--theme-navigation-drawer: #363636;
 
@@ -231,6 +232,11 @@ main {
 
 	// --theme-text-fields-border-width: thin;
 	--theme-text-fields-border-width-hover: thin;
+}
+
+.s-ripple-container {
+	-webkit-mask-image: none;
+	transform: translateZ(0);
 }
 
 .text-center {

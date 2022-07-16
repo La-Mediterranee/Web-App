@@ -1,11 +1,11 @@
-import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types';
 
 // import Stripe from 'stripe';
 
 // const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_API);
 // const secret = import.meta.env.VITE_STRIPE_WEBHOOK_SECRET;
 
-export async function get({ locals }: RequestEvent): Promise<RequestHandlerOutput> {
+export async function GET({ locals }: RequestEvent): Promise<RequestHandlerOutput> {
 	return {
 		status: 302,
 		headers: {

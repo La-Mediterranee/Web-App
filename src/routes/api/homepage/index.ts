@@ -1,13 +1,13 @@
 import { SERVER_PORT, SERVER_URL } from '$lib/server/constants';
 
 import type { MenuItem, Product } from 'types/product';
-import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types';
 
 interface GetBody {
 	product?: Product;
 }
 
-export async function get({ locals }: RequestEvent): Promise<RequestHandlerOutput> {
+export async function GET({ locals }: RequestEvent): Promise<RequestHandlerOutput> {
 	return {
 		body: JSON.stringify(await homepage()),
 	};

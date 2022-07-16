@@ -1,9 +1,9 @@
 import { serialize } from '$lib/server/cookie';
 import { fetchFromAPI } from '$lib/utils';
 
-import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types';
 
-export async function get() {
+export async function GET() {
 	return {};
 }
 
@@ -25,7 +25,7 @@ interface CartMenuItem extends ICartItem {
 	}[];
 }
 
-export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
+export async function POST(event: RequestEvent): Promise<RequestHandlerOutput> {
 	if (event.locals.cookies.intentSecret)
 		return {
 			status: 303,

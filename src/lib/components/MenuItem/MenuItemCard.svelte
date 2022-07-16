@@ -154,24 +154,26 @@
 		<link itemprop="url" content={href} />
 		<MenuItemInnerCard>
 			<main>
-				<MenuItemImage {image} />
-				<MenuItemName
-					{href}
-					{captureRipple}
-					{tabindex}
-					captureRippleNode={ctaEl}
-					on:click={handler}
-				>
-					<slot name="name" />
-					<span slot="cta" class="visually-hidden">
-						-
-						<slot name="cta" />
-					</span>
-				</MenuItemName>
+				<div style="position: relative;">
+					<MenuItemImage {image} />
+					<MenuItemName
+						{href}
+						{captureRipple}
+						{tabindex}
+						captureRippleNode={ctaEl}
+						on:click={handler}
+					>
+						<slot name="name" />
+						<span slot="cta" class="visually-hidden">
+							-
+							<slot name="cta" />
+						</span>
+					</MenuItemName>
 
-				<MenuItemPrice ariaLabel={label?.price}>
-					<slot name="price" />
-				</MenuItemPrice>
+					<MenuItemPrice ariaLabel={label?.price}>
+						<slot name="price" />
+					</MenuItemPrice>
+				</div>
 
 				{#if desc}
 					<MenuItemDesc>
@@ -210,7 +212,13 @@
 		// flex: 0 0 auto;
 
 		--wave-color: #278cc5;
+		--theme-cards: rgba(38, 61, 209, 0.55);
+		--_menuitem-name-height: 2.4em;
+
 		position: relative;
+
+		contain: layout;
+		break-inside: avoid;
 
 		width: var(--product-card-width, 100%);
 		height: var(--product-card-height, 100%);
@@ -220,6 +228,9 @@
 
 		:global(.s-card) {
 			height: 100%;
+			// box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+			backdrop-filter: blur(12.5px);
+			-webkit-backdrop-filter: blur(12.5px);
 		}
 
 		main {
@@ -238,7 +249,7 @@
 			animation-play-state: var(--animps, paused);
 
 			@media (prefers-reduced-motion: no-preference) {
-				--animps: running;
+				// --animps: running;
 			}
 
 			@media screen and (min-width: 450px) and (any-hover: none) and (pointer: coarse) {

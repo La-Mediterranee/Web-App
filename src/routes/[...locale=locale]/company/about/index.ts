@@ -1,3 +1,3 @@
-import type { RequestEvent } from '@sveltejs/kit/types/private';
+import type { RequestEvent } from '@sveltejs/kit/types';
 
-export async function get(event: RequestEvent) {}
+export async function GET(event: RequestEvent) {}

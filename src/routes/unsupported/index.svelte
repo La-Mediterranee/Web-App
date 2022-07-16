@@ -4,6 +4,8 @@
 
 	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
 
+	export const prerender = true;
+
 	export async function load({ session }: LoadInput): Promise<LoadOutput> {
 		await loadLocaleAsync(session.locale);
 

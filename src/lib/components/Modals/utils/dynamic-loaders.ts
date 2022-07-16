@@ -3,17 +3,17 @@ export async function loadDialog() {
 }
 
 export async function loadMenuItemModal() {
-	return (await import('$lib/components/Modals/MenuItemModal')).default;
+	return (await import('$lib/components/Modals/MenuItemModal/MenuItemModal.svelte')).default;
 }
 
 export async function loadProductModal() {
-	return (await import('$lib/components/Modals/ProductModal')).default;
+	return (await import('$lib/components/Modals/ProductModal/ProductModal.svelte')).default;
 }
 
 export async function loadInfoModal() {
-	const reducedMotionMq = window.matchMedia('screen and (min-width: 961px)');
+	// const reducedMotionMq = window.matchMedia('screen and (min-width: 961px)');
 	// return reducedMotionMq.matches
 	// 	? (await import('$lib/components/Modals/InfoModal')).default
 	// 	: (await import('$lib/components/Modals/InfoModal/MobileInfoModal.svelte')).default;
-	return (await import('$lib/components/Modals/InfoModal')).default;
+	return (await import('$lib/components/Modals/InfoModal/InfoModal.svelte')).default;
 }

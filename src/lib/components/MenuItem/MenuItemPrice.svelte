@@ -4,7 +4,7 @@
 	export let ariaLabel: string;
 </script>
 
-<div itemscope itemprop="offers" itemtype="https://schema.org/Offer" class="price">
+<div itemscope itemprop="offers" itemtype="https://schema.org/Offer" class="price bottom-right">
 	<!-- <meta itemprop="priceCurrency" content="EUR" /> -->
 	<Chip aria-label={ariaLabel} class="form-elements-color" style="font-size: .8em;">
 		<slot />
@@ -17,9 +17,20 @@
 		display: flex;
 		position: absolute;
 		justify-content: center;
-		top: 0;
 		font-size: 1.4rem;
 		font-weight: 600;
+	}
+
+	.top-left {
+		top: 0;
+		padding-block-start: 0.2em;
 		margin-inline-start: 0.4em;
+	}
+
+	.bottom-right {
+		bottom: calc(var(--_menuitem-name-height) + 0.7em);
+		right: 0;
+		padding-block-end: 0.2em;
+		margin-inline-end: 0.4em;
 	}
 </style>

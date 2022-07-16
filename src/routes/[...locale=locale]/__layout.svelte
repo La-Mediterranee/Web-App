@@ -110,8 +110,24 @@
 		});
 	});
 
+	let runningAnimations: Animation[] = [];
+	function visibilityHandler(_e: Event) {
+		if (document.visibilityState === 'visible') {
+			runningAnimations.forEach(animation => animation.play());
+			return;
+		}
+
+		runningAnimations = document.getAnimations().filter(animation => {
+			const prevState = animation.playState;
+			animation.pause();
+			return prevState === 'running';
+		});
+	}
+
 	onMount(() => {
 		if (dev) return;
+		document.addEventListener('visibilitychange', visibilityHandler);
+		// window.addEventListener("pagehide", visibilityHandler)
 		// const sw = await registerServiceWorker();
 		// Notification.requestPermission(permission => {
 		// 	if (permission === 'granted') {
@@ -119,15 +135,17 @@
 		// 	}
 		// });
 
-		return () => {};
+		return () => {
+			document.removeEventListener('visibilitychange', visibilityHandler);
+		};
 	});
 </script>
 
 <svelte:window bind:online />
 
-<svelte:head>
+<!-- <svelte:head>
 	<html {lang} {dir} />
-</svelte:head>
+</svelte:head> -->
 
 <!-- <LDTag {}/>  -->
 

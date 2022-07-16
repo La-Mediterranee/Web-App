@@ -1,6 +1,6 @@
 import type { RequestEvent } from '@sveltejs/kit/types/internal';
 
-export async function get(req: RequestEvent) {
+export async function GET(req: RequestEvent) {
 	const sessionId = '1234';
 	const ghAuthURL = 'https://github.com/login/oauth/authorize';
 	const clientId = import.meta.env.VITE_CLIENT_ID;
@@ -13,7 +13,7 @@ export async function get(req: RequestEvent) {
 	};
 }
 
-export async function post(req: RequestEvent) {
+export async function POST(req: RequestEvent) {
 	const form = await req.request.formData();
 
 	console.debug(form.get('email'));

@@ -14,7 +14,7 @@
 		<div
 			bind:this={ctaEl}
 			use:Ripple
-			class="cta s-btn size-default rounded s-ripple-container form-elements-color"
+			class="cta s-btn size-default rounded form-elements-color"
 		>
 			<span class="s-btn__content add-to-cart-text" aria-hidden="true">
 				<slot />
@@ -59,6 +59,7 @@
 
 	.cta {
 		cursor: pointer;
+		position: relative;
 		// margin: 0 auto;
 	}
 
@@ -79,6 +80,11 @@
 			transform: translateZ(0) translateY(110%);
 			transition: transform var(--actions-transition-duration) ease;
 			// padding-top: 4.2em;
+		}
+
+		:global(.menuitem-card-container:hover) .cta {
+			&::before {
+			}
 		}
 
 		// :global(.menuitem-card-container:focus-within) .cta:not(.click)::before {

@@ -22,7 +22,7 @@ async function fetchWithJSON(init: RequestInit) {
 const days = 14;
 const defaultExpiresIn = days * 60 * 60 * 24 * 1000;
 
-export async function post(event: RequestEvent): Promise<RequestHandlerOutput> {
+export async function POST(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const body = (await event.request.json()) as SessionLogin;
 
 	try {

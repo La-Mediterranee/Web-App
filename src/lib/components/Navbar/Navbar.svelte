@@ -120,6 +120,9 @@
 		position: var(--header-position, sticky);
 		background: var(--theme-app-bar);
 		border-radius: 0 0 1.2em 1.2em;
+
+		contain: paint;
+		break-inside: avoid;
 		content-visibility: visible;
 
 		@media screen and (min-width: map-get($map: $breakpoints, $key: sm)) {

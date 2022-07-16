@@ -2,14 +2,14 @@ import { SERVER_PORT, SERVER_URL } from '$lib/server/constants';
 
 import type { Product } from 'types/product';
 import type { WithContext, Product as DTSProduct } from 'schema-dts';
-import type { ShadowEndpointOutput, RequestEvent, JSONObject } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, ResponseBody, RequestHandlerOutput } from '@sveltejs/kit/types';
 
 interface GetBody {
 	product: Product;
 	jsonLd: WithContext<DTSProduct>;
 }
 
-export async function get({ params }: RequestEvent): Promise<ShadowEndpointOutput> {
+export async function GET({ params }: RequestEvent): Promise<RequestHandlerOutput> {
 	const { id } = params;
 
 	const product: Product = await fetch(`${SERVER_URL}/v1/products/${id}`).then(res => res.json());
@@ -37,6 +37,6 @@ export async function get({ params }: RequestEvent): Promise<ShadowEndpointOutpu
 	};
 
 	return {
-		body: body as unknown as JSONObject,
+		body: body as unknown as ResponseBody,
 	};
 }

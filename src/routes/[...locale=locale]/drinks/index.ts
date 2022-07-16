@@ -2,9 +2,9 @@ import { SERVER_URL } from '$lib/server/constants';
 
 import type { MenuItem } from 'types/product';
 import type { BreadcrumbList, WithContext } from 'schema-dts';
-import type { RequestEvent, JSONObject, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput, ResponseBody } from '@sveltejs/kit/types';
 
-export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
+export async function GET(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const res = await fetch(`${SERVER_URL}/v1/products/drinks`);
 	if (!res.ok) return { status: 500 };
 
@@ -37,7 +37,7 @@ export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	};
 
 	return {
-		body: <JSONObject>(<unknown>{
+		body: {
 			schema: breadcrumb,
 			drinks: drinks.map(drink => {
 				const aspectRatio = (drink.image.height || 1) / (drink.image.width || 1);
@@ -57,6 +57,6 @@ export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 					},
 				});
 			}),
-		}),
+		} as unknown as ResponseBody,
 	};
 }

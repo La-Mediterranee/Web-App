@@ -20,6 +20,18 @@ const openGraph: OpenGraph = {
 	'og:image:alt': 'SvelteSociety.dev',
 };
 
+// - restaurant.menu:  This object type represents a restaurant's menu. A restaurant can have multiple menus, and each menu has multiple sections.
+
+// - restaurant.menu_item: This object type represents a single item on a restaurant's menu. Every item belongs within a menu section.
+
+// - restaurant.menu_section: This object type represents a section in a restaurant's menu. A section contains multiple menu items.
+
+// - restaurant.restaurant: This object type represents a restaurant at a specific location.
+
+// - restaurant.visited: An action representing someone visiting a restaurant.
+
+// - restaurant.wants_to_visit: An action representing someone wanting to visit a restaurant
+
 const twitter: Twitter = {
 	'twitter:card': 'summary',
 	'twitter:title': title,

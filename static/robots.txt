@@ -1,5 +1,13 @@
 User-agent: *
-
 Disallow: */cart
 Disallow: */checkout
 Disallow: */customer
+
+# Google adsbot ignores robots.txt unless specifically named!
+User-agent: adsbot-google
+Disallow: */cart
+Disallow: */checkout
+Disallow: */customer
+
+User-agent: Pinterest
+Crawl-delay: 1

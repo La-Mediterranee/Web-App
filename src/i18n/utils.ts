@@ -1,5 +1,5 @@
 import { getContext, setContext } from 'svelte';
-import { initI18nSvelte, type SvelteStoreInit } from 'typesafe-i18n/adapters/adapter-svelte';
+import { initI18nSvelte, type SvelteStoreInit } from 'typesafe-i18n/svelte';
 import { loadedFormatters, loadedLocales, locales as utilLocales } from './i18n-util';
 
 import type { Formatters } from './i18n-types';
@@ -48,6 +48,8 @@ export const intlConfig: Record<Locales, LocaleConfig> = Object.freeze({
 const LL_KEY = Symbol('i18n');
 
 type i18nStore = SvelteStoreInit<Locales, Translations, TranslationFunctions>;
+
+// self.addEventListener("languagechange")
 
 export function seti18nContext(): i18nStore {
 	const i18n = initI18nSvelte<Locales, Translations, TranslationFunctions, Formatters>(

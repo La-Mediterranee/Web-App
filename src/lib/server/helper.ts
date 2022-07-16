@@ -1,13 +1,11 @@
 // import { auth } from './firebase';
 import { serialize } from './cookie';
+import { SERVER_URL } from './constants';
 
 import type { Options } from './cookie';
-import type {
-	ResponseHeaders,
-	ShadowEndpointOutput,
-	RequestHandlerOutput,
-} from '@sveltejs/kit/types/internal';
-import { SERVER_URL } from './constants';
+import type { ResponseHeaders, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+
+import type * as nodeFetch from 'node-fetch';
 
 // /**
 //  * Decodes the JSON Web Token sent via the frontend app.
@@ -96,131 +94,24 @@ export async function refreshSessionCookie(response: Response, uid: string) {
 	return cookie;
 }
 
-// class InvalidTokenError extends Error {
-// 	constructor(readonly message: string) {
-// 		super();
-// 	}
-// }
+export async function attachFetchGlobal() {
+	const [{ default: https }, { default: fetch }] = await Promise.all([
+		import('node:https'),
+		import('node-fetch'),
+	]);
 
-// interface FirebaseHeader {
-// 	alg: 'RS256';
-// 	kid: string;
-// }
+	const agent = new https.Agent({
+		rejectUnauthorized: false,
+	});
 
-// interface DecodedFirebaseToken {
-// 	header: FirebaseHeader;
-// 	payload: DecodedIdToken;
-// 	signature: string;
-// }
+	const myFetch = (input: RequestInfo, init: RequestInit = {}) =>
+		fetch(<nodeFetch.RequestInfo>input, <nodeFetch.RequestInit>Object.assign(init, { agent }));
 
-// function createDecoder() {
-// 	const decoder = dev
-// 		? (raw: string) => Buffer.from(raw, 'base64').toString()
-// 		: (raw: string) => {
-// 				raw = <JwtToken>raw.replace(/-/g, '+').replace(/_/g, '/');
-// 				switch (raw.length % 4) {
-// 					case 0:
-// 						break;
-// 					case 2:
-// 						raw += '==';
-// 						break;
-// 					case 3:
-// 						raw += '=';
-// 						break;
-// 					default:
-// 						throw new Error('Illegal base64url string!');
-// 				}
-
-// 				return decodeURIComponent(escape(self.atob(raw)));
-// 		  };
-
-// 	return function decodeJWT(raw: JwtToken): DecodedFirebaseToken {
-// 		const [header, payload, signature] = raw.split('.');
-
-// 		try {
-// 			return <DecodedFirebaseToken>{
-// 				header: JSON.parse(decoder(header)),
-// 				payload: JSON.parse(decoder(payload)),
-// 				signature,
-// 			};
-// 		} catch (e) {
-// 			throw new InvalidTokenError('Invalid token specified: ' + (e as any).message);
-// 		}
-// 	};
-// }
-
-// const jwtDecoder = createDecoder();
-
-// async function verifySessionCookie(token: JwtToken) {
-// 	if (typeof token !== 'string') {
-// 		// throw new FirebaseAuthError(
-// 		// 	AuthClientErrorCode.INVALID_ARGUMENT,
-// 		// 	`First argument to ${this.tokenInfo.verifyApiName} must be a ${this.tokenInfo.jwtName} string.`,
-// 		// );
-// 	}
-
-// 	// const decodedIdToken = jwt_decode<DecodedIdToken>(token, { header: true });
-// 	const decodedToken = jwtDecoder(token);
-
-// 	verifyFirebaseToken(decodedToken);
-
-// 	const decodedIdToken = decodedToken.payload;
-// 	console.log('JWT:', decodedIdToken);
-
-// 	decodedIdToken.uid = decodedIdToken.sub;
-// 	return decodedIdToken;
-// }
-
-// const PROJECT_ID = 'la-meditaterranee';
-// const ALGORITHM_RS256 = 'RS256';
-// const APP_CHECK_ISSUER = 'https://firebaseappcheck.googleapis.com/';
-
-// async function verifyFirebaseToken({ header, payload }: DecodedFirebaseToken) {
-// 	const projectIdMatchMessage =
-// 		' Make sure the token comes from the same ' +
-// 		'Firebase project as the service account used to authenticate this SDK.';
-// 	const scopedProjectId = `projects/${PROJECT_ID}`;
-
-// 	// let errorMessage: string | undefined;
-// 	// if (header.alg !== ALGORITHM_RS256) {
-// 	//   errorMessage = `The provided App Check token has incorrect algorithm. Expected "${ALGORITHM_RS256}" but got "${header.alg}".`;
-
-// 	let errorMessage: string | undefined;
-//     if (!isEmulator && typeof header.kid === 'undefined') {
-//       const isCustomToken = (payload.aud === FIREBASE_AUDIENCE);
-//       const isLegacyCustomToken = (header.alg === 'HS256' && payload.v === 0 && 'd' in payload && 'uid' in payload.d);
-
-//       if (isCustomToken) {
-//         errorMessage = `${this.tokenInfo.verifyApiName} expects ${this.shortNameArticle} ` +
-//           `${this.tokenInfo.shortName}, but was given a custom token.`;
-//       } else if (isLegacyCustomToken) {
-//         errorMessage = `${this.tokenInfo.verifyApiName} expects ${this.shortNameArticle} ` +
-//           `${this.tokenInfo.shortName}, but was given a legacy custom token.`;
-//       } else {
-//         errorMessage = 'Firebase ID token has no "kid" claim.';
-//       }
-
-//       errorMessage += verifyJwtTokenDocsMessage;
-//     } else if (header.alg !== ALGORITHM_RS256) {
-//       errorMessage = `${this.tokenInfo.jwtName} has incorrect algorithm. Expected "` + ALGORITHM_RS256 + '" but got ' +
-//         '"' + header.alg + '".' + verifyJwtTokenDocsMessage;
-//     } else if (payload.aud !== projectId) {
-//       errorMessage = `${this.tokenInfo.jwtName} has incorrect "aud" (audience) claim. Expected "` +
-//         projectId + '" but got "' + payload.aud + '".' + projectIdMatchMessage +
-//         verifyJwtTokenDocsMessage;
-//     } else if (payload.iss !== this.issuer + projectId) {
-//       errorMessage = `${this.tokenInfo.jwtName} has incorrect "iss" (issuer) claim. Expected ` +
-//         `"${this.issuer}` + projectId + '" but got "' +
-//         payload.iss + '".' + projectIdMatchMessage + verifyJwtTokenDocsMessage;
-//     } else if (typeof payload.sub !== 'string') {
-//       errorMessage = `${this.tokenInfo.jwtName} has no "sub" (subject) claim.` + verifyJwtTokenDocsMessage;
-//     } else if (payload.sub === '') {
-//       errorMessage = `${this.tokenInfo.jwtName} has an empty string "sub" (subject) claim.` + verifyJwtTokenDocsMessage;
-//     } else if (payload.sub.length > 128) {
-//       errorMessage = `${this.tokenInfo.jwtName} has "sub" (subject) claim longer than 128 characters.` +
-//         verifyJwtTokenDocsMessage;
-//     }
-//     if (errorMessage) {
-//       throw new FirebaseAuthError(AuthClientErrorCode.INVALID_ARGUMENT, errorMessage);
-//     }
-// }
+	Object.defineProperties(globalThis, {
+		fetch: {
+			enumerable: true,
+			configurable: true,
+			value: myFetch,
+		},
+	});
+}

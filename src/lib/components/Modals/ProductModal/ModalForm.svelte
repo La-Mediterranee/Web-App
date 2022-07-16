@@ -42,6 +42,7 @@
 						{@const id = `${topping.ID}-${option.ID}`.toLowerCase()}
 						<div class="topping-item">
 							<label for={id}>
+								<!-- !(1 ^ 1) -->
 								<!-- {#if topping.qtyMin === 1 && topping.qtyMax === 1} -->
 								<!-- because qtyMax can only be one -->
 								{#if (topping.qtyMax & topping.qtyMin) | topping.qtyMin}

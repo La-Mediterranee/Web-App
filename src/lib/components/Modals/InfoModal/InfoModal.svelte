@@ -11,6 +11,7 @@
 
 	import type { MenuItem } from 'types/product';
 	import type { TranslationFunctions } from '$i18n/i18n-types';
+	import { browser } from '$app/env';
 
 	const dispatch = createEventDispatcher();
 
@@ -20,6 +21,8 @@
 	export let translations: TranslationFunctions['product'];
 
 	let translateY: string | undefined = undefined;
+
+	console.debug(menuitem);
 </script>
 
 <!-- draggable="true"
@@ -64,7 +67,6 @@ on:dragstart={e => console.debug(e)} -->
 		color: var(--theme-text-primary);
 		display: block;
 		max-width: 100%;
-		outline: none;
 		text-decoration: none;
 		transition-property: box-shadow, opacity;
 		overflow-wrap: break-word;

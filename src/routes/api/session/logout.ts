@@ -17,7 +17,7 @@ import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/int
 // 	return response;
 // }
 
-export function head(req: RequestEvent): RequestHandlerOutput {
+export function HEAD(req: RequestEvent): RequestHandlerOutput {
 	req.locals.user = null;
 
 	const response = {};

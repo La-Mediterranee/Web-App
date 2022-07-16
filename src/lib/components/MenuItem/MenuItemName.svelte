@@ -28,7 +28,7 @@
 	.title {
 		display: flex;
 		padding: 0 0.3em;
-		height: 2.4em;
+		height: var(--_menuitem-name-height);
 		font-size: 1.8rem;
 
 		justify-content: center;

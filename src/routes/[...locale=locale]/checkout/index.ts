@@ -1,6 +1,6 @@
 import { dev } from '$app/env';
 
-import type { RequestEvent, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types';
 
 function getSection(searchParams: URLSearchParams) {
 	const section = searchParams.get('section');
@@ -20,7 +20,7 @@ function getSection(searchParams: URLSearchParams) {
 	};
 }
 
-export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
+export async function GET(event: RequestEvent): Promise<RequestHandlerOutput> {
 	if (!dev && typeof event.locals.cookies.intentSecret === 'undefined')
 		return {
 			status: 302,
@@ -38,7 +38,7 @@ export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
 	};
 }
 
-export async function post(event: RequestEvent): Promise<ShadowEndpointOutput> {
+export async function POST(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const section = event.url.searchParams.get('section');
 	const prev = event.url.searchParams.get('prev');
 	const next = +(event.url.searchParams.get('next') || 0);

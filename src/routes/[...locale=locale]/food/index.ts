@@ -1,5 +1,4 @@
-import type { ShadowEndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
-import type { JSONObject } from '@sveltejs/kit/types/internal';
+import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types';
 
 const categories: Record<Locales, string[]> = {
 	de: [
@@ -46,9 +45,9 @@ const categories: Record<Locales, string[]> = {
 	],
 };
 
-export async function get(event: RequestEvent): Promise<ShadowEndpointOutput> {
+export async function get(event: RequestEvent): Promise<RequestHandlerOutput> {
 	return {
-		body: <JSONObject>{
+		body: {
 			categories: categories[event.locals.locale],
 		},
 	};

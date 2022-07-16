@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 import { initFormatters } from './formatters'
-import type { Locales, Translations, Namespaces } from './i18n-types'
+import type { Locales, Namespaces, Translations } from './i18n-types'
 import { loadedFormatters, loadedLocales, locales } from './i18n-util'
 
 const localeTranslationLoaders = {
@@ -29,20 +29,24 @@ const localeNamespaceLoaders = {
 	}
 }
 
-export const loadLocaleAsync = async (locale: Locales) => {
-	if (loadedLocales[locale]) return
+const updateDictionary = (locale: Locales, dictionary: Partial<Translations>) =>
+	loadedLocales[locale] = { ...loadedLocales[locale], ...dictionary }
 
-	loadedLocales[locale] = (await localeTranslationLoaders[locale]()).default as unknown as Translations
+export const loadLocaleAsync = async (locale: Locales): Promise<void> => {
+	updateDictionary(
+		locale,
+		(await localeTranslationLoaders[locale]()).default as unknown as Translations
+	)
 	loadFormatters(locale)
 }
 
-export const loadAllLocalesAsync = () => Promise.all(locales.map(loadLocaleAsync))
+export const loadAllLocalesAsync = (): Promise<void[]> => Promise.all(locales.map(loadLocaleAsync))
 
-export const loadFormatters = (locale: Locales) => {
-	loadedFormatters[locale] = initFormatters(locale)
-}
+export const loadFormatters = (locale: Locales): void =>
+	void (loadedFormatters[locale] = initFormatters(locale))
 
-export const loadNamespaceAsync = async <Namespace extends Namespaces>(locale: Locales, namespace: Namespace) => {
-	if (!loadedLocales[locale]) loadedLocales[locale] = {} as Translations
-	loadedLocales[locale][namespace] = (await (localeNamespaceLoaders[locale][namespace])()).default as Translations[Namespace]
-}
+export const loadNamespaceAsync = async <Namespace extends Namespaces>(locale: Locales, namespace: Namespace): Promise<void> =>
+	void updateDictionary(
+		locale,
+		{ [namespace]: (await (localeNamespaceLoaders[locale][namespace])()).default } as unknown as Partial<Translations>
+	)

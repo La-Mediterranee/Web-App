@@ -110,3 +110,8 @@ interface HTMLDialogElement extends HTMLElement {
 	 */
 	showModal(): void;
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation
+interface NetworkInformation {
+	readonly effectiveType: 'slow-2g' | '2g' | '3g' | '4g';
+}

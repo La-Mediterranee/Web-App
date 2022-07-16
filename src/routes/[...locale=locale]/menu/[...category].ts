@@ -1,11 +1,31 @@
 import { EDAMAM_API_KEY } from '$lib/server/constants';
 
-import type { RequestHandlerOutput, RequestEvent, ResponseBody } from '@sveltejs/kit/types';
+import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types';
 
 const data = new Map();
 
 export async function GET(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const { category } = event.params;
+
+	console.log(event.url.pathname);
+
+	const path = event.url.pathname;
+
+	if (!category)
+		return {
+			status: 301,
+			headers: {
+				location: event.url.pathname + '/popular',
+			},
+		};
+
+	if (category == 'popular') {
+		return {
+			body: {
+				body: 'popular',
+			},
+		};
+	}
 
 	if (!data.has(category)) {
 		console.log('fetching');
@@ -29,7 +49,7 @@ export async function GET(event: RequestEvent): Promise<RequestHandlerOutput> {
 	const hits = <any[]>data.get(event.params).hits;
 
 	return {
-		body: <ResponseBody>{
+		body: {
 			res: hits.map(({ recipe }: any) => {
 				return {
 					label: recipe.label,

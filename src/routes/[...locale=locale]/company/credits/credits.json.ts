@@ -1,4 +1,4 @@
-import type { ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+import type { RequestHandlerOutput } from '@sveltejs/kit/types';
 
 const credits = {
 	posts: {
@@ -32,7 +32,7 @@ const credits = {
 	// },
 };
 
-export function get(): ShadowEndpointOutput {
+export function GET(): RequestHandlerOutput {
 	return {
 		body: credits,
 	};

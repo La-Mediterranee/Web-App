@@ -1,6 +1,6 @@
-import type { RequestEvent } from '@sveltejs/kit/types/private';
+import type { RequestEvent } from '@sveltejs/kit/types';
 
-export function get(event: RequestEvent) {
+export function GET(event: RequestEvent) {
 	// fetch('', {
 	// 	cf: {
 	// 		// Always cache this fetch regardless of content type

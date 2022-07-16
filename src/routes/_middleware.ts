@@ -2,14 +2,14 @@ import { baseLocale } from '$i18n/i18n-util';
 import { RTL_LANGS, locales, seti18nContext } from '$i18n/utils';
 import { replaceLocaleInUrl } from '$lib/utils';
 
-import type { ShadowEndpointOutput, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types';
 // import type { RequestHandler } from '../../.svelte-kit/types/src/routes/[...locale=locale]';
 
-export async function get({
+export async function GET({
 	locals,
 	params,
 	url,
-}: RequestEvent<{ locale: string }>): Promise<ShadowEndpointOutput> {
+}: RequestEvent<{ locale: string }>): Promise<RequestHandlerOutput> {
 	const locale = params.locale as Locales | '';
 	console.log('locale called', locale);
 	const session = locals;

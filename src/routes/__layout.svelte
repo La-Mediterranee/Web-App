@@ -4,9 +4,9 @@
 	import { RTL_LANGS, seti18nContext } from '$i18n/utils';
 
 	// import { registerServiceWorker } from '$lib/pwa/register-sw';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent, LoadOutput } from '@sveltejs/kit/types';
 
-	export async function load({ session, params, url }: LoadInput): Promise<LoadOutput> {
+	export async function load({ session, params, url }: LoadEvent): Promise<LoadOutput> {
 		return {
 			props: {
 				lang: session.locale,
@@ -41,7 +41,7 @@
 </script>
 
 <Providers>
-	<slot />
+	<!-- <slot /> -->
 </Providers>
 
 <style lang="scss" global>

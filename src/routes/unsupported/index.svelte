@@ -2,11 +2,11 @@
 	import { loadLocaleAsync } from '$i18n/i18n-util.async';
 	import { LL, setLocale } from '$i18n/utils';
 
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent, LoadOutput } from '@sveltejs/kit/types';
 
 	export const prerender = true;
 
-	export async function load({ session }: LoadInput): Promise<LoadOutput> {
+	export async function load({ session }: LoadEvent): Promise<LoadOutput> {
 		await loadLocaleAsync(session.locale);
 
 		return {

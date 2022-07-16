@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	// import type { HttpStatusCode } from 'types/index';
-	import type { ErrorLoadInput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent } from '@sveltejs/kit/types';
 
 	// type HttpStatusCode = number;
 
@@ -16,7 +16,7 @@
 	// 	500: 'Es gab einen Fehler auf unserem Server',
 	// };
 
-	export async function load({ error, status, session }: ErrorLoadInput) {
+	export async function load({ error, status, session }: LoadEvent) {
 		await loadNamespaceAsync(session.locale, 'errors');
 
 		return {

@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
 	export const prerender = true;
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent, LoadOutput } from '@sveltejs/kit/types';
 
-	export async function load({ session }: LoadInput): Promise<LoadOutput> {
+	export async function load({ session }: LoadEvent): Promise<LoadOutput> {
 		if (session.user) {
 			return {
 				status: 302,

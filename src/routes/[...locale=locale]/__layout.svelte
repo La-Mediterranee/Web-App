@@ -26,11 +26,11 @@
 
 	import type { Locales } from '$i18n/i18n-types';
 	import type { INavbarItem, ITabbarItem } from 'types/navbar';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent, LoadOutput } from '@sveltejs/kit/types';
 
 	const numberFormatter = derived(session, $session => new Intl.NumberFormat($session.locale));
 
-	export async function load({ params, session, url }: LoadInput): Promise<LoadOutput> {
+	export async function load({ params, session, url }: LoadEvent): Promise<LoadOutput> {
 		const locale = params.locale as Locales | '';
 
 		// redirect to preferred language if user comes from page root

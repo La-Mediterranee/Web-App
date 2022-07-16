@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
 	import type { User } from 'firebase/auth';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent, LoadOutput } from '@sveltejs/kit/types';
 
 	type Rec<T = any> = Record<string, T>;
 
-	export function load({ session, url }: LoadInput<Rec<string>>): LoadOutput {
+	export function load({ session, url }: LoadEvent<Rec<string>>): LoadOutput {
 		console.log(session.user);
 
 		if (!session.user) {

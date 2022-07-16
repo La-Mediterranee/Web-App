@@ -3,7 +3,7 @@ import { SERVER_PORT } from '$lib/server/constants';
 import { setCookie } from '$lib/server/helper';
 import { SERVER_URL } from '$lib/utils/constants';
 
-import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types/internal';
+import type { RequestEvent, RequestHandlerOutput } from '@sveltejs/kit/types';
 
 export interface SessionLogin {
 	idToken: string;

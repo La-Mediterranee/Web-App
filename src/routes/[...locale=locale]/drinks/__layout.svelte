@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadOutput } from '@sveltejs/kit/types';
 	import { onMount } from 'svelte';
 
 	const routeName = 'drinks';

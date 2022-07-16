@@ -3,7 +3,7 @@ import { serialize } from './cookie';
 import { SERVER_URL } from './constants';
 
 import type { Options } from './cookie';
-import type { ResponseHeaders, ShadowEndpointOutput } from '@sveltejs/kit/types/internal';
+import type { ResponseHeaders, ShadowEndpointOutput } from '@sveltejs/kit/types';
 
 import type * as nodeFetch from 'node-fetch';
 

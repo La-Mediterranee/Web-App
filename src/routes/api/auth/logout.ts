@@ -1,6 +1,6 @@
 import { clearCookie } from '$lib/server/helper';
 
-import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { RequestHandlerOutput, RequestEvent } from '@sveltejs/kit/types';
 import type { SessionLogin } from '../session/login';
 
 export async function POST(req: RequestEvent): Promise<RequestHandlerOutput> {

@@ -124,7 +124,7 @@
 					return Promise.all(wrappedPromises);
 				};
 		</script>
-		%svelte.head%
+		%sveltekit.head%
 	</head>
 	<body>
 		<noscript>
@@ -134,7 +134,7 @@
 				}
 			</style>
 		</noscript>
-		<div id="svelte" class="s-app theme--custom">%svelte.body%</div>
+		<div id="svelte" class="s-app theme--custom">%sveltekit.body%</div>
 		<script type="module">
 			// Lighthouse lowers the score because firebase auth iframe doesn't have a title/(visibility not hidden)
 			const observer = new MutationObserver(mutations => {

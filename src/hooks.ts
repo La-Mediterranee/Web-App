@@ -11,7 +11,7 @@ import { RTL_LANGS } from '$i18n/utils';
 import { attachCsrfToken } from '$lib/server/csrf';
 import { attachFetchGlobal } from '$lib/server/helper';
 
-import type { Handle, RequestEvent } from '@sveltejs/kit/types/internal';
+import type { Handle, RequestEvent } from '@sveltejs/kit/types';
 
 // if (dev)
 attachFetchGlobal();

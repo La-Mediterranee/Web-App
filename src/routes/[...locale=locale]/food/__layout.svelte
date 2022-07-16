@@ -3,7 +3,7 @@
 
 	import { session } from '$app/stores';
 
-	import type { LoadOutput } from '@sveltejs/kit/types/internal';
+	import type { LoadOutput } from '@sveltejs/kit/types';
 	import type { BreadcrumbList, WithContext } from 'schema-dts';
 
 	const routeName = 'food';

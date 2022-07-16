@@ -5,9 +5,9 @@
 	import { loadNamespaceAsync } from '$i18n/i18n-util.async';
 	import { geti18nContext } from '$i18n/utils';
 
-	import type { LoadInput } from '@sveltejs/kit/types/private';
+	import type { LoadEvent } from '@sveltejs/kit/types';
 
-	export async function load({ session }: LoadInput) {
+	export async function load({ session }: LoadEvent) {
 		await loadNamespaceAsync(session.locale, 'checkout');
 
 		return {

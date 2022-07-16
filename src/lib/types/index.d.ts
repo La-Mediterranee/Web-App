@@ -2,7 +2,7 @@ import { Stripe } from '@stripe/stripe-js';
 import { Readable, Unsubscriber, Subscriber } from 'svelte/store';
 
 import { Adapter, PrerenderOnErrorValue, Config } from '@sveltejs/kit';
-import { TrailingSlash } from '@sveltejs/kit/types/internal';
+import { TrailingSlash } from '@sveltejs/kit/types';
 import { UserConfig, SSROptions } from 'vite';
 
 export type Invalidator<T> = (value?: T) => void;

@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
 	import type { HomepageProps } from '../api/homepage';
-	import type { LoadInput } from '@sveltejs/kit/types/internal';
+	import type { LoadEvent } from '@sveltejs/kit/types';
 
-	export async function load({ fetch }: LoadInput) {
+	export async function load({ fetch }: LoadEvent) {
 		const url = `/api/homepage`;
 		const homePageData: HomepageProps = await fetch(url)
 			.then(p => p.json())
